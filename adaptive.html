@@ -173,6 +173,62 @@
 .option:hover {
     background-color: var(--light-green);
 }
+    
+    
+    .virtual-keyboard {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.keyboard-char {
+    padding: 10px 16px;
+    font-size: 20px;
+    background-color: var(--light-green);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-width: 40px;
+}
+
+.keyboard-char:hover {
+    background-color: var(--main-green);
+    color: white;
+}
+        
+        
+        .hint-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: var(--main-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hint-container {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9ffe7;
+    border: 1px solid #e6e6a7;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+    
     </style>
 </head>
 <body>
@@ -248,12 +304,11 @@ async function loadTask(taskNumber) {
 }
 
 function initTask() {
-    const feedback = document.querySelector('.feedback') || document.getElementById('feedback2');
     const nextBtn = document.querySelector('.next-btn');
+    const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
+
+    // === 1. Поддержка клика по вариантам (.image-option / .option) ===
     const options = document.querySelectorAll('.image-option, .option');
-
-    let selectedOption = null;
-
     if (options.length > 0) {
         options.forEach(option => {
             option.style.cursor = 'pointer';
@@ -267,33 +322,70 @@ function initTask() {
                     opt.classList.remove('selected');
                 });
 
-                selectedOption = this;
                 this.style.backgroundColor = 'var(--light-green)';
                 this.classList.add('selected');
 
-                const isCorrect = this.dataset.correct === 'true';
-
-                if (isCorrect) {
-                    feedback.textContent = 'Правильно! 👍';
-                    feedback.className = 'feedback correct';
-                    nextBtn.disabled = false;
-                } else {
-                    feedback.textContent = 'Неверно. Попробуйте ещё раз!';
-                    feedback.className = 'feedback incorrect';
-                    nextBtn.disabled = true;
+                // Проверяем, есть ли checkAnswer()
+                if (typeof checkAnswer === 'function') {
+                    const isCorrect = checkAnswer(this);
+                    if (isCorrect) {
+                        feedback.textContent = 'Правильно! 👍';
+                        feedback.className = 'feedback correct';
+                        nextBtn.disabled = false;
+                    } else {
+                        feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                        feedback.className = 'feedback incorrect';
+                        nextBtn.disabled = true;
+                    }
                 }
             });
         });
     }
 
+    // === 2. Поддержка текстового ввода и виртуальной клавиатуры ===
+    const inputField = document.querySelector('.translate-input');
+    const keyboardChars = document.querySelectorAll('.keyboard-char');
+
+    if (inputField) {
+        inputField.addEventListener('input', function () {
+            nextBtn.disabled = inputField.value.trim() === '';
+        });
+
+        keyboardChars.forEach(char => {
+            char.addEventListener('click', function () {
+                inputField.value += this.textContent;
+                inputField.dispatchEvent(new Event('input'));
+            });
+        });
+    }
+
+    // === 3. Обработчик кнопки "Далее" ===
     if (nextBtn) {
         nextBtn.onclick = async function () {
-            if (currentTaskIndex < totalTasks) {
-                currentTaskIndex++; // Переход к следующему заданию
-                await loadTask(currentTaskIndex);
+            // Сначала проверяем через checkAnswer(), если он определён
+            if (typeof checkAnswer === 'function') {
+                let userAnswer = null;
+
+                if (inputField) {
+                    userAnswer = inputField.value.trim();
+                } else if (document.querySelector('.selected')) {
+                    userAnswer = document.querySelector('.selected');
+                }
+
+                const isCorrect = checkAnswer(userAnswer);
+
+                if (isCorrect) {
+                    feedback.textContent = 'Правильно! 👍';
+                    feedback.className = 'feedback correct';
+
+                    currentTaskIndex++;
+                    await loadTask(currentTaskIndex);
+                } else {
+                    feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                    feedback.className = 'feedback incorrect';
+                }
             } else {
-                alert('Поздравляем! Вы завершили демо-урок.');
-                nextBtn.disabled = true;
+                console.warn("Функция checkAnswer() не определена в текущем задании.");
             }
         };
     }
