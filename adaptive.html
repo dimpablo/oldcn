@@ -313,15 +313,28 @@
 
 .clear-btn {
     position: absolute;
-    top: 5px;
+    top: 8px;
     right: 10px;
-    background: none;
+    background-color: var(--red); /* Яркий фон */
+    color: white;                  /* Белый текст */
     border: none;
-    font-size: 18px;
-    color: var(--dark-gray);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    z-index: 10;
-    display: none;
+    z-index: 100;                  /* Важно! Чтобы была поверх всего */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.clear-btn:hover,
+.clear-btn:focus {
+    transform: scale(1.1);
+    background-color: #e63946; /* Темнее при наведении */
 }
 
 .sentence-container:not(:empty) .clear-btn {
