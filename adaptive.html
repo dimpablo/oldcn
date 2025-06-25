@@ -386,33 +386,32 @@ function initTask() {
     const nextBtn = document.querySelector('.next-btn');
     const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
 
-    // --- Перетаскивание слов ---
-    const draggables = document.querySelectorAll('.draggable');
+    // === 1. Поддержка перетаскивания слов (для задания 4.1) ===
     const dropzone = document.getElementById('sentence-container');
-    const placeholder = dropzone.querySelector('.placeholder');
-    const clearBtn = document.querySelector('.clear-btn');
-
-    if (dropzone && clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
-            clearBtn.style.display = 'none';
-            nextBtn.disabled = true;
-        });
-    }
-
-    draggables.forEach(word => {
-        word.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', e.target.textContent);
-            e.dataTransfer.effectAllowed = 'move';
-            e.target.classList.add('dragging');
-        });
-
-        word.addEventListener('dragend', (e) => {
-            e.target.classList.remove('dragging');
-        });
-    });
-
     if (dropzone) {
+        const placeholder = dropzone.querySelector('.placeholder');
+        const clearBtn = document.querySelector('.clear-btn');
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
+                nextBtn.disabled = true;
+            });
+        }
+
+        const draggables = document.querySelectorAll('.draggable');
+        draggables.forEach(word => {
+            word.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.textContent);
+                e.dataTransfer.effectAllowed = 'move';
+                e.target.classList.add('dragging');
+            });
+
+            word.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+        });
+
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
@@ -426,10 +425,8 @@ function initTask() {
 
             if (!draggingWord) return;
 
-            // Убираем placeholder
             if (placeholder) placeholder.remove();
 
-            // Клонируем элемент, чтобы оригинал остался в банке
             const newWord = draggingWord.cloneNode(true);
             newWord.classList.add('in-sentence');
             newWord.removeAttribute('draggable');
@@ -438,21 +435,77 @@ function initTask() {
             dropzone.appendChild(newWord);
             nextBtn.disabled = false;
 
-            // Обновляем состояние кнопки очистки
-            clearBtn.style.display = 'block';
-
-            // Удаляем placeholder при повторных дропах
-            if (dropzone.querySelector('.placeholder')) {
-                dropzone.removeChild(dropzone.querySelector('.placeholder'));
-            }
+            if (clearBtn) clearBtn.style.display = 'block';
         });
     }
 
-    // --- Кнопка "Далее" ---
+    // === 2. Поддержка клика по вариантам (.image-option / .option) ===
+    const options = document.querySelectorAll('.image-option, .option');
+    if (options.length > 0) {
+        options.forEach(option => {
+            option.style.cursor = 'pointer';
+            option.style.padding = '10px';
+            option.style.borderRadius = '5px';
+            option.style.transition = 'background-color 0.2s';
+
+            option.addEventListener('click', function () {
+                options.forEach(opt => {
+                    opt.style.backgroundColor = '';
+                    opt.classList.remove('selected');
+                });
+
+                this.style.backgroundColor = 'var(--light-green)';
+                this.classList.add('selected');
+
+                if (typeof checkAnswer === 'function') {
+                    const isCorrect = checkAnswer(this);
+                    if (isCorrect) {
+                        feedback.textContent = 'Правильно! 👍';
+                        feedback.className = 'feedback correct';
+                        nextBtn.disabled = false;
+                    } else {
+                        feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                        feedback.className = 'feedback incorrect';
+                        nextBtn.disabled = true;
+                    }
+                }
+            });
+        });
+    }
+
+    // === 3. Поддержка текстового ввода (задание 3.1) ===
+    const inputField = document.querySelector('.translate-input');
+    const keyboardChars = document.querySelectorAll('.keyboard-char');
+
+    if (inputField) {
+        inputField.addEventListener('input', function () {
+            nextBtn.disabled = inputField.value.trim() === '';
+        });
+
+        keyboardChars.forEach(char => {
+            char.addEventListener('click', function () {
+                inputField.value += this.textContent;
+                inputField.dispatchEvent(new Event('input'));
+            });
+        });
+    }
+
+    // === 4. Кнопка "Далее" ===
     if (nextBtn) {
         nextBtn.onclick = async function () {
             if (typeof checkAnswer === 'function') {
-                const isCorrect = checkAnswer();
+                let userAnswer = null;
+
+                if (inputField) {
+                    userAnswer = inputField.value.trim();
+                } else if (document.querySelector('.selected')) {
+                    userAnswer = document.querySelector('.selected');
+                } else if (dropzone) {
+                    userAnswer = dropzone; // для задания 4.1
+                }
+
+                const isCorrect = checkAnswer(userAnswer);
+
                 if (isCorrect) {
                     feedback.textContent = 'Правильно! 👍';
                     feedback.className = 'feedback correct';
