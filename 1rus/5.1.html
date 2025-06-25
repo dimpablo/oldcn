@@ -1,14 +1,19 @@
-        <!-- Task 5: Match translation -->
-        <div class="task active" id="task5">
-            <h3 class="task-title">Выберите правильный перевод</h3>
-            <p class="task-prompt">Что означает "茶与咖啡"?</p>
-            <div class="options-container">
-                <div class="option">Чай или кофе</div>
-                <div class="option" data-correct="true">Чай и кофе</div>
-                <div class="option">Пейте чай</div>
-                <div class="option">Кофе с чаем</div>
-            </div>
-            <div class="feedback" id="feedback5"></div>
-            <button class="next-btn" disabled="">Далее</button>
-        </div>
-        
+<!-- Task 5: Match translation -->
+<div class="task active" id="task5">
+    <h3 class="task-title">Выберите правильный перевод</h3>
+    <p class="task-prompt">Что означает «茶与咖啡»?</p>
+    <div class="options-container">
+        <div class="option">Чай или кофе</div>
+        <div class="option" data-correct="true">Чай и кофе</div>
+        <div class="option">Пейте чай</div>
+        <div class="option">Кофе с чаем</div>
+    </div>
+    <div class="feedback" id="feedback5"></div>
+    <button class="next-btn" disabled>Далее</button>
+</div>
+
+<script>
+    function checkAnswer(selectedOption) {
+        return selectedOption.dataset.correct === 'true';
+    }
+</script>
