@@ -341,7 +341,50 @@
     display: block;
 }
         
-        
+.sentence-container {
+    min-height: 60px;
+    padding: 12px 40px 12px 12px; /* Отступ справа под кнопку */
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative; /* ВАЖНО! Для позиционирования clear-btn */
+    background-color: #f9fff7;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    overflow: visible;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.clear-btn:hover,
+.clear-btn:active,
+.clear-btn:focus {
+    background-color: #d62828;
+    transform: scale(1.1);
+}
         
         
         
@@ -497,37 +540,33 @@ function initTask() {
                 word.classList.add('dragging');
             });
 
-            word.addEventListener('touchend', (e) => {
-                if (!draggingWord) return;
+        word.addEventListener('touchend', (e) => {
+    if (!draggingWord) return;
 
-                const touch = e.changedTouches[0];
-                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const touch = e.changedTouches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
 
-                if (target && target.closest('#sentence-container')) {
-                    const newWord = draggingWord.cloneNode(true);
-                    newWord.classList.add('in-sentence');
-                    newWord.removeAttribute('draggable');
-                    newWord.style.margin = '0 5px';
+    if (target && target.closest('#sentence-container')) {
+        const newWord = draggingWord.cloneNode(true);
+        newWord.classList.add('in-sentence');
+        newWord.removeAttribute('draggable');
+        newWord.style.margin = '0 5px';
 
-                    if (placeholder) placeholder.remove();
+        if (placeholder) placeholder.remove();
 
-                    dropzone.appendChild(newWord);
-                    nextBtn.disabled = false;
-                    clearBtn.style.display = 'block';
+        dropzone.appendChild(newWord);
+        nextBtn.disabled = false;
 
-                    // Убираем placeholder
-                    if (dropzone.querySelector('.placeholder')) {
-                        dropzone.removeChild(dropzone.querySelector('.placeholder'));
-                    }
+        // Явно делаем кнопку "Очистить" видимой
+        clearBtn.style.display = 'flex';
+        clearBtn.style.zIndex = '100';
+        clearBtn.style.opacity = '1';
+        clearBtn.style.visibility = 'visible';
+    }
 
-                    // Убираем обработчики
-                    newWord.removeEventListener('touchstart', () => {});
-                    newWord.removeEventListener('touchend', () => {});
-                }
-
-                draggingWord.classList.remove('dragging');
-                draggingWord = null;
-            });
+    draggingWord.classList.remove('dragging');
+    draggingWord = null;
+});
         });
     }
 
@@ -615,6 +654,37 @@ function initTask() {
     }
 }
 
+        
+function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
+    e.preventDefault();
+
+    const textContent = e.dataTransfer.getData('text/plain');
+    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(w => w.textContent === textContent);
+
+    if (!draggingWord) return;
+
+    if (placeholder) placeholder.remove();
+
+    const newWord = draggingWord.cloneNode(true);
+    newWord.classList.add('in-sentence');
+    newWord.removeAttribute('draggable');
+    newWord.style.margin = '0 5px';
+
+    dropzone.appendChild(newWord);
+    nextBtn.disabled = false;
+
+    // Делаем кнопку "Очистить" явно видимой
+    clearBtn.style.display = 'flex';
+    clearBtn.style.zIndex = '100';
+    clearBtn.style.opacity = '1';
+    clearBtn.style.visibility = 'visible';
+
+    if (dropzone.querySelector('.placeholder')) {
+        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+    }
+}
+        
+        
 // Вспомогательная функция для обработки drop
 function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
     e.preventDefault();
