@@ -1,1 +1,22 @@
-empty
+ <!-- Task 1: Match image to character -->
+        <div class="task" id="task1">
+            <h3 class="task-title">Выберите правильный перевод</h3>
+            <p class="task-prompt">Что означает этот иероглиф?</p>
+            <div class="character" style="text-align: center; font-size: 48px;">豆</div>
+            <div class="options-container">
+                <div class="image-option" data-correct="true">
+                    <img src="./beans.webp" alt="Beans">
+                    <span>бобы</span>
+                </div>
+                <div class="image-option">
+                    <img src="rice.webp" alt="Rice">
+                    <span>рис</span>
+                </div>
+                <div class="image-option">
+                    <img src="tea.webp" alt="Tea">
+                    <span>чай</span>
+                </div>
+            </div>
+            <div class="feedback" id="feedback1"></div>
+            <button class="next-btn" disabled>Далее</button>
+        </div>

@@ -1,0 +1,41 @@
+        <!-- Task 3: Translate sentence -->
+        <div class="task" id="task3">
+            <h3 class="task-title">Переведите предложение</h3>
+            <p class="task-prompt">Как будет по-древнекитайски "Это суп"?</p>
+            <div class="translate-container">
+                <input type="text" class="translate-input" placeholder="Введите предложение..." id="sentence-input">
+                
+                <!-- Виртуальная клавиатура -->
+                <div class="virtual-keyboard">
+                    <div class="keyboard-row">
+                        <div class="keyboard-char">此</div>
+                        <div class="keyboard-char">汤</div>
+                        <div class="keyboard-char">也</div>
+                        <div class="keyboard-char">。</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="keyboard-char">豆</div>
+                        <div class="keyboard-char">粥</div>
+                        <div class="keyboard-char">在</div>
+                        <div class="keyboard-char">茶</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="keyboard-char">与</div>
+                        <div class="keyboard-char">咖</div>
+                        <div class="keyboard-char">啡</div>
+                        <div class="keyboard-char">饮</div>
+                    </div>
+                </div>
+                
+                <button class="hint-btn" id="hint-btn3">
+                    <i class="fas fa-lightbulb"></i> Подсказка
+                </button>
+                <div class="hint-container" id="hint3">
+                    <p>"это" = 此, "суп" = 汤</p>
+                    <p>В древнекитайском для утвердительных предложений часто используется частица 也 в конце.</p>
+                    <p>Пример: 此豆也。 (Это бобы.)</p>
+                </div>
+            </div>
+            <div class="feedback" id="feedback3"></div>
+            <button class="next-btn" disabled>Далее</button>
+        </div>
