@@ -292,6 +292,55 @@
         
         
         
+        
+        .sentence-container {
+    min-height: 60px;
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative;
+    background-color: #f9fff7;
+    transition: border-color 0.3s;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--dark-gray);
+    cursor: pointer;
+    z-index: 10;
+    display: none;
+}
+
+.sentence-container:not(:empty) .clear-btn {
+    display: block;
+}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     </style>
 </head>
 <body>
