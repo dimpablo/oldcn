@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Содержимое файла dead.txt:</h1>
-  <pre id="text-content">Загрузка...</pre>
+  <div id="text-content">Загрузка...</div>
 
   <script>
     fetch('dead.txt')
@@ -17,7 +17,8 @@
         return response.text();
       })
       .then(text => {
-        document.getElementById('text-content').textContent = text;
+        // Вставляем содержимое как HTML
+        document.getElementById('text-content').innerHTML = text;
       })
       .catch(error => {
         document.getElementById('text-content').textContent = 'Ошибка: ' + error.message;
