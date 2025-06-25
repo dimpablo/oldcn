@@ -157,18 +157,17 @@
         
         
         
-        
-        
         .option {
     display: inline-block;
     padding: 10px 20px;
     margin: 5px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     background-color: var(--white);
+    border: 1px solid #ccc;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .option:hover {
@@ -223,16 +222,38 @@ function updateProgress(percent) {
     const progressFill = document.querySelector('.progress-fill');
     progressFill.style.width = percent + '%';
 }
-        // Инициализация обработчиков событий для задания
+
+let currentTaskIndex = 1; // Начинаем с первого задания
+const totalTasks = 5; // Укажи общее число заданий в уроке (можно увеличить)
+
+async function loadTask(taskNumber) {
+    try {
+        const response = await fetch(`./1rus/${taskNumber}.1.html`);
+        if (!response.ok) throw new Error(`Не удалось загрузить задание ${taskNumber}`);
+
+        const html = await response.text();
+        const container = document.getElementById('lesson-container');
+        container.innerHTML = html;
+
+        initTask(); // Инициализируем обработчики для нового задания
+        updateProgress((taskNumber / totalTasks) * 100); // Обновляем прогресс
+    } catch (error) {
+        document.getElementById('lesson-container').innerHTML = `
+            <div class="error-message">
+                <p>Ошибка загрузки задания ${taskNumber}: ${error.message}</p>
+                <button onclick="location.reload()">Попробовать снова</button>
+            </div>
+        `;
+    }
+}
+
 function initTask() {
     const feedback = document.querySelector('.feedback') || document.getElementById('feedback2');
     const nextBtn = document.querySelector('.next-btn');
-
-    // Поддержка обоих типов вариантов
     const options = document.querySelectorAll('.image-option, .option');
+
     let selectedOption = null;
 
-    // Если есть варианты ответов
     if (options.length > 0) {
         options.forEach(option => {
             option.style.cursor = 'pointer';
@@ -241,18 +262,15 @@ function initTask() {
             option.style.transition = 'background-color 0.2s';
 
             option.addEventListener('click', function () {
-                // Сброс выделения
                 options.forEach(opt => {
                     opt.style.backgroundColor = '';
                     opt.classList.remove('selected');
                 });
 
-                // Выделяем текущий
                 selectedOption = this;
                 this.style.backgroundColor = 'var(--light-green)';
                 this.classList.add('selected');
 
-                // Проверяем правильность
                 const isCorrect = this.dataset.correct === 'true';
 
                 if (isCorrect) {
@@ -268,33 +286,21 @@ function initTask() {
         });
     }
 
-    // Обработчик кнопки "Далее"
     if (nextBtn) {
         nextBtn.onclick = async function () {
-            try {
-                const response = await fetch('./1rus/2.1.html'); // заменить на следующее задание
-                if (!response.ok) throw new Error('Не удалось загрузить следующее задание');
-
-                const html = await response.text();
-                const container = document.getElementById('lesson-container');
-                container.innerHTML = html;
-
-                initTask(); // повторно инициализируем обработчики
-                updateProgress(33); // обновляем прогресс
-            } catch (error) {
-                container.innerHTML = `
-                    <div class="error-message">
-                        <p>Ошибка загрузки следующего задания: ${error.message}</p>
-                        <button onclick="location.reload()">Попробовать снова</button>
-                    </div>
-                `;
+            if (currentTaskIndex < totalTasks) {
+                currentTaskIndex++; // Переход к следующему заданию
+                await loadTask(currentTaskIndex);
+            } else {
+                alert('Поздравляем! Вы завершили демо-урок.');
+                nextBtn.disabled = true;
             }
         };
     }
 }
         
         // Загружаем первое задание при загрузке страницы
-        window.addEventListener('DOMContentLoaded', loadFirstTask);
+        window.addEventListener('DOMContentLoaded', () => loadTask(1));
     </script>
 </body>
 </html>
