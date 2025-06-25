@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OldCN - Learn Classical Chinese</title>
+    <title>OldCN - Урок 1</title>
     <style>
         :root {
             --main-green: #58a700;
@@ -78,12 +78,18 @@
             display: block;
         }
         
-        .task-loading {
+        .task-title {
             text-align: center;
-            padding: 20px;
+            margin-bottom: 20px;
+            color: var(--dark-green);
         }
         
-        /* Все остальные стили остаются без изменений */
+        .task-prompt {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
         .options-container {
             display: flex;
             flex-wrap: wrap;
@@ -92,62 +98,118 @@
             margin-bottom: 20px;
         }
         
-        .option {
-            padding: 10px 15px;
+        .image-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .image-option:hover {
+            background-color: var(--light-green);
+        }
+        
+        .image-option.selected {
+            background-color: var(--main-green);
+        }
+        
+        .image-option img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .character {
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        
+        .feedback.correct {
+            color: var(--main-green);
+        }
+        
+        .feedback.incorrect {
+            color: var(--red);
+        }
+        
+        .next-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: var(--main-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .next-btn:hover {
+            background-color: var(--dark-green);
+        }
+        
+        .next-btn:disabled {
             background-color: var(--gray);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
+            cursor: not-allowed;
         }
         
-        .option:hover {
-            background-color: var(--light-green);
+        .loading-message {
+            text-align: center;
+            padding: 20px;
         }
         
-        .option.selected {
-            background-color: var(--main-green);
-            color: white;
+        .error-message {
+            text-align: center;
+            color: var(--red);
+            padding: 20px;
         }
         
-        .virtual-keyboard {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 5px;
+        .error-message button {
             margin-top: 10px;
-            max-width: 400px;
-        }
-        
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            width: 100%;
-        }
-        
-        .keyboard-char {
-            padding: 8px 12px;
-            background-color: var(--light-green);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.2s;
-        }
-        
-        .keyboard-char:hover {
+            padding: 8px 16px;
             background-color: var(--main-green);
             color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         
-        /* Добавьте остальные стили из предыдущих версий */
+        .lesson-complete {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .lesson-complete button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: var(--main-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
         <div class="logo">OldCN</div>
         <div class="user-menu">
-            <span>Lesson 1.1</span>
+            <span id="lesson-info">Урок 1.1</span>
         </div>
     </header>
     
@@ -156,8 +218,7 @@
     </div>
     
     <div class="lesson-container" id="lesson-container">
-        <!-- Контейнер будет заполняться динамически -->
-        <div class="task-loading">Loading lessons...</div>
+        <div class="loading-message">Загрузка заданий...</div>
     </div>
 
     <script>
@@ -166,78 +227,29 @@
         let currentTaskIndex = 0;
         let tasks = [];
         
-        // Основная функция инициализации
-        async function initLesson() {
-            const lessonContainer = document.getElementById('lesson-container');
-            
-            // Показываем индикатор загрузки
-            lessonContainer.innerHTML = '';
-            
-            // Последовательно загружаем и инициализируем задания
-            for (let i = 1; i <= TOTAL_TASKS; i++) {
-                try {
-                    // Показываем индикатор загрузки для текущего задания
-                    const loadingIndicator = document.createElement('div');
-                    loadingIndicator.className = 'task-loading';
-                    loadingIndicator.textContent = `Loading task ${i}...`;
-                    lessonContainer.appendChild(loadingIndicator);
-                    
-                    // Загружаем задание
-                    const response = await fetch(`./1rus/${i}.1.html`);
-                    if (!response.ok) throw new Error('Failed to load task');
-                    const html = await response.text();
-                    
-                    // Создаем элемент задания
-                    const taskElement = document.createElement('div');
-                    taskElement.id = `task${i}`;
-                    taskElement.className = 'task';
-                    taskElement.innerHTML = html;
-                    
-                    // Заменяем индикатор загрузки на задание
-                    lessonContainer.replaceChild(taskElement, loadingIndicator);
-                    
-                    // Инициализируем задание
-                    initTask(taskElement);
-                    
-                    // Сохраняем ссылку на задание
-                    tasks.push(taskElement);
-                    
-                } catch (error) {
-                    console.error(`Error loading task ${i}:`, error);
-                    const errorElement = document.createElement('div');
-                    errorElement.className = 'task';
-                    errorElement.innerHTML = `<p>Error loading task ${i}: ${error.message}</p>`;
-                    lessonContainer.replaceChild(errorElement, 
-                        lessonContainer.lastElementChild);
-                    tasks.push(errorElement);
-                }
-            }
-            
-            // После загрузки всех заданий показываем первое
-            if (tasks.length > 0) {
-                tasks[0].classList.add('active');
-                updateProgress();
+        // Загрузка задания
+        async function loadTask(taskNumber) {
+            try {
+                const response = await fetch(`./1rus/${taskNumber}.1.html`);
+                if (!response.ok) throw new Error('Не удалось загрузить задание');
+                return await response.text();
+            } catch (error) {
+                console.error(`Ошибка загрузки задания ${taskNumber}:`, error);
+                return `
+                    <div class="task" id="task${taskNumber}">
+                        <div class="error-message">
+                            <p>Ошибка загрузки задания ${taskNumber}</p>
+                            <p>${error.message}</p>
+                        </div>
+                    </div>
+                `;
             }
         }
         
-        // Инициализация конкретного задания
+        // Инициализация задания
         function initTask(taskElement) {
-            // Инициализация виртуальной клавиатуры
-            const keyboardChars = taskElement.querySelectorAll('.keyboard-char');
-            const inputField = taskElement.querySelector('.translate-input');
-            
-            if (keyboardChars.length > 0 && inputField) {
-                keyboardChars.forEach(char => {
-                    char.addEventListener('click', () => {
-                        inputField.value += char.textContent;
-                        inputField.dispatchEvent(new Event('keyup'));
-                        inputField.focus();
-                    });
-                });
-            }
-            
-            // Инициализация вариантов ответа
-            const options = taskElement.querySelectorAll('.option, .image-option');
+            // Обработчики для вариантов ответа
+            const options = taskElement.querySelectorAll('.image-option, .option');
             options.forEach(option => {
                 option.addEventListener('click', function() {
                     if (this.classList.contains('selected')) return;
@@ -245,67 +257,30 @@
                     // Снимаем выделение с других вариантов
                     options.forEach(opt => opt.classList.remove('selected'));
                     
+                    // Выделяем текущий вариант
                     this.classList.add('selected');
                     
-                    // Активируем кнопку "Continue"
-                    const nextBtn = taskElement.querySelector('.next-btn');
-                    if (nextBtn) nextBtn.disabled = false;
-                    
-                    // Проверяем правильность ответа
+                    // Активируем кнопку "Далее" если ответ правильный
                     const isCorrect = this.dataset.correct === 'true';
+                    const nextBtn = taskElement.querySelector('.next-btn');
                     const feedback = taskElement.querySelector('.feedback');
                     
+                    if (nextBtn) nextBtn.disabled = !isCorrect;
                     if (feedback) {
-                        feedback.textContent = isCorrect ? 'Correct! 👍' : 'Not quite. Try again!';
+                        feedback.textContent = isCorrect ? 'Правильно! 👍' : 'Неверно. Попробуйте ещё раз!';
                         feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
                     }
                 });
             });
             
-            // Инициализация полей ввода
-            const inputFields = taskElement.querySelectorAll('.translate-input');
-            inputFields.forEach(input => {
-                input.addEventListener('keyup', function(e) {
-                    const nextBtn = taskElement.querySelector('.next-btn');
-                    if (nextBtn) nextBtn.disabled = !this.value.trim();
-                    
-                    if (e.key === 'Enter') {
-                        const correctAnswer = this.dataset.correct;
-                        const feedback = taskElement.querySelector('.feedback');
-                        
-                        if (feedback && correctAnswer) {
-                            const isCorrect = this.value.trim() === correctAnswer;
-                            feedback.textContent = isCorrect ? 'Excellent! 🎉' : `Almost! Correct answer: ${correctAnswer}`;
-                            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-                            
-                            if (isCorrect && nextBtn) {
-                                nextBtn.disabled = false;
-                            }
-                        }
-                    }
-                });
-            });
-            
-            // Инициализация кнопки "Continue"
-            const nextButton = taskElement.querySelector('.next-btn');
-            if (nextButton) {
-                nextButton.addEventListener('click', goToNextTask);
+            // Обработчик кнопки "Далее"
+            const nextBtn = taskElement.querySelector('.next-btn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', goToNextTask);
             }
             
-            // Инициализация кнопок подсказок
-            const hintButtons = taskElement.querySelectorAll('.hint-btn');
-            hintButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const hint = this.nextElementSibling;
-                    if (hint.style.display === 'block') {
-                        hint.style.display = 'none';
-                        this.innerHTML = '<i class="fas fa-lightbulb"></i> Hint';
-                    } else {
-                        hint.style.display = 'block';
-                        this.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
-                    }
-                });
-            });
+            // Обработчики для других элементов (клавиатура, drag-and-drop и т.д.)
+            // можно добавить по аналогии
         }
         
         // Переход к следующему заданию
@@ -320,10 +295,23 @@
             if (currentTaskIndex < TOTAL_TASKS) {
                 // Показываем следующее задание
                 tasks[currentTaskIndex].classList.add('active');
+                document.getElementById('lesson-info').textContent = `Урок 1.${currentTaskIndex + 1}`;
             } else {
                 // Урок завершен
-                alert('Lesson completed! Great job!');
+                showLessonComplete();
             }
+        }
+        
+        // Показать сообщение о завершении урока
+        function showLessonComplete() {
+            const container = document.getElementById('lesson-container');
+            container.innerHTML = `
+                <div class="lesson-complete">
+                    <h2>Урок завершён!</h2>
+                    <p>Вы успешно выполнили все ${TOTAL_TASKS} заданий.</p>
+                    <button onclick="location.reload()">Начать заново</button>
+                </div>
+            `;
         }
         
         // Обновление прогресс-бара
@@ -332,8 +320,45 @@
             document.getElementById('progress').style.width = `${progress}%`;
         }
         
-        // Запускаем загрузку уроков при полной загрузке DOM
-        document.addEventListener('DOMContentLoaded', initLesson);
+        // Основная функция загрузки уроков
+        async function loadAllTasks() {
+            const container = document.getElementById('lesson-container');
+            container.innerHTML = '<div class="loading-message">Загрузка заданий...</div>';
+            
+            // Загружаем все задания последовательно
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                try {
+                    const html = await loadTask(i);
+                    const taskElement = document.createElement('div');
+                    taskElement.innerHTML = html;
+                    taskElement.id = `task${i}`;
+                    taskElement.className = 'task';
+                    
+                    container.appendChild(taskElement);
+                    tasks.push(taskElement);
+                    initTask(taskElement);
+                    
+                } catch (error) {
+                    console.error('Ошибка при загрузке задания:', error);
+                }
+            }
+            
+            // Показываем первое задание
+            if (tasks.length > 0) {
+                tasks[0].classList.add('active');
+                updateProgress();
+            } else {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <p>Не удалось загрузить ни одного задания</p>
+                        <button onclick="location.reload()">Попробовать снова</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Запускаем загрузку при полной загрузке DOM
+        document.addEventListener('DOMContentLoaded', loadAllTasks);
     </script>
 </body>
 </html>
