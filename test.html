@@ -1,28 +1,650 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Чтение файла dead.txt</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OldCN - Урок 1.1</title>
+    <style>
+        :root {
+            --main-green: #58a700;
+            --dark-green: #3c7a00;
+            --light-green: #e5ffc8;
+            --white: #ffffff;
+            --gray: #f0f0f0;
+            --dark-gray: #333333;
+            --red: #ff4b4b;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-gray);
+            background-color: var(--gray);
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--main-green);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--white);
+            border-radius: 5px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--main-green);
+            width: 30%;
+            transition: width 0.3s;
+        }
+        
+        .lesson-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+        
+        .task {
+            display: none;
+        }
+        
+        .task.active {
+            display: block;
+        }
+        
+        .task-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-green);
+        }
+        
+        .task-prompt {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 10px 15px;
+            background-color: var(--gray);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: var(--light-green);
+        }
+        
+        .option.selected {
+            background-color: var(--main-green);
+            color: white;
+        }
+        
+        .option.correct {
+            background-color: var(--main-green);
+            color: white;
+        }
+        
+        .option.incorrect {
+            background-color: var(--red);
+            color: white;
+        }
+        
+        .translate-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .translate-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 15px;
+            border: 2px solid var(--gray);
+            border-radius: 5px;
+        }
+        
+        .translate-input:focus {
+            border-color: var(--main-green);
+            outline: none;
+        }
+        
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .word {
+            padding: 8px 12px;
+            background-color: var(--light-green);
+            border-radius: 5px;
+            cursor: move;
+        }
+        
+        .sentence-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            min-height: 50px;
+            border: 2px dashed var(--gray);
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .sentence-container.highlight {
+            border-color: var(--main-green);
+            background-color: var(--light-green);
+        }
+        
+        .clear-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background-color: var(--red);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        
+        .feedback.correct {
+            color: var(--main-green);
+        }
+        
+        .feedback.incorrect {
+            color: var(--red);
+        }
+        
+        .next-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: var(--main-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .next-btn:hover {
+            background-color: var(--dark-green);
+        }
+        
+        .next-btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .character {
+            font-size: 24px;
+            margin: 0 5px;
+        }
+        
+        .image-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .image-option img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .pronunciation {
+            font-style: italic;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .hint-container {
+            margin: 15px 0;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+        }
+        
+        .hint-btn {
+            background: none;
+            border: none;
+            color: var(--main-green);
+            text-decoration: underline;
+            cursor: pointer;
+            margin: 10px 0;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .hint-btn i {
+            margin-right: 5px;
+        }
+        
+        .virtual-keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+            max-width: 400px;
+        }
+        
+        .keyboard-char {
+            padding: 8px 12px;
+            background-color: var(--light-green);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .keyboard-char:hover {
+            background-color: var(--main-green);
+            color: white;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <h1>Содержимое файла dead.txt:</h1>
-  <div id="text-content">Загрузка...</div>
+    <header>
+        <div class="logo">OldCN</div>
+        <div class="user-menu">
+            <span>Урок 1.1</span>
+        </div>
+    </header>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+    
+    <div class="lesson-container">
+        <!-- BEGIN ZNACHIT NACHAT -->
+  <pre id="task1">Загрузка 1...</pre>
+  <pre id="task2">Загрузка 2...</pre>
+  <pre id="task3">Загрузка 3...</pre>
+  <pre id="task4">Загрузка 4...</pre>
+  <pre id="task5">Загрузка 5...</pre>
+  <pre id="task6">Загрузка 6...</pre>
+        
+                <!-- END OF TASKS    -->
 
-  <script>
-    fetch('dead.txt')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Не удалось загрузить файл');
-        }
-        return response.text();
-      })
-      .then(text => {
-        // Вставляем содержимое как HTML
-        document.getElementById('text-content').innerHTML = text;
-      })
-      .catch(error => {
-        document.getElementById('text-content').textContent = 'Ошибка: ' + error.message;
-      });
+    </div>
+    
+      <script>
+          //uploadismenti
+    const taskIds = ["task1", "task2", "task3", "task4", "task5", "task6"];
+    const filePaths = taskIds.map(id => `./1rus/${id.replace("task", "")}.1.html`);
+
+    taskIds.forEach((id, index) => {
+      const url = filePaths[index];
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Ошибка загрузки: ${url}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById(id).innerHTML = data;
+        })
+        .catch(error => {
+          document.getElementById(id).textContent = 'Ошибка: ' + error.message;
+        });
+    });
   </script>
+
+    <script>
+        // Current task and progress tracking
+        let currentTask = 0;
+        const tasks = document.querySelectorAll('.task');
+        const progressFill = document.getElementById('progress');
+        const totalTasks = tasks.length;
+        let completedTasks = 0;
+        
+        // Initialize the lesson
+        function initLesson() {
+            showTask(0);
+            setupDragAndDrop();
+            setupVirtualKeyboard();
+            setupHintButtons();
+        }
+        
+        // Show a specific task
+        function showTask(index) {
+            tasks.forEach(task => task.classList.remove('active'));
+            tasks[index].classList.add('active');
+            currentTask = index;
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const progress = (completedTasks / totalTasks) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+        
+        // Setup event listeners for options
+        function setupOptionSelection() {
+            document.querySelectorAll('.option, .image-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (this.classList.contains('selected')) return;
+                    
+                    // Remove selection from other options
+                    this.parentElement.querySelectorAll('.option, .image-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    this.classList.add('selected');
+                    
+                    // Enable next button
+                    this.closest('.task').querySelector('.next-btn').disabled = false;
+                    
+                    // Check if correct
+                    const isCorrect = this.dataset.correct === 'true';
+                    const feedback = this.closest('.task').querySelector('.feedback');
+                    
+                    if (isCorrect) {
+                        feedback.textContent = 'Правильно! 👍';
+                        feedback.className = 'feedback correct';
+                    } else {
+                        feedback.textContent = 'Не совсем. Попробуйте еще раз!';
+                        feedback.className = 'feedback incorrect';
+                    }
+                });
+            });
+        }
+        
+        // Setup event listeners for translate inputs
+        function setupTranslateInputs() {
+            document.querySelectorAll('.translate-input').forEach(input => {
+                input.addEventListener('keyup', function(e) {
+                    const task = this.closest('.task');
+                    const nextBtn = task.querySelector('.next-btn');
+                    const feedback = task.querySelector('.feedback');
+                    
+                    if (this.value.trim()) {
+                        nextBtn.disabled = false;
+                    } else {
+                        nextBtn.disabled = true;
+                    }
+                    
+                    // Check for correct answer on Enter
+                    if (e.key === 'Enter') {
+                        checkTranslation(this);
+                    }
+                });
+            });
+        }
+        
+        // Setup virtual keyboard
+        function setupVirtualKeyboard() {
+            document.querySelectorAll('.keyboard-char').forEach(char => {
+                char.addEventListener('click', function() {
+                    const task = this.closest('.task');
+                    let input;
+                    
+                    if (task.id === 'task3') {
+                        input = document.getElementById('sentence-input');
+                    } else if (task.id === 'task6') {
+                        input = document.getElementById('particle-input');
+                    }
+                    
+                    if (input) {
+                        input.value += this.textContent;
+                        input.dispatchEvent(new Event('keyup'));
+                        input.focus();
+                    }
+                });
+            });
+        }
+        
+        // Setup hint buttons
+        function setupHintButtons() {
+            document.querySelectorAll('.hint-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const hintId = this.id.replace('hint-btn', 'hint');
+                    const hint = document.getElementById(hintId);
+                    
+                    if (hint.style.display === 'block') {
+                        hint.style.display = 'none';
+                        this.innerHTML = '<i class="fas fa-lightbulb"></i> Подсказка';
+                    } else {
+                        hint.style.display = 'block';
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i> Скрыть';
+                    }
+                });
+            });
+        }
+        
+        // Check translation input
+        function checkTranslation(input) {
+            const task = input.closest('.task');
+            const feedback = task.querySelector('.feedback');
+            const nextBtn = task.querySelector('.next-btn');
+            const userAnswer = input.value.trim();
+            let correctAnswer = '';
+            
+            if (task.id === 'task3') {
+                correctAnswer = '此汤也。';
+            } else if (task.id === 'task6') {
+                correctAnswer = '饮之！';
+            }
+            
+            if (userAnswer === correctAnswer) {
+                feedback.textContent = 'Превосходно! 🎉';
+                feedback.className = 'feedback correct';
+                nextBtn.disabled = false;
+            } else {
+                feedback.textContent = 'Почти! Правильный ответ: ' + correctAnswer;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Setup drag and drop for sentence construction
+        function setupDragAndDrop() {
+            const words = document.querySelectorAll('.word');
+            const sentenceContainer = document.getElementById('sentence-container');
+            const clearBtn = sentenceContainer.querySelector('.clear-btn');
+            
+            // Clear button functionality
+            clearBtn.addEventListener('click', function() {
+                sentenceContainer.innerHTML = '';
+                const placeholder = document.createElement('div');
+                placeholder.className = 'placeholder';
+                placeholder.textContent = 'Перетащите слова сюда';
+                sentenceContainer.appendChild(placeholder);
+                sentenceContainer.appendChild(clearBtn);
+                
+                document.getElementById('feedback4').textContent = '';
+                document.querySelector('#task4 .next-btn').disabled = true;
+            });
+            
+            words.forEach(word => {
+                word.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', this.textContent);
+                    setTimeout(() => this.classList.add('dragging'), 0);
+                });
+                
+                word.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+            });
+            
+            sentenceContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('highlight');
+            });
+            
+            sentenceContainer.addEventListener('dragleave', function() {
+                this.classList.remove('highlight');
+            });
+            
+            sentenceContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('highlight');
+                
+                const word = e.dataTransfer.getData('text/plain');
+                const wordElement = document.createElement('div');
+                wordElement.className = 'word';
+                wordElement.textContent = word;
+                wordElement.draggable = true;
+                
+                // Remove placeholder if exists
+                const placeholder = this.querySelector('.placeholder');
+                if (placeholder) {
+                    this.removeChild(placeholder);
+                }
+                
+                this.appendChild(wordElement);
+                
+                // Check if sentence is complete
+                checkSentence();
+            });
+            
+            // Allow reordering words in sentence
+            sentenceContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const draggingWord = document.querySelector('.dragging');
+                if (draggingWord && draggingWord.parentElement === this) {
+                    const afterElement = getDragAfterElement(this, e.clientY);
+                    if (afterElement) {
+                        this.insertBefore(draggingWord, afterElement);
+                    } else {
+                        this.appendChild(draggingWord);
+                    }
+                }
+            });
+        }
+        
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.word:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+        
+        // Check if constructed sentence is correct
+        function checkSentence() {
+            const sentenceContainer = document.getElementById('sentence-container');
+            const words = sentenceContainer.querySelectorAll('.word');
+            const feedback = document.getElementById('feedback4');
+            const nextBtn = document.querySelector('#task4 .next-btn');
+            
+            if (words.length === 3) {
+                const isCorrect = 
+                    words[0].textContent === '粥' && 
+                    words[1].textContent === '在' && 
+                    words[2].textContent === '此';
+                
+                if (isCorrect) {
+                    feedback.textContent = 'Верно! Это "粥在此" (Каша здесь)';
+                    feedback.className = 'feedback correct';
+                    nextBtn.disabled = false;
+                } else {
+                    feedback.textContent = 'Попробуйте еще раз! Правильный порядок: 粥在此';
+                    feedback.className = 'feedback incorrect';
+                }
+            }
+        }
+        
+        // Next button functionality
+        document.querySelectorAll('.next-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                completedTasks++;
+                updateProgress();
+                
+                if (currentTask < totalTasks - 1) {
+                    showTask(currentTask + 1);
+                } else {
+                    // Lesson completed
+                    alert('Урок завершен! Отличная работа!');
+                    // Here you would typically redirect or show completion screen
+                }
+            });
+        });
+        
+        // Initialize the lesson
+        window.onload = function() {
+            initLesson();
+            setupOptionSelection();
+            setupTranslateInputs();
+        };
+    </script>
 </body>
 </html>
