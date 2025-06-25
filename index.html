@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OldCN - Изучай древнекитайский</title>
+    <style>
+        :root {
+            --main-green: #58a700;
+            --dark-green: #3c7a00;
+            --light-green: #e5ffc8;
+            --white: #ffffff;
+            --gray: #f0f0f0;
+            --dark-gray: #333333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-gray);
+            background-color: var(--gray);
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--main-green);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--main-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+        }
+        
+        main {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .course-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .course-title h1 {
+            color: var(--main-green);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .course-title p {
+            color: var(--dark-gray);
+            font-size: 16px;
+        }
+        
+        .path-container {
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .path-line {
+            position: absolute;
+            height: 4px;
+            background-color: var(--main-green);
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+        
+        .units-container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        
+        .unit-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .unit-number {
+            background-color: var(--main-green);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .unit-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .checkpoints {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .checkpoint {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 4px solid var(--main-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .checkpoint:hover {
+            transform: scale(1.1);
+            background-color: var(--light-green);
+        }
+        
+        .checkpoint.completed {
+            background-color: var(--main-green);
+            color: white;
+        }
+        
+        .checkpoint.current {
+            box-shadow: 0 0 0 4px var(--light-green);
+        }
+        
+        .checkpoint i {
+            font-size: 24px;
+        }
+        
+        .checkpoint-lock {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background-color: var(--white);
+            border: 2px solid var(--dark-gray);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--white);
+            margin-top: 50px;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+        
+        @media (max-width: 768px) {
+            .checkpoint {
+                width: 50px;
+                height: 50px;
+                margin: 0 5px;
+            }
+            
+            .unit-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">OldCN</div>
+        <div class="user-menu">
+            <span>Мой прогресс</span>
+            <div class="user-avatar">U</div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="course-title">
+            <h1>Древнекитайский язык</h1>
+            <p>Изучайте язык классических китайских текстов шаг за шагом</p>
+        </div>
+        
+        <div class="path-container">
+            <div class="path-line"></div>
+            
+            <div class="units-container">
+                <!-- Unit 1 -->
+                <div class="unit">
+                    <div class="unit-header">
+                        <div class="unit-number">1</div>
+                        <div class="unit-title">Основы иероглифики</div>
+                    </div>
+                    <div class="checkpoints">
+                        <div class="checkpoint completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="checkpoint completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="checkpoint completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="checkpoint completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="checkpoint current">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Unit 2 -->
+                <div class="unit">
+                    <div class="unit-header">
+                        <div class="unit-number">2</div>
+                        <div class="unit-title">Базовые грамматические структуры</div>
+                    </div>
+                    <div class="checkpoints">
+                        <div class="checkpoint">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Units 3-29 (collapsed for brevity) -->
+                <div class="unit">
+                    <div class="unit-header">
+                        <div class="unit-number">3</div>
+                        <div class="unit-title">Частицы и модальные слова</div>
+                    </div>
+                    <div class="checkpoints">
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <!-- 4 more checkpoints -->
+                    </div>
+                </div>
+                
+                <!-- More units... -->
+                
+                <!-- Unit 30 -->
+                <div class="unit">
+                    <div class="unit-header">
+                        <div class="unit-number">30</div>
+                        <div class="unit-title">Классические тексты</div>
+                    </div>
+                    <div class="checkpoints">
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="checkpoint">
+                            <div class="checkpoint-lock">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>OldCN - Изучение древнекитайского языка. © 2023 Все права защищены.</p>
+    </footer>
+</body>
+</html>
