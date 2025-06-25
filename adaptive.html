@@ -700,7 +700,7 @@ if (nextBtn) {
             } else if (document.querySelector('.selected')) {
                 userAnswer = document.querySelector('.selected');
             } else if (dropzone) {
-                userAnswer = dropzone; // для задания 4.1
+                userAnswer = dropzone;
             }
 
             const isCorrect = checkAnswer(userAnswer);
@@ -709,7 +709,6 @@ if (nextBtn) {
                 feedback.textContent = 'Правильно! 👍';
                 feedback.className = 'feedback correct';
 
-                // Если текущий уровень последний — показываем поздравление и переходим
                 if (currentTaskIndex === totalTasks) {
                     showVictoryAnimation(() => {
                         window.location.href = 'index.html';
