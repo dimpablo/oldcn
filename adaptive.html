@@ -386,7 +386,44 @@
     transform: scale(1.1);
 }
         
-        
+        #victory-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+#victory-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#victory-overlay h2 {
+    font-size: 28px;
+    color: var(--main-green);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
         
         
         
@@ -652,6 +689,44 @@ function initTask() {
             }
         };
     }
+// === 4. Кнопка "Далее" ===
+if (nextBtn) {
+    nextBtn.onclick = async function () {
+        if (typeof checkAnswer === 'function') {
+            let userAnswer = null;
+
+            if (inputField) {
+                userAnswer = inputField.value.trim();
+            } else if (document.querySelector('.selected')) {
+                userAnswer = document.querySelector('.selected');
+            } else if (dropzone) {
+                userAnswer = dropzone; // для задания 4.1
+            }
+
+            const isCorrect = checkAnswer(userAnswer);
+
+            if (isCorrect) {
+                feedback.textContent = 'Правильно! 👍';
+                feedback.className = 'feedback correct';
+
+                // Если текущий уровень последний — показываем поздравление и переходим
+                if (currentTaskIndex === totalTasks) {
+                    showVictoryAnimation(() => {
+                        window.location.href = 'index.html';
+                    });
+                } else {
+                    currentTaskIndex++;
+                    await loadTask(currentTaskIndex);
+                }
+            } else {
+                feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                feedback.className = 'feedback incorrect';
+            }
+        } else {
+            console.warn("Функция checkAnswer() не определена в текущем задании.");
+        }
+    };
+}
 }
 
         
@@ -715,6 +790,90 @@ function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
         
         // Загружаем первое задание при загрузке страницы
         window.addEventListener('DOMContentLoaded', () => loadTask(1));
+    function showVictoryAnimation(onComplete) {
+    // Создаём overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'victory-overlay';
+    overlay.innerHTML = `
+        <h2>🎉 Поздравляем!<br>Вы завершили урок!</h2>
+    `;
+    document.body.appendChild(overlay);
+
+    // Создаём canvas для салюта
+    const canvas = document.createElement('canvas');
+    canvas.classList.add('fireworks-canvas');
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Адаптация под размер экрана
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Простой салют
+    const fireworks = [];
+    function createFirework(x, y) {
+        for (let i = 0; i < 50; i++) {
+            fireworks.push({
+                x: x,
+                y: y,
+                dx: (Math.random() - 0.5) * 4,
+                dy: (Math.random() - 0.5) * 4,
+                life: 100,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`
+            });
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let firework of fireworks) {
+            ctx.beginPath();
+            ctx.arc(firework.x, firework.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = firework.color;
+            ctx.fill();
+
+            firework.x += firework.dx;
+            firework.y += firework.dy;
+            firework.life--;
+        }
+
+        // Удаляем выдохшиеся частицы
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            if (fireworks[i].life <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        if (fireworks.length > 0) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    // Запуск нескольких салютов
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2);
+        }, i * 300);
+    }
+
+    animate();
+
+    // Через 3 секунды показываем надпись и переходим
+    setTimeout(() => {
+        overlay.classList.add('show');
+        setTimeout(() => {
+            if (onComplete) onComplete();
+        }, 3000);
+    }, 1000);
+}
+    
     </script>
 </body>
 </html>
