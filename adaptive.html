@@ -228,7 +228,70 @@
     font-size: 14px;
     line-height: 1.4;
 }
-    
+    .word-bank {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.draggable {
+    padding: 10px 16px;
+    border-radius: 5px;
+    background-color: var(--light-green);
+    color: var(--dark-gray);
+    font-size: 20px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.draggable:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+.sentence-container {
+    min-height: 60px;
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative;
+    background-color: #f9fff7;
+    transition: border-color 0.3s;
+}
+
+.sentence-container:hover {
+    border-color: var(--main-green);
+}
+
+.placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--dark-gray);
+    cursor: pointer;
+    display: none;
+}
+
+.sentence-container:not(:empty) .clear-btn {
+    display: block;
+}
+        
+        
+        
     </style>
 </head>
 <body>
@@ -323,73 +386,73 @@ function initTask() {
     const nextBtn = document.querySelector('.next-btn');
     const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
 
-    // === 1. Поддержка клика по вариантам (.image-option / .option) ===
-    const options = document.querySelectorAll('.image-option, .option');
-    if (options.length > 0) {
-        options.forEach(option => {
-            option.style.cursor = 'pointer';
-            option.style.padding = '10px';
-            option.style.borderRadius = '5px';
-            option.style.transition = 'background-color 0.2s';
+    // --- Перетаскивание слов ---
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzone = document.getElementById('sentence-container');
+    const placeholder = dropzone.querySelector('.placeholder');
+    const clearBtn = document.querySelector('.clear-btn');
 
-            option.addEventListener('click', function () {
-                options.forEach(opt => {
-                    opt.style.backgroundColor = '';
-                    opt.classList.remove('selected');
-                });
-
-                this.style.backgroundColor = 'var(--light-green)';
-                this.classList.add('selected');
-
-                // Проверяем, есть ли checkAnswer()
-                if (typeof checkAnswer === 'function') {
-                    const isCorrect = checkAnswer(this);
-                    if (isCorrect) {
-                        feedback.textContent = 'Правильно! 👍';
-                        feedback.className = 'feedback correct';
-                        nextBtn.disabled = false;
-                    } else {
-                        feedback.textContent = 'Неверно. Попробуйте ещё раз!';
-                        feedback.className = 'feedback incorrect';
-                        nextBtn.disabled = true;
-                    }
-                }
-            });
+    if (dropzone && clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
+            clearBtn.style.display = 'none';
+            nextBtn.disabled = true;
         });
     }
 
-    // === 2. Поддержка текстового ввода и виртуальной клавиатуры ===
-    const inputField = document.querySelector('.translate-input');
-    const keyboardChars = document.querySelectorAll('.keyboard-char');
-
-    if (inputField) {
-        inputField.addEventListener('input', function () {
-            nextBtn.disabled = inputField.value.trim() === '';
+    draggables.forEach(word => {
+        word.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.classList.add('dragging');
         });
 
-        keyboardChars.forEach(char => {
-            char.addEventListener('click', function () {
-                inputField.value += this.textContent;
-                inputField.dispatchEvent(new Event('input'));
-            });
+        word.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging');
+        });
+    });
+
+    if (dropzone) {
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            const textContent = e.dataTransfer.getData('text/plain');
+            const draggingWord = Array.from(draggables).find(w => w.textContent === textContent);
+
+            if (!draggingWord) return;
+
+            // Убираем placeholder
+            if (placeholder) placeholder.remove();
+
+            // Клонируем элемент, чтобы оригинал остался в банке
+            const newWord = draggingWord.cloneNode(true);
+            newWord.classList.add('in-sentence');
+            newWord.removeAttribute('draggable');
+            newWord.style.margin = '0 5px';
+
+            dropzone.appendChild(newWord);
+            nextBtn.disabled = false;
+
+            // Обновляем состояние кнопки очистки
+            clearBtn.style.display = 'block';
+
+            // Удаляем placeholder при повторных дропах
+            if (dropzone.querySelector('.placeholder')) {
+                dropzone.removeChild(dropzone.querySelector('.placeholder'));
+            }
         });
     }
 
-    // === 3. Обработчик кнопки "Далее" ===
+    // --- Кнопка "Далее" ---
     if (nextBtn) {
         nextBtn.onclick = async function () {
-            // Сначала проверяем через checkAnswer(), если он определён
             if (typeof checkAnswer === 'function') {
-                let userAnswer = null;
-
-                if (inputField) {
-                    userAnswer = inputField.value.trim();
-                } else if (document.querySelector('.selected')) {
-                    userAnswer = document.querySelector('.selected');
-                }
-
-                const isCorrect = checkAnswer(userAnswer);
-
+                const isCorrect = checkAnswer();
                 if (isCorrect) {
                     feedback.textContent = 'Правильно! 👍';
                     feedback.className = 'feedback correct';
