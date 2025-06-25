@@ -283,6 +283,10 @@ let currentTaskIndex = 1; // Начинаем с первого задания
 const totalTasks = 5; // Укажи общее число заданий в уроке (можно увеличить)
 
 async function loadTask(taskNumber) {
+    if (window.checkAnswer) {
+    delete window.checkAnswer;
+}
+    
     try {
         const response = await fetch(`./1rus/${taskNumber}.1.html`);
         if (!response.ok) throw new Error(`Не удалось загрузить задание ${taskNumber}`);
@@ -291,8 +295,20 @@ async function loadTask(taskNumber) {
         const container = document.getElementById('lesson-container');
         container.innerHTML = html;
 
-        initTask(); // Инициализируем обработчики для нового задания
-        updateProgress((taskNumber / totalTasks) * 100); // Обновляем прогресс
+        // Ищем <script> внутри загруженного HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const scriptElements = doc.querySelectorAll('script');
+
+        // Создаем и добавляем новые <script> в DOM
+        scriptElements.forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript); // или head
+        });
+
+        initTask(); // Теперь можно инициализировать обработчики
+        updateProgress((taskNumber / totalTasks) * 100);
     } catch (error) {
         document.getElementById('lesson-container').innerHTML = `
             <div class="error-message">
