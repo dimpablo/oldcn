@@ -338,8 +338,7 @@
 
     </div>
     
-      <script>
-          //uploadismenti
+  <script>
     const taskIds = ["task1", "task2", "task3", "task4", "task5", "task6"];
     const filePaths = taskIds.map(id => `./1rus/${id.replace("task", "")}.1.html`);
 
@@ -354,7 +353,11 @@
           return response.text();
         })
         .then(data => {
-          document.getElementById(id).innerHTML = data;
+          const element = document.getElementById(id);
+          // Вставляем HTML перед элементом
+          element.insertAdjacentHTML('beforebegin', data);
+          // Удаляем старый элемент
+          element.remove();
         })
         .catch(error => {
           document.getElementById(id).textContent = 'Ошибка: ' + error.message;
