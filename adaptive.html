@@ -392,18 +392,22 @@ function initTask() {
         const placeholder = dropzone.querySelector('.placeholder');
         const clearBtn = document.querySelector('.clear-btn');
 
+        // Очистка поля
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
                 dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
                 nextBtn.disabled = true;
+                if (placeholder) placeholder.style.display = 'block';
+                clearBtn.style.display = 'none';
             });
         }
 
         const draggables = document.querySelectorAll('.draggable');
+
+        // === Drag & Drop для desktop ===
         draggables.forEach(word => {
             word.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text/plain', e.target.textContent);
-                e.dataTransfer.effectAllowed = 'move';
                 e.target.classList.add('dragging');
             });
 
@@ -419,23 +423,49 @@ function initTask() {
 
         dropzone.addEventListener('drop', (e) => {
             e.preventDefault();
+            handleDrop(e, dropzone, placeholder, nextBtn, clearBtn);
+        });
 
-            const textContent = e.dataTransfer.getData('text/plain');
-            const draggingWord = Array.from(draggables).find(w => w.textContent === textContent);
+        // === Touch для mobile ===
+        let draggingWord = null;
 
-            if (!draggingWord) return;
+        draggables.forEach(word => {
+            word.addEventListener('touchstart', (e) => {
+                draggingWord = e.target;
+                word.classList.add('dragging');
+            });
 
-            if (placeholder) placeholder.remove();
+            word.addEventListener('touchend', (e) => {
+                if (!draggingWord) return;
 
-            const newWord = draggingWord.cloneNode(true);
-            newWord.classList.add('in-sentence');
-            newWord.removeAttribute('draggable');
-            newWord.style.margin = '0 5px';
+                const touch = e.changedTouches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
 
-            dropzone.appendChild(newWord);
-            nextBtn.disabled = false;
+                if (target && target.closest('#sentence-container')) {
+                    const newWord = draggingWord.cloneNode(true);
+                    newWord.classList.add('in-sentence');
+                    newWord.removeAttribute('draggable');
+                    newWord.style.margin = '0 5px';
 
-            if (clearBtn) clearBtn.style.display = 'block';
+                    if (placeholder) placeholder.remove();
+
+                    dropzone.appendChild(newWord);
+                    nextBtn.disabled = false;
+                    clearBtn.style.display = 'block';
+
+                    // Убираем placeholder
+                    if (dropzone.querySelector('.placeholder')) {
+                        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+                    }
+
+                    // Убираем обработчики
+                    newWord.removeEventListener('touchstart', () => {});
+                    newWord.removeEventListener('touchend', () => {});
+                }
+
+                draggingWord.classList.remove('dragging');
+                draggingWord = null;
+            });
         });
     }
 
@@ -522,6 +552,34 @@ function initTask() {
         };
     }
 }
+
+// Вспомогательная функция для обработки drop
+function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
+    e.preventDefault();
+
+    const textContent = e.dataTransfer.getData('text/plain');
+    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(w => w.textContent === textContent);
+
+    if (!draggingWord) return;
+
+    if (placeholder) placeholder.remove();
+
+    const newWord = draggingWord.cloneNode(true);
+    newWord.classList.add('in-sentence');
+    newWord.removeAttribute('draggable');
+    newWord.style.margin = '0 5px';
+
+    dropzone.appendChild(newWord);
+    nextBtn.disabled = false;
+    clearBtn.style.display = 'block';
+
+    if (dropzone.querySelector('.placeholder')) {
+        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+    }
+}
+        
+        
+        // конец функции inittask
         
         // Загружаем первое задание при загрузке страницы
         window.addEventListener('DOMContentLoaded', () => loadTask(1));
