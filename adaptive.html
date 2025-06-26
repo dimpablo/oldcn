@@ -532,7 +532,39 @@ async function loadTask(taskNumber) {
 function initTask() {
     const nextBtn = document.querySelector('.next-btn');
     const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
+const options = document.querySelectorAll('.image-option, .option');
+    if (options.length > 0) {
+        options.forEach(option => {
+            option.style.cursor = 'pointer';
+            option.style.padding = '10px';
+            option.style.borderRadius = '5px';
+            option.style.transition = 'background-color 0.2s';
 
+            option.addEventListener('click', function () {
+                options.forEach(opt => {
+                    opt.style.backgroundColor = '';
+                    opt.classList.remove('selected');
+                });
+
+                this.style.backgroundColor = 'var(--light-green)';
+                this.classList.add('selected');
+
+                // Проверяем, есть ли checkAnswer()
+                if (typeof checkAnswer === 'function') {
+                    const isCorrect = checkAnswer(this);
+                    if (isCorrect) {
+                        feedback.textContent = 'Правильно! 👍';
+                        feedback.className = 'feedback correct';
+                        nextBtn.disabled = false;
+                    } else {
+                        feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                        feedback.className = 'feedback incorrect';
+                        nextBtn.disabled = true;
+                    }
+                }
+            });
+        });
+    }
     // === 1. Поддержка перетаскивания слов (для задания 4.1) ===
     const dropzone = document.getElementById('sentence-container');
     if (dropzone) {
