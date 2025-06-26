@@ -13,7 +13,7 @@
 </div>
 
 <script>
-    function checkAnswer(selectedOption) {
-        return selectedOption.dataset.correct === 'true';
-    }
+  function checkAnswer(selectedOption) {
+    return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true';
+  }
 </script>
