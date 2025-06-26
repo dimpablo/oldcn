@@ -428,7 +428,48 @@
         
         
         
-        
+        .transcription-toggle {
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.transcription-toggle summary {
+    cursor: pointer;
+    color: var(--dark-green);
+    font-size: 18px;
+    user-select: none;
+    outline: none;
+}
+
+.transcription-toggle summary::-webkit-details-marker {
+    display: none; /* Скрываем стрелочку в Chrome */
+}
+
+.transcription-toggle[open] summary::after {
+    content: ' ▲'; /* Меняем текст при раскрытии */
+    color: var(--main-green);
+}
+
+.transcription-toggle summary::after {
+    content: ' ▼';
+    color: var(--main-green);
+    font-size: 14px;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+}
+
+.transcription-toggle .transcription {
+    margin-top: 8px;
+    font-size: 20px;
+    color: var(--dark-gray);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
         
         
         
