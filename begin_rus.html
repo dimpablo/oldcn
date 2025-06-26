@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OldCN - Урок 1</title>
+    <style>
+        :root {
+            --main-green: #58a700;
+            --dark-green: #3c7a00;
+            --light-green: #e5ffc8;
+            --white: #ffffff;
+            --gray: #f0f0f0;
+            --dark-gray: #333333;
+            --red: #ff4b4b;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-gray);
+            background-color: var(--gray);
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--main-green);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--white);
+            border-radius: 5px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--main-green);
+            width: 16%;
+            transition: width 0.3s;
+        }
+        
+        .lesson-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+        
+        .task-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-green);
+        }
+        
+        .task-prompt {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .image-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .image-option:hover {
+            background-color: var(--light-green);
+        }
+        
+        .image-option.selected {
+            background-color: var(--main-green);
+        }
+        
+        .image-option img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .character {
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        
+        .feedback.correct {
+            color: var(--main-green);
+        }
+        
+        .feedback.incorrect {
+            color: var(--red);
+        }
+        
+        .next-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: var(--main-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .next-btn:hover {
+            background-color: var(--dark-green);
+        }
+        
+        .next-btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        
+        
+        
+        .option {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: var(--white);
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.option:hover {
+    background-color: var(--light-green);
+}
+    
+    
+    .virtual-keyboard {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.keyboard-char {
+    padding: 10px 16px;
+    font-size: 20px;
+    background-color: var(--light-green);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-width: 40px;
+}
+
+.keyboard-char:hover {
+    background-color: var(--main-green);
+    color: white;
+}
+        
+        
+        .hint-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: var(--main-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hint-container {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9ffe7;
+    border: 1px solid #e6e6a7;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+    .word-bank {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.draggable {
+    padding: 10px 16px;
+    border-radius: 5px;
+    background-color: var(--light-green);
+    color: var(--dark-gray);
+    font-size: 20px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.draggable:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+.sentence-container {
+    min-height: 60px;
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative;
+    background-color: #f9fff7;
+    transition: border-color 0.3s;
+}
+
+.sentence-container:hover {
+    border-color: var(--main-green);
+}
+
+.placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--dark-gray);
+    cursor: pointer;
+    display: none;
+}
+
+.sentence-container:not(:empty) .clear-btn {
+    display: block;
+}
+        
+        
+        
+        
+        .sentence-container {
+    min-height: 60px;
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative;
+    background-color: #f9fff7;
+    transition: border-color 0.3s;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background-color: var(--red); /* Яркий фон */
+    color: white;                  /* Белый текст */
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;                  /* Важно! Чтобы была поверх всего */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.clear-btn:hover,
+.clear-btn:focus {
+    transform: scale(1.1);
+    background-color: #e63946; /* Темнее при наведении */
+}
+
+.sentence-container:not(:empty) .clear-btn {
+    display: block;
+}
+        
+.sentence-container {
+    min-height: 60px;
+    padding: 12px 40px 12px 12px; /* Отступ справа под кнопку */
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 400px;
+    position: relative; /* ВАЖНО! Для позиционирования clear-btn */
+    background-color: #f9fff7;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    overflow: visible;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.clear-btn:hover,
+.clear-btn:active,
+.clear-btn:focus {
+    background-color: #d62828;
+    transform: scale(1.1);
+}
+        
+        #victory-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+#victory-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#victory-overlay h2 {
+    font-size: 28px;
+    color: var(--main-green);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.fireworks-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+        
+        
+        
+        
+        .transcription-toggle {
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.transcription-toggle summary {
+    cursor: pointer;
+    color: var(--dark-green);
+    font-size: 18px;
+    user-select: none;
+    outline: none;
+}
+
+.transcription-toggle summary::-webkit-details-marker {
+    display: none; /* Скрываем стрелочку в Chrome */
+}
+
+.transcription-toggle[open] summary::after {
+    content: ' ▲'; /* Меняем текст при раскрытии */
+    color: var(--main-green);
+}
+
+.transcription-toggle summary::after {
+    content: ' ▼';
+    color: var(--main-green);
+    font-size: 14px;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+}
+
+.transcription-toggle .transcription {
+    margin-top: 8px;
+    font-size: 20px;
+    color: var(--dark-gray);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+        
+        
+        
+        
+        
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">OldCN</div>
+        <div class="user-menu">
+            <span>Урок 1.1</span>
+        </div>
+    </header>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+    
+    <div class="lesson-container" id="lesson-container">
+        <!-- Задание будет загружено сюда -->
+        <div id="loading-message">Загрузка задания...</div>
+    </div>
+
+    <script>
+        // Загружаем первое задание
+        async function loadFirstTask() {
+            try {
+                const response = await fetch('./1rus/1.1.html');
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить задание');
+                }
+                const html = await response.text();
+                
+                // Вставляем задание в контейнер
+                const container = document.getElementById('lesson-container');
+                container.innerHTML = html;
+                
+                // Инициализируем обработчики событий
+                initTask();
+                
+            } catch (error) {
+                document.getElementById('lesson-container').innerHTML = `
+                    <div class="error-message">
+                        <p>Ошибка загрузки задания: ${error.message}</p>
+                        <button onclick="location.reload()">Попробовать снова</button>
+                    </div>
+                `;
+            }
+        }
+function updateProgress(percent) {
+    const progressFill = document.querySelector('.progress-fill');
+    progressFill.style.width = percent + '%';
+}
+
+let currentTaskIndex = 1; // Начинаем с первого задания
+const totalTasks = 6; // Укажи общее число заданий в уроке (можно увеличить)
+const variantsCount = 3; // Количество вариантов каждого задания
+
+async function loadTask(taskNumber) {
+    try {
+        // Удаляем старую функцию checkAnswer(), если она есть
+        if (window.checkAnswer) {
+            delete window.checkAnswer;
+        }
+
+        // Получаем случайный путь к файлу
+        const variant = Math.floor(Math.random() * variantsCount) + 1;
+        const response = await fetch(`./1rus/${taskNumber}.${variant}.html`);
+
+        if (!response.ok) throw new Error(`Не удалось загрузить ${taskNumber}.${variant}`);
+
+        const html = await response.text();
+        const container = document.getElementById('lesson-container');
+        container.innerHTML = html;
+
+        // Парсим скрипты и добавляем в DOM
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const scriptElements = doc.querySelectorAll('script');
+
+        scriptElements.forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+        });
+
+        initTask(); // Инициализируем обработчики событий
+        updateProgress((taskNumber / totalTasks) * 100);
+
+    } catch (error) {
+        document.getElementById('lesson-container').innerHTML = `
+            <div class="error-message">
+                <p>Ошибка загрузки задания ${taskNumber}: ${error.message}</p>
+                <button onclick="location.reload()">Попробовать снова</button>
+            </div>
+        `;
+    }
+}
+
+function initTask() {
+    const nextBtn = document.querySelector('.next-btn');
+    const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
+
+    // === 1. Поддержка клика по картинкам и вариантам ===
+    const options = document.querySelectorAll('.image-option[data-correct], .option[data-correct]');
+    if (options.length > 0) {
+        options.forEach(option => {
+            option.style.cursor = 'pointer';
+            option.style.padding = '10px';
+            option.style.borderRadius = '5px';
+            option.style.transition = 'background-color 0.2s';
+
+            option.addEventListener('click', function () {
+                options.forEach(opt => {
+                    opt.style.backgroundColor = '';
+                    opt.classList.remove('selected');
+                });
+
+                this.style.backgroundColor = 'var(--light-green)';
+                this.classList.add('selected');
+
+                if (typeof checkAnswer === 'function') {
+                    const isCorrect = checkAnswer(this);
+                    if (isCorrect) {
+                        feedback.textContent = 'Правильно! 👍';
+                        feedback.className = 'feedback correct';
+                        nextBtn.disabled = false;
+                    } else {
+                        feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                        feedback.className = 'feedback incorrect';
+                        nextBtn.disabled = true;
+                    }
+                }
+            });
+        });
+    }
+
+    // === 2. Поддержка перетаскивания слов (задание 4) ===
+    const dropzone = document.getElementById('sentence-container');
+    if (dropzone) {
+        const placeholder = dropzone.querySelector('.placeholder');
+        const clearBtn = document.querySelector('.clear-btn');
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
+                nextBtn.disabled = true;
+            });
+        }
+
+        const draggables = document.querySelectorAll('.draggable');
+        draggables.forEach(word => {
+            word.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.textContent);
+                e.target.classList.add('dragging');
+            });
+
+            word.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            const textContent = e.dataTransfer.getData('text/plain');
+            const draggingWord = Array.from(draggables).find(w => w.textContent === textContent);
+
+            if (!draggingWord) return;
+
+            const newWord = draggingWord.cloneNode(true);
+            newWord.classList.add('in-sentence');
+            newWord.removeAttribute('draggable');
+            newWord.style.margin = '0 5px';
+
+            if (placeholder) placeholder.remove();
+
+            dropzone.appendChild(newWord);
+            nextBtn.disabled = false;
+            clearBtn.style.display = 'block';
+        });
+
+        // === Touch для mobile ===
+        let draggingWord = null;
+        draggables.forEach(word => {
+            word.addEventListener('touchstart', (e) => {
+                draggingWord = e.target;
+                word.classList.add('dragging');
+            });
+
+            word.addEventListener('touchend', (e) => {
+                if (!draggingWord) return;
+
+                const touch = e.changedTouches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+                if (target && target.closest('#sentence-container')) {
+                    const newWord = draggingWord.cloneNode(true);
+                    newWord.classList.add('in-sentence');
+                    newWord.removeAttribute('draggable');
+                    newWord.style.margin = '0 5px';
+
+                    if (placeholder) placeholder.remove();
+
+                    dropzone.appendChild(newWord);
+                    nextBtn.disabled = false;
+                    clearBtn.style.display = 'flex';
+                    clearBtn.style.zIndex = '100';
+                    clearBtn.style.opacity = '1';
+                    clearBtn.style.visibility = 'visible';
+                }
+
+                draggingWord.classList.remove('dragging');
+                draggingWord = null;
+            });
+
+            word.addEventListener('touchmove', e => {
+                e.preventDefault(); // Предотвращаем скролл
+            }, { passive: false });
+        });
+    }
+
+    // === 3. Поддержка текстового ввода (задание 3.1) ===
+    const inputField = document.querySelector('.translate-input');
+    const keyboardChars = document.querySelectorAll('.keyboard-char');
+
+    if (inputField) {
+        inputField.addEventListener('input', function () {
+            nextBtn.disabled = inputField.value.trim() === '';
+        });
+
+        keyboardChars.forEach(char => {
+            char.addEventListener('click', function () {
+                inputField.value += this.textContent;
+                inputField.dispatchEvent(new Event('input'));
+            });
+        });
+    }
+
+    // === 4. Кнопка "Далее" ===
+    if (nextBtn) {
+
+        nextBtn.onclick = async function () {
+    if (typeof checkAnswer === 'function') {
+        let userAnswer = null;
+
+        if (inputField) {
+            userAnswer = inputField.value.trim();
+        } else if (document.querySelector('.selected')) {
+            userAnswer = document.querySelector('.selected');
+        } else if (dropzone) {
+            userAnswer = dropzone;
+        }
+
+        const isCorrect = checkAnswer(userAnswer);
+
+        if (isCorrect) {
+            feedback.textContent = 'Правильно! 👍';
+            feedback.className = 'feedback correct';
+
+            if (currentTaskIndex < totalTasks) {
+                currentTaskIndex++;
+                await loadTask(currentTaskIndex);
+            } else {
+                showVictoryAnimation(() => {
+                    window.location.href = 'index.html';
+                });
+            }
+        } else {
+            feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+            feedback.className = 'feedback incorrect';
+        }
+    } else {
+        console.warn("Функция checkAnswer() не определена в текущем задании.");
+    }
+};
+    }
+}
+
+        
+function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
+    e.preventDefault();
+
+    const textContent = e.dataTransfer.getData('text/plain');
+    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(w => w.textContent === textContent);
+
+    if (!draggingWord) return;
+
+    if (placeholder) placeholder.remove();
+
+    const newWord = draggingWord.cloneNode(true);
+    newWord.classList.add('in-sentence');
+    newWord.removeAttribute('draggable');
+    newWord.style.margin = '0 5px';
+
+    dropzone.appendChild(newWord);
+    nextBtn.disabled = false;
+
+    // Делаем кнопку "Очистить" явно видимой
+    clearBtn.style.display = 'flex';
+    clearBtn.style.zIndex = '100';
+    clearBtn.style.opacity = '1';
+    clearBtn.style.visibility = 'visible';
+
+    if (dropzone.querySelector('.placeholder')) {
+        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+    }
+}
+        
+        
+// Вспомогательная функция для обработки drop
+function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
+    e.preventDefault();
+
+    const textContent = e.dataTransfer.getData('text/plain');
+    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(w => w.textContent === textContent);
+
+    if (!draggingWord) return;
+
+    if (placeholder) placeholder.remove();
+
+    const newWord = draggingWord.cloneNode(true);
+    newWord.classList.add('in-sentence');
+    newWord.removeAttribute('draggable');
+    newWord.style.margin = '0 5px';
+
+    dropzone.appendChild(newWord);
+    nextBtn.disabled = false;
+    clearBtn.style.display = 'block';
+
+    if (dropzone.querySelector('.placeholder')) {
+        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+    }
+}
+        
+        
+        // конец функции inittask
+        
+        // Загружаем первое задание при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => loadTask(1));
+    function showVictoryAnimation(onComplete) {
+    // Создаём overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'victory-overlay';
+    overlay.innerHTML = `
+        <h2>🎉 Поздравляем!<br>Вы завершили урок!</h2>
+    `;
+    document.body.appendChild(overlay);
+
+    // Создаём canvas для салюта
+    const canvas = document.createElement('canvas');
+    canvas.classList.add('fireworks-canvas');
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Адаптация под размер экрана
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Простой салют
+    const fireworks = [];
+    function createFirework(x, y) {
+        for (let i = 0; i < 50; i++) {
+            fireworks.push({
+                x: x,
+                y: y,
+                dx: (Math.random() - 0.5) * 4,
+                dy: (Math.random() - 0.5) * 4,
+                life: 100,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`
+            });
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let firework of fireworks) {
+            ctx.beginPath();
+            ctx.arc(firework.x, firework.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = firework.color;
+            ctx.fill();
+
+            firework.x += firework.dx;
+            firework.y += firework.dy;
+            firework.life--;
+        }
+
+        // Удаляем выдохшиеся частицы
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            if (fireworks[i].life <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        if (fireworks.length > 0) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    // Запуск нескольких салютов
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2);
+        }, i * 300);
+    }
+
+    animate();
+
+    // Через 3 секунды показываем надпись и переходим
+    setTimeout(() => {
+        overlay.classList.add('show');
+        setTimeout(() => {
+            if (onComplete) onComplete();
+        }, 3000);
+    }, 1000);
+}
+    
+    </script>
+</body>
+</html>
