@@ -486,34 +486,39 @@ function updateProgress(percent) {
 
 let currentTaskIndex = 1; // Начинаем с первого задания
 const totalTasks = 6; // Укажи общее число заданий в уроке (можно увеличить)
+const variantsCount = 3; // Количество вариантов каждого задания
 
 async function loadTask(taskNumber) {
-    if (window.checkAnswer) {
-    delete window.checkAnswer;
-}
-    
     try {
-        const response = await fetch(`./1rus/${taskNumber}.1.html`);
-        if (!response.ok) throw new Error(`Не удалось загрузить задание ${taskNumber}`);
+        // Удаляем старую функцию checkAnswer(), если она есть
+        if (window.checkAnswer) {
+            delete window.checkAnswer;
+        }
+
+        // Получаем случайный путь к файлу
+        const variant = Math.floor(Math.random() * variantsCount) + 1;
+        const response = await fetch(`./1rus/${taskNumber}.${variant}.html`);
+
+        if (!response.ok) throw new Error(`Не удалось загрузить ${taskNumber}.${variant}`);
 
         const html = await response.text();
         const container = document.getElementById('lesson-container');
         container.innerHTML = html;
 
-        // Ищем <script> внутри загруженного HTML
+        // Парсим скрипты и добавляем в DOM
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const scriptElements = doc.querySelectorAll('script');
 
-        // Создаем и добавляем новые <script> в DOM
         scriptElements.forEach(script => {
             const newScript = document.createElement('script');
             newScript.textContent = script.textContent;
-            document.body.appendChild(newScript); // или head
+            document.body.appendChild(newScript);
         });
 
-        initTask(); // Теперь можно инициализировать обработчики
+        initTask(); // Инициализируем обработчики событий
         updateProgress((taskNumber / totalTasks) * 100);
+
     } catch (error) {
         document.getElementById('lesson-container').innerHTML = `
             <div class="error-message">
