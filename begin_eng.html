@@ -538,7 +538,7 @@ async function loadTask(taskNumber) {
 
         // Получаем случайный путь к файлу
         const variant = Math.floor(Math.random() * variantsCount) + 1;
-        const response = await fetch(`./1rus/${taskNumber}.${variant}.html`);
+        const response = await fetch(`./1eng/${taskNumber}.${variant}.html`);
 
         if (!response.ok) throw new Error(`Не удалось загрузить ${taskNumber}.${variant}`);
 
