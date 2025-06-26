@@ -1,0 +1,36 @@
+<div class="task active" id="task4">
+  <h3 class="task-title">Составьте предложение</h3>
+  <p class="task-prompt">Составьте предложение "Голод здесь"</p>
+  <div class="word-bank">
+    <div class="word draggable" draggable="true" data-correct="1">饥</div>
+    <div class="word draggable" draggable="true" data-correct="2">在</div>
+    <div class="word draggable" draggable="true" data-correct="3">此</div>
+  </div>
+  <div class="sentence-container" id="sentence-container">
+    <div class="placeholder">Перетащите слова сюда</div>
+    <button class="clear-btn" title="Очистить">×</button>
+  </div>
+  <button class="hint-btn" id="hint-btn4">
+    <i class="fas fa-lightbulb"></i> Подсказка
+  </button>
+  <div class="hint-container" id="hint4">
+    <p>Порядок слов в древнекитайском: Подлежащее + Глагол + Дополнение</p>
+    <p>"голод" = 饥, "находиться" = 在, "здесь" = 此</p>
+    <p>Пример похожей фразы: 汤在此。 (Суп здесь.)</p>
+  </div>
+  <div class="feedback" id="feedback4"></div>
+  <button class="next-btn" disabled="">Далее</button>
+</div>
+
+<script>
+  function checkAnswer() {
+    const container = document.getElementById('sentence-container');
+    const words = Array.from(container.querySelectorAll('.draggable'));
+
+    // Ожидаемый порядок символов
+    const correctOrder = ['饥', '在', '此'];
+
+    return words.length === correctOrder.length &&
+           words.every((word, i) => word.textContent.trim() === correctOrder[i]);
+  }
+</script>
