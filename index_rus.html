@@ -377,7 +377,22 @@
             </div>
         </div>
     </main>
-    
+        <script>
+    // Функция определяет, мобильное ли устройство
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || 
+               (navigator.userAgent.includes('Mobi'));
+    }
+
+    // Вызывается при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        if (isMobileDevice()) {
+            document.body.classList.add('mobile-view');
+document.getElementsByClassName("lang-switcher")[0].innerText='🇬🇧';
+document.getElementsByClassName("btn-create-lesson")[0].innerText = 'Помочь';
+        }
+    });
+</script>
     <footer>
         <p>OldCN - Изучение классического древнекитайского языка. © 2025 Все права защищены.</p>
     </footer>
