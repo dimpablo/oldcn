@@ -232,6 +232,105 @@
 .btn-create-lesson:hover {
     background-color: var(--dark-green);
 }
+
+
+
+/* mobile: */
+
+
+/* Мобильные стили */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .user-menu {
+        font-size: 12px;
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .btn-create-lesson {
+        margin-left: 10px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        margin: 15px auto;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: var(--main-green);
+        width: 16%;
+        transition: width 0.3s;
+    }
+
+    .unit-number {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .unit-title {
+        font-size: 14px;
+    }
+
+    .checkpoint {
+        width: 40px;
+        height: 40px;
+        margin: 0 5px;
+    }
+
+    .checkpoint-lock {
+        width: 16px;
+        height: 16px;
+        font-size: 8px;
+    }
+
+    .hint-btn {
+        margin-top: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .keyboard-char {
+        padding: 8px 12px;
+        font-size: 16px;
+        min-width: 32px;
+    }
+
+    .next-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .character {
+        font-size: 36px;
+    }
+
+    .image-option img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .task-prompt,
+    .option {
+        font-size: 14px;
+    }
+}
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -377,7 +476,20 @@
             </div>
         </div>
     </main>
-    
+    <script>
+    // Функция определяет, мобильное ли устройство
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || 
+               (navigator.userAgent.includes('Mobi'));
+    }
+
+    // Вызывается при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        if (isMobileDevice()) {
+            document.body.classList.add('mobile-view');
+        }
+    });
+</script>
     <footer>
         <p>OldCN - the study of the ancient Chinese language. © 2025 All rights reserved.</p>
     </footer>
