@@ -215,13 +215,33 @@
 .lang-switcher:hover {
     transform: scale(1.1);
 }
+.btn-create-lesson {
+    margin-right: auto;
+    margin-left: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: var(--main-green);
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
+.btn-create-lesson:hover {
+    background-color: var(--dark-green);
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
 <div class="logo">OldCN</div>
+            <!-- Кнопка "Create Your OWN lessons!" -->
+    <a href="taskgenerator_eng.html" class="btn-create-lesson" target="_blank">
+        Create Your OWN lessons!
+    </a>
     <div class="user-menu">
     <span>My progress</span>
     <div class="user-avatar">U</div>
