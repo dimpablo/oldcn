@@ -1,0 +1,50 @@
+<!-- Task 4: Arrange words -->
+<div class="task active" id="task4">
+<h3 class="task-title">Make a sentence</h3>
+<p class="task-prompt">Make a sentence "Porridge here"</p>
+
+<!-- Word bank -->
+<div class="word-bank">
+<div class="word draggable" draggable="true" data-correct="1">粥</div>
+<div class="word draggable" draggable="true" data-correct="2">在</div>
+<div class="word draggable" draggable="true" data-correct="3">此</div>
+</div>
+
+<!-- Field for assembling a sentence -->
+<div class="sentence-container" id="sentence-container">
+<div class="placeholder">Drag words here</div>
+<button class="clear-btn" title="Clear">×</button>
+</div>
+<i class="fas fa-times"></i>
+</button>
+</div>
+
+<!-- Hint -->
+<button class="hint-btn" id="hint-btn4">
+<i class="fas fa-lightbulb"></i> Hint
+</button>
+<div class="hint-container" id="hint4">
+<p>Word order in ancient Chinese: Subject + Verb + Object</p>
+<p>"Porridge" = 粥, "to be" = 在, "here" = 此</p>
+<p>An example of a similar phrase: 汤在此。 (The soup is here.)</p>
+</div>
+
+<!-- Answer -->
+<div class="feedback" id="feedback4"></div>
+<button class="next-btn" disabled>Next</button>
+</div>
+
+<!-- Check script -->
+<script>
+function checkAnswer() {
+const container = document.getElementById('sentence-container');
+const words = Array.from(container.querySelectorAll('.draggable'));
+
+// Expected character order
+const correctOrder = ['粥', '在', '此'];
+
+// Check that all words are added and in the correct order
+return words.length === correctOrder.length &&
+words.every((word, i) => word.textContent.trim() === correctOrder[i]);
+}
+</script>

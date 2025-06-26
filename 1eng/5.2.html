@@ -1,0 +1,19 @@
+<div class="task active" id="task5">
+<h3 class="task-title">Choose the correct translation</h3>
+<p class="task-prompt">What does "吾渴" mean?</p>
+<div class="options-container">
+<div class="option">I'm hungry</div>
+<div class="option" data-correct="true">I'm thirsty</div>
+<div class="option">He's hungry</div>
+<div class="option">She wants water</div>
+</div>
+<div class="feedback" id="feedback5"></div>
+<button class="next-btn" disabled>Next</button>
+</div>
+
+<script>
+function checkAnswer(selectedOption) {
+// Check if the element is passed and has dataset.correct
+return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true'; 
+}
+</script>

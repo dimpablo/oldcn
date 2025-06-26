@@ -1,0 +1,20 @@
+<div class="task active" id="task2">
+<h3 class="task-title">Choose the correct transcription</h3>
+<p class="task-prompt">How to read this hieroglyph?</p>
+<div class="character">粥</div>
+<div class="options-container">
+<div class="option">tāng</div>
+<div class="option">dòu</div>
+<div class="option" data-correct="true">zhōu</div>
+<div class="option">yǐn</div>
+</div>
+<div class="feedback" id="feedback2"></div>
+<button class="next-btn">Next</button>
+</div>
+
+<script>
+function checkAnswer(selectedOption) {
+// Check if selectedOption exists and has a dataset
+return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true';
+}
+</script>

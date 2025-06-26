@@ -1,0 +1,36 @@
+<div class="task active" id="task4">
+<h3 class="task-title">Make a sentence</h3>
+<p class="task-prompt">Make a sentence "Rice here"</p>
+<div class="word-bank">
+<div class="word draggable" draggable="true" data-correct="1">米</div>
+<div class="word draggable" draggable="true" data-correct="2">在</div>
+<div class="word draggable" draggable="true" data-correct="3">此</div>
+</div>
+<div class="sentence-container" id="sentence-container">
+<div class="placeholder">Drag words here</div>
+<button class="clear-btn" title="Clear">×</button>
+</div>
+<button class="hint-btn" id="hint-btn4">
+<i class="fas fa-lightbulb"></i> Hint
+</button>
+<div class="hint-container" id="hint4">
+<p>Word order in ancient Chinese: Subject + Verb + Object</p>
+<p>"rice" = 米, "to be" = 在, "here" = 此</p>
+<p>An example of a similar phrase: 汤在此。 (The soup is here.)</p>
+</div>
+<div class="feedback" id="feedback4"></div>
+<button class="next-btn" disabled="">Next</button>
+</div>
+
+<script>
+function checkAnswer() {
+const container = document.getElementById('sentence-container');
+const words = Array.from(container.querySelectorAll('.draggable'));
+
+// Expected character order
+const correctOrder = ['米', '在', '此'];
+
+return words.length === correctOrder.length &&
+words.every((word, i) => word.textContent.trim() === correctOrder[i]);
+}
+</script>

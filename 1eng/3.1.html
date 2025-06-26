@@ -1,0 +1,47 @@
+<div class="task active" id="task3">
+<h3 class="task-title">Translate this sentence</h3>
+<p class="task-prompt">How do you say "This is soup" in ancient Chinese?</p>
+<div class="translate-container">
+<input type="text" class="translate-input" placeholder="Enter a sentence..." id="sentence-input">
+
+<!-- Virtual keyboard -->
+<div class="virtual-keyboard">
+<div class="keyboard-row">
+<div class="keyboard-char">此</div>
+<div class="keyboard-char">汤</div>
+<div class="keyboard-char">也</div>
+<div class="keyboard-char">。</div>
+</div>
+<div class="keyboard-row">
+<div class="keyboard-char">豆</div>
+<div class="keyboard-char">粥</div>
+<div class="keyboard-char">在</div>
+<div class="keyboard-char">茶</div>
+</div>
+<div class="keyboard-row">
+<div class="keyboard-char">与</div>
+<div class="keyboard-char">咖</div>
+<div class="keyboard-char">啡</div>
+<div class="keyboard-char">饮</div>
+</div>
+</div>
+
+<button class="hint-btn" id="hint-btn3">
+<i class="fas fa-lightbulb"></i> Hint
+</button>
+<div class="hint-container" id="hint3">
+<p>"this" = 此, "soup" = 汤</p>
+<p>In ancient Chinese, the particle 汤 is often used for affirmative sentences. 也 at the end.</p> 
+<p>Example: 此豆也。 (These are beans.)</p> 
+</div> 
+</div> 
+<div class="feedback" id="feedback3"></div> 
+<button class="next-btn" disabled>Next</button>
+</div>
+
+<script> 
+function checkAnswer(userInput) { 
+const correctAnswer = '此汤也'; 
+return userInput === correctAnswer; 
+}
+</script>

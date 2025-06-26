@@ -1,0 +1,57 @@
+<!-- Task 6: Use possessive particle -->
+<div class="task active" id="task6">
+<h3 class="task-title">Use the particle 之</h3>
+<p class="task-prompt">How to say "Drink it!" (tea)?</p> 
+
+<div class="translate-container"> 
+<input type="text" class="translate-input" placeholder="Enter a sentence..." id="particle-input"> 
+
+<!--Virtual keyboard --> 
+<div class="virtual-keyboard"> 
+<div class="keyboard-row"> 
+<div class="keyboard-char">饮</div> 
+<div class="keyboard-char">之</div> 
+<div class="keyboard-char">！</div> 
+<div class="keyboard-char">茶</div> 
+</div> 
+<div class="keyboard-row"> 
+<div class="keyboard-char">食</div> 
+<div class="keyboard-char">此</div> 
+<div class="keyboard-char">也</div> 
+<div class="keyboard-char">。</div> 
+</div> 
+<div class="keyboard-row">
+<div class="keyboard-char">吾</div>
+<div class="keyboard-char">汝</div>
+<div class="keyboard-char">渴</div>
+<div class="keyboard-char">饥</div>
+</div>
+</div>
+
+<button class="hint-btn" id="hint-btn6">
+<i class="fas fa-lightbulb"></i> Hint
+</button>
+<div class="hint-container" id="hint6">
+<p>"drink" = 饮, "tea" = 茶</p>
+<p>The particle 之 is used as a possessive pronoun "his/her"</p>
+<p>An imperative sentence ends with ！</p>
+<p>Example: 食之！ (Eat this!)</p>
+</div>
+</div>
+
+<div class="feedback" id="feedback6"></div>
+<button class="next-btn" disabled>Next</button>
+</div>
+
+<!-- Check script -->
+<script>
+function checkAnswer(userInput) {
+const inputField = document.getElementById('particle-input');
+const userAnswer = inputField.value.trim();
+
+// Expected correct answer
+const correctAnswer = '饮之茶！';
+
+return userAnswer === correctAnswer;
+}
+</script>
