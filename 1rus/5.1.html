@@ -13,7 +13,8 @@
 </div>
 
 <script>
-  function checkAnswer(selectedOption) {
-    return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true';
-  }
+    function checkAnswer(selectedOption) {
+        // Проверяем, передан ли элемент и есть ли у него dataset.correct
+        return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true';
+    }
 </script>
