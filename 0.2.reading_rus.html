@@ -531,12 +531,8 @@ const variantsCount = 2; // Количество вариантов каждог
 
 async function loadTask(taskNumber) {
     try {
-        // Удаляем старую функцию checkAnswer(), если она есть
-        if (window.checkAnswer) {
-            delete window.checkAnswer;
-        }
+        if (window.checkAnswer) delete window.checkAnswer;
 
-        // Получаем случайный путь к файлу
         const variant = Math.floor(Math.random() * variantsCount) + 1;
         const response = await fetch(`./2rus/${taskNumber}.${variant}.html`);
 
@@ -546,75 +542,63 @@ async function loadTask(taskNumber) {
         const container = document.getElementById('lesson-container');
         container.innerHTML = html;
 
-        // Парсим все <script> из файла
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const scriptElements = doc.querySelectorAll('script');
 
         let scriptsToLoad = [];
 
-        // Сначала создаём "пустые" скрипты, чтобы сохранить порядок выполнения
         scriptElements.forEach(script => {
             const newScript = document.createElement('script');
-            if (script.src) {
-                // Если есть src → загружаем его отдельно
-                newScript.src = script.src;
-                newScript.async = true;
-                scriptsToLoad.push(newScript);
-            } else if (script.textContent.trim()) {
-                // Если скрипт inline → сразу добавляем как текстовый
-                newScript.textContent = script.textContent;
-                document.body.appendChild(newScript);
-            }
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+            scriptsToLoad.push(newScript);
         });
 
-        // Ждём загрузки внешних скриптов, если они есть
+        // Ждём, пока все скрипты выполнены
         if (scriptsToLoad.length > 0) {
             await Promise.all(scriptsToLoad.map(script => {
-                return new Promise((resolve, reject) => {
+                return new Promise(resolve => {
                     script.onload = resolve;
-                    script.onerror = reject;
-                    document.body.appendChild(script);
                 });
             }));
         }
 
-        // Теперь можно безопасно запускать initTask()
-        initTask();
+        initTask(); // Теперь можно запускать
         updateProgress((taskNumber / totalTasks) * 100);
 
     } catch (error) {
-        document.getElementById('lesson-container').innerHTML = `
+        container.innerHTML = `
             <div class="error-message">
                 <p>Ошибка загрузки задания ${taskNumber}: ${error.message}</p>
                 <button onclick="location.reload()">Попробовать снова</button>
-            </div>
-        `;
+            </div>`;
     }
 }
 
 function initTask() {
+    // Сначала находим кнопку "Далее"
     const nextBtn = document.querySelector('.next-btn');
-    const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
 
-    // === 1. Поддержка клика по картинкам и вариантам ===
+    // Затем остальные элементы
+    const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
+    const dropzone = document.getElementById('sentence-container');
+    const inputField = document.querySelector('.translate-input');
+    
+    // === 1. Поддержка клика по вариантам (.image-option / .option) ===
     const options = document.querySelectorAll('.image-option[data-correct], .option[data-correct]');
     if (options.length > 0) {
         options.forEach(option => {
             option.style.cursor = 'pointer';
-            option.style.padding = '10px';
-            option.style.borderRadius = '5px';
-            option.style.transition = 'background-color 0.2s';
-
             option.addEventListener('click', function () {
                 options.forEach(opt => {
-                    opt.style.backgroundColor = '';
                     opt.classList.remove('selected');
+                    opt.style.backgroundColor = '';
                 });
 
-                this.style.backgroundColor = 'var(--light-green)';
                 this.classList.add('selected');
-
+                this.style.backgroundColor = 'var(--light-green)';
+                
                 if (typeof checkAnswer === 'function') {
                     const isCorrect = checkAnswer(this);
                     if (isCorrect) {
@@ -629,6 +613,141 @@ function initTask() {
                 }
             });
         });
+    }
+
+    // === 2. Поддержка перетаскивания слов (задание 4) ===
+    if (dropzone) {
+        const placeholder = dropzone.querySelector('.placeholder');
+        const clearBtn = document.querySelector('.clear-btn');
+
+        const draggables = document.querySelectorAll('.draggable');
+        let draggingWord = null;
+
+        draggables.forEach(word => {
+            word.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/plain', e.target.textContent);
+                word.classList.add('dragging');
+            });
+
+            word.addEventListener('dragend', e => {
+                word.classList.remove('dragging');
+            });
+
+            word.addEventListener('touchstart', e => {
+                draggingWord = e.target;
+                word.classList.add('dragging');
+            });
+
+            word.addEventListener('touchmove', e => {
+                e.preventDefault();
+            }, { passive: false });
+
+            word.addEventListener('touchend', async () => {
+                if (!draggingWord) return;
+
+                const touch = e.changedTouches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+                if (target && target.closest('#sentence-container')) {
+                    const newWord = draggingWord.cloneNode(true);
+                    newWord.classList.add('in-sentence');
+                    newWord.removeAttribute('draggable');
+                    newWord.style.margin = '0 5px';
+
+                    if (placeholder) placeholder.remove();
+                    dropzone.appendChild(newWord);
+                    nextBtn.disabled = false;
+                    clearBtn.style.display = 'block';
+                }
+
+                draggingWord = null;
+            });
+        });
+
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+
+            const textContent = e.dataTransfer.getData('text/plain');
+            const draggingWord = Array.from(draggables).find(w => w.textContent === textContent);
+
+            if (!draggingWord) return;
+
+            const newWord = draggingWord.cloneNode(true);
+            newWord.classList.add('in-sentence');
+            newWord.removeAttribute('draggable');
+            newWord.style.margin = '0 5px';
+
+            if (placeholder) placeholder.remove();
+            dropzone.appendChild(newWord);
+            nextBtn.disabled = false;
+            clearBtn.style.display = 'block';
+        });
+
+        // Очистка поля
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
+                nextBtn.disabled = true;
+                clearBtn.style.display = 'none';
+            });
+        }
+    }
+
+    // === 3. Ввод текста (задание 3 и 6) ===
+    if (inputField) {
+        inputField.addEventListener('input', function () {
+            nextBtn.disabled = inputField.value.trim() === '';
+        });
+
+        const keyboardChars = document.querySelectorAll('.keyboard-char');
+        keyboardChars.forEach(char => {
+            char.addEventListener('click', () => {
+                inputField.value += char.textContent;
+                inputField.dispatchEvent(new Event('input'));
+            });
+        });
+    }
+
+    // === 4. Кнопка "Далее" ===
+    if (nextBtn) {
+        nextBtn.onclick = async function () {
+            if (typeof checkAnswer === 'function') {
+                let userAnswer = null;
+
+                if (inputField) {
+                    userAnswer = inputField.value.trim();
+                } else if (document.querySelector('.selected')) {
+                    userAnswer = document.querySelector('.selected');
+                } else if (dropzone) {
+                    userAnswer = dropzone;
+                }
+
+                const isCorrect = checkAnswer(userAnswer);
+
+                if (isCorrect) {
+                    feedback.textContent = 'Правильно! 👍';
+                    feedback.className = 'feedback correct';
+
+                    if (currentTaskIndex < totalTasks) {
+                        currentTaskIndex++;
+                        await loadTask(currentTaskIndex);
+                    } else {
+                        showVictoryAnimation(() => {
+                            window.location.href = 'index.html';
+                        });
+                    }
+                } else {
+                    feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                    feedback.className = 'feedback incorrect';
+                }
+            } else {
+                console.warn("Функция checkAnswer() не определена в текущем задании.");
+            }
+        };
     }
 }
     // === 2. Поддержка перетаскивания слов (задание 4) ===
