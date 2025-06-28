@@ -576,6 +576,7 @@ async function loadTask(taskNumber) {
     }
 }
 // Глобальные переменные для работы initTask()
+// Глобальные переменные для работы initTask()
 let nextBtn = null;
 let feedback = null;
 let dropzone = null;
@@ -753,7 +754,6 @@ function initTask() {
     }
 }
     // === 2. Поддержка перетаскивания слов (задание 4) ===
-    const dropzone = document.getElementById('sentence-container');
     if (dropzone) {
         const placeholder = dropzone.querySelector('.placeholder');
         const clearBtn = document.querySelector('.clear-btn');
