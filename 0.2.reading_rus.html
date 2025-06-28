@@ -546,18 +546,41 @@ async function loadTask(taskNumber) {
         const container = document.getElementById('lesson-container');
         container.innerHTML = html;
 
-        // Парсим скрипты и добавляем в DOM
+        // Парсим все <script> из файла
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const scriptElements = doc.querySelectorAll('script');
 
+        let scriptsToLoad = [];
+
+        // Сначала создаём "пустые" скрипты, чтобы сохранить порядок выполнения
         scriptElements.forEach(script => {
             const newScript = document.createElement('script');
-            newScript.textContent = script.textContent;
-            document.body.appendChild(newScript);
+            if (script.src) {
+                // Если есть src → загружаем его отдельно
+                newScript.src = script.src;
+                newScript.async = true;
+                scriptsToLoad.push(newScript);
+            } else if (script.textContent.trim()) {
+                // Если скрипт inline → сразу добавляем как текстовый
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            }
         });
 
-        initTask(); // Инициализируем обработчики событий
+        // Ждём загрузки внешних скриптов, если они есть
+        if (scriptsToLoad.length > 0) {
+            await Promise.all(scriptsToLoad.map(script => {
+                return new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                });
+            }));
+        }
+
+        // Теперь можно безопасно запускать initTask()
+        initTask();
         updateProgress((taskNumber / totalTasks) * 100);
 
     } catch (error) {
@@ -715,46 +738,43 @@ function initTask() {
         });
     }
 
-    // === 4. Кнопка "Далее" ===
-    if (nextBtn) {
+// === 4. Кнопка "Далее" ===
+if (nextBtn) {
+    nextBtn.onclick = async function () {
+        if (typeof checkAnswer === 'function') {
+            let userAnswer = null;
 
-        nextBtn.onclick = async function () {
-    if (typeof checkAnswer === 'function') {
-        let userAnswer = null;
+            if (inputField) {
+                userAnswer = inputField.value.trim();
+            } else if (document.querySelector('.selected')) {
+                userAnswer = document.querySelector('.selected');
+            } else if (dropzone) {
+                userAnswer = dropzone; // для задания 4.1
+            }
 
-        if (inputField) {
-            userAnswer = inputField.value.trim();
-        } else if (document.querySelector('.selected')) {
-            userAnswer = document.querySelector('.selected');
-        } else if (dropzone) {
-            userAnswer = dropzone;
-        }
+            const isCorrect = checkAnswer(userAnswer);
 
-        const isCorrect = checkAnswer(userAnswer);
+            if (isCorrect) {
+                feedback.textContent = 'Правильно! 👍';
+                feedback.className = 'feedback correct';
 
-        if (isCorrect) {
-            feedback.textContent = 'Правильно! 👍';
-            feedback.className = 'feedback correct';
-
-            if (currentTaskIndex < totalTasks) {
-                currentTaskIndex++;
-                await loadTask(currentTaskIndex);
+                if (currentTaskIndex === totalTasks) {
+                    showVictoryAnimation(() => {
+                        window.location.href = 'index.html';
+                    });
+                } else {
+                    currentTaskIndex++;
+                    await loadTask(currentTaskIndex);
+                }
             } else {
-                showVictoryAnimation(() => {
-                    window.location.href = 'index_rus.html';
-                });
+                feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                feedback.className = 'feedback incorrect';
             }
         } else {
-            feedback.textContent = 'Неверно. Попробуйте ещё раз!';
-            feedback.className = 'feedback incorrect';
+            console.warn("Функция checkAnswer() не определена в текущем задании.");
         }
-    } else {
-        console.warn("Функция checkAnswer() не определена в текущем задании.");
-    }
-};
-    }
+    };
 }
-
         
 function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
     e.preventDefault();
