@@ -1,0 +1,19 @@
+<div class="task active" id="task2">
+<h3 class="task-title">Выберите правильную транскрипцию</h3>
+<p class="task-prompt">Как читается этот иероглиф?</p>
+<div class="character" style="text-align: center; font-size: 48px;">名</div>
+<div class="options-container">
+<div class="option">shēng</div>
+<div class="option" data-correct="true">míng</div>
+<div class="option">yán</div>
+<div class="option">chēng</div>
+</div>
+<div class="feedback" id="feedback2"></div>
+<button class="next-btn">Далее</button>
+</div>
+
+<script>
+function checkAnswer(selectedOption) {
+return selectedOption && selectedOption.dataset && selectedOption.dataset.correct === 'true';
+}
+</script>
