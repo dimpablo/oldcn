@@ -712,43 +712,7 @@ function initTask() {
         });
     }
 
-    // === 4. Кнопка "Далее" ===
-    if (nextBtn) {
-        nextBtn.onclick = async function () {
-            if (typeof checkAnswer === 'function') {
-                let userAnswer = null;
 
-                if (inputField) {
-                    userAnswer = inputField.value.trim();
-                } else if (document.querySelector('.selected')) {
-                    userAnswer = document.querySelector('.selected');
-                } else if (dropzone) {
-                    userAnswer = dropzone;
-                }
-
-                const isCorrect = checkAnswer(userAnswer);
-
-                if (isCorrect) {
-                    feedback.textContent = 'Правильно! 👍';
-                    feedback.className = 'feedback correct';
-
-                    if (currentTaskIndex < totalTasks) {
-                        currentTaskIndex++;
-                        await loadTask(currentTaskIndex);
-                    } else {
-                        showVictoryAnimation(() => {
-                            window.location.href = 'index.html';
-                        });
-                    }
-                } else {
-                    feedback.textContent = 'Неверно. Попробуйте ещё раз!';
-                    feedback.className = 'feedback incorrect';
-                }
-            } else {
-                console.warn("Функция checkAnswer() не определена в текущем задании.");
-            }
-        };
-    }
 }
     // === 2. Поддержка перетаскивания слов (задание 4) ===
     const dropzone = document.getElementById('sentence-container');
