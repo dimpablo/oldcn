@@ -1,55 +1,29 @@
-<!-- Task 1: Calligraphy -->
+<!-- Task 1: Match image to character -->
 <div class="task active" id="task1">
-  <h3 class="task-title">Каллиграфия</h3>
-  <p class="task-prompt">Нарисуйте правильно этот иероглиф:</p>
-  <div class="character">道</div>
-
+  <h3 class="task-title">Выберите правильный перевод</h3>
+  <p class="task-prompt">Что означает этот иероглиф?</p>
+  <div class="character">米</div>
   <details class="transcription-toggle">
-    <summary>Показать транскрипцию</summary>
-    <p class="transcription">dào</p>
+  <summary>Показать транскрипцию</summary>
+  <p class="transcription">mǐ</p>
   </details>
-
   <div class="options-container">
-    <div id="character-target-div"></div>
-    <button class="next-btn" disabled>Далее</button>
+    <div class="image-option" data-correct="true">
+      <img src="./imgs/rice.webp" alt="Rice grains">
+    </div>
+    <div class="image-option">
+      <img src="./imgs/beans.webp" alt="Beans">
+    </div>
+    <div class="image-option">
+      <img src="./imgs/tea.webp" alt="Tea">
+    </div>
   </div>
-
   <div class="feedback" id="feedback1"></div>
+  <button class="next-btn">Далее</button>
 </div>
 
 <script>
-  // Объявляем writer глобально, чтобы он не пересоздавался при обновлении
-  let hanziWriterInstance = null;
-
-  function initCalligraphy() {
-    const container = document.getElementById('character-target-div');
-    if (!container) return;
-
-    // Создаем новый экземпляр писателя
-    hanziWriterInstance = HanziWriter.create(container, '道', {
-      width: 150,
-      height: 150,
-      showCharacter: false,
-      showOutline: false,
-      showHintAfterMisses: 1,
-      highlightOnComplete: false,
-      padding: 5
-    });
-
-    hanziWriterInstance.quiz({
-      onComplete: function(data) {
-        const nextBtn = document.querySelector('.next-btn');
-        const feedback = document.querySelector('.feedback');
-
-        nextBtn.disabled = false;
-        feedback.textContent = 'Хорошая работа! 👍';
-        feedback.className = 'feedback correct';
-      }
-    });
-  }
-
-  function checkAnswer() {
-    // Возвращаем true, если пользователь завершил квиз
-    return !document.querySelector('.next-btn').disabled;
-  }
+    function checkAnswer(selectedOption) {
+        return selectedOption.dataset.correct === 'true';
+    }
 </script>
