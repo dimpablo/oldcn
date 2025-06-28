@@ -1,0 +1,56 @@
+<!-- Task 1: Match image to character -->
+<div class="task active" id="task1">
+<h3 class="task-title">Каллиграфия</h3>
+<p class="task-prompt">Нарисуйте правильно этот иероглиф:</p>
+<div class="character">非</div>
+<details class="transcription-toggle">
+<summary>Показать транскрипцию</summary>
+<p class="transcription">fēi</p>
+</details>
+<div class="options-container">
+
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+        <div id="character-target-div"></div>
+   
+<div id="character-target-div"></div>
+<button id="next-btn" disabled>Далее</button>
+
+  <script>
+  var writer = HanziWriter.create('character-target-div', '道', {
+    width: 150,
+    height: 150,
+    showCharacter: false,
+    showOutline: false,
+    showHintAfterMisses: 1,
+    highlightOnComplete: false,
+    padding: 5
+  });
+
+  // Запуск квиза
+  function startQuiz() {
+    writer.quiz({
+      onComplete: function(data) {
+        // Всегда активируем кнопку "Далее"
+        document.getElementById('next-btn').disabled = false;
+
+        // Показываем количество ошибок
+        alert('Количество ошибок: ' + data.totalMistakes);
+      }
+    });
+  }
+
+  // Первый запуск квиза
+  startQuiz();
+</script>
+    
+    
+</div>
+<div class="feedback" id="feedback1"></div>
+<button class="next-btn">Далее</button>
+</div>
+
+<script>
+function checkAnswer(selectedOption) {
+return selectedOption.dataset.correct === 'true';
+}
+</script>
