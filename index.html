@@ -361,14 +361,19 @@
     <a href="taskgenerator_eng.html" class="btn-create-lesson" target="_blank">
         Create Your OWN lessons!
     </a>
+    
+
+
     <div class="user-menu">
     <span>My progress</span>
     <div class="user-avatar">U</div>
 
-    <!-- Новая кнопка -->
-    <a href="./index_rus.html" class="lang-switcher" title="Переключиться на английскую версию">
-        🇷🇺 Переключиться на русскую версию 🇷🇺 
+            <a href="./invest.html" class="lang-switcher" title="Переключиться на английскую версию">
+        INVEST 📈 IN US 
+    </a>    <a href="./index_rus.html" class="lang-switcher" title="Переключиться на английскую версию">
+        Сменить язык 🌐 
     </a>
+
 </div>
     </header>
     
@@ -511,6 +516,29 @@ document.getElementsByClassName("lang-switcher")[0].innerText='🇷🇺';
 document.getElementsByClassName("btn-create-lesson")[0].innerText = 'Contribute';
         }
     });
+</script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+    authDomain: "antient-9bff0.firebaseapp.com",
+    projectId: "antient-9bff0",
+    storageBucket: "antient-9bff0.firebasestorage.app",
+    messagingSenderId: "311792589414",
+    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+    measurementId: "G-W4ZQXWRTKK"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
     <footer>
         <p>OldCN - the study of the ancient Chinese language. © 2025 All rights reserved.</p>
