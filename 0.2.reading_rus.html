@@ -575,21 +575,21 @@ async function loadTask(taskNumber) {
             </div>`;
     }
 }
+let nextBtn = null;
+let feedback = null;
+let dropzone = null;
+let inputField = null;
 
 function initTask() {
-    // Сначала находим кнопку "Далее"
-    const nextBtn = document.querySelector('.next-btn');
+    nextBtn = document.querySelector('.next-btn');
+    feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
+    dropzone = document.getElementById('sentence-container');
+    inputField = document.querySelector('.translate-input');
 
-    // Затем остальные элементы
-    const feedback = document.querySelector('.feedback') || document.querySelector('[id*="feedback"]');
-    const dropzone = document.getElementById('sentence-container');
-    const inputField = document.querySelector('.translate-input');
-    
-    // === 1. Поддержка клика по вариантам (.image-option / .option) ===
+    // 1. Клик по вариантам
     const options = document.querySelectorAll('.image-option[data-correct], .option[data-correct]');
     if (options.length > 0) {
         options.forEach(option => {
-            option.style.cursor = 'pointer';
             option.addEventListener('click', function () {
                 options.forEach(opt => {
                     opt.classList.remove('selected');
@@ -615,32 +615,28 @@ function initTask() {
         });
     }
 
-    // === 2. Поддержка перетаскивания слов (задание 4) ===
+    // 2. Перетаскивание слов
     if (dropzone) {
         const placeholder = dropzone.querySelector('.placeholder');
         const clearBtn = document.querySelector('.clear-btn');
 
-        const draggables = document.querySelectorAll('.draggable');
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+
+        dropzone.addEventListener('drop', e => {
+            handleDrop(e); // теперь handleDrop использует глобальные переменные
+        });
+
+        // Тач поддержка
         let draggingWord = null;
+        const draggables = document.querySelectorAll('.draggable');
 
         draggables.forEach(word => {
-            word.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text/plain', e.target.textContent);
-                word.classList.add('dragging');
-            });
-
-            word.addEventListener('dragend', e => {
-                word.classList.remove('dragging');
-            });
-
             word.addEventListener('touchstart', e => {
                 draggingWord = e.target;
                 word.classList.add('dragging');
             });
-
-            word.addEventListener('touchmove', e => {
-                e.preventDefault();
-            }, { passive: false });
 
             word.addEventListener('touchend', async () => {
                 if (!draggingWord) return;
@@ -653,51 +649,24 @@ function initTask() {
                     newWord.classList.add('in-sentence');
                     newWord.removeAttribute('draggable');
                     newWord.style.margin = '0 5px';
-
                     if (placeholder) placeholder.remove();
                     dropzone.appendChild(newWord);
-                    nextBtn.disabled = false;
-                    clearBtn.style.display = 'block';
+                    if (nextBtn) nextBtn.disabled = false;
+                    if (clearBtn) {
+                        clearBtn.style.display = 'block';
+                        clearBtn.style.zIndex = '100';
+                        clearBtn.style.opacity = '1';
+                        clearBtn.style.visibility = 'visible';
+                    }
                 }
 
+                draggingWord.classList.remove('dragging');
                 draggingWord = null;
             });
         });
-
-        dropzone.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-
-        dropzone.addEventListener('drop', e => {
-            e.preventDefault();
-
-            const textContent = e.dataTransfer.getData('text/plain');
-            const draggingWord = Array.from(draggables).find(w => w.textContent === textContent);
-
-            if (!draggingWord) return;
-
-            const newWord = draggingWord.cloneNode(true);
-            newWord.classList.add('in-sentence');
-            newWord.removeAttribute('draggable');
-            newWord.style.margin = '0 5px';
-
-            if (placeholder) placeholder.remove();
-            dropzone.appendChild(newWord);
-            nextBtn.disabled = false;
-            clearBtn.style.display = 'block';
-        });
-
-        // Очистка поля
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                dropzone.innerHTML = '<div class="placeholder">Перетащите слова сюда</div>';
-                nextBtn.disabled = true;
-                clearBtn.style.display = 'none';
-            });
-        }
     }
 
-    // === 3. Ввод текста (задание 3 и 6) ===
+    // 3. Поддержка клавиатуры
     if (inputField) {
         inputField.addEventListener('input', function () {
             nextBtn.disabled = inputField.value.trim() === '';
@@ -712,7 +681,43 @@ function initTask() {
         });
     }
 
+    // 4. Обработчик кнопки "Далее"
+    if (nextBtn) {
+        nextBtn.onclick = async function () {
+            if (typeof checkAnswer === 'function') {
+                let userAnswer = null;
 
+                if (inputField) {
+                    userAnswer = inputField.value.trim();
+                } else if (document.querySelector('.selected')) {
+                    userAnswer = document.querySelector('.selected');
+                } else if (dropzone) {
+                    userAnswer = dropzone;
+                }
+
+                const isCorrect = checkAnswer(userAnswer);
+
+                if (isCorrect) {
+                    feedback.textContent = 'Правильно! 👍';
+                    feedback.className = 'feedback correct';
+
+                    if (currentTaskIndex < totalTasks) {
+                        currentTaskIndex++;
+                        await loadTask(currentTaskIndex);
+                    } else {
+                        showVictoryAnimation(() => {
+                            window.location.href = 'index.html';
+                        });
+                    }
+                } else {
+                    feedback.textContent = 'Неверно. Попробуйте ещё раз!';
+                    feedback.className = 'feedback incorrect';
+                }
+            } else {
+                console.warn("Функция checkAnswer() не определена в текущем задании.");
+            }
+        };
+    }
 }
     // === 2. Поддержка перетаскивания слов (задание 4) ===
     const dropzone = document.getElementById('sentence-container');
@@ -859,32 +864,33 @@ if (nextBtn) {
     };
 }
         
-function handleDrop(e, dropzone, placeholder, nextBtn, clearBtn) {
+function handleDrop(e) {
     e.preventDefault();
 
     const textContent = e.dataTransfer.getData('text/plain');
-    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(w => w.textContent === textContent);
+    const draggingWord = Array.from(document.querySelectorAll('.draggable')).find(
+        w => w.textContent === textContent
+    );
 
     if (!draggingWord) return;
-
-    if (placeholder) placeholder.remove();
 
     const newWord = draggingWord.cloneNode(true);
     newWord.classList.add('in-sentence');
     newWord.removeAttribute('draggable');
     newWord.style.margin = '0 5px';
 
+    const placeholder = dropzone.querySelector('.placeholder');
+    if (placeholder) placeholder.remove();
+
     dropzone.appendChild(newWord);
-    nextBtn.disabled = false;
 
-    // Делаем кнопку "Очистить" явно видимой
-    clearBtn.style.display = 'flex';
-    clearBtn.style.zIndex = '100';
-    clearBtn.style.opacity = '1';
-    clearBtn.style.visibility = 'visible';
+    const clearBtn = document.querySelector('.clear-btn');
+    if (clearBtn) {
+        clearBtn.style.display = 'block';
+    }
 
-    if (dropzone.querySelector('.placeholder')) {
-        dropzone.removeChild(dropzone.querySelector('.placeholder'));
+    if (nextBtn) {
+        nextBtn.disabled = false;
     }
 }
         
