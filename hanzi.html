@@ -62,6 +62,26 @@
 
 <script>
     
+    let iHEIGHT=screen.height/2;
+    let iWIDTH=screen.width/2;
+    
+        // Функция определяет, мобильное ли устройство
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || 
+               (navigator.userAgent.includes('Mobi'));
+    }
+
+    // Вызывается при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        if (isMobileDevice()) {
+            iHEIGHT=screen.height;
+            iWIDTH=screen.width;
+        }
+    });
+    
+    
+    
+    
     const sourceStr = "豆米饥汤粥渴在此与咖啡饮之也";
     const hundred = sourceStr.length;
 
@@ -96,8 +116,8 @@ function updateProgress() {
     document.getElementById('character-target-div').innerHTML = '';
 
 var writer = HanziWriter.create('character-target-div', randchar, {
-  width: screen.width/2,
-  height: screen.height/2,
+  width: iWIDTH,
+  height: iHEIGHT,
   showCharacter: false,
   showOutline: false,
   showHintAfterMisses: 1,
