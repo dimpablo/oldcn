@@ -1,44 +1,118 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    
+      <style>
+          
+          
+    .progress-container {
+      width: 100%;
+      max-width: 600px;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px auto;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.4s ease-in-out;
+      text-align: right;
+      padding-right: 10px;
+      color: white;
+      font-weight: bold;
+      line-height: 30px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #character-target-div {
+      margin: 20px auto;
+      width: 50%;
+      height: 50%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    #next-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
   <meta charset="UTF-8">
   <title>Hanzi Writer Пример</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer @3.5/dist/hanzi-writer.min.js"></script>
-        
+  <!-- Подключаем HanziWriter правильно -->
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer @3.6.0/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 </head>
 <body>
-
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar">0%</div>
+  </div>
 <div id="character-target-div"></div>
-<button id="next-btn" disabled>Далее</button>
 
 <script>
-  // Создаем писателя
-  var writer = HanziWriter.create('character-target-div', '道', {
-    width: 500,
-    height: 500,
-    showCharacter: false,
-    showOutline: false,
-    showHintAfterMisses: 1,
-    highlightOnComplete: false,
-    padding: 5
-  });
+    
+    const sourceStr = "豆米饥汤粥渴在此与咖啡饮之也";
+    const hundred = sourceStr.length;
 
-  // Запуск квиза
-  function startQuiz() {
-    writer.quiz({
-      onComplete: function(data) {
-        // Всегда активируем кнопку "Далее"
-        document.getElementById('next-btn').disabled = false;
+// Преобразуем в массив
+let chars = [...sourceStr]; // разбиваем по символам, даже если это Unicode
 
-        // Показываем количество ошибок
-        alert('Количество ошибок: ' + data.totalMistakes);
-      }
-    });
+    function getRandomChar(arr) {
+    const index = Math.floor(Math.random() * arr.length);
+    return arr.splice(index, 1)[0]; // удаляем и возвращаем случайный иероглиф
+
+}
+    
+function updateProgress() {
+    const percent = Math.round(((hundred - chars.length) / hundred) * 100);
+
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = percent + '%';
+    progressBar.textContent = percent + '%';
+
+    if (percent >= 100) {
+        progressBar.textContent = 'Готово!';
+        progressBar.style.backgroundColor = '#8bc34a'; // можно изменить на любой цвет
+    }
+}
+
+    
+    function buttoned(randchar) {
+        if (chars.length === 0) {
+        alert("Иероглифы закончились!");
+        return;
+    }
+    document.getElementById('character-target-div').innerHTML = '';
+
+var writer = HanziWriter.create('character-target-div', randchar, {
+  width: screen.availWidth/2,
+  height: screen.availHeight/2,
+  showCharacter: false,
+  showOutline: false,
+  showHintAfterMisses: 1,
+  highlightOnComplete: true,
+});
+writer.quiz({
+  onComplete: function() {
+      buttoned(getRandomChar(chars)); updateProgress();
   }
+});
+      
 
-  // Первый запуск квиза
-  startQuiz();
+
+   }
+buttoned(getRandomChar(chars));
 </script>
 
 </body>
