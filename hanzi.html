@@ -46,6 +46,48 @@
       font-size: 16px;
       margin-top: 20px;
     }
+          
+          
+          
+          
+          
+          @media (max-width: 768px) {
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+  }
+
+  #character-target-div {
+    width: 100vw;         /* Полная ширина экрана */
+    height: 70vh;         /* 70% высоты экрана */
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  #next-btn {
+    width: 90vw;          /* Практически вся ширина экрана */
+    max-width: 500px;
+    margin: 10px auto;
+    padding: 16px 20px;
+    font-size: 18px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  #next-btn:disabled {
+    background-color: #cccccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+}
   </style>
   <meta charset="UTF-8">
   <title>Hanzi Writer Пример</title>
@@ -74,8 +116,8 @@
     // Вызывается при загрузке страницы
     window.addEventListener('DOMContentLoaded', () => {
         if (isMobileDevice()) {
-            iHEIGHT=screen.height;
-            iWIDTH=screen.width;
+            iHEIGHT=screen.height*2;
+            iWIDTH=screen.width*2;
         }
     });
     
