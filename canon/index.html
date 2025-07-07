@@ -103,7 +103,7 @@
   <div id="transcription-text" style="font-size: 30px; font-weight:bold;"></div>
   <button id="play-audio-btn" style="margin-top: 10px; padding: 8px 16px; font-size: 18px;">▶</button>
 </div>
-<div id="explanation" style="background-color: red; margin-top: 5px; font-size: 25px; text-align: center;"></div>
+<div id="explanation" style="background-color: azure; margin-top: 5px; font-size: 20px; text-align: center;"></div>
 <table align="center">
   <tr align="center">
     <td align="center"><div align="center" id="character-target-div"></div></td>
@@ -883,8 +883,8 @@ function buttoned(randchar) {
 
     // Инициализация HanziWriter
     var writer = HanziWriter.create('character-target-div', randchar, {
-        width: iWIDTH,
-        height: iHEIGHT,
+        width: iWIDTH*2,
+        height: iHEIGHT*2,
         showCharacter: false,
         showOutline: false,
         showHintAfterMisses: 1,
