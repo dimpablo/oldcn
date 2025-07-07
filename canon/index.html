@@ -848,8 +848,8 @@ function updateProgress() {
         progressBar.style.backgroundColor = '#8bc34a'; // можно изменить на любой цвет
     }
 }
-let currentWriter = null; // Глобальная переменная для хранения текущего HanziWriter
-let currentAudio = null;  // Для управления аудио
+
+let currentAudio = null;
 
 function buttoned(randchar) {
     if (chars.length === 0) {
@@ -863,22 +863,15 @@ function buttoned(randchar) {
         currentAudio = null;
     }
 
-    // Уничтожаем старый HanziWriter, если он существует
-    if (currentWriter) {
-        currentWriter.destroy(); // Очистка
-        currentWriter = null;
-    }
-
-    // Чистим область рисования
-    const targetDiv = document.getElementById('character-target-div');
-    targetDiv.innerHTML = '';
+    // Очистка области рисования
+    document.getElementById('character-target-div').innerHTML = '';
 
     // Показываем транскрипцию
     const transDiv = document.getElementById('transcription-text');
     const transcription = pinyinMap[randchar] || 'неизвестно';
     transDiv.textContent = `${randchar} → ${transcription}`;
 
-    // Показываем случайное пояснение
+    // Показ случайного пояснения
     const explDiv = document.getElementById('explanation');
     if (explanations[randchar]) {
         const randomExpl = explanations[randchar][Math.floor(Math.random() * explanations[randchar].length)];
@@ -887,8 +880,8 @@ function buttoned(randchar) {
         explDiv.textContent = 'Пояснение недоступно.';
     }
 
-    // Создаём новый HanziWriter
-    currentWriter = HanziWriter.create('character-target-div', randchar, {
+    // Инициализация HanziWriter
+    var writer = HanziWriter.create('character-target-div', randchar, {
         width: iWIDTH,
         height: iHEIGHT,
         showCharacter: false,
@@ -897,18 +890,14 @@ function buttoned(randchar) {
         highlightOnComplete: true,
     });
 
-    // Запуск квиза
-    currentWriter.quiz({
+    writer.quiz({
         onComplete: function () {
-            // Рекурсивный вызов с небольшой задержкой для стабильности
-            setTimeout(() => {
-                buttoned(getRandomChar(chars));
-                updateProgress();
-            }, 50);
+            buttoned(getRandomChar(chars));
+            updateProgress();
         }
     });
 
-    // Настройка кнопки воспроизведения звука
+    // Кнопка воспроизведения звука
     const playBtn = document.getElementById('play-audio-btn');
     playBtn.onclick = function () {
         const char = randchar;
@@ -916,7 +905,7 @@ function buttoned(randchar) {
         const audioPathWav = `./voices/${encodeURIComponent(char)}.wav`;
 
         if (currentAudio) {
-            currentAudio.pause(); // Останавливаем предыдущий звук
+            currentAudio.pause(); // Остановить предыдущий звук
         }
 
         currentAudio = new Audio(audioPathMp3);
