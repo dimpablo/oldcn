@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    
+      <style>
+          
+          
+    .progress-container {
+      width: 100%;
+      max-width: 600px;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px auto;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.4s ease-in-out;
+      text-align: right;
+      padding-right: 10px;
+      color: white;
+      font-weight: bold;
+      line-height: 30px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    #next-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+          
+          
+          
+          
+          
+          @media (max-width: 768px) {
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+  }
+
+  #character-target-div {
+    width: 100vw;         /* Полная ширина экрана */
+    height: 70vh;         /* 70% высоты экрана */
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  #next-btn {
+    width: 90vw;          /* Практически вся ширина экрана */
+    max-width: 500px;
+    margin: 10px auto;
+    padding: 16px 20px;
+    font-size: 18px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  #next-btn:disabled {
+    background-color: #cccccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+}
+  </style>
+  <meta charset="UTF-8">
+  <title>Hanzi Writer Пример</title>
+  <!-- Подключаем HanziWriter правильно -->
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer @3.6.0/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+</head>
+<body>
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar">0%</div>
+  </div>
+  <div id="transcription-area" style="text-align:center; margin-top: 10px;">
+  <div id="transcription-text" style="font-size: 20px; font-weight:bold;"></div>
+  <button id="play-audio-btn" style="margin-top: 10px; padding: 8px 16px; font-size: 18px;">▶</button>
+</div>
+<div id="character-target-div"></div>
+
+<script>
+    
+    let iHEIGHT=screen.height/2;
+    let iWIDTH=screen.width/2;
+    
+        // Функция определяет, мобильное ли устройство
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || 
+               (navigator.userAgent.includes('Mobi'));
+    }
+
+    // Вызывается при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+        if (isMobileDevice()) {
+            iHEIGHT=screen.height*2;
+            iWIDTH=screen.width*2;
+        }
+    });
+    
+    
+    
+    
+    const sourceStr = "老君曰大道無形生育天地情運行日月名長養萬物吾不知其強夫者有清濁動靜男女降本流末而之源基人能常悉皆歸神好心擾欲牽若遣自澄然六三毒消滅所以為未也內觀外遠既悟惟見於空亦湛寂豈即是真應得性矣如此漸入雖實化眾可傳聖上士爭下德執著妄驚貪求煩惱想憂苦身便遭辱浪死沉海永失";
+    const hundred = sourceStr.length;
+    const pinyinMap = {
+    '老': 'lǎo',
+    '君': 'jūn',
+    '曰': 'yuē',
+    '大': 'dà',
+    '道': 'dào',
+    '無': 'wú',
+    '形': 'xíng',
+    '生': 'shēng',
+    '育': 'yù',
+    '天': 'tiān',
+    '地': 'dì',
+    '情': 'qíng',
+    '運': 'yùn',
+    '行': 'xíng',
+    '日': 'rì',
+    '月': 'yuè',
+    '名': 'míng',
+    '長': 'cháng',
+    '養': 'yǎng',
+    '萬': 'wàn',
+    '物': 'wù',
+    '吾': 'wú',
+    '不': 'bù',
+    '知': 'zhī',
+    '其': 'qí',
+    '強': 'qiáng',
+    '夫': 'fū',
+    '者': 'zhě',
+    '有': 'yǒu',
+    '清': 'qīng',
+    '濁': 'zhuó',
+    '動': 'dòng',
+    '靜': 'jìng',
+    '男': 'nán',
+    '女': 'nǚ',
+    '降': 'jiàng',
+    '本': 'běn',
+    '流': 'liú',
+    '末': 'mò',
+    '而': 'ér',
+    '之': 'zhī',
+    '源': 'yuán',
+    '基': 'jī',
+    '人': 'rén',
+    '能': 'néng',
+    '常': 'cháng',
+    '悉': 'xī',
+    '皆': 'jiē',
+    '歸': 'guī',
+    '神': 'shén',
+    '好': 'hǎo',
+    '心': 'xīn',
+    '擾': 'rǎo',
+    '欲': 'yù',
+    '牽': 'qiān',
+    '若': 'ruò',
+    '遣': 'qiǎn',
+    '自': 'zì',
+    '澄': 'chéng',
+    '然': 'rán',
+    '六': 'liù',
+    '三': 'sān',
+    '毒': 'dú',
+    '消': 'xiāo',
+    '滅': 'miè',
+    '所': 'suǒ',
+    '以': 'yǐ',
+    '為': 'wéi',
+    '未': 'wèi',
+    '也': 'yě',
+    '內': 'nèi',
+    '觀': 'guān',
+    '外': 'wài',
+    '遠': 'yuǎn',
+    '既': 'jì',
+    '悟': 'wù',
+    '惟': 'wéi',
+    '見': 'jiàn',
+    '於': 'yú',
+    '空': 'kōng',
+    '亦': 'yì',
+    '湛': 'zhàn',
+    '寂': 'jì',
+    '豈': 'qǐ',
+    '即': 'jí',
+    '是': 'shì',
+    '真': 'zhēn',
+    '應': 'yīng',
+    '得': 'dé',
+    '性': 'xìng',
+    '矣': 'yǐ',
+    '如': 'rú',
+    '此': 'cǐ',
+    '漸': 'jiàn',
+    '入': 'rù',
+    '雖': 'suī',
+    '實': 'shí',
+    '化': 'huà',
+    '眾': 'zhòng',
+    '可': 'kě',
+    '傳': 'chuán',
+    '聖': 'shèng',
+    '上': 'shàng',
+    '士': 'shì',
+    '爭': 'zhēng',
+    '下': 'xià',
+    '德': 'dé',
+    '執': 'zhí',
+    '著': 'zhe',
+    '妄': 'wàng',
+    '驚': 'jīng',
+    '貪': 'tān',
+    '求': 'qiú',
+    '煩': 'fán',
+    '惱': 'nǎo',
+    '想': 'xiǎng',
+    '憂': 'yōu',
+    '苦': 'kǔ',
+    '身': 'shēn',
+    '便': 'biàn',
+    '遭': 'zāo',
+    '辱': 'rǔ',
+    '浪': 'làng',
+    '死': 'sǐ',
+    '沉': 'chén',
+    '海': 'hǎi',
+    '永': 'yǒng',
+    '失': 'shī'
+};
+
+// Преобразуем в массив
+let chars = [...sourceStr]; // разбиваем по символам, даже если это Unicode
+
+    function getRandomChar(arr) {
+    const index = Math.floor(Math.random() * arr.length);
+    return arr.splice(index, 1)[0]; // удаляем и возвращаем случайный иероглиф
+
+}
+    
+function updateProgress() {
+    const percent = Math.round(((hundred - chars.length) / hundred) * 100);
+
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = percent + '%';
+    progressBar.textContent = percent + '%';
+
+    if (percent >= 100) {
+        progressBar.textContent = 'Готово!';
+        progressBar.style.backgroundColor = '#8bc34a'; // можно изменить на любой цвет
+    }
+}
+
+    
+function buttoned(randchar) {
+  if (chars.length === 0) {
+    alert("Иероглифы закончились!");
+    return;
+  }
+
+  document.getElementById('character-target-div').innerHTML = '';
+
+  // Обновляем транскрипцию
+  const transcription = pinyinMap[randchar] || 'неизвестно';
+  document.getElementById('transcription-text').textContent = `${randchar} → ${transcription}`;
+
+  var writer = HanziWriter.create('character-target-div', randchar, {
+    width: iWIDTH * 2,
+    height: iHEIGHT,
+    showCharacter: false,
+    showOutline: false,
+    showHintAfterMisses: 1,
+    highlightOnComplete: true,
+  });
+
+  writer.quiz({
+    onComplete: function () {
+      buttoned(getRandomChar(chars));
+      updateProgress();
+    }
+  });
+
+  // Обработчик кнопки проигрывания
+  document.getElementById('play-audio-btn').onclick = function () {
+    const audioPath = `./voices/${encodeURIComponent(randchar)}.mp3`;
+    const audio = new Audio(audioPath);
+    audio.play().catch(err => console.error("Ошибка воспроизведения:", err));
+  };
+    document.getElementById("play-audio-btn").click()
+}
+buttoned(getRandomChar(chars));
+    document.getElementById("play-audio-btn").click()
+</script>
+
+</body>
+</html>
+
+
