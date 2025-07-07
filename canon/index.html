@@ -56,7 +56,7 @@
 
   align-items: center;     /* по вертикали */
 
-        overflow: hidden; /* Отключаем прокрутку */
+   /*     overflow: hidden;  Отключаем прокрутку */
 
 
   }
@@ -929,17 +929,6 @@ function buttoned(randchar) {
     };
 }
 buttoned(getRandomChar(chars));
-    function enterFullscreen() {
-  const elem = document.documentElement;
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) { /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) { /* IE11 */
-    elem.msRequestFullscreen();
-  }
-}
-    enterFullscreen();
 </script>
 
 </body>
