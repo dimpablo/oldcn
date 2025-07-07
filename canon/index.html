@@ -98,7 +98,7 @@
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 </head>
 <body>
-  <div id="character-target-div"></div>
+    <div align="center" id="character-target-div"></div>
   <div class="progress-container">
     <div id="progress-bar" class="progress-bar">0%</div>
   </div>
@@ -107,6 +107,7 @@
   <button id="play-audio-btn" style="margin-top: 10px; padding: 5px 8px; font-size: 15px;">▶</button>
 </div>
 <div id="explanation" style="background-color: #ffe6b5; margin-top: 5px; font-size: 20px; text-align: center;"></div>
+
 
     
     
@@ -864,21 +865,7 @@ function buttoned(randchar) {
     }
 
     // Очистка области рисования
-    // 1. Найти следующий div после 'character-target-div'
-const targetDiv = document.getElementById('character-target-div');
-const divAfter = targetDiv.nextElementSibling;
-
-// 2. Удалить старый элемент
-targetDiv.remove();
-
-// 3. Создать новый div и вставить его перед divAfter
-const newDiv = document.createElement('div');
-newDiv.id = 'character-target-div';
-// Можно добавить классы или другие атрибуты при необходимости
-// newDiv.className = 'some-class';
-
-// Вставить перед divAfter
-divAfter.parentNode.insertBefore(newDiv, divAfter);
+    document.getElementById('character-target-div').innerHTML = '';
 
     // Показываем транскрипцию
     const transDiv = document.getElementById('transcription-text');
