@@ -53,10 +53,8 @@
     height: 100%;
     font-size: 30px;
         justify-content: center; /* по горизонтали */
-        justify-content: top; /* по горизонтали */
 
   align-items: center;     /* по вертикали */
-        align-items: top;     /* по вертикали */
 
         overflow: hidden; /* Отключаем прокрутку */
 
@@ -887,8 +885,8 @@ function buttoned(randchar) {
 
     // Инициализация HanziWriter
     var writer = HanziWriter.create('character-target-div', randchar, {
-        width: iWIDTH*2,
-        height: iHEIGHT*2,
+        width: iWIDTH,
+        height: iHEIGHT,
         showCharacter: false,
         showOutline: false,
         showHintAfterMisses: 1,
