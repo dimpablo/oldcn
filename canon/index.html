@@ -863,15 +863,21 @@ function buttoned(randchar) {
         currentAudio = null;
     }
 
-    // Очистка области рисования
-    document.getElementById('character-target-div').innerHTML = '';
+    // Уничтожаем предыдущий HanziWriter
+    if (currentWriter) {
+        currentWriter.destroy(); // важно!
+        currentWriter = null;
+    }
 
-    // Показываем транскрипцию
+    // Очистка области рисования
+    const targetDiv = document.getElementById('character-target-div');
+    targetDiv.innerHTML = ''; // чистим
+
+    // Показываем транскрипцию и объяснение
     const transDiv = document.getElementById('transcription-text');
     const transcription = pinyinMap[randchar] || 'неизвестно';
     transDiv.textContent = `${randchar} → ${transcription}`;
 
-    // Показ случайного пояснения
     const explDiv = document.getElementById('explanation');
     if (explanations[randchar]) {
         const randomExpl = explanations[randchar][Math.floor(Math.random() * explanations[randchar].length)];
@@ -880,8 +886,8 @@ function buttoned(randchar) {
         explDiv.textContent = 'Пояснение недоступно.';
     }
 
-    // Инициализация HanziWriter
-    var writer = HanziWriter.create('character-target-div', randchar, {
+    // Создаем новый HanziWriter
+    currentWriter = HanziWriter.create('character-target-div', randchar, {
         width: iWIDTH,
         height: iHEIGHT,
         showCharacter: false,
@@ -890,12 +896,14 @@ function buttoned(randchar) {
         highlightOnComplete: true,
     });
 
-    writer.quiz({
+    currentWriter.quiz({
         onComplete: function () {
             buttoned(getRandomChar(chars));
             updateProgress();
         }
     });
+
+
 
     // Кнопка воспроизведения звука
     const playBtn = document.getElementById('play-audio-btn');
