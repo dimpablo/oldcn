@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Урок 2 — Древнекитайский язык по Крюкову</title>
+    <style>
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    line-height: 1.8;
+    color: #333;
+    background: #f9f7f4;
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: white;
+  }
+
+  h1, h2, h3 {
+    color: #1a5fb4;
+  }
+
+  h1 {
+    text-align: center;
+    border-bottom: 3px double #1a5fb4;
+    padding-bottom: 10px;
+  }
+
+  h2 {
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-top: 30px;
+  }
+
+  .original {
+    font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+    font-size: 1.8em;
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    letter-spacing: 3px;
+  }
+
+  .comment {
+    background: #f8f9fa;
+    padding: 15px;
+    border-left: 4px solid #1a5fb4;
+    margin: 15px 0;
+    font-size: 0.96em;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.95em;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background: #e6f2ff;
+  }
+
+  .footnote {
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+  }
+
+  .exercise {
+    background: #eef7ff;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px dashed #1a5fb4;
+  }
+
+  .char-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .char-item {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f8ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Noto Serif CJK SC', serif;
+    position: relative;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9em;
+  }
+
+  .cycle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.95em;
+  }
+
+  .cycle-table th, .cycle-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .cycle-table th {
+    background: #e6f2ff;
+  }
+
+  .pinyin {
+    font-size: 0.9em;
+    color: #555;
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .inline-char {
+    font-family: 'Noto Serif CJK SC', serif;
+    font-size: 1.1em;
+  }
+
+  .inline-pinyin {
+    font-size: 0.85em;
+    color: #555;
+    margin-left: 4px;
+  }
+
+  /* === Стили для аудиоплеера === */
+  .audio-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .audio-container audio {
+    width: 80%;
+    max-width: 600px;
+    height: 50px;
+    border: 1px solid #d0d8e8;
+    border-radius: 10px;
+    padding: 8px;
+    background: #f5f9ff;
+    box-shadow: 0 2px 8px rgba(26, 95, 180, 0.15);
+  }
+
+  /* Стилизация полосы прогресса (воспроизведения) */
+  .audio-container audio::-webkit-media-controls-timeline,
+  .audio-container audio::-webkit-media-controls-seek-back-button,
+  .audio-container audio::-webkit-media-controls-seek-forward-button {
+    display: block;
+  }
+
+  /* Кнопка воспроизведения */
+  .audio-container audio::-webkit-media-controls-play-button {
+    background-color: #1a5fb4;
+    border-radius: 50%;
+    transform: scale(1.1);
+  }
+
+  /* Прогресс-бар */
+  .audio-container audio::-webkit-media-controls-timeline {
+    color: #1a5fb4;
+  }
+
+  /* Общий стиль полосы прогресса */
+  .audio-container audio::-webkit-media-controls-progress-bar {
+    background-color: #e6f2ff;
+    border-radius: 4px;
+  }
+
+  .audio-container audio::-webkit-media-controls-progress-bar::before {
+    /* Показывает текущую позицию — синяя */
+    content: '';
+    display: block;
+    height: 100%;
+    background: #1a5fb4;
+    border-radius: 4px;
+  }
+
+  /* Подпись под плеером */
+  .audio-caption {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 8px;
+    font-style: italic;
+  }
+</style>
+    <!-- Вставьте этот CSS в <style> после вашего текущего -->
+<style>
+  /* === Интерактивные подсказки для иероглифов (без конфликтов) === */
+  
+  /* Контейнер для подсказки — не мешает основному стилю */
+  .char-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 260px;
+    background: #1a5fb4; /* основной акцентный цвет */
+    color: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    text-align: left;
+    white-space: normal;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    line-height: 1.5;
+  }
+
+  /* Показываем подсказку при наведении */
+  .char-item:hover .char-tooltip {
+    display: block;
+  }
+
+  /* Обеспечиваем позиционирование контейнера */
+  .char-item {
+    position: relative; /* важно для позиционирования подсказки */
+  }
+
+  /* Делаем иероглифы кликабельными/интерактивными */
+  .char-item > span:first-child {
+    cursor: help;
+  }
+</style>
+</head>
+<body>
+
+    <h1>УРОК 2</h1>
+
+    <div class="text">
+        <h2>Текст урока</h2>
+        <div class="original">
+            癸卯卜，爭貞：「今歲商受年？貞：來歲不其受年？」<br>
+            癸丑卜，珏貞：「冓受年？貞：冓不其受年？」<br>
+            癸卯卜，亘貞：「我受黍年？」<br>
+            癸巳卜，珏貞：「我受稻年？貞：今來歲我不其受年？」<br>
+            貞：「戔受？」貞：「甫弗其受黍年？」<br>
+            貞：「肅來牛？」貞：「肅弗其來牛？」<br>
+            貞：「重不其來犬？」<br>
+            貞：「今春奚來牛？奚不其來牛？」<br>
+            甲辰卜，珏貞：「奚來白馬？」<br>
+            王占曰：「吉。其來馬。」<br>
+            丙辰卜，珏貞：「今春方其自來？」
+        </div>
+    </div>
+
+    <div class="grammar">
+        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>2.1. Прямое дополнение</h3>
+        <p>Прямое дополнение стоит обычно после сказуемого. В приводимых текстах наличие прямого дополнения определяется по признаку: а) опущения и б) замены члена предложения в постсказуемостной позиции:</p>
+        <ul>
+            <li><strong>受年</strong> — «получить урожай»;</li>
+            <li><strong>弗受年</strong> — «не получить [урожая]»;</li>
+            <li><strong>來牛</strong> — «прислать быков»;</li>
+            <li><strong>來犬</strong> — «прислать собак».</li>
+        </ul>
+
+        <h3>2.2. Определение</h3>
+        <p>Определение в архаическом, как и вообще в древнекитайском языке, всегда предшествует определяемому:</p>
+        <ul>
+            <li><strong>白馬</strong> — «белая лошадь»;</li>
+            <li><strong>稻年</strong> — «урожай риса»;</li>
+            <li><strong>今春</strong> — «нынешняя весна».</li>
+        </ul>
+
+        <h3>2.3. Личные местоимения</h3>
+        <p>Личные местоимения — полуслужебная часть речи, выступающая всегда в строго определённой грамматической функции, замещая имена. В качестве предикатива личное местоимение употребляться не может.</p>
+        <p>Личные местоимения обладают всеми синтаксическими свойствами имён, кроме одного — они не могут принимать определений. В древнекитайском языке личные местоимения различаются по лицам. Число выражено в них непоследовательно. В частности, местоимение 1-го лица <strong>我</strong> может употребляться как в единственном числе («я»), так и во множественном («мы»).</p>
+
+        <h3>2.4. Наречные имена</h3>
+        <p>В древнекитайском языке существует группа наречных имён, обозначающих точку в пространстве и времени. К ним относится, в частности, слово <strong>今</strong> с исходным значением «сейчас», «в настоящий момент». Оно может употребляться как самостоятельно, в функции обстоятельства времени, так и в качестве определения к другому имени:</p>
+        <ul>
+            <li><strong>今雨</strong> — «Сейчас идёт дождь»;</li>
+            <li><strong>今歲我受年</strong> — «В нынешнем году мы получим урожай» (<strong>今歲</strong> — «нынешний год»).</li>
+        </ul>
+        <p>В архаическом языке в такой функции могут употребляться и некоторые другие знаменательные слова. Так, <strong>來</strong> — «приходить» — будучи употреблено как определение к имени, приобретает значение «будущий», «следующий»:</p>
+        <ul>
+            <li><strong>來歲我弗受年</strong> — «В будущем году мы не получим урожая» (<strong>來歲</strong> — «будущий год»).</li>
+        </ul>
+        <p>Однако самостоятельно, подобно <strong>今</strong>, слово <strong>來</strong> в таком значении употребляться не может.</p>
+
+        <h3>2.5. Основное и каузативное значение предикатива</h3>
+        <p>Знаменательное слово, выступающее в предикативной функции, может иметь в архаическом древнекитайском языке несколько значений. Одно из них — основное — имеет предикатив, обозначающий действие, выполняемое субъектом, но наряду с ним данное слово может иметь и другое, каузативное значение, т. е. обозначать действие, которое побуждает субъект.</p>
+        <p>Например, если <strong>來</strong> означает «приходить», то в каузативном значении — «прислать». То же самое — с <strong>受</strong>: «получать» → «давать».</p>
+        <p>В более поздних памятниках различие выражается графически: <strong>受</strong> — «получать», <strong>授</strong> — «давать».</p>
+
+        <h3>2.6. Отрицание <strong>弗</strong></h3>
+        <p><strong>弗</strong> — нейтральное отрицание, как и <strong>不</strong>. Употребляется перед глаголами, но не перед безличными предикативами и не с местоимённым дополнением.</p>
+        <p>Примеры:</p>
+        <ul>
+            <li><strong>方出</strong> — «Племя выступит»;</li>
+            <li><strong>方弗出</strong> — «Племя не выступит».</li>
+        </ul>
+        <p>В большинстве случаев <strong>弗</strong> и <strong>不</strong> взаимозаменяемы: <strong>弗受年</strong> = <strong>不受年</strong>.</p>
+    </div>
+
+    <div class="lexicon">
+        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>2-1. Личные имена</h3>
+        <p>Личные имена в иньских надписях употребляются только как имена. Они могут обозначать:</p>
+        <ul>
+            <li>одно лицо;</li>
+            <li>всё племя или род;</li>
+            <li>территорию.</li>
+        </ul>
+        <p>Таким образом, имена вроде <strong>重</strong>, <strong>珏</strong>, <strong>亘</strong>, <strong>戔</strong> — это не просто личные имена, а **родовые обозначения**.</p>
+
+        <h3>2-2. Год и сезоны года</h3>
+        <p>У иньцев год (<strong>歲</strong>) делился на два сезона: <strong>春</strong> (первая половина) и <strong>秋</strong> (вторая). Поэтому «весна» и «осень» — условные переводы. Отсюда выражение <strong>春秋</strong> — «течение времени», позднее — «летопись».</p>
+    </div>
+
+    <div class="assignment">
+        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+        <ol>
+            <li>Перепишите текст в виде дистрибутивной таблицы (по датам, гадателям, вопросам).</li>
+            <li>Проведите грамматический анализ текста (синтаксис, частицы, отрицания).</li>
+            <li>Переведите текст на русский язык с комментариями.</li>
+        </ol>
+    </div>
+
+    <div class="footnote">
+        <p><em>Учебник: Крюков В. А. — Архаический древнекитайский язык. Урок 2. Восстановлено по OCR с исправлением артефактов.</em></p>
+    </div>
+
+</body>
+</html>
