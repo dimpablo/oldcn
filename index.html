@@ -320,10 +320,65 @@
       }
     });
 
-    nextBtn.addEventListener("click", () => {
-      currentTaskIndex++;
-      loadTask(currentTaskIndex);
-    });
+// Обработка сообщений от iframe (без CONTENT_TOO_WIDE)
+window.addEventListener("message", (event) => {
+  const { type, success } = event.data;
+
+  if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+    hasProcessedHanzi = true;
+
+    const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
+    const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
+
+    console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
+
+    iframe.src = '';
+    setTimeout(() => {
+      iframe.src = newSrc;
+    }, 10);
+
+    nextBtn.disabled = true;
+    return;
+  }
+
+  if (type === "TASK_RESULT") {
+    if (success) {
+      statusEl.textContent = "✅ Задание выполнено!";
+      nextBtn.disabled = false;
+    } else {
+      statusEl.textContent = "⏳ Задание загружается...";
+    }
+  }
+});
+
+// Определяем, мобильное ли устройство
+function isMobile() {
+  return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+}
+
+// Применяем масштаб при загрузке
+window.addEventListener("load", () => {
+  if (isMobile()) {
+    iframe.style.transform = "scale(0.5)";
+    iframe.style.transformOrigin = "top left";
+    iframe.style.width = "200%";
+    iframe.style.height = "200%";
+    console.log("📱 Мобильное устройство: iframe уменьшен в 2 раза");
+  }
+});
+
+// Перепроверка при изменении размера (поворот экрана)
+window.addEventListener("resize", () => {
+  if (isMobile()) {
+    iframe.style.transform = "scale(0.5)";
+    iframe.style.width = "200%";
+    iframe.style.height = "200%";
+  } else {
+    iframe.style.transform = "scale(1)";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+  }
+});
 
     // Отправка размера контента из iframe (опционально)
     // iframe может прислать: postMessage({ type: "CONTENT_TOO_WIDE" }, "*")
