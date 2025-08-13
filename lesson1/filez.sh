@@ -1,5 +1,5 @@
 for file in *.html; do
-  echo "=== 📄 $file ===" >> filez
-  cat "$file" >> filez
-  echo -e "\n" >> filez
+  echo "=== 📄 $file ===" >> filez.txt
+  cat "$file" >> filez.txt
+  echo -e "\n" >> filez.txt
 done

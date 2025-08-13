@@ -461,64 +461,68 @@ body {
     }
 
     function checkTaskIsValid(n) {
-      return new Promise((resolve) => {
-        const filename = `task${n}.html`;
-        const frame = document.createElement("iframe");
-        frame.classList.add("hidden-iframe");
-        frame.setAttribute("data-check", n);
+  return new Promise((resolve) => {
+    const filename = `task${n}.html`;
+    const frame = document.createElement("iframe");
+    frame.classList.add("hidden-iframe");
+    frame.setAttribute("data-check", n);
 
-        let responded = false;
-        let timeoutId;
+    let responded = false;
+    let timeoutId;
 
-        function onMessage(event) {
-          if (event.data.type === "TASK_EXISTS" && event.data.valid) {
-            const frameN = parseInt(frame.getAttribute("data-check"));
-            if (frameN === n) {
-              responded = true;
-              clearTimeout(timeoutId);
-              document.body.removeChild(frame);
-              window.removeEventListener("message", onMessage);
-              resolve({ exists: true, n });
-            }
-          }
+    function onMessage(event) {
+      // Проверяем, что сообщение от нашего фрейма
+      const frameN = parseInt(frame.getAttribute("data-check"));
+      if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+        if (!responded && frameN === n) {
+          responded = true;
+          clearTimeout(timeoutId);
+          document.body.removeChild(frame);
+          window.removeEventListener("message", onMessage);
+          resolve({ exists: true, n });
         }
+      }
+    }
 
-        window.addEventListener("message", onMessage);
+    window.addEventListener("message", onMessage);
 
-        timeoutId = setTimeout(() => {
-          if (!responded) {
-            document.body.removeChild(frame);
-            window.removeEventListener("message", onMessage);
-            resolve({ exists: false, n });
-          }
-        }, 3000);
+    timeoutId = setTimeout(() => {
+      if (!responded) {
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    }, 3000);
 
-        frame.onload = () => {
-          try {
-            if (frame.contentDocument.title === "404 Not Found") {
-              if (!responded) {
-                clearTimeout(timeoutId);
-                document.body.removeChild(frame);
-                window.removeEventListener("message", onMessage);
-                resolve({ exists: false, n });
-              }
-            }
-          } catch (e) {}
-        };
-
-        frame.onerror = () => {
+    frame.onload = () => {
+      try {
+        // Если браузер показал 404 (в некоторых средах)
+        if (frame.contentDocument && frame.contentDocument.title === "404 Not Found") {
           if (!responded) {
             clearTimeout(timeoutId);
             document.body.removeChild(frame);
             window.removeEventListener("message", onMessage);
             resolve({ exists: false, n });
           }
-        };
+        }
+      } catch (e) {
+        // Доступ заблокирован — возможно, ошибка, но не 404
+      }
+    };
 
-        frame.src = filename + "?_=" + Date.now();
-        document.body.appendChild(frame);
-      });
-    }
+    frame.onerror = () => {
+      if (!responded) {
+        clearTimeout(timeoutId);
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    };
+
+    frame.src = filename + "?_=" + Date.now();
+    document.body.appendChild(frame);
+  });
+}
 
     async function discoverTasks() {
       const existingTasks = [];
@@ -565,23 +569,39 @@ body {
     }
 
     function loadTask(index) {
-      if (index >= tasks.length) {
-        statusEl.textContent = "🎉 Все задания выполнены!";
-        iframe.style.display = "none";
-        nextBtn.disabled = true;
-        return;
-      }
+  if (index >= tasks.length) {
+    // Скрыть iframe
+    iframe.style.display = "none";
+    nextBtn.disabled = true;
 
-      hasProcessedHanzi = false;
+    // Обновить статус
+    statusEl.innerHTML = `<div style="text-align: center;">
+      <h2>🎉 Поздравляем!</h2>
+      <p>Вы успешно завершили урок<br><strong>Древнекитайские оракульные надписи</strong>!</p>
+      <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
+    </div>`;
 
-      const url = tasks[index] + "?_=" + Date.now();
-      console.log(`▶️ Загрузка: ${url}`);
-      iframe.src = url;
+    // Добавить фейерверки (простая реализация)
+    createFireworks();
 
-      updateProgress();
-      nextBtn.disabled = true;
-      currentTaskIndex = index;
-    }
+    // Через 5 секунд — редирект в ../
+    setTimeout(() => {
+      window.location.href = "../";
+    }, 5000);
+
+    updateProgress();
+    return;
+  }
+
+  hasProcessedHanzi = false;
+  const url = tasks[index] + "?_=" + Date.now();
+  console.log(`▶️ Загрузка: ${url}`);
+  iframe.src = url;
+
+  updateProgress();
+  nextBtn.disabled = true;
+  currentTaskIndex = index;
+}
 
     function updateProgress() {
       const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
@@ -650,6 +670,65 @@ body {
 
     // Запуск
     discoverTasks();
+      function createFireworks() {
+  const container = document.getElementById("fireworks");
+  const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
+  const particles = 50;
+
+  function createExplosion(x, y) {
+    for (let i = 0; i < particles; i++) {
+      const particle = document.createElement("div");
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 3;
+      const size = 2 + Math.random() * 4;
+
+      particle.style.position = "absolute";
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.borderRadius = "50%";
+      particle.style.boxShadow = "0 0 6px currentColor";
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.pointerEvents = "none";
+
+      container.appendChild(particle);
+
+      // Анимация
+      let dx = Math.cos(angle) * speed;
+      let dy = Math.sin(angle) * speed;
+      let opacity = 1;
+      let posX = x;
+      let posY = y;
+
+      const animate = () => {
+        opacity -= 0.02;
+        posX += dx;
+        posY += dy + 0.1; // гравитация
+        dy += 0.05;
+
+        particle.style.opacity = opacity;
+        particle.style.left = `${posX}px`;
+        particle.style.top = `${posY}px`;
+
+        if (opacity > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          container.removeChild(particle);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }
+
+  // Запуск нескольких взрывов
+  setInterval(() => {
+    const x = 50 + Math.random() * (container.offsetWidth - 100);
+    const y = 100 + Math.random() * (container.offsetHeight - 100);
+    createExplosion(x, y);
+  }, 400);
+}
   </script>
 </body>
 </html>-e 
@@ -3152,10 +3231,11 @@ window.parent.postMessage({
 
   <div class="instructions">
     <p><strong>Перетащите иероглифы в правильном порядке</strong>, чтобы перевести фразу:</p>
-    <p><em>Вопрос гласит: «Был ли дождь?»</em></p>
+    <p><em>"Вопрос гласит: «Был ли дождь?»"</em></p>
     
-<p class="hint">💡 Подсказка: вспомните косвенные признаки времени</p>
- </div>
+<p class="hint">💡 Подсказка: косвенные признаки времени</p>
+
+  </div>
 
   <p><strong>Доступные иероглифы:</strong></p>
   <div id="char-pool"></div>
@@ -5387,130 +5467,210 @@ const pairs = [
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Урок 1: Древнекитайский язык — Гадания о дожде</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
-      line-height: 1.8;
-      color: #333;
-      background: #f9f7f4;
-      margin: 40px auto;
-      max-width: 900px;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      background: white;
-    }
-    h1, h2, h3 {
-      color: #1a5fb4;
-    }
-    h1 {
-      text-align: center;
-      border-bottom: 3px double #1a5fb4;
-      padding-bottom: 10px;
-    }
-    h2 {
-      text-align: center;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 5px;
-      margin-top: 30px;
-    }
-    .original {
-      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-      font-size: 1.8em;
-      background: #f0f8ff;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      letter-spacing: 3px;
-    }
-    .comment {
-      background: #f8f9fa;
-      padding: 15px;
-      border-left: 4px solid #1a5fb4;
-      margin: 15px 0;
-      font-size: 0.96em;
-    }
-    .table-container {
-      overflow-x: auto;
-      margin: 20px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 0.95em;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background: #e6f2ff;
-    }
-    .footnote {
-      font-size: 0.9em;
-      color: #666;
-      font-style: italic;
-    }
-    .exercise {
-      background: #eef7ff;
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
-      border: 1px dashed #1a5fb4;
-    }
-    .char-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .char-item {
-      display: flex;
-      justify-content: space-between;
-      background: #f0f8ff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-family: 'Noto Serif CJK SC', serif;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #777;
-      font-size: 0.9em;
-    }
-    .cycle-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-      font-size: 0.95em;
-    }
-    .cycle-table th, .cycle-table td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    .cycle-table th {
-      background: #e6f2ff;
-    }
-    .pinyin {
-      font-size: 0.9em;
-      color: #555;
-      font-style: italic;
-      display: block;
-      margin-top: 2px;
-    }
-    .inline-char {
-      font-family: 'Noto Serif CJK SC', serif;
-      font-size: 1.1em;
-    }
-    .inline-pinyin {
-      font-size: 0.85em;
-      color: #555;
-      margin-left: 4px;
-    }
-  </style>
+<style>
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    line-height: 1.8;
+    color: #333;
+    background: #f9f7f4;
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: white;
+  }
+
+  h1, h2, h3 {
+    color: #1a5fb4;
+  }
+
+  h1 {
+    text-align: center;
+    border-bottom: 3px double #1a5fb4;
+    padding-bottom: 10px;
+  }
+
+  h2 {
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-top: 30px;
+  }
+
+  .original {
+    font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+    font-size: 1.8em;
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    letter-spacing: 3px;
+  }
+
+  .comment {
+    background: #f8f9fa;
+    padding: 15px;
+    border-left: 4px solid #1a5fb4;
+    margin: 15px 0;
+    font-size: 0.96em;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.95em;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background: #e6f2ff;
+  }
+
+  .footnote {
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+  }
+
+  .exercise {
+    background: #eef7ff;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px dashed #1a5fb4;
+  }
+
+  .char-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .char-item {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f8ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Noto Serif CJK SC', serif;
+    position: relative;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9em;
+  }
+
+  .cycle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.95em;
+  }
+
+  .cycle-table th, .cycle-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .cycle-table th {
+    background: #e6f2ff;
+  }
+
+  .pinyin {
+    font-size: 0.9em;
+    color: #555;
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .inline-char {
+    font-family: 'Noto Serif CJK SC', serif;
+    font-size: 1.1em;
+  }
+
+  .inline-pinyin {
+    font-size: 0.85em;
+    color: #555;
+    margin-left: 4px;
+  }
+
+  /* === Стили для аудиоплеера === */
+  .audio-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .audio-container audio {
+    width: 80%;
+    max-width: 600px;
+    height: 50px;
+    border: 1px solid #d0d8e8;
+    border-radius: 10px;
+    padding: 8px;
+    background: #f5f9ff;
+    box-shadow: 0 2px 8px rgba(26, 95, 180, 0.15);
+  }
+
+  /* Стилизация полосы прогресса (воспроизведения) */
+  .audio-container audio::-webkit-media-controls-timeline,
+  .audio-container audio::-webkit-media-controls-seek-back-button,
+  .audio-container audio::-webkit-media-controls-seek-forward-button {
+    display: block;
+  }
+
+  /* Кнопка воспроизведения */
+  .audio-container audio::-webkit-media-controls-play-button {
+    background-color: #1a5fb4;
+    border-radius: 50%;
+    transform: scale(1.1);
+  }
+
+  /* Прогресс-бар */
+  .audio-container audio::-webkit-media-controls-timeline {
+    color: #1a5fb4;
+  }
+
+  /* Общий стиль полосы прогресса */
+  .audio-container audio::-webkit-media-controls-progress-bar {
+    background-color: #e6f2ff;
+    border-radius: 4px;
+  }
+
+  .audio-container audio::-webkit-media-controls-progress-bar::before {
+    /* Показывает текущую позицию — синяя */
+    content: '';
+    display: block;
+    height: 100%;
+    background: #1a5fb4;
+    border-radius: 4px;
+  }
+
+  /* Подпись под плеером */
+  .audio-caption {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 8px;
+    font-style: italic;
+  }
+</style>
     <!-- Вставьте этот CSS в <style> после вашего текущего -->
 <style>
   /* === Интерактивные подсказки для иероглифов (без конфликтов) === */
@@ -5572,6 +5732,17 @@ const pairs = [
     <input type="checkbox" id="readableToggle">
     Показать читаемый вариант
   </label>
+</div>
+
+<!-- Аудиоозвучка текста -->
+<div style="text-align: center; margin: 10px 0;">
+  <audio controls style="vertical-align: middle;">
+    <source src="./mp3/1.mp3" type="audio/mpeg">
+    Ваш браузер не поддерживает элемент <code>audio</code>.
+  </audio>
+  <div class="footnote" style="margin-top: 5px;">
+    Прослушать текст: Урок 1 — Гадания о дожде
+  </div>
 </div>
 
 <script>
