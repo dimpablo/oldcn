@@ -22,13 +22,46 @@
       overflow: hidden;
     }
 
-    /* Прогресс-бар */
+    /* Заголовок и элементы управления */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .scale-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scale-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      line-height: 28px;
+      text-align: center;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .scale-value {
+      min-width: 36px;
+      text-align: center;
+      font-weight: bold;
+    }
+
     #progress-container {
       width: 100%;
       height: 6px;
       background-color: #e0e0e0;
       border-radius: 3px;
-      margin: 10px 0;
+      margin: 6px 0;
       overflow: hidden;
     }
 
@@ -40,31 +73,32 @@
       border-radius: 3px;
     }
 
-    /* Контейнер iframe */
+    /* Контейнер iframe — скрыт до готовности */
     #task-container {
       flex: 1;
       border: none;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      opacity: 0.4;
+      opacity: 0;
+      visibility: hidden;
       transition: opacity 0.3s ease;
     }
 
     #task-container.active {
       opacity: 1;
+      visibility: visible;
     }
 
     #task-frame {
       width: 100%;
       height: 100%;
       border: none;
-      /* Если контент не влазит — масштабируем */
       transform-origin: top left;
       transform: scale(1);
+      transition: transform 0.2s ease;
     }
 
-    /* Кнопка — мобильная, приятная на ощупь */
     .controls {
       padding: 12px 0;
       display: flex;
@@ -96,7 +130,6 @@
       transform: none;
     }
 
-    /* Скрытие iframe для проверки */
     .hidden-iframe {
       position: absolute;
       top: -9999px;
@@ -106,7 +139,6 @@
       border: none;
     }
 
-    /* Сообщение состояния */
     #status {
       font-size: 16px;
       text-align: center;
@@ -116,13 +148,21 @@
   </style>
 </head>
 <body>
-  <div id="status">🔍 Поиск заданий...</div>
+  <div class="header">
+    <div id="status">🔍 Поиск заданий...</div>
+    <div class="scale-controls">
+      <div class="scale-btn" id="zoom-out">−</div>
+      <div class="scale-value" id="scale-value">1.0</div>
+      <div class="scale-btn" id="zoom-in">+</div>
+    </div>
+  </div>
 
   <div id="progress-container">
     <div id="progress-bar"></div>
   </div>
 
-  <div id="task-container" class="active">
+  <!-- iframe скрыт до завершения поиска -->
+  <div id="task-container">
     <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
   </div>
 
@@ -138,11 +178,18 @@
 
     let tasks = [];
     let currentTaskIndex = 0;
+    let currentScale = 1.0;
+    const minScale = 0.25;
+    const maxScale = 2.0;
+    const scaleStep = 0.1;
 
     const iframe = document.getElementById("task-frame");
     const statusEl = document.getElementById("status");
     const nextBtn = document.getElementById("next-btn");
     const progressBar = document.getElementById("progress-bar");
+    const scaleValueEl = document.getElementById("scale-value");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
 
     let hasProcessedHanzi = false;
     let discoveryCompleted = false;
@@ -249,6 +296,14 @@
       statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
       updateProgress();
 
+      // 🔓 Показываем iframe только после поиска
+      document.getElementById("task-container").classList.add("active");
+
+      // Автомасштаб на мобильных
+      if (isMobile()) {
+        setScale(0.5);
+      }
+
       loadTask(0);
     }
 
@@ -271,10 +326,33 @@
       currentTaskIndex = index;
     }
 
-    // Обновление прогресс-бара
     function updateProgress() {
       const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
       progressBar.style.width = `${progress}%`;
+    }
+
+    // Управление масштабом
+    function setScale(scale) {
+      currentScale = scale;
+      iframe.style.transform = `scale(${currentScale})`;
+      scaleValueEl.textContent = currentScale.toFixed(1);
+    }
+
+    zoomInBtn.addEventListener("click", () => {
+      if (currentScale < maxScale) {
+        setScale(Math.round((currentScale + scaleStep) * 10) / 10);
+      }
+    });
+
+    zoomOutBtn.addEventListener("click", () => {
+      if (currentScale > minScale) {
+        setScale(Math.round((currentScale - scaleStep) * 10) / 10);
+      }
+    });
+
+    // Определение мобильного устройства
+    function isMobile() {
+      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
     }
 
     // Обработка сообщений от iframe
@@ -306,84 +384,14 @@
           statusEl.textContent = "⏳ Задание загружается...";
         }
       }
-
-      // Проверка размера контента iframe
-      if (type === "CONTENT_TOO_WIDE") {
-        iframe.style.transform = "scale(0.5)";
-        iframe.style.margin = "auto";
-        iframe.style.width = "200%";
-        iframe.style.height = "200%";
-      } else {
-        iframe.style.transform = "scale(1)";
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-      }
     });
 
-// Обработка сообщений от iframe (без CONTENT_TOO_WIDE)
-window.addEventListener("message", (event) => {
-  const { type, success } = event.data;
+    nextBtn.addEventListener("click", () => {
+      currentTaskIndex++;
+      loadTask(currentTaskIndex);
+    });
 
-  if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
-    hasProcessedHanzi = true;
-
-    const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
-    const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
-
-    console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
-
-    iframe.src = '';
-    setTimeout(() => {
-      iframe.src = newSrc;
-    }, 10);
-
-    nextBtn.disabled = true;
-    return;
-  }
-
-  if (type === "TASK_RESULT") {
-    if (success) {
-      statusEl.textContent = "✅ Задание выполнено!";
-      nextBtn.disabled = false;
-    } else {
-      statusEl.textContent = "⏳ Задание загружается...";
-    }
-  }
-});
-
-// Определяем, мобильное ли устройство
-function isMobile() {
-  return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
-}
-
-// Применяем масштаб при загрузке
-window.addEventListener("load", () => {
-  if (isMobile()) {
-    iframe.style.transform = "scale(0.5)";
-    iframe.style.transformOrigin = "top left";
-    iframe.style.width = "200%";
-    iframe.style.height = "200%";
-    console.log("📱 Мобильное устройство: iframe уменьшен в 2 раза");
-  }
-});
-
-// Перепроверка при изменении размера (поворот экрана)
-window.addEventListener("resize", () => {
-  if (isMobile()) {
-    iframe.style.transform = "scale(0.5)";
-    iframe.style.width = "200%";
-    iframe.style.height = "200%";
-  } else {
-    iframe.style.transform = "scale(1)";
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-  }
-});
-
-    // Отправка размера контента из iframe (опционально)
-    // iframe может прислать: postMessage({ type: "CONTENT_TOO_WIDE" }, "*")
-    // если его содержимое шире, чем ширина экрана.
-
+    // Запуск
     discoverTasks();
   </script>
 </body>
