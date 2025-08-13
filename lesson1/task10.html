@@ -2,76 +2,147 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Сопоставьте: иероглиф ↔ значение</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
+      margin: 0;
+      line-height: 1.6;
+      background: #f7f9fc;
+      color: #333;
     }
-    h2, p {
+
+    h2 {
+      color: #2c3e50;
       text-align: center;
+      margin: 20px 0;
+      font-size: 28px;
     }
+
+    p {
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      margin: 10px 0 20px;
+    }
+
     .match-container {
       display: flex;
-      justify-content: space-around;
-      gap: 30px;
+      justify-content: center;
+      gap: 40px;
       margin-top: 30px;
+      flex-wrap: wrap;
     }
+
     .column {
       width: 45%;
+      min-width: 280px;
+      max-width: 500px;
     }
+
     .column h3 {
       text-align: center;
       margin-bottom: 15px;
       color: #333;
+      font-size: 20px;
+      font-weight: bold;
     }
+
     .word-item, .def-item {
-      padding: 12px 16px;
-      margin: 8px 0;
+      padding: 14px 16px;
+      margin: 10px 0;
       background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       text-align: center;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
+
     .word-item:hover, .def-item:hover {
       background: #eef5ff;
       border-color: #66aaff;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
+
     .word-item.selected {
       background: #bbdefb;
       border-color: #1976d2;
       transform: scale(1.05);
     }
+
     .def-item.selected {
       background: #c8e6c9;
       border-color: #43a047;
       transform: scale(1.05);
     }
+
     .matched {
       background: #d4edda;
       border: 2px solid #28a745 !important;
       color: #155724;
-      opacity: 0.9;
+      opacity: 0.95;
       cursor: default;
       font-weight: bold;
+      transform: scale(1.02) !important;
+      box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
     }
+
     button {
       display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
+      margin: 30px auto;
+      padding: 12px 24px;
       font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+
+    button:hover {
+      background: #2980b9;
+    }
+
     #result {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 25px;
       font-weight: bold;
       font-size: 18px;
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      .match-container {
+        gap: 20px;
+        flex-direction: column;
+        align-items: center;
+      }
+      .column {
+        width: 100%;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      p {
+        font-size: 16px;
+      }
+      .word-item, .def-item {
+        font-size: 18px;
+        padding: 12px;
+      }
     }
   </style>
 </head>
@@ -97,19 +168,17 @@
   <p id="result"></p>
 
   <script>
-    // Пять пар из первой колонки
-const pairs = [
-  { char: "丑", meaning: "Земная ветвь (2-я)" },
-  { char: "爭", meaning: "Чжэн (имя собств.)" },
-  { char: "雨", meaning: "Дождь / Дождь идет / Дождить" },
-  { char: "允", meaning: "Действительно!" },
-  { char: "亥", meaning: "Земная ветвь (12-я)" }
-];
+    const pairs = [
+      { char: "丑", meaning: "Земная ветвь (2-я)" },
+      { char: "爭", meaning: "Чжэн (имя собств.)" },
+      { char: "雨", meaning: "Дождь / Дождь идет / Дождить" },
+      { char: "允", meaning: "Действительно!" },
+      { char: "亥", meaning: "Земная ветвь (12-я)" }
+    ];
 
     let selectedWord = null;
     let matchedPairs = 0;
 
-    // Перемешивает массив случайным образом
     function shuffle(arr) {
       return [...arr].sort(() => Math.random() - 0.5);
     }
@@ -121,11 +190,10 @@ const pairs = [
       wordList.innerHTML = "";
       defList.innerHTML = "";
 
-      // Перемешиваем и иероглифы, и значения
       const shuffledChars = shuffle(pairs);
       const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
 
-      // Создаём левую колонку (иероглифы)
+      // Создаём иероглифы
       shuffledChars.forEach(item => {
         const el = document.createElement("div");
         el.className = "word-item";
@@ -135,7 +203,7 @@ const pairs = [
         wordList.appendChild(el);
       });
 
-      // Создаём правую колонку (значения)
+      // Создаём значения
       shuffledMeanings.forEach(meaning => {
         const el = document.createElement("div");
         el.className = "def-item";
@@ -165,7 +233,6 @@ const pairs = [
       const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
 
       if (isCorrect) {
-        // Правильно — фиксируем пару
         el.classList.add("matched");
         selectedWord.classList.add("matched");
         selectedWord.onclick = null;
@@ -174,12 +241,13 @@ const pairs = [
         matchedPairs++;
 
         if (matchedPairs === 5) {
-          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          document.getElementById("result").innerHTML = "✅ <strong>Отлично! Все пары подобраны верно.</strong>";
+          document.getElementById("result").style.color = "#27ae60";
           sendResult(true);
         }
       } else {
-        // Ошибка
         document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        document.getElementById("result").style.color = "#e74c3c";
         setTimeout(() => {
           document.getElementById("result").textContent = "";
         }, 1500);
@@ -199,7 +267,7 @@ const pairs = [
       window.parent.postMessage({
         type: "TASK_RESULT",
         success,
-        message: message || (success ? "Все верно!" : "Есть ошибки")
+        message: message || (success ? "Все пары верны" : "Ошибка в сопоставлении")
       }, "*");
     }
 

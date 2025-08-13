@@ -2,27 +2,31 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Собери фразу</title>
   <style>
     .hint-list {
-  margin: 5px 0 0;
-  padding-left: 20px;
-  color: #7f8c8d;
-  font-size: 14px;
-  list-style-type: "🔸 ";
-}
+      margin: 5px 0 0;
+      padding-left: 20px;
+      color: #7f8c8d;
+      font-size: 14px;
+      list-style-type: "🔸 ";
+    }
 
-.hint-list li {
-  margin: 3px 0;
-}
+    .hint-list li {
+      margin: 3px 0;
+    }
+
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       line-height: 1.6;
     }
+
     h2 {
       color: #2c3e50;
     }
+
     .instructions {
       background: #f8f9fa;
       padding: 15px;
@@ -30,6 +34,7 @@
       margin-bottom: 20px;
       font-size: 16px;
     }
+
     .drop-area {
       min-height: 60px;
       border: 2px dashed #3498db;
@@ -43,6 +48,7 @@
       font-size: 24px;
       align-items: center;
     }
+
     #char-pool {
       display: flex;
       flex-wrap: wrap;
@@ -54,6 +60,7 @@
       min-height: 60px;
       background: #f9f9f9;
     }
+
     .char-box {
       width: 45px;
       height: 45px;
@@ -69,21 +76,26 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       transition: all 0.2s;
     }
+
     .char-box:hover {
       transform: translateY(-2px);
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
+
     .char-box.dragging {
       opacity: 0.7;
       transform: scale(1.05);
     }
+
     .punctuation {
       font-size: 20px;
       color: #7f8c8d;
     }
+
     .controls {
       margin-top: 20px;
     }
+
     button {
       padding: 10px 18px;
       font-size: 16px;
@@ -94,17 +106,21 @@
       cursor: pointer;
       margin-right: 10px;
     }
+
     button:hover {
       background: #2980b9;
     }
+
     .message {
       margin-top: 15px;
       font-weight: bold;
       color: #e74c3c;
     }
+
     .success {
       color: #27ae60;
     }
+
     .hint {
       font-style: italic;
       color: #7f8c8d;
@@ -120,8 +136,7 @@
     <p><strong>Перетащите иероглифы в правильном порядке</strong>, чтобы перевести фразу:</p>
     <p><em>"Вопрос гласит: «Был ли дождь?»"</em></p>
     
-<p class="hint">💡 Подсказка: косвенные признаки времени</p>
-
+    <p class="hint">💡 Подсказка: косвенные признаки времени</p>
   </div>
 
   <p><strong>Доступные иероглифы:</strong></p>
@@ -129,7 +144,7 @@
 
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area" class="drop-area">
-    <!-- Сюда перетаскиваются иероглифы -->
+    <!-- Сюда добавляются иероглифы -->
   </div>
 
   <div class="controls">
@@ -150,74 +165,105 @@
       '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
     ];
 
-    // Перемешиваем
-    const shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
-
     const charPool = document.getElementById('char-pool');
     const dropArea = document.getElementById('drop-area');
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
 
-    // Создаём блоки и добавляем в char-pool
-    shuffledChars.forEach(char => {
-      const box = document.createElement('div');
-      box.className = 'char-box';
-      if (char === '，') {
-        box.classList.add('punctuation');
-      }
-      box.textContent = char;
-      box.draggable = true;
+    // Определяем, мобильное ли устройство (по сенсору)
+    const isMobileDevice = 'ontouchstart' in window;
 
-      box.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', char);
-        box.classList.add('dragging');
+    // Функция перемещения иероглифа в зону сборки
+    function moveToDropArea(box) {
+      const char = box.textContent;
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.classList.remove('dragging');
+      // Убираем все обработчики
+      clone.onclick = null;
+      clone.ontouchstart = null;
+      clone.removeEventListener('dragstart', handleDragStart);
+      clone.removeEventListener('dragend', handleDragEnd);
+
+      // Удаляем оригинал
+      box.remove();
+
+      // Добавляем в зону сборки
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация пула
+    function initCharPool(shuffled) {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+
+      shuffled.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        if (char === '，') {
+          box.classList.add('punctuation');
+        }
+        box.textContent = char;
+
+        if (isMobileDevice) {
+          // На мобильных — клик
+          box.style.cursor = 'pointer';
+          box.addEventListener('click', function() {
+            moveToDropArea(this);
+          });
+        } else {
+          // На десктопе — drag and drop
+          box.draggable = true;
+          box.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', this.textContent);
+            this.classList.add('dragging');
+          });
+          box.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+          });
+        }
+
+        charPool.appendChild(box);
+      });
+    }
+
+    // Перемешиваем и инициализируем
+    let shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+    initCharPool(shuffledChars);
+
+    // Обработка drop — только для десктопа
+    if (!isMobileDevice) {
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#e67e22';
       });
 
-      box.addEventListener('dragend', () => {
-        box.classList.remove('dragging');
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.style.borderColor = '#3498db';
       });
 
-      charPool.appendChild(box);
-    });
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#3498db';
 
-    // Обработка drop в целевой области
-    dropArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropArea.style.borderColor = '#e67e22';
-    });
+        const char = e.dataTransfer.getData('text/plain');
+        const sourceBox = [...document.querySelectorAll('#char-pool .char-box')]
+          .find(b => b.textContent === char && b.draggable);
 
-    dropArea.addEventListener('dragleave', () => {
-      dropArea.style.borderColor = '#3498db';
-    });
-
-    dropArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropArea.style.borderColor = '#3498db';
-
-      const char = e.dataTransfer.getData('text/plain');
-      const draggedBox = document.querySelector(`#char-pool .char-box[draggable="true"]:not(.removed):not([style*='display: none'])[data-text='${char}']`) ||
-                        [...document.querySelectorAll('#char-pool .char-box')].find(b => b.textContent === char && b.draggable);
-
-      if (draggedBox) {
-        const clone = draggedBox.cloneNode(true);
-        clone.classList.add('removed');
-        clone.draggable = false;
-        clone.style.cursor = 'default';
-
-        // Удаляем оригинал из пула
-        draggedBox.remove();
-
-        // Добавляем в drop-area
-        dropArea.appendChild(clone);
-      }
-    });
+        if (sourceBox) {
+          moveToDropArea(sourceBox);
+        }
+      });
+    }
 
     // Проверка результата
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ <strong>Правильно!</strong> Это подлинная оракульная надпись.<br>貞曰允雨 = Вопрос гласит: «Был ли дождь?» ';
+        resultEl.innerHTML = '✅ <strong>Правильно!</strong> Это подлинная оракульная надпись.<br>貞曰允雨 = Вопрос гласит: «Был ли дождь?»';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -229,31 +275,8 @@
 
     // Сброс
     resetBtn.addEventListener('click', () => {
-      dropArea.innerHTML = '';
-      resultEl.textContent = '';
-      charPool.innerHTML = '';
-
-      const shuffled = [...allChars].sort(() => Math.random() - 0.5);
-      shuffled.forEach(char => {
-        const box = document.createElement('div');
-        box.className = 'char-box';
-        if (char === '，') {
-          box.classList.add('punctuation');
-        }
-        box.textContent = char;
-        box.draggable = true;
-
-        box.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', char);
-          box.classList.add('dragging');
-        });
-
-        box.addEventListener('dragend', () => {
-          box.classList.remove('dragging');
-        });
-
-        charPool.appendChild(box);
-      });
+      shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+      initCharPool(shuffledChars);
     });
 
     // Вспомогательные функции
@@ -272,14 +295,12 @@
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
+
+    // Сигнал: задание существует
+    window.parent.postMessage({
+      type: "TASK_EXISTS",
+      valid: true
+    }, "*");
   </script>
 </body>
 </html>
-
-<!-- Сигнал: это настоящее задание -->
-<script>
-  window.parent.postMessage({
-    type: "TASK_EXISTS",
-    valid: true
-  }, "*");
-</script>

@@ -7,98 +7,140 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
+      margin: 0;
       line-height: 1.6;
+      background: #f8f9fa;
+      color: #333;
     }
+
     h2 {
       color: #2c3e50;
       text-align: center;
-    }
-    .task {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    .oracle-text {
-      font-size: 24px;
-      text-align: center;
       margin: 20px 0;
-      font-weight: bold;
+      font-size: 28px;
     }
+
+    /* Убираем рамку — просто контент на всю ширину */
+    .task {
+      padding: 20px;
+      background: white;
+      border-radius: 0;
+      box-shadow: none;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .oracle-text {
+      font-size: 32px;
+      text-align: center;
+      margin: 30px 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #1a1a1a;
+    }
+
     .question {
       font-weight: bold;
-      margin: 15px 0 10px;
+      margin: 20px 0 10px;
+      font-size: 18px;
+      text-align: center;
     }
+
     .options {
-      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 600px;
+      margin: 20px auto;
     }
+
     .option {
       margin: 8px 0;
-      padding: 8px;
-      border-radius: 5px;
-      background: white;
+      padding: 14px;
+      border-radius: 6px;
+      background: #f0f4f8;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      border: 1px solid #d0d8e0;
+      font-size: 16px;
+      text-align: center;
     }
+
     .option:hover {
-      background: #eef7ff;
+      background: #e1effc;
+      transform: scale(1.02);
     }
+
     .option.selected {
       background: #d4edff;
-      border-left: 3px solid #3498db;
+      border-color: #3498db;
+      border-width: 2px;
+      font-weight: bold;
     }
+
     button {
-      padding: 10px 18px;
-      font-size: 16px;
+      padding: 14px 24px;
+      font-size: 18px;
       background: #3498db;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 15px;
+      margin: 30px auto;
       display: block;
-      margin-left: auto;
-      margin-right: auto;
+      transition: background 0.2s;
     }
+
     button:hover {
       background: #2980b9;
     }
+
     #result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 5px;
+      margin: 25px auto;
+      padding: 16px;
+      border-radius: 6px;
       text-align: center;
       font-weight: bold;
+      max-width: 600px;
+      font-size: 16px;
     }
+
     .success {
       background: #e8f5e9;
       color: #27ae60;
+      border: 1px solid #a5d6a7;
     }
+
     .error {
       background: #ffebee;
       color: #e74c3c;
-    }
-    .explanation {
-      margin-top: 15px;
-      padding: 10px;
-      background: #fffde7;
-      border-radius: 5px;
-      font-size: 14px;
+      border: 1px solid #ef9a9a;
     }
 
-    /* Стиль для пиньиня */
-    .pinyin-container {
-      margin: 15px 0;
-      border: 1px solid #eee;
-      border-radius: 8px;
-      overflow: hidden;
+    .explanation {
+      margin: 20px auto;
+      padding: 20px;
+      background: #fffde7;
+      border-radius: 6px;
+      font-size: 16px;
+      max-width: 700px;
+      line-height: 1.7;
+      border-left: 4px solid #ffb300;
     }
+
+    /* Пиньинь — растягивается, но не ломает читаемость */
+    .pinyin-container {
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 0;
+      overflow: hidden;
+      max-width: 600px;
+    }
+
     .pinyin-toggle {
       background: #f5f5f5;
       border: none;
-      padding: 8px 15px;
+      padding: 12px 16px;
       width: 100%;
       text-align: left;
       cursor: pointer;
@@ -108,16 +150,23 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .pinyin-toggle:hover {
       background: #eef7ff;
     }
+
     .pinyin-toggle::after {
       content: '▼';
       font-size: 12px;
       transition: transform 0.2s;
     }
+
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
     .pinyin-text {
-      padding: 0 15px;
+      padding: 0 16px;
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease, padding 0.3s ease;
@@ -125,13 +174,28 @@
       font-style: italic;
       color: #666;
       font-size: 15px;
+      border-top: 1px solid #eee;
     }
+
     .pinyin-text.expanded {
-      padding: 12px 15px;
+      padding: 12px 16px;
       max-height: 100px;
     }
-    .pinyin-toggle.expanded::after {
-      transform: rotate(180deg);
+
+    /* На маленьких экранах — адаптация */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .oracle-text {
+        font-size: 24px;
+      }
+      .options, #result, .explanation, .pinyin-container {
+        max-width: 100%;
+      }
+      .task {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -139,7 +203,7 @@
   <h2>Прямая речь в оракульных надписях</h2>
 
   <div class="task">
-    <p>Внимательно прочитайте надпись и ответьте на вопрос:</p>
+    <p style="text-align: center; font-size: 18px;">Внимательно прочитайте надпись и ответьте на вопрос:</p>
     
     <div class="oracle-text">貞丁卯其雨王占曰其雨</div>
     
@@ -171,7 +235,6 @@
   </div>
 
   <script>
-    // Все варианты с указанием, какой из них правильный
     const options = [
       { id: 1, text: "貞丁卯其雨", correct: true },
       { id: 2, text: "王占曰其雨", correct: false },
@@ -181,7 +244,6 @@
 
     let selectedOptionId = null;
 
-    // Функция Фишера-Йейтса для перемешивания массива
     function shuffleArray(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -191,14 +253,13 @@
       return arr;
     }
 
-    // Генерация вариантов в случайном порядке
     function renderOptions() {
       const container = document.getElementById("options-container");
       container.innerHTML = "";
 
       const shuffled = shuffleArray(options);
 
-      shuffled.forEach((option, index) => {
+      shuffled.forEach(option => {
         const optionEl = document.createElement("div");
         optionEl.className = "option";
         optionEl.textContent = option.text;
@@ -213,7 +274,6 @@
       document.querySelectorAll('.option').forEach(opt => {
         opt.classList.remove('selected');
       });
-      // Находим элемент с нужным data-id
       document.querySelector(`.option[data-id="${id}"]`).classList.add('selected');
     }
 
@@ -250,10 +310,8 @@
       }, "*");
     }
 
-    // Перемешиваем и отображаем варианты при загрузке
     window.onload = renderOptions;
 
-    // Сигнализируем, что задание загружено
     window.parent.postMessage({
       type: "TASK_EXISTS",
       valid: true

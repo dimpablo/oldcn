@@ -2,79 +2,145 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Какие предложения — безличные?</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
+      margin: 0;
       line-height: 1.6;
+      background: #f8f9fc;
+      color: #333;
     }
+
     h2 {
       text-align: center;
-      color: #333;
-      margin-bottom: 20px;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 28px;
     }
+
     .instruction {
       text-align: center;
       margin-bottom: 25px;
       color: #555;
       font-style: italic;
+      font-size: 17px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
     #options-container {
-      margin: 20px 0;
+      margin: 20px auto;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
+
     .option {
-      display: block;
-      margin: 10px 0;
-      padding: 12px;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      margin: 6px 0;
+      padding: 14px;
       background: #f9f9f9;
       border: 1px solid #ddd;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
+
     .option:hover {
       background: #f0f8ff;
       border-color: #007cba;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0, 124, 186, 0.1);
     }
+
     .option.checked {
       background: #e1f3ff;
       border-color: #007cba;
+      box-shadow: 0 2px 8px rgba(0, 124, 186, 0.15);
     }
+
     .option input {
-      margin-right: 10px;
-      vertical-align: middle;
+      margin-right: 12px;
+      accent-color: #007cba;
+      transform: scale(1.1);
     }
+
     button {
       display: block;
-      margin: 25px auto;
-      padding: 12px 20px;
+      margin: 30px auto;
+      padding: 12px 24px;
       font-size: 16px;
       background: #007cba;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     button:hover {
       background: #005a87;
+      transform: translateY(-1px);
     }
+
     #result {
-      margin-top: 20px;
-      padding: 15px;
+      margin-top: 25px;
+      padding: 16px;
       text-align: center;
       font-weight: bold;
-      border-radius: 5px;
+      font-size: 16px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 6px;
     }
+
     .success {
       background: #d4edda;
       color: #155724;
+      border: 1px solid #c3e6c3;
     }
+
     .error {
       background: #f8d7da;
       color: #721c24;
+      border: 1px solid #f1b1b7;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      .instruction {
+        font-size: 15px;
+        padding: 0 10px;
+      }
+      #options-container {
+        padding: 0 10px;
+      }
+      .option {
+        padding: 12px;
+        font-size: 15px;
+      }
+      button {
+        padding: 10px 18px;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
@@ -91,7 +157,6 @@
   <p id="result"></p>
 
   <script>
-    // Все варианты: текст, id (для логики), и правильный ответ (true = безличное)
     const items = [
       { id: "yu", text: "雨", isImpersonal: true },
       { id: "qi-yu", text: "其雨", isImpersonal: true },
@@ -100,7 +165,6 @@
       { id: "yun-yu", text: "允雨", isImpersonal: true }
     ];
 
-    // Функция перемешивания (Фишер-Йейтс)
     function shuffleArray(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -110,13 +174,11 @@
       return arr;
     }
 
-    // Хранение выбранных значений
     const userSelections = {};
 
-    // Генерация перемешанных пунктов
     function renderOptions() {
       const container = document.getElementById("options-container");
-      container.innerHTML = ""; // 🔴 Очищаем
+      container.innerHTML = "";
 
       const shuffled = shuffleArray(items);
 
@@ -127,10 +189,9 @@
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.id = `chk-${item.id}`; // Уникальный id
+        checkbox.id = `chk-${item.id}`;
         checkbox.checked = false;
 
-        // Сохраняем состояние при изменении
         checkbox.onchange = () => {
           userSelections[item.id] = checkbox.checked;
           if (checkbox.checked) {
@@ -146,7 +207,6 @@
         label.appendChild(textNode);
         container.appendChild(label);
 
-        // Инициализируем выбор
         userSelections[item.id] = false;
       });
     }
@@ -155,7 +215,6 @@
       const resultEl = document.getElementById("result");
       resultEl.className = "";
 
-      // Проверяем, все ли соответствуют
       const allCorrect = items.every(item => {
         const expected = item.isImpersonal;
         const actual = !!userSelections[item.id];
@@ -163,7 +222,7 @@
       });
 
       if (allCorrect) {
-        resultEl.textContent = "✅ Верно! Безличные предложения — те, где нет деятеля: погода, судьба, подтверждение.";
+        resultEl.innerHTML = "✅ <strong>Верно!</strong> Безличные предложения — те, где нет деятеля: погода, судьба, подтверждение.";
         resultEl.className = "success";
         sendResult(true);
       } else {
@@ -181,7 +240,7 @@
       }, "*");
     }
 
-    // Загрузка при старте
+    // Инициализация
     renderOptions();
 
     // Сигнал родителю
