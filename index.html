@@ -2,37 +2,101 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Курс: Древнекитайские оракульные надписи</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
     }
-    #task-container {
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 10px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Прогресс-бар */
+    #progress-container {
       width: 100%;
-      height: 500px;
-      border: 1px solid #ccc;
-      margin-top: 20px;
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.4s ease;
+      border-radius: 3px;
+    }
+
+    /* Контейнер iframe */
+    #task-container {
+      flex: 1;
+      border: none;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       opacity: 0.4;
       transition: opacity 0.3s ease;
     }
+
     #task-container.active {
       opacity: 1;
     }
+
+    #task-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      /* Если контент не влазит — масштабируем */
+      transform-origin: top left;
+      transform: scale(1);
+    }
+
+    /* Кнопка — мобильная, приятная на ощупь */
     .controls {
-      margin-top: 15px;
+      padding: 12px 0;
+      display: flex;
+      justify-content: center;
     }
-    button {
-      padding: 10px 15px;
-      font-size: 16px;
+
+    #next-btn {
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      background-color: #1976d2;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      width: 90%;
+      max-width: 300px;
     }
-    #status {
-      font-weight: bold;
-      color: #333;
+
+    #next-btn:active {
+      transform: scale(0.98);
     }
+
+    #next-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Скрытие iframe для проверки */
     .hidden-iframe {
       position: absolute;
       top: -9999px;
@@ -41,14 +105,25 @@
       height: 1px;
       border: none;
     }
+
+    /* Сообщение состояния */
+    #status {
+      font-size: 16px;
+      text-align: center;
+      padding: 8px 0;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h1>Курс: Древнекитайские оракульные надписи</h1>
-  <p id="status">🔍 Поиск заданий... Откройте консоль (F12)</p>
+  <div id="status">🔍 Поиск заданий...</div>
 
-  <div id="task-container">
-    <iframe id="task-frame" src="about:blank" width="100%" height="100%" frameborder="0"></iframe>
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="task-container" class="active">
+    <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
   </div>
 
   <div class="controls">
@@ -56,7 +131,6 @@
   </div>
 
   <script>
-    // Массив иероглифов урока (только символы)
     const lessonwords = [
       '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
       '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
@@ -68,12 +142,11 @@
     const iframe = document.getElementById("task-frame");
     const statusEl = document.getElementById("status");
     const nextBtn = document.getElementById("next-btn");
+    const progressBar = document.getElementById("progress-bar");
 
-    // Флаги
-    let hasProcessedHanzi = false;           // Однократная обработка DO_HANZI
-    let discoveryCompleted = false;          // Поиск заданий завершён
+    let hasProcessedHanzi = false;
+    let discoveryCompleted = false;
 
-    // Перемешивание массива
     function shuffleArray(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -83,127 +156,102 @@
       return arr;
     }
 
-    // Проверка: настоящий ли это task? (через fetch + postMessage)
-function checkTaskIsValid(n) {
-  return new Promise((resolve) => {
-    const filename = `task${n}.html`;
-    const frame = document.createElement("iframe");
-    frame.classList.add("hidden-iframe");
-    frame.setAttribute("data-check", n);
+    function checkTaskIsValid(n) {
+      return new Promise((resolve) => {
+        const filename = `task${n}.html`;
+        const frame = document.createElement("iframe");
+        frame.classList.add("hidden-iframe");
+        frame.setAttribute("data-check", n);
 
-    let responded = false;
-    let timeoutId;
+        let responded = false;
+        let timeoutId;
 
-    function onMessage(event) {
-      if (event.data.type === "TASK_EXISTS" && event.data.valid) {
-        const frameN = parseInt(frame.getAttribute("data-check"));
-        if (frameN === n) {
-          console.log(`✅ ${filename} — подтвердил, что он настоящий`);
-          responded = true;
-          clearTimeout(timeoutId);
-          document.body.removeChild(frame);
-          window.removeEventListener("message", onMessage);
-          resolve({ exists: true, n });
+        function onMessage(event) {
+          if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+            const frameN = parseInt(frame.getAttribute("data-check"));
+            if (frameN === n) {
+              responded = true;
+              clearTimeout(timeoutId);
+              document.body.removeChild(frame);
+              window.removeEventListener("message", onMessage);
+              resolve({ exists: true, n });
+            }
+          }
         }
-      }
-    }
 
-    window.addEventListener("message", onMessage);
+        window.addEventListener("message", onMessage);
 
-    // Таймер стартует сразу — не ждём onload
-    timeoutId = setTimeout(() => {
-      if (!responded) {
-        console.warn(`⏰ ${filename} — не ответил за 3 сек. Считаем: не существует.`);
-        document.body.removeChild(frame);
-        window.removeEventListener("message", onMessage);
-        resolve({ exists: false, n });
-      }
-    }, 3000);
+        timeoutId = setTimeout(() => {
+          if (!responded) {
+            document.body.removeChild(frame);
+            window.removeEventListener("message", onMessage);
+            resolve({ exists: false, n });
+          }
+        }, 3000);
 
-    frame.onload = () => {
-      console.log(`🟢 ${filename} — iframe загрузился`);
-      // Дополнительная проверка: если это 404-страница браузера, отклоняем
-      try {
-        if (frame.contentDocument.title === "404 Not Found") {
-          console.log(`❌ ${filename} — это страница 404`);
+        frame.onload = () => {
+          try {
+            if (frame.contentDocument.title === "404 Not Found") {
+              if (!responded) {
+                clearTimeout(timeoutId);
+                document.body.removeChild(frame);
+                window.removeEventListener("message", onMessage);
+                resolve({ exists: false, n });
+              }
+            }
+          } catch (e) {}
+        };
+
+        frame.onerror = () => {
           if (!responded) {
             clearTimeout(timeoutId);
             document.body.removeChild(frame);
             window.removeEventListener("message", onMessage);
             resolve({ exists: false, n });
           }
-        }
-      } catch (e) {
-        // Если доступ к contentDocument запрещён — это нормально
-      }
-    };
+        };
 
-    frame.onerror = () => {
-      if (!responded) {
-        console.log(`❌ ${filename} — ошибка загрузки`);
-        clearTimeout(timeoutId);
-        document.body.removeChild(frame);
-        window.removeEventListener("message", onMessage);
-        resolve({ exists: false, n });
-      }
-    };
+        frame.src = filename + "?_=" + Date.now();
+        document.body.appendChild(frame);
+      });
+    }
 
-    frame.src = filename + "?_=" + Date.now();
-    document.body.appendChild(frame);
-
-    console.log(`🔍 Проверка: ${filename} (таймер запущен)`);
-  });
-}
-
-    // Основная функция — поиск заданий
     async function discoverTasks() {
       const existingTasks = [];
       let n = 1;
 
-      statusEl.textContent = "🔍 Ищем настоящие задания...";
+      statusEl.textContent = "🔍 Ищем задания...";
 
       while (true) {
-        console.log(`🔄 Проверяем task${n}.html`);
         const result = await checkTaskIsValid(n);
 
         if (result.exists) {
           existingTasks.push(`task${n}.html`);
           n++;
         } else {
-          console.log(`🛑 Настоящее задание task${n}.html не найдено → выход`);
           break;
         }
 
-        if (n > 200) {
-          console.error("⛔ Лимит проверки (n > 200). Остановка.");
-          break;
-        }
+        if (n > 200) break;
       }
-
-      console.log(`🏁 Поиск завершён. Найдено настоящих заданий: ${existingTasks.length}`);
-      console.log("📋 Список:", existingTasks);
 
       if (existingTasks.length === 0) {
         statusEl.innerHTML = `
           ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
-          Убедитесь, что каждый <code>taskN.html</code> содержит:<br>
+          Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
           <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
         `;
         return;
       }
 
       tasks = shuffleArray(existingTasks);
-      discoveryCompleted = true;  // 🔑 Поиск завершён — теперь можно обрабатывать DO_HANZI
-      statusEl.textContent = `✅ Найдено ${tasks.length} настоящих заданий.`;
+      discoveryCompleted = true;
+      statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
+      updateProgress();
 
-      // Активируем контейнер
-      document.getElementById("task-container").classList.add("active");
-
-      // Загружаем первое задание
       loadTask(0);
     }
 
-    // Загрузка задания
     function loadTask(index) {
       if (index >= tasks.length) {
         statusEl.textContent = "🎉 Все задания выполнены!";
@@ -212,30 +260,36 @@ function checkTaskIsValid(n) {
         return;
       }
 
-      hasProcessedHanzi = false;  // Сбрасываем флаг для нового задания
+      hasProcessedHanzi = false;
 
-      console.log(`▶️ Загрузка: ${tasks[index]}`);
-      iframe.src = tasks[index];
-      statusEl.textContent = `Задание ${index + 1} из ${tasks.length}`;
+      const url = tasks[index] + "?_=" + Date.now();
+      console.log(`▶️ Загрузка: ${url}`);
+      iframe.src = url;
+
+      updateProgress();
       nextBtn.disabled = true;
       currentTaskIndex = index;
+    }
+
+    // Обновление прогресс-бара
+    function updateProgress() {
+      const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
     }
 
     // Обработка сообщений от iframe
     window.addEventListener("message", (event) => {
       const { type, success } = event.data;
 
-      // 🔐 ИГНОРИРУЕМ DO_HANZI, пока поиск заданий не завершён
       if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
         hasProcessedHanzi = true;
 
         const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
         const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
 
-        console.log(`🎨 DO_HANZI получен. Перезагружаем с #${randomChar}`);
+        console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
 
-        // Принудительная перезагрузка для Chrome
-        iframe.src = ''; // обнуляем
+        iframe.src = '';
         setTimeout(() => {
           iframe.src = newSrc;
         }, 10);
@@ -244,22 +298,37 @@ function checkTaskIsValid(n) {
         return;
       }
 
-      // Обработка результата выполнения задания
       if (type === "TASK_RESULT") {
-        statusEl.textContent = success 
-          ? "✅ Задание выполнено!" 
-          : "❌ Попробуйте снова.";
-        nextBtn.disabled = false;
+        if (success) {
+          statusEl.textContent = "✅ Задание выполнено!";
+          nextBtn.disabled = false;
+        } else {
+          statusEl.textContent = "⏳ Задание загружается...";
+        }
+      }
+
+      // Проверка размера контента iframe
+      if (type === "CONTENT_TOO_WIDE") {
+        iframe.style.transform = "scale(0.5)";
+        iframe.style.margin = "auto";
+        iframe.style.width = "200%";
+        iframe.style.height = "200%";
+      } else {
+        iframe.style.transform = "scale(1)";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
       }
     });
 
-    // Кнопка "Следующее задание"
     nextBtn.addEventListener("click", () => {
       currentTaskIndex++;
       loadTask(currentTaskIndex);
     });
 
-    // Запуск поиска
+    // Отправка размера контента из iframe (опционально)
+    // iframe может прислать: postMessage({ type: "CONTENT_TOO_WIDE" }, "*")
+    // если его содержимое шире, чем ширина экрана.
+
     discoverTasks();
   </script>
 </body>
