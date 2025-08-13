@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Перевод</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options {
+      margin-left: 20px;
+    }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+      color: #333;
+    }
+    .options input {
+      margin-right: 8px;
+    }
+    button { 
+      padding: 10px; 
+      margin-top: 20px; 
+    }
+    .pinyin-container {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pinyin-toggle:hover {
+      background: #eef7ff;
+    }
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .pinyin-text {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 15px;
+    }
+    .pinyin-text.expanded {
+      padding: 12px 15px;
+      max-height: 100px;
+    }
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Переведи словосочетание</h2>
+
+  <div id="questions-container">
+    <!-- Вопросы будут перемешаны при загрузке -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Определение вопросов (можно легко расширить)
+    const questions = [
+      {
+        id: "t1",
+        text: "丙寅卜",
+        pinyin: "bǐng yín bo",
+        options: [
+          "гадали в день бин-инь",
+          "правитель гадал",
+          "в день бинь-мао",
+          "жертвоприношение в храме"
+        ],
+        correct: "гадали в день бин-инь"
+      },
+      {
+        id: "t2",
+        text: "王占曰",
+        pinyin: "wáng zhàn yuē",
+        options: [
+          "правитель сказал",
+          "правитель истолковал",
+          "царь приказал",
+          "он записал"
+        ],
+        correct: "правитель истолковал"
+      }
+    ];
+
+    // Функция для перемешивания массива (алгоритм Фишера-Йейтса)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Вставляем вопросы в случайном порядке
+    function loadQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = ""; // очистим
+
+      const shuffled = shuffleArray(questions);
+
+      shuffled.forEach(q => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        questionDiv.innerHTML = `
+          <p><strong>${q.text}</strong></p>
+          <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+              Показать пиньинь ▼
+            </button>
+            <div class="pinyin-text">${q.pinyin}</div>
+          </div>
+          <div class="options">
+            ${q.options.map(option => `
+              <label>
+                <input type="radio" name="${q.id}" value="${option}">
+                ${option}
+              </label>
+            `).join("")}
+          </div>
+        `;
+        container.appendChild(questionDiv);
+      });
+    }
+
+    function check() {
+      const selectedT1 = document.querySelector('input[name="t1"]:checked');
+      const selectedT2 = document.querySelector('input[name="t2"]:checked');
+
+      if (!selectedT1 || !selectedT2) {
+        document.getElementById("result").textContent = "Выберите оба варианта.";
+        sendResult(false, "Не все поля заполнены");
+        return;
+      }
+
+      const correctT1 = questions.find(q => q.id === "t1").correct;
+      const correctT2 = questions.find(q => q.id === "t2").correct;
+
+      const match1 = selectedT1.value === correctT1;
+      const match2 = selectedT2.value === correctT2;
+
+      if (match1 && match2) {
+        document.getElementById("result").textContent = "✅ Верно!";
+        sendResult(true);
+      } else {
+        document.getElementById("result").textContent = "❌ Попробуйте снова. Подсказка: 曰 — вводит прямую речь, 占 — истолковывать.";
+        sendResult(false, "Неверный выбор");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Загружаем вопросы в случайном порядке при старте
+    window.onload = loadQuestions;
+
+    // Сигнализируем родителю, что задание загружено
+    window.parent.postMessage({
+      type: "TASK_EXISTS",
+      valid: true
+    }, "*");
+  </script>
+</body>
+</html>

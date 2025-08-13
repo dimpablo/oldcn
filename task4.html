@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Прямая речь в оракульных надписях</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .task {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .question {
+      font-weight: bold;
+      margin: 15px 0 10px;
+    }
+    .options {
+      margin-left: 20px;
+    }
+    .option {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background: #eef7ff;
+    }
+    .option.selected {
+      background: #d4edff;
+      border-left: 3px solid #3498db;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 10px;
+      background: #fffde7;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    /* Стиль для пиньиня */
+    .pinyin-container {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pinyin-toggle:hover {
+      background: #eef7ff;
+    }
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .pinyin-text {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 15px;
+    }
+    .pinyin-text.expanded {
+      padding: 12px 15px;
+      max-height: 100px;
+    }
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+  <h2>Прямая речь в оракульных надписях</h2>
+
+  <div class="task">
+    <p>Внимательно прочитайте надпись и ответьте на вопрос:</p>
+    
+    <div class="oracle-text">貞丁卯其雨王占曰其雨</div>
+    
+    <div class="pinyin-container">
+      <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+        Показать пиньинь ▼
+      </button>
+      <div class="pinyin-text">zhēn dīng mǎo qí yǔ wáng zhàn yuē qí yǔ</div>
+    </div>
+
+    <div class="question">Какая часть этого текста представляет собой прямой вопрос, заданный оракулу?</div>
+    
+    <div id="options-container" class="options">
+      <!-- Варианты будут вставлены динамически и перемешаны -->
+    </div>
+    
+    <button onclick="checkAnswer()">Проверить</button>
+    
+    <div id="result"></div>
+    
+    <div id="explanation" class="explanation" style="display: none;">
+      <p><strong>Объяснение:</strong> В оракульных надписях структура обычно включает:</p>
+      <ol>
+        <li><strong>Вопрос к оракулу</strong> — вводится иероглифом <strong>貞</strong> — это прямая речь</li>
+        <li><strong>Ответ</strong> — вводится фразой <strong>王占曰</strong> — "царь истолковал" — тоже прямая речь</li>
+      </ol>
+      <p>В данном случае <strong>「貞丁卯其雨」</strong> — это полная формулировка вопроса: "Гадание: будет ли дождь на четвертый день?"</p>
+    </div>
+  </div>
+
+  <script>
+    // Все варианты с указанием, какой из них правильный
+    const options = [
+      { id: 1, text: "貞丁卯其雨", correct: true },
+      { id: 2, text: "王占曰其雨", correct: false },
+      { id: 3, text: "丁卯其雨", correct: false },
+      { id: 4, text: "貞丁卯", correct: false }
+    ];
+
+    let selectedOptionId = null;
+
+    // Функция Фишера-Йейтса для перемешивания массива
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация вариантов в случайном порядке
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach((option, index) => {
+        const optionEl = document.createElement("div");
+        optionEl.className = "option";
+        optionEl.textContent = option.text;
+        optionEl.dataset.id = option.id;
+        optionEl.onclick = () => selectOption(option.id);
+        container.appendChild(optionEl);
+      });
+    }
+
+    function selectOption(id) {
+      selectedOptionId = id;
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      // Находим элемент с нужным data-id
+      document.querySelector(`.option[data-id="${id}"]`).classList.add('selected');
+    }
+
+    function checkAnswer() {
+      const resultEl = document.getElementById('result');
+      const explanationEl = document.getElementById('explanation');
+
+      if (!selectedOptionId) {
+        resultEl.textContent = "Пожалуйста, выберите вариант ответа";
+        resultEl.className = "error";
+        return;
+      }
+
+      const selectedOption = options.find(opt => opt.id === selectedOptionId);
+
+      if (selectedOption.correct) {
+        resultEl.innerHTML = "✅ <strong>Верно!</strong> Это полная формулировка вопроса к оракулу.";
+        resultEl.className = "success";
+        explanationEl.style.display = 'block';
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Не совсем верно. Попробуйте еще раз.";
+        resultEl.className = "error";
+        explanationEl.style.display = 'block';
+        sendResult(false, "Ошибка в определении прямой речи");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Правильно определена прямая речь" : "Ошибка")
+      }, "*");
+    }
+
+    // Перемешиваем и отображаем варианты при загрузке
+    window.onload = renderOptions;
+
+    // Сигнализируем, что задание загружено
+    window.parent.postMessage({
+      type: "TASK_EXISTS",
+      valid: true
+    }, "*");
+  </script>
+</body>
+</html>

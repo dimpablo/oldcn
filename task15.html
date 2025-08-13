@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Какие предложения — безличные?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .instruction {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #555;
+      font-style: italic;
+    }
+    #options-container {
+      margin: 20px 0;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .option:hover {
+      background: #f0f8ff;
+      border-color: #007cba;
+    }
+    .option.checked {
+      background: #e1f3ff;
+      border-color: #007cba;
+    }
+    .option input {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    button {
+      display: block;
+      margin: 25px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #007cba;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005a87;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Какие предложения — безличные?</h2>
+  <p class="instruction">Выберите все предложения, в которых нет подлежащего — то есть действия происходят сами по себе (чаще всего — о погоде, судьбе и т.п.).</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены динамически -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Все варианты: текст, id (для логики), и правильный ответ (true = безличное)
+    const items = [
+      { id: "yu", text: "雨", isImpersonal: true },
+      { id: "qi-yu", text: "其雨", isImpersonal: true },
+      { id: "wang-zhan-yue", text: "王占曰", isImpersonal: false },
+      { id: "bu-yu", text: "不雨", isImpersonal: true },
+      { id: "yun-yu", text: "允雨", isImpersonal: true }
+    ];
+
+    // Функция перемешивания (Фишер-Йейтс)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Хранение выбранных значений
+    const userSelections = {};
+
+    // Генерация перемешанных пунктов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = ""; // 🔴 Очищаем
+
+      const shuffled = shuffleArray(items);
+
+      shuffled.forEach(item => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.id = item.id;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `chk-${item.id}`; // Уникальный id
+        checkbox.checked = false;
+
+        // Сохраняем состояние при изменении
+        checkbox.onchange = () => {
+          userSelections[item.id] = checkbox.checked;
+          if (checkbox.checked) {
+            label.classList.add("checked");
+          } else {
+            label.classList.remove("checked");
+          }
+        };
+
+        const textNode = document.createTextNode(item.text);
+
+        label.appendChild(checkbox);
+        label.appendChild(textNode);
+        container.appendChild(label);
+
+        // Инициализируем выбор
+        userSelections[item.id] = false;
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      // Проверяем, все ли соответствуют
+      const allCorrect = items.every(item => {
+        const expected = item.isImpersonal;
+        const actual = !!userSelections[item.id];
+        return expected === actual;
+      });
+
+      if (allCorrect) {
+        resultEl.textContent = "✅ Верно! Безличные предложения — те, где нет деятеля: погода, судьба, подтверждение.";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Подумайте: 王占曰 — это действие субъекта (правитель говорит), значит — не безличное.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в определении безличных предложений");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно определены безличные формы" : "Ошибка в определении безличности")
+      }, "*");
+    }
+
+    // Загрузка при старте
+    renderOptions();
+
+    // Сигнал родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Задание 3: Значение 其</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin: 10px 0; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Что означает 其?</h2>
+  <p><strong>«其雨» — это:</strong></p>
+  <div class="pinyin-container">
+  <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+    Показать пиньинь ▼
+  </button>
+  <div class="pinyin-text">
+    qí yǔ
+  </div>
+</div>
+
+<style>
+  .pinyin-container {
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pinyin-toggle {
+    background: #f5f5f5;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pinyin-toggle:hover {
+    background: #eef7ff;
+  }
+  
+  .pinyin-toggle::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .pinyin-text {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #fafafa;
+    font-style: italic;
+    color: #666;
+    font-size: 15px;
+  }
+  
+  .pinyin-text.expanded {
+    padding: 12px 15px;
+    max-height: 100px;
+  }
+  
+  .pinyin-toggle.expanded::after {
+    transform: rotate(180deg);
+  }
+</style>
+  <label><input type="radio" name="q" value="0"> Дождь идёт</label>
+  <label><input type="radio" name="q" value="1"> Будет дождь</label>
+  <label><input type="radio" name="q" value="2"> Дождя не будет</label>
+  <label><input type="radio" name="q" value="3"> Дождь действительно был</label>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    function check() {
+      const selected = document.querySelector('input[name="q"]:checked');
+      if (!selected) {
+        document.getElementById("result").textContent = "Выберите вариант.";
+        return;
+      }
+
+      if (selected.value === "1") {
+        document.getElementById("result").textContent = "✅ Правильно! 其 — указывает на будущее действие.";
+        sendResult(true);
+      } else {
+        document.getElementById("result").textContent = "❌ Неверно. 其 — служебное слово будущего/предположения.";
+        sendResult(false, "Ошибка в интерпретации 其");
+      }
+    }
+  </script>
+</body>
+</html><script>// Сигнализируем родителю, что это — настоящее задание
+window.parent.postMessage({
+  type: "TASK_EXISTS",
+  valid: true
+}, "*");
+</script>

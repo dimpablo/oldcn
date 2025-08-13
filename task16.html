@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Что означает 卜爭?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .instruction {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #555;
+      font-style: italic;
+    }
+    #options-container {
+      margin: 20px 0;
+    }
+    .option {
+      display: block;
+      margin: 12px 0;
+      padding: 14px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .option:hover {
+      background: #f0f8ff;
+      border-color: #007cba;
+    }
+    .option.selected {
+      background: #e1f3ff;
+      border-color: #007cba;
+      box-shadow: 0 0 0 2px #b3d7ff;
+    }
+    .option input {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    button {
+      display: block;
+      margin: 25px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #007cba;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005a87;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Что означает 卜爭?</h2>
+  <p class="instruction">В оракульных надписях некоторые имена гадателей записаны через комбинации иероглифов. Что означает 卜爭?</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены здесь -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Варианты с указанием правильного
+    const options = [
+      { value: "wang", text: "Гадатель по имени Ван", correct: false },
+      { value: "zheng", text: "Гадатель по имени Чжэн", correct: true },
+      { value: "ruler-zheng", text: "Правитель Чжэн", correct: false },
+      { value: "repeat", text: "Слово «гадать» повторяется", correct: false }
+    ];
+
+    let selectedValue = null;
+
+    // Перемешивание массива (Фишер-Йейтс)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация перемешанных вариантов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = ""; // 🔴 Гарантированно очищаем
+      selectedValue = null;
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach(option => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.value = option.value;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "answer";
+        input.value = option.value;
+
+        input.onchange = () => {
+          selectedValue = option.value;
+          // Снимаем выделение
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          // Выделяем выбранный
+          label.classList.add('selected');
+        };
+
+        const textNode = document.createTextNode(option.text);
+
+        label.appendChild(input);
+        label.appendChild(textNode);
+        container.appendChild(label);
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      if (!selectedValue) {
+        resultEl.textContent = "Выберите вариант ответа.";
+        resultEl.className = "error";
+        return;
+      }
+
+      if (selectedValue === "zheng") {
+        resultEl.textContent = "✅ Верно! 卜爭 — это гадатель по имени Чжэн. Иероглиф 爭 здесь читается как «Чжэн».";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание: 爭 в этом контексте — не «спор», а имя — Чжэн.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в интерпретации иероглифа 爭");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно интерпретировано 卜爭" : "Ошибка в интерпретации")
+      }, "*");
+    }
+
+    // Загружаем варианты
+    renderOptions();
+
+    // Сигнал родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

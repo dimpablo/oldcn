@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Собери перевод оракульной надписи</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #eef7ff;
+      font-size: 24px;
+      align-items: center;
+    }
+    .word-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 60px;
+      background: #f9f9f9;
+      align-items: center;
+    }
+    .word-box {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-size: 18px;
+      padding: 8px 12px;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin: 2px;
+    }
+    .word-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .word-box.dragging {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+    .controls {
+      margin-top: 20px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+      text-align: center;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .hint {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .hint-list {
+      margin: 5px 0 0;
+      padding-left: 20px;
+      color: #7f8c8d;
+      font-size: 14px;
+      list-style-type: "🔸 ";
+    }
+    .hint-list li {
+      margin: 3px 0;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .task-container {
+      margin-bottom: 30px;
+    }
+    .task-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Собери перевод оракульной надписи</h2>
+
+  <div class="instructions">
+    <p><strong>Перетащите слова в правильном порядке</strong>, чтобы перевести оракульную надпись.</p>
+    
+  </div>
+
+  <div class="task-container">
+    <div class="task-title">1. Переведите надпись:</div>
+    <div class="oracle-text">不其雨</div>
+    
+    <p>Доступные слова:</p>
+    <div id="word-pool1" class="word-pool"></div>
+
+    <p>Соберите перевод здесь:</p>
+    <div id="drop-area1" class="drop-area"></div>
+  </div>
+
+  <div class="task-container">
+    <div class="task-title">2. Переведите надпись:</div>
+    <div class="oracle-text">貞不雨</div>
+    
+    <p>Доступные слова:</p>
+    <div id="word-pool2" class="word-pool"></div>
+
+    <p>Соберите перевод здесь:</p>
+    <div id="drop-area2" class="drop-area"></div>
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Возможные правильные переводы (без пунктуации)
+    const expected1 = [
+      ['не', 'будет', 'дождя'],
+      ['не', 'пойдёт', 'дождь'],
+      ['дождя', 'не', 'будет'],
+      ['дождь', 'не', 'пойдёт'],
+      ['не', 'будет', 'дождь'],
+      ['не', 'пойдёт', 'дождя']
+    ];
+    
+    const expected2 = [
+      ['спрашивали', 'не', 'будет', 'дождя'],
+      ['гадали', 'не', 'пойдёт', 'дождь'],
+      ['спрашивали', 'дождя', 'не', 'будет'],
+      ['гадали', 'дождь', 'не', 'пойдёт'],
+      ['спрашивали', 'не', 'пойдёт', 'дождь'],
+      ['гадали', 'не', 'будет', 'дождя']
+    ];
+
+    // Основные слова для каждого задания + несколько обманок
+    const words1 = ['не', 'будет', 'пойдёт', 'дождя', 'дождь', 'возможно', 'может', 'ли', 'дождливо'];
+    const words2 = ['спрашивали', 'гадали', 'не', 'будет', 'пойдёт', 'дождя', 'дождь', 'задавали', 'предсказывали'];
+
+    const wordPool1 = document.getElementById('word-pool1');
+    const wordPool2 = document.getElementById('word-pool2');
+    const dropArea1 = document.getElementById('drop-area1');
+    const dropArea2 = document.getElementById('drop-area2');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Инициализация
+    function init() {
+      wordPool1.innerHTML = '';
+      wordPool2.innerHTML = '';
+      dropArea1.innerHTML = '';
+      dropArea2.innerHTML = '';
+      
+      // Перемешиваем слова для каждого пула
+      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
+      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
+      
+      // Создаём блоки слов для первого задания
+      shuffled1.forEach(word => {
+        createWordBox(word, wordPool1, dropArea1);
+      });
+      
+      // Создаём блоки слов для второго задания
+      shuffled2.forEach(word => {
+        createWordBox(word, wordPool2, dropArea2);
+      });
+    }
+
+    // Создание перетаскиваемого элемента
+    function createWordBox(word, pool, dropArea) {
+      const box = document.createElement('div');
+      box.className = 'word-box';
+      box.textContent = word;
+      box.draggable = true;
+
+      box.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', word);
+        box.classList.add('dragging');
+      });
+
+      box.addEventListener('dragend', () => {
+        box.classList.remove('dragging');
+      });
+
+      pool.appendChild(box);
+      
+      // Обработка drop
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#e67e22';
+      });
+
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.style.borderColor = '#3498db';
+      });
+
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#3498db';
+
+        const word = e.dataTransfer.getData('text/plain');
+        const draggedBox = [...pool.children].find(b => b.textContent === word && b.draggable);
+
+        if (draggedBox) {
+          const clone = draggedBox.cloneNode(true);
+          clone.draggable = false;
+          clone.style.cursor = 'default';
+          draggedBox.remove();
+          dropArea.appendChild(clone);
+        }
+      });
+    }
+
+    // Проверка результата
+    checkBtn.addEventListener('click', () => {
+      const current1 = Array.from(dropArea1.children).map(el => el.textContent.trim());
+      const current2 = Array.from(dropArea2.children).map(el => el.textContent.trim());
+      
+      // Проверяем первый перевод
+      const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+      const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+      
+      if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `✅ <strong>Верно!</strong> Вы правильно перевели обе надписи.<br>
+          <em>不其雨</em> = «${current1.join(' ')}»<br>
+          <em>貞 不雨</em> = «${current2.join(' ')}»`;
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        let message = '❌ Есть ошибки. Попробуйте ещё раз.';
+        if (!isCorrect1 && isCorrect2) {
+          message = '❌ Первый перевод неверен. Второй правильный.';
+        } else if (isCorrect1 && !isCorrect2) {
+          message = '❌ Второй перевод неверен. Первый правильный.';
+        }
+        resultEl.textContent = message;
+        resultEl.className = 'message';
+        sendResult(false, 'Ошибка в переводе');
+      }
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', init);
+
+    // Вспомогательные функции
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Перевод собран верно" : "Ошибка в порядке слов")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    init();
+  </script>
+</body>
+</html>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script> 

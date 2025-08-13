@@ -1,554 +1,266 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OldCN - Learn Classical Chinese</title>
-    <style>
-        :root {
-            --main-green: #58a700;
-            --dark-green: #3c7a00;
-            --light-green: #e5ffc8;
-            --white: #ffffff;
-            --gray: #f0f0f0;
-            --dark-gray: #333333;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--dark-gray);
-            background-color: var(--gray);
-        }
-        
-        header {
-            background-color: var(--white);
-            padding: 15px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--main-green);
-        }
-        
-        .user-menu {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--main-green);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 15px;
-        }
-        
-        main {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        
-        .course-title {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .course-title h1 {
-            color: var(--main-green);
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .course-title p {
-            color: var(--dark-gray);
-            font-size: 16px;
-        }
-        
-        .path-container {
-            position: relative;
-            margin: 40px 0;
-        }
-        
-        .path-line {
-            position: absolute;
-            height: 4px;
-            background-color: var(--main-green);
-            top: 50px;
-            left: 0;
-            right: 0;
-            z-index: 1;
-        }
-        
-        .units-container {
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .unit {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 60px;
-        }
-        
-        .unit-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .unit-number {
-            background-color: var(--main-green);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-        
-        .unit-title {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .checkpoints {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-        
-        .checkpoint {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--white);
-            border: 4px solid var(--main-green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 10px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .checkpoint:hover {
-            transform: scale(1.1);
-            background-color: var(--light-green);
-        }
-        
-        .checkpoint.completed {
-            background-color: var(--main-green);
-            color: white;
-        }
-        
-        .checkpoint.current {
-            box-shadow: 0 0 0 4px var(--light-green);
-        }
-        
-        .checkpoint i {
-            font-size: 24px;
-        }
-        
-        .checkpoint-lock {
-            position: absolute;
-            bottom: -5px;
-            right: -5px;
-            background-color: var(--white);
-            border: 2px solid var(--dark-gray);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: var(--white);
-            margin-top: 50px;
-            font-size: 14px;
-            color: var(--dark-gray);
-        }
-        
-        @media (max-width: 768px) {
-            .checkpoint {
-                width: 50px;
-                height: 50px;
-                margin: 0 5px;
-            }
-            
-            .unit-title {
-                font-size: 16px;
-            }
-        }
-          .lang-switcher {
-    font-size: 20px;
-    text-decoration: none;
-    color: var(--dark-gray);
-    margin-left: 15px;
-    transition: transform 0.2s ease;
-    cursor: pointer;
-}
-
-.lang-switcher:hover {
-    transform: scale(1.1);
-}
-.btn-create-lesson {
-    margin-right: auto;
-    margin-left: 20px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    background-color: var(--main-green);
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.btn-create-lesson:hover {
-    background-color: var(--dark-green);
-}
-
-
-
-/* mobile: */
-
-
-/* Мобильные стили */
-@media (max-width: 768px) {
-    header {
-        padding: 10px 15px;
-        font-size: 14px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Курс: Древнекитайские оракульные надписи</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
     }
-
-    .logo {
-        font-size: 18px;
+    #task-container {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      opacity: 0.4;
+      transition: opacity 0.3s ease;
     }
-
-    .user-menu {
-        font-size: 12px;
+    #task-container.active {
+      opacity: 1;
     }
-
-    .user-avatar {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
+    .controls {
+      margin-top: 15px;
     }
-
-    .btn-create-lesson {
-        margin-left: 10px;
-        padding: 6px 12px;
-        font-size: 12px;
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
     }
-
-    .progress-bar {
-        height: 6px;
-        margin: 15px auto;
+    #status {
+      font-weight: bold;
+      color: #333;
     }
-
-    .progress-fill {
-        height: 100%;
-        background-color: var(--main-green);
-        width: 16%;
-        transition: width 0.3s;
+    .hidden-iframe {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      border: none;
     }
-
-    .unit-number {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
-    }
-
-    .unit-title {
-        font-size: 14px;
-    }
-
-    .checkpoint {
-        width: 40px;
-        height: 40px;
-        margin: 0 5px;
-    }
-
-    .checkpoint-lock {
-        width: 16px;
-        height: 16px;
-        font-size: 8px;
-    }
-
-    .hint-btn {
-        margin-top: 8px;
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    .keyboard-char {
-        padding: 8px 12px;
-        font-size: 16px;
-        min-width: 32px;
-    }
-
-    .next-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-
-    .character {
-        font-size: 36px;
-    }
-
-    .image-option img {
-        width: 60px;
-        height: 60px;
-    }
-
-    .task-prompt,
-    .option {
-        font-size: 14px;
-    }
-}
-@media (max-width: 768px) {
-
-
-    .btn-create-lesson.mobile-visible {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background-color: var(--main-green);
-        color: white;
-        border-radius: 5px;
-        margin-left: 8px;
-        font-size: 12px;
-    }
-
-    .btn-create-lesson.mobile-visible:hover {
-        background-color: var(--dark-green);
-    }
-}
-
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  </style>
 </head>
 <body>
-    <header>
-<div class="logo">OldCN</div>
-            <!-- Кнопка "Create Your OWN lessons!" -->
-    <a href="taskgenerator_eng.html" class="btn-create-lesson" target="_blank">
-        Create Your OWN lessons!
-    </a>
-    
+  <h1>Курс: Древнекитайские оракульные надписи</h1>
+  <p id="status">🔍 Поиск заданий... Откройте консоль (F12)</p>
 
+  <div id="task-container">
+    <iframe id="task-frame" src="about:blank" width="100%" height="100%" frameborder="0"></iframe>
+  </div>
 
-    <div class="user-menu">
-    <span>My progress</span>
-    <div class="user-avatar">U</div>
+  <div class="controls">
+    <button id="next-btn" disabled>Следующее задание</button>
+  </div>
 
-            <a href="./invest.html" class="lang-switcher" title="Переключиться на английскую версию">
-        INVEST 📈 IN US 
-    </a>    <a href="./index_rus.html" class="lang-switcher" title="Переключиться на английскую версию">
-        Сменить язык 🌐 
-    </a>
+  <script>
+    // Массив иероглифов урока (только символы)
+    const lessonwords = [
+      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
+      '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
+    ];
 
-</div>
-    </header>
-    
-    <main>
-        <div class="course-title">
-            <h1>Classical Chinese</h1>
-            <p>Learn the language of classic Chinese texts step by step</p>
-        </div>
-        
-        <div class="path-container">
-            <div class="path-line"></div>
-            
-            <div class="units-container">
-                <!-- Unit 1 -->
-                <div class="unit">
-                    <div class="unit-header">
-                        <div class="unit-number">1</div>
-                        <div class="unit-title">Basic words and particle 之</div>
-                    </div>
-                    <div class="checkpoints">
-<div class="checkpoint completed" onclick="window.location.href='begin_eng.html'" style="cursor: pointer;">
-    <i class="fas fa-check"></i>
-</div>
+    let tasks = [];
+    let currentTaskIndex = 0;
 
-                        <div onclick="window.location.href='hanzi.html'" class="checkpoint completed">
-                            <h2>字</h2>
-                        </div>
-                        <div class="checkpoint completed">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="checkpoint completed">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="checkpoint current">
-                            <i class="fas fa-book"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Unit 2 -->
-                <div class="unit">
-                    <div class="unit-header">
-                        <div class="unit-number">2</div>
-                        <div class="unit-title">Basic grammatical structures</div>
-                    </div>
-                    <div class="checkpoints">
-                        <div class="checkpoint">
-                            <i class="fas fa-lock"></i>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Units 3-29 (collapsed for brevity) -->
-                <div class="unit">
-                    <div class="unit-header">
-                        <div class="unit-number">3</div>
-                        <div class="unit-title">Particles and modal words</div>
-                    </div>
-                    <div class="checkpoints">
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <!-- 4 more checkpoints -->
-                    </div>
-                </div>
-                
-                <!-- More units... -->
-                
-                <!-- Unit 30 -->
-                <div class="unit">
-                    <div class="unit-header">
-                        <div class="unit-number">30</div>
-                        <div class="unit-title">Classic texts</div>
-                    </div>
-                    <div class="checkpoints">
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                        <div class="checkpoint">
-                            <div class="checkpoint-lock">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    <script>
-    // Функция определяет, мобильное ли устройство
-    function isMobileDevice() {
-        return (typeof window.orientation !== "undefined") || 
-               (navigator.userAgent.includes('Mobi'));
+    const iframe = document.getElementById("task-frame");
+    const statusEl = document.getElementById("status");
+    const nextBtn = document.getElementById("next-btn");
+
+    // Флаги
+    let hasProcessedHanzi = false;           // Однократная обработка DO_HANZI
+    let discoveryCompleted = false;          // Поиск заданий завершён
+
+    // Перемешивание массива
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
-    // Вызывается при загрузке страницы
-    window.addEventListener('DOMContentLoaded', () => {
-        if (isMobileDevice()) {
-            document.body.classList.add('mobile-view');
-document.getElementsByClassName("lang-switcher")[1].innerText='🇷🇺';
-document.getElementsByClassName("btn-create-lesson")[0].innerText = 'Contribute';
-document.getElementsByClassName("lang-switcher")[0].innerText='INVEST 📈';
-document.getElementsByTagName("span")[0].innerText='Progress' 
-document.getElementsByClassName("logo")[0].remove();
+    // Проверка: настоящий ли это task? (через fetch + postMessage)
+function checkTaskIsValid(n) {
+  return new Promise((resolve) => {
+    const filename = `task${n}.html`;
+    const frame = document.createElement("iframe");
+    frame.classList.add("hidden-iframe");
+    frame.setAttribute("data-check", n);
 
+    let responded = false;
+    let timeoutId;
 
-
-
+    function onMessage(event) {
+      if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+        const frameN = parseInt(frame.getAttribute("data-check"));
+        if (frameN === n) {
+          console.log(`✅ ${filename} — подтвердил, что он настоящий`);
+          responded = true;
+          clearTimeout(timeoutId);
+          document.body.removeChild(frame);
+          window.removeEventListener("message", onMessage);
+          resolve({ exists: true, n });
         }
+      }
+    }
+
+    window.addEventListener("message", onMessage);
+
+    // Таймер стартует сразу — не ждём onload
+    timeoutId = setTimeout(() => {
+      if (!responded) {
+        console.warn(`⏰ ${filename} — не ответил за 3 сек. Считаем: не существует.`);
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    }, 3000);
+
+    frame.onload = () => {
+      console.log(`🟢 ${filename} — iframe загрузился`);
+      // Дополнительная проверка: если это 404-страница браузера, отклоняем
+      try {
+        if (frame.contentDocument.title === "404 Not Found") {
+          console.log(`❌ ${filename} — это страница 404`);
+          if (!responded) {
+            clearTimeout(timeoutId);
+            document.body.removeChild(frame);
+            window.removeEventListener("message", onMessage);
+            resolve({ exists: false, n });
+          }
+        }
+      } catch (e) {
+        // Если доступ к contentDocument запрещён — это нормально
+      }
+    };
+
+    frame.onerror = () => {
+      if (!responded) {
+        console.log(`❌ ${filename} — ошибка загрузки`);
+        clearTimeout(timeoutId);
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    };
+
+    frame.src = filename + "?_=" + Date.now();
+    document.body.appendChild(frame);
+
+    console.log(`🔍 Проверка: ${filename} (таймер запущен)`);
+  });
+}
+
+    // Основная функция — поиск заданий
+    async function discoverTasks() {
+      const existingTasks = [];
+      let n = 1;
+
+      statusEl.textContent = "🔍 Ищем настоящие задания...";
+
+      while (true) {
+        console.log(`🔄 Проверяем task${n}.html`);
+        const result = await checkTaskIsValid(n);
+
+        if (result.exists) {
+          existingTasks.push(`task${n}.html`);
+          n++;
+        } else {
+          console.log(`🛑 Настоящее задание task${n}.html не найдено → выход`);
+          break;
+        }
+
+        if (n > 200) {
+          console.error("⛔ Лимит проверки (n > 200). Остановка.");
+          break;
+        }
+      }
+
+      console.log(`🏁 Поиск завершён. Найдено настоящих заданий: ${existingTasks.length}`);
+      console.log("📋 Список:", existingTasks);
+
+      if (existingTasks.length === 0) {
+        statusEl.innerHTML = `
+          ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
+          Убедитесь, что каждый <code>taskN.html</code> содержит:<br>
+          <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
+        `;
+        return;
+      }
+
+      tasks = shuffleArray(existingTasks);
+      discoveryCompleted = true;  // 🔑 Поиск завершён — теперь можно обрабатывать DO_HANZI
+      statusEl.textContent = `✅ Найдено ${tasks.length} настоящих заданий.`;
+
+      // Активируем контейнер
+      document.getElementById("task-container").classList.add("active");
+
+      // Загружаем первое задание
+      loadTask(0);
+    }
+
+    // Загрузка задания
+    function loadTask(index) {
+      if (index >= tasks.length) {
+        statusEl.textContent = "🎉 Все задания выполнены!";
+        iframe.style.display = "none";
+        nextBtn.disabled = true;
+        return;
+      }
+
+      hasProcessedHanzi = false;  // Сбрасываем флаг для нового задания
+
+      console.log(`▶️ Загрузка: ${tasks[index]}`);
+      iframe.src = tasks[index];
+      statusEl.textContent = `Задание ${index + 1} из ${tasks.length}`;
+      nextBtn.disabled = true;
+      currentTaskIndex = index;
+    }
+
+    // Обработка сообщений от iframe
+    window.addEventListener("message", (event) => {
+      const { type, success } = event.data;
+
+      // 🔐 ИГНОРИРУЕМ DO_HANZI, пока поиск заданий не завершён
+      if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+        hasProcessedHanzi = true;
+
+        const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
+        const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
+
+        console.log(`🎨 DO_HANZI получен. Перезагружаем с #${randomChar}`);
+
+        // Принудительная перезагрузка для Chrome
+        iframe.src = ''; // обнуляем
+        setTimeout(() => {
+          iframe.src = newSrc;
+        }, 10);
+
+        nextBtn.disabled = true;
+        return;
+      }
+
+      // Обработка результата выполнения задания
+      if (type === "TASK_RESULT") {
+        statusEl.textContent = success 
+          ? "✅ Задание выполнено!" 
+          : "❌ Попробуйте снова.";
+        nextBtn.disabled = false;
+      }
     });
-</script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-    authDomain: "antient-9bff0.firebaseapp.com",
-    projectId: "antient-9bff0",
-    storageBucket: "antient-9bff0.firebasestorage.app",
-    messagingSenderId: "311792589414",
-    appId: "1:311792589414:web:5fff3154735007c2006ba7",
-    measurementId: "G-W4ZQXWRTKK"
-  };
+    // Кнопка "Следующее задание"
+    nextBtn.addEventListener("click", () => {
+      currentTaskIndex++;
+      loadTask(currentTaskIndex);
+    });
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-    <footer>
-        <p>OldCN - the study of the ancient Chinese language. © 2025 All rights reserved.</p>
-    </footer>
+    // Запуск поиска
+    discoverTasks();
+  </script>
 </body>
 </html>
