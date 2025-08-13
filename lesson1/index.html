@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Курс: Древнекитайские оракульные надписи</title>
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+  gap: 8px; /* небольшой отступ между блоками */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scale-btn {
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.scale-value {
+  min-width: 36px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#progress-container {
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: #4caf50;
+  transition: width 0.4s ease;
+  border-radius: 3px;
+}
+
+#task-container {
+  flex: 1; /* Занимает ВСЁ оставшееся пространство */
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  min-height: 0; /* на случай сжатия */
+}
+
+#task-container.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#task-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform-origin: top left;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+.controls {
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0; /* Не сжимается! */
+}
+
+#next-btn {
+  padding: 14px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  width: 90%;
+  max-width: 300px;
+}
+
+#next-btn:active {
+  transform: scale(0.98);
+}
+
+#next-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.hidden-iframe {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  border: none;
+}
+
+#status {
+  font-size: 16px;
+  text-align: center;
+  color: #555;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="status">🔍 Поиск заданий...</div>
+    <div class="scale-controls">
+      <div class="scale-btn" id="zoom-out">−</div>
+      <div class="scale-value" id="scale-value">1.0</div>
+      <div class="scale-btn" id="zoom-in">+</div>
+    </div>
+  </div>
+
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- iframe скрыт до завершения поиска -->
+  <div id="task-container">
+    <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <div class="controls">
+    <button id="next-btn" disabled>Следующее задание</button>
+  </div>
+
+  <script>
+    const lessonwords = [
+      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
+      '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
+    ];
+
+    let tasks = [];
+    let currentTaskIndex = 0;
+    let currentScale = 1.0;
+    const minScale = 0.25;
+    const maxScale = 2.0;
+    const scaleStep = 0.1;
+
+    const iframe = document.getElementById("task-frame");
+    const statusEl = document.getElementById("status");
+    const nextBtn = document.getElementById("next-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const scaleValueEl = document.getElementById("scale-value");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+
+    let hasProcessedHanzi = false;
+    let discoveryCompleted = false;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function checkTaskIsValid(n) {
+  return new Promise((resolve) => {
+    const filename = `task${n}.html`;
+    const frame = document.createElement("iframe");
+    frame.classList.add("hidden-iframe");
+    frame.setAttribute("data-check", n);
+
+    let responded = false;
+    let timeoutId;
+
+    function onMessage(event) {
+      // Проверяем, что сообщение от нашего фрейма
+      const frameN = parseInt(frame.getAttribute("data-check"));
+      if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+        if (!responded && frameN === n) {
+          responded = true;
+          clearTimeout(timeoutId);
+          document.body.removeChild(frame);
+          window.removeEventListener("message", onMessage);
+          resolve({ exists: true, n });
+        }
+      }
+    }
+
+    window.addEventListener("message", onMessage);
+
+    timeoutId = setTimeout(() => {
+      if (!responded) {
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    }, 3000);
+
+    frame.onload = () => {
+      try {
+        // Если браузер показал 404 (в некоторых средах)
+        if (frame.contentDocument && frame.contentDocument.title === "404 Not Found") {
+          if (!responded) {
+            clearTimeout(timeoutId);
+            document.body.removeChild(frame);
+            window.removeEventListener("message", onMessage);
+            resolve({ exists: false, n });
+          }
+        }
+      } catch (e) {
+        // Доступ заблокирован — возможно, ошибка, но не 404
+      }
+    };
+
+    frame.onerror = () => {
+      if (!responded) {
+        clearTimeout(timeoutId);
+        document.body.removeChild(frame);
+        window.removeEventListener("message", onMessage);
+        resolve({ exists: false, n });
+      }
+    };
+
+    frame.src = filename + "?_=" + Date.now();
+    document.body.appendChild(frame);
+  });
+}
+
+    async function discoverTasks() {
+      const existingTasks = [];
+      let n = 1;
+
+      statusEl.textContent = "🔍 Ищем задания...";
+
+      while (true) {
+        const result = await checkTaskIsValid(n);
+
+        if (result.exists) {
+          existingTasks.push(`task${n}.html`);
+          n++;
+        } else {
+          break;
+        }
+
+        if (n > 200) break;
+      }
+
+      if (existingTasks.length === 0) {
+        statusEl.innerHTML = `
+          ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
+          Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
+          <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
+        `;
+        return;
+      }
+
+      tasks = shuffleArray(existingTasks);
+      discoveryCompleted = true;
+      statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
+      updateProgress();
+
+      // 🔓 Показываем iframe только после поиска
+      document.getElementById("task-container").classList.add("active");
+
+      // Автомасштаб на мобильных
+      if (isMobile()) {
+        setScale(0.5);
+      }
+
+      loadTask(0);
+    }
+
+    function loadTask(index) {
+  if (index >= tasks.length) {
+    // Скрыть iframe
+    iframe.style.display = "none";
+    nextBtn.disabled = true;
+
+    // Обновить статус
+    statusEl.innerHTML = `<div style="text-align: center;">
+      <h2>🎉 Поздравляем!</h2>
+      <p>Вы успешно завершили урок<br><strong>Древнекитайские оракульные надписи</strong>!</p>
+      <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
+    </div>`;
+
+    // Добавить фейерверки (простая реализация)
+    createFireworks();
+
+    // Через 5 секунд — редирект в ../
+    setTimeout(() => {
+      window.location.href = "../";
+    }, 5000);
+
+    updateProgress();
+    return;
+  }
+
+  hasProcessedHanzi = false;
+  const url = tasks[index] + "?_=" + Date.now();
+  console.log(`▶️ Загрузка: ${url}`);
+  iframe.src = url;
+
+  updateProgress();
+  nextBtn.disabled = true;
+  currentTaskIndex = index;
+}
+
+    function updateProgress() {
+      const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // Управление масштабом
+    function setScale(scale) {
+      currentScale = scale;
+      iframe.style.transform = `scale(${currentScale})`;
+      scaleValueEl.textContent = currentScale.toFixed(1);
+    }
+
+    zoomInBtn.addEventListener("click", () => {
+      if (currentScale < maxScale) {
+        setScale(Math.round((currentScale + scaleStep) * 10) / 10);
+      }
+    });
+
+    zoomOutBtn.addEventListener("click", () => {
+      if (currentScale > minScale) {
+        setScale(Math.round((currentScale - scaleStep) * 10) / 10);
+      }
+    });
+
+    // Определение мобильного устройства
+    function isMobile() {
+      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+    }
+
+    // Обработка сообщений от iframe
+    window.addEventListener("message", (event) => {
+      const { type, success } = event.data;
+
+      if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+        hasProcessedHanzi = true;
+
+        const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
+        const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
+
+        console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
+
+        iframe.src = '';
+        setTimeout(() => {
+          iframe.src = newSrc;
+        }, 10);
+
+        nextBtn.disabled = true;
+        return;
+      }
+
+      if (type === "TASK_RESULT") {
+        if (success) {
+          statusEl.textContent = "✅ Задание выполнено!";
+          nextBtn.disabled = false;
+        } else {
+          statusEl.textContent = "⏳ Задание загружается...";
+        }
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentTaskIndex++;
+      loadTask(currentTaskIndex);
+    });
+
+    // Запуск
+    discoverTasks();
+      function createFireworks() {
+  const container = document.getElementById("fireworks");
+  const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
+  const particles = 50;
+
+  function createExplosion(x, y) {
+    for (let i = 0; i < particles; i++) {
+      const particle = document.createElement("div");
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 3;
+      const size = 2 + Math.random() * 4;
+
+      particle.style.position = "absolute";
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.borderRadius = "50%";
+      particle.style.boxShadow = "0 0 6px currentColor";
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.pointerEvents = "none";
+
+      container.appendChild(particle);
+
+      // Анимация
+      let dx = Math.cos(angle) * speed;
+      let dy = Math.sin(angle) * speed;
+      let opacity = 1;
+      let posX = x;
+      let posY = y;
+
+      const animate = () => {
+        opacity -= 0.02;
+        posX += dx;
+        posY += dy + 0.1; // гравитация
+        dy += 0.05;
+
+        particle.style.opacity = opacity;
+        particle.style.left = `${posX}px`;
+        particle.style.top = `${posY}px`;
+
+        if (opacity > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          container.removeChild(particle);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }
+
+  // Запуск нескольких взрывов
+  setInterval(() => {
+    const x = 50 + Math.random() * (container.offsetWidth - 100);
+    const y = 100 + Math.random() * (container.offsetHeight - 100);
+    createExplosion(x, y);
+  }, 400);
+}
+  </script>
+</body>
+</html>

@@ -1,0 +1,6039 @@
+=== 📄 Duolingo style menu.html ===
+<html lang="zh"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>古汉语之道 — Центрированная синусоида</title>
+  <style>
+    :root {
+      --color-primary: 97, 196, 255;
+      --color-theory: 66, 133, 244;
+      --color-hanzi: 255, 140, 0;
+      --color-practice: 122, 199, 12;
+      --color-bg: 255, 253, 240;
+      --color-line: 220, 210, 190;
+      --color-text: 60, 50, 40;
+      --unit-size: 60px;
+      --gap-unit: 80px;
+      --amplitude: 140px;
+      --wavelength: 8;
+      --font-ui: 'Segoe UI', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: rgb(var(--color-bg));
+      color: rgb(var(--color-text));
+      font-family: var(--font-ui);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* --- Навигация --- */
+    .lingo-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem;
+      background: white;
+      border-bottom: 1px solid #e0d8c8;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .lingo-logo {
+      font-weight: bold;
+      font-size: 1.6rem;
+      color: rgb(var(--color-primary));
+    }
+
+    .lingo-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .lingo-stat {
+      background: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+      font-weight: 600;
+    }
+
+    /* --- Прогресс --- */
+    .lingo-progress {
+      padding: 1rem 1.5rem;
+      background: white;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #777;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* --- Секция --- */
+    .ancient-section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      position: relative;
+      background-color: whitesmoke;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 1.6rem;
+      color: rgb(var(--color-primary));
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-era {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 2rem;
+    }
+
+    /* --- Центральная линия --- */
+    .path-track {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: rgb(var(--color-line));
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+
+    /* --- Контейнер для юнита --- */
+    .unit-wrapper {
+      position: absolute;
+      left: 50%; /* Всегда от центра */
+      top: 0;
+      transform: translateX(0); /* Будет изменяться через JS */
+      text-align: center;
+      width: auto; /* Важно: не 100% */
+    }
+
+    /* --- Юнит (кружочек) --- */
+    .unit-node {
+      position: relative;
+      width: var(--unit-size);
+      height: var(--unit-size);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+
+    .unit-node.theory { background: rgb(var(--color-theory)); }
+    .unit-node.hanzi  { background: rgb(var(--color-hanzi)); }
+    .unit-node.practice { background: rgb(var(--color-practice)); }
+
+    /* --- Подпись --- */
+    .unit-label {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* --- Адаптивность --- */
+    @media (max-width: 768px) {
+      :root {
+        --amplitude: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Навигация -->
+  <header class="lingo-nav">
+    <div class="lingo-logo">古汉语之道</div>
+    <div class="lingo-stats">
+      <span class="lingo-stat">🔥 42 дня</span>
+      <span class="lingo-stat">💰 1875 XP</span>
+    </div>
+  </header>
+
+
+
+  <!-- Секция -->
+  <div class="ancient-section">
+    <h1 class="section-title">Архаический древнекитайский язык</h1>
+    <p class="section-era">Оракульные надписи династии Шан</p>
+
+
+
+    <!-- Юниты будут добавлены через JS -->
+  <div class="unit-wrapper" style="top: 100px; transform: translateX(0px);"><div class="unit-node theory">📖</div><div class="unit-label"><br>Первый текст!</div></div><div class="unit-wrapper" style="top: 180px; transform: translateX(98.995px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 260px; transform: translateX(140px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 340px; transform: translateX(98.995px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 420px; transform: translateX(1.71451e-14px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 500px; transform: translateX(-98.995px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 580px; transform: translateX(-140px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 660px; transform: translateX(-98.995px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 740px; transform: translateX(-3.42901e-14px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 820px; transform: translateX(98.995px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 900px; transform: translateX(140px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 980px; transform: translateX(98.995px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 1060px; transform: translateX(5.14352e-14px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 1140px; transform: translateX(-98.995px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 1220px; transform: translateX(-140px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 1300px; transform: translateX(-98.995px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 1380px; transform: translateX(-6.85802e-14px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 1460px; transform: translateX(98.995px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 1540px; transform: translateX(140px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 1620px; transform: translateX(98.995px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 1700px; transform: translateX(8.57253e-14px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 1780px; transform: translateX(-98.995px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 1860px; transform: translateX(-140px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 1940px; transform: translateX(-98.995px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 2020px; transform: translateX(-1.0287e-13px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 2100px; transform: translateX(98.995px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 2180px; transform: translateX(140px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div><div class="unit-wrapper" style="top: 2260px; transform: translateX(98.995px);"><div class="unit-node theory">📖</div><div class="unit-label">Теория</div></div><div class="unit-wrapper" style="top: 2340px; transform: translateX(1.20015e-13px);"><div class="unit-node hanzi">🖌️</div><div class="unit-label">Hanzi</div></div><div class="unit-wrapper" style="top: 2420px; transform: translateX(-98.995px);"><div class="unit-node practice">✍️</div><div class="unit-label">Практика</div></div></div>
+
+  <script>
+    const container = document.querySelector('.ancient-section');
+    const totalLessons = 10;
+    const unitsPerLesson = 3;
+    const totalUnits = totalLessons * unitsPerLesson;
+    const startTop = 100;
+    const unitGap = 80;
+
+    const amplitude = 140;
+    const wavelength = 8; // в юнитах
+
+    for (let lesson = 0; lesson < totalLessons; lesson++) {
+      for (let unit = 0; unit < unitsPerLesson; unit++) {
+        const unitIndex = lesson * unitsPerLesson + unit;
+        const topPosition = startTop + unitIndex * unitGap;
+
+        // Синусоидальное смещение
+        const angle = (unitIndex / wavelength) * 2 * Math.PI;
+        const offsetX = Math.sin(angle) * amplitude; // может быть от -140 до +140
+
+        // Создаём контейнер
+        const wrapper = document.createElement('div');
+        wrapper.className = 'unit-wrapper';
+        wrapper.style.top = `${topPosition}px`;
+        wrapper.style.transform = `translateX(${offsetX}px)`; // смещение от центра
+
+        // Определяем тип
+        let unitType, icon, label;
+        if (unit === 0) {
+          unitType = 'theory';
+          icon = '📖';
+          label = 'Теория';
+        } else if (unit === 1) {
+          unitType = 'hanzi';
+          icon = '🖌️';
+          label = 'Hanzi';
+        } else {
+          unitType = 'practice';
+          icon = '✍️';
+          label = 'Практика';
+        }
+
+        // Кружочек
+        const unitNode = document.createElement('div');
+        unitNode.className = `unit-node ${unitType}`;
+        unitNode.innerHTML = icon;
+
+        // Подпись
+        const unitLabel = document.createElement('div');
+        unitLabel.className = 'unit-label';
+        unitLabel.textContent = label;
+
+        // Собираем
+        wrapper.appendChild(unitNode);
+        wrapper.appendChild(unitLabel);
+        container.appendChild(wrapper);
+      }
+    }
+
+    // Обработчики кликов
+    document.querySelectorAll('.unit-node').forEach(unit => {
+      unit.addEventListener('click', () => {
+        const types = { '📖': 'Теория', '🖌️': 'Hanzi', '✍️': 'Практика' };
+        const type = types[unit.textContent.trim()];
+        alert(`Открываем: ${type}`);
+      });
+    });
+  </script>
+
+
+</body></html>-e 
+
+=== 📄 index.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Курс: Древнекитайские оракульные надписи</title>
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+  gap: 8px; /* небольшой отступ между блоками */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scale-btn {
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  line-height: 28px;
+  text-align: center;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.scale-value {
+  min-width: 36px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#progress-container {
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: #4caf50;
+  transition: width 0.4s ease;
+  border-radius: 3px;
+}
+
+#task-container {
+  flex: 1; /* Занимает ВСЁ оставшееся пространство */
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  min-height: 0; /* на случай сжатия */
+}
+
+#task-container.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#task-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform-origin: top left;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+.controls {
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0; /* Не сжимается! */
+}
+
+#next-btn {
+  padding: 14px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  width: 90%;
+  max-width: 300px;
+}
+
+#next-btn:active {
+  transform: scale(0.98);
+}
+
+#next-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.hidden-iframe {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  border: none;
+}
+
+#status {
+  font-size: 16px;
+  text-align: center;
+  color: #555;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="status">🔍 Поиск заданий...</div>
+    <div class="scale-controls">
+      <div class="scale-btn" id="zoom-out">−</div>
+      <div class="scale-value" id="scale-value">1.0</div>
+      <div class="scale-btn" id="zoom-in">+</div>
+    </div>
+  </div>
+
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- iframe скрыт до завершения поиска -->
+  <div id="task-container">
+    <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <div class="controls">
+    <button id="next-btn" disabled>Следующее задание</button>
+  </div>
+
+  <script>
+    const lessonwords = [
+      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
+      '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
+    ];
+
+    let tasks = [];
+    let currentTaskIndex = 0;
+    let currentScale = 1.0;
+    const minScale = 0.25;
+    const maxScale = 2.0;
+    const scaleStep = 0.1;
+
+    const iframe = document.getElementById("task-frame");
+    const statusEl = document.getElementById("status");
+    const nextBtn = document.getElementById("next-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const scaleValueEl = document.getElementById("scale-value");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+
+    let hasProcessedHanzi = false;
+    let discoveryCompleted = false;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function checkTaskIsValid(n) {
+      return new Promise((resolve) => {
+        const filename = `task${n}.html`;
+        const frame = document.createElement("iframe");
+        frame.classList.add("hidden-iframe");
+        frame.setAttribute("data-check", n);
+
+        let responded = false;
+        let timeoutId;
+
+        function onMessage(event) {
+          if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+            const frameN = parseInt(frame.getAttribute("data-check"));
+            if (frameN === n) {
+              responded = true;
+              clearTimeout(timeoutId);
+              document.body.removeChild(frame);
+              window.removeEventListener("message", onMessage);
+              resolve({ exists: true, n });
+            }
+          }
+        }
+
+        window.addEventListener("message", onMessage);
+
+        timeoutId = setTimeout(() => {
+          if (!responded) {
+            document.body.removeChild(frame);
+            window.removeEventListener("message", onMessage);
+            resolve({ exists: false, n });
+          }
+        }, 3000);
+
+        frame.onload = () => {
+          try {
+            if (frame.contentDocument.title === "404 Not Found") {
+              if (!responded) {
+                clearTimeout(timeoutId);
+                document.body.removeChild(frame);
+                window.removeEventListener("message", onMessage);
+                resolve({ exists: false, n });
+              }
+            }
+          } catch (e) {}
+        };
+
+        frame.onerror = () => {
+          if (!responded) {
+            clearTimeout(timeoutId);
+            document.body.removeChild(frame);
+            window.removeEventListener("message", onMessage);
+            resolve({ exists: false, n });
+          }
+        };
+
+        frame.src = filename + "?_=" + Date.now();
+        document.body.appendChild(frame);
+      });
+    }
+
+    async function discoverTasks() {
+      const existingTasks = [];
+      let n = 1;
+
+      statusEl.textContent = "🔍 Ищем задания...";
+
+      while (true) {
+        const result = await checkTaskIsValid(n);
+
+        if (result.exists) {
+          existingTasks.push(`task${n}.html`);
+          n++;
+        } else {
+          break;
+        }
+
+        if (n > 200) break;
+      }
+
+      if (existingTasks.length === 0) {
+        statusEl.innerHTML = `
+          ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
+          Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
+          <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
+        `;
+        return;
+      }
+
+      tasks = shuffleArray(existingTasks);
+      discoveryCompleted = true;
+      statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
+      updateProgress();
+
+      // 🔓 Показываем iframe только после поиска
+      document.getElementById("task-container").classList.add("active");
+
+      // Автомасштаб на мобильных
+      if (isMobile()) {
+        setScale(0.5);
+      }
+
+      loadTask(0);
+    }
+
+    function loadTask(index) {
+      if (index >= tasks.length) {
+        statusEl.textContent = "🎉 Все задания выполнены!";
+        iframe.style.display = "none";
+        nextBtn.disabled = true;
+        return;
+      }
+
+      hasProcessedHanzi = false;
+
+      const url = tasks[index] + "?_=" + Date.now();
+      console.log(`▶️ Загрузка: ${url}`);
+      iframe.src = url;
+
+      updateProgress();
+      nextBtn.disabled = true;
+      currentTaskIndex = index;
+    }
+
+    function updateProgress() {
+      const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // Управление масштабом
+    function setScale(scale) {
+      currentScale = scale;
+      iframe.style.transform = `scale(${currentScale})`;
+      scaleValueEl.textContent = currentScale.toFixed(1);
+    }
+
+    zoomInBtn.addEventListener("click", () => {
+      if (currentScale < maxScale) {
+        setScale(Math.round((currentScale + scaleStep) * 10) / 10);
+      }
+    });
+
+    zoomOutBtn.addEventListener("click", () => {
+      if (currentScale > minScale) {
+        setScale(Math.round((currentScale - scaleStep) * 10) / 10);
+      }
+    });
+
+    // Определение мобильного устройства
+    function isMobile() {
+      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+    }
+
+    // Обработка сообщений от iframe
+    window.addEventListener("message", (event) => {
+      const { type, success } = event.data;
+
+      if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+        hasProcessedHanzi = true;
+
+        const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
+        const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
+
+        console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
+
+        iframe.src = '';
+        setTimeout(() => {
+          iframe.src = newSrc;
+        }, 10);
+
+        nextBtn.disabled = true;
+        return;
+      }
+
+      if (type === "TASK_RESULT") {
+        if (success) {
+          statusEl.textContent = "✅ Задание выполнено!";
+          nextBtn.disabled = false;
+        } else {
+          statusEl.textContent = "⏳ Задание загружается...";
+        }
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentTaskIndex++;
+      loadTask(currentTaskIndex);
+    });
+
+    // Запуск
+    discoverTasks();
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task1.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Задание 1: Рисование</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+</head>
+<body>
+
+<div id="character-target-div"></div>
+
+<script>
+  // ✅ Универсальная функция отправки результата
+  function sendResult(success, message) {
+    window.parent.postMessage({
+      type: "TASK_RESULT",
+      success: !!success,
+      message: message || (success ? "Задание выполнено" : "Ошибка")
+    }, "*");
+  }
+
+  window.onload = function() {
+    const char = window.location.hash.slice(1);
+    
+    if (!char) {
+      console.warn("⚠️ Не указан иероглиф в хэше");
+      sendResult(false, "Не указан иероглиф");
+      return;
+    }
+
+    const writer = HanziWriter.create('character-target-div', char, {
+      width: 300,
+      height: 300,
+      showCharacter: false,
+      showOutline: false,
+      showHintAfterMisses: 1,
+      highlightOnComplete: false,
+      padding: 5
+    });
+
+    writer.quiz({
+      onComplete: function(summaryData) {
+        console.log("🎯 Квиз завершён:", summaryData);
+        // Можно добавить проверку: например, если 100% правильных попыток
+        sendResult(true, "Иероглиф нарисован верно");
+      },
+      onIncorrectStroke: function(strokeData) {
+        // Опционально: можно отправить промежуточный результат
+      }
+    });
+  };
+</script>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script>
+
+<!-- Сигнал: это задание с hanziwriter -->
+<script>
+  window.parent.postMessage({
+    type: "DO_HANZI",
+    valid: true
+  }, "*");
+</script>
+
+</body>
+</html>-e 
+
+=== 📄 task10.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ значение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его значение</h2>
+  <p>Кликните на иероглиф слева, затем — на значение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "丑", meaning: "Земная ветвь (2-я)" },
+  { char: "爭", meaning: "Чжэн (имя собств.)" },
+  { char: "雨", meaning: "Дождь / Дождь идет / Дождить" },
+  { char: "允", meaning: "Действительно!" },
+  { char: "亥", meaning: "Земная ветвь (12-я)" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task11.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ значение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его перевод</h2>
+  <p>Кликните на иероглиф слева, затем — на значение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "寅", meaning: "Земная ветвь (3-я)" },
+  { char: "癸", meaning: "Небесный ствол (10-й)" },
+  { char: "卯", meaning: "Земная ветвь (4-я)" },
+  { char: "珏", meaning: "Цзюэ (Имя собственное)" },
+  { char: "午", meaning: "Земная ветвь (7-я)" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task12.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ произношение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его транскрипцию</h2>
+  <p>Кликните на иероглиф слева, затем — на произношение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "午", meaning: "wǔ" },
+  { char: "其", meaning: "qí" },
+  { char: "珏", meaning: "jué" },
+  { char: "丙", meaning: "bǐng" },
+  { char: "不", meaning: "bù" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task13.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ произношение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его транскрипцию</h2>
+  <p>Кликните на иероглиф слева, затем — на произношение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "占", meaning: "zhān" },
+  { char: "亥", meaning: "hài" },
+  { char: "壬", meaning: "rén" },
+  { char: "雨", meaning: "yǔ" },
+  { char: "寅", meaning: "yín" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task14.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ произношение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его транскрипцию</h2>
+  <p>Кликните на иероглиф слева, затем — на произношение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "曰", meaning: "yuē" },
+  { char: "允", meaning: "yǔn" },
+  { char: "癸", meaning: "guǐ" },
+  { char: "己", meaning: "jǐ" },
+  { char: "貞", meaning: "zhēn" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task15.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Какие предложения — безличные?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .instruction {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #555;
+      font-style: italic;
+    }
+    #options-container {
+      margin: 20px 0;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .option:hover {
+      background: #f0f8ff;
+      border-color: #007cba;
+    }
+    .option.checked {
+      background: #e1f3ff;
+      border-color: #007cba;
+    }
+    .option input {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    button {
+      display: block;
+      margin: 25px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #007cba;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005a87;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Какие предложения — безличные?</h2>
+  <p class="instruction">Выберите все предложения, в которых нет подлежащего — то есть действия происходят сами по себе (чаще всего — о погоде, судьбе и т.п.).</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены динамически -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Все варианты: текст, id (для логики), и правильный ответ (true = безличное)
+    const items = [
+      { id: "yu", text: "雨", isImpersonal: true },
+      { id: "qi-yu", text: "其雨", isImpersonal: true },
+      { id: "wang-zhan-yue", text: "王占曰", isImpersonal: false },
+      { id: "bu-yu", text: "不雨", isImpersonal: true },
+      { id: "yun-yu", text: "允雨", isImpersonal: true }
+    ];
+
+    // Функция перемешивания (Фишер-Йейтс)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Хранение выбранных значений
+    const userSelections = {};
+
+    // Генерация перемешанных пунктов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = ""; // 🔴 Очищаем
+
+      const shuffled = shuffleArray(items);
+
+      shuffled.forEach(item => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.id = item.id;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `chk-${item.id}`; // Уникальный id
+        checkbox.checked = false;
+
+        // Сохраняем состояние при изменении
+        checkbox.onchange = () => {
+          userSelections[item.id] = checkbox.checked;
+          if (checkbox.checked) {
+            label.classList.add("checked");
+          } else {
+            label.classList.remove("checked");
+          }
+        };
+
+        const textNode = document.createTextNode(item.text);
+
+        label.appendChild(checkbox);
+        label.appendChild(textNode);
+        container.appendChild(label);
+
+        // Инициализируем выбор
+        userSelections[item.id] = false;
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      // Проверяем, все ли соответствуют
+      const allCorrect = items.every(item => {
+        const expected = item.isImpersonal;
+        const actual = !!userSelections[item.id];
+        return expected === actual;
+      });
+
+      if (allCorrect) {
+        resultEl.textContent = "✅ Верно! Безличные предложения — те, где нет деятеля: погода, судьба, подтверждение.";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Подумайте: 王占曰 — это действие субъекта (правитель говорит), значит — не безличное.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в определении безличных предложений");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно определены безличные формы" : "Ошибка в определении безличности")
+      }, "*");
+    }
+
+    // Загрузка при старте
+    renderOptions();
+
+    // Сигнал родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task16.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Что означает 卜爭?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .instruction {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #555;
+      font-style: italic;
+    }
+    #options-container {
+      margin: 20px 0;
+    }
+    .option {
+      display: block;
+      margin: 12px 0;
+      padding: 14px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .option:hover {
+      background: #f0f8ff;
+      border-color: #007cba;
+    }
+    .option.selected {
+      background: #e1f3ff;
+      border-color: #007cba;
+      box-shadow: 0 0 0 2px #b3d7ff;
+    }
+    .option input {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    button {
+      display: block;
+      margin: 25px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #007cba;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005a87;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Что означает 卜爭?</h2>
+  <p class="instruction">В оракульных надписях некоторые имена гадателей записаны через комбинации иероглифов. Что означает 卜爭?</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены здесь -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Варианты с указанием правильного
+    const options = [
+      { value: "wang", text: "Гадатель по имени Ван", correct: false },
+      { value: "zheng", text: "Гадатель по имени Чжэн", correct: true },
+      { value: "ruler-zheng", text: "Правитель Чжэн", correct: false },
+      { value: "repeat", text: "Слово «гадать» повторяется", correct: false }
+    ];
+
+    let selectedValue = null;
+
+    // Перемешивание массива (Фишер-Йейтс)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация перемешанных вариантов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = ""; // 🔴 Гарантированно очищаем
+      selectedValue = null;
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach(option => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.value = option.value;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "answer";
+        input.value = option.value;
+
+        input.onchange = () => {
+          selectedValue = option.value;
+          // Снимаем выделение
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          // Выделяем выбранный
+          label.classList.add('selected');
+        };
+
+        const textNode = document.createTextNode(option.text);
+
+        label.appendChild(input);
+        label.appendChild(textNode);
+        container.appendChild(label);
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      if (!selectedValue) {
+        resultEl.textContent = "Выберите вариант ответа.";
+        resultEl.className = "error";
+        return;
+      }
+
+      if (selectedValue === "zheng") {
+        resultEl.textContent = "✅ Верно! 卜爭 — это гадатель по имени Чжэн. Иероглиф 爭 здесь читается как «Чжэн».";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание: 爭 в этом контексте — не «спор», а имя — Чжэн.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в интерпретации иероглифа 爭");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно интерпретировано 卜爭" : "Ошибка в интерпретации")
+      }, "*");
+    }
+
+    // Загружаем варианты
+    renderOptions();
+
+    // Сигнал родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task17.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ произношение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его транскрипцию</h2>
+  <p>Кликните на иероглиф слева, затем — на произношение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "王", meaning: "wáng" },
+  { char: "卯", meaning: "mǎo" },
+  { char: "卜", meaning: "bǔ" },
+  { char: "丑", meaning: "chǒu" },
+  { char: "爭", meaning: "zhēng" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task18.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Собери фразу</title>
+  <style>
+    .hint-list {
+  margin: 5px 0 0;
+  padding-left: 20px;
+  color: #7f8c8d;
+  font-size: 14px;
+  list-style-type: "🔸 ";
+}
+
+.hint-list li {
+  margin: 3px 0;
+}
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #eef7ff;
+      font-size: 24px;
+      align-items: center;
+    }
+    #char-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 60px;
+      background: #f9f9f9;
+    }
+    .char-box {
+      width: 45px;
+      height: 45px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-size: 24px;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .char-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .char-box.dragging {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+    .punctuation {
+      font-size: 20px;
+      color: #7f8c8d;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .hint {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+
+  <div class="instructions">
+    <p><strong>Перетащите иероглифы в правильном порядке</strong>, чтобы перевести фразу:</p>
+    <p><em>Гадатель Чжэн сказал: «Правитель действительно не задаёт вопросов».</em></p>
+  </div>
+
+  <p><strong>Доступные иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area" class="drop-area">
+    <!-- Сюда перетаскиваются иероглифы -->
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Правильная последовательность
+    const expected = ['卜', '爭', '曰', '王', '允', '不', '貞'];
+
+    // Все иероглифы: нужные + обманки (только из урока 1)
+    const allChars = [
+      '己', '卯', '王', '不', '貞', '巳',
+      '爭', '寅', '爭', '雨', '曰', '其', 
+      '癸', '亥', '允', '卜', '丑', '珏', '壬', '午'
+    ];
+
+    // Перемешиваем
+    const shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Создаём блоки и добавляем в char-pool
+    shuffledChars.forEach(char => {
+      const box = document.createElement('div');
+      box.className = 'char-box';
+      if (char === '，') {
+        box.classList.add('punctuation');
+      }
+      box.textContent = char;
+      box.draggable = true;
+
+      box.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', char);
+        box.classList.add('dragging');
+      });
+
+      box.addEventListener('dragend', () => {
+        box.classList.remove('dragging');
+      });
+
+      charPool.appendChild(box);
+    });
+
+    // Обработка drop в целевой области
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#e67e22';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.borderColor = '#3498db';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#3498db';
+
+      const char = e.dataTransfer.getData('text/plain');
+      const draggedBox = document.querySelector(`#char-pool .char-box[draggable="true"]:not(.removed):not([style*='display: none'])[data-text='${char}']`) ||
+                        [...document.querySelectorAll('#char-pool .char-box')].find(b => b.textContent === char && b.draggable);
+
+      if (draggedBox) {
+        const clone = draggedBox.cloneNode(true);
+        clone.classList.add('removed');
+        clone.draggable = false;
+        clone.style.cursor = 'default';
+
+        // Удаляем оригинал из пула
+        draggedBox.remove();
+
+        // Добавляем в drop-area
+        dropArea.appendChild(clone);
+      }
+    });
+
+    // Проверка результата
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ <strong>Правильно!</strong> Это подлинная оракульная надпись.<br>卜爭曰王允不貞 = "Гадатель Чжэн сказал: «Правитель действительно не задаёт вопросов»."';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', () => {
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      charPool.innerHTML = '';
+
+      const shuffled = [...allChars].sort(() => Math.random() - 0.5);
+      shuffled.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        if (char === '，') {
+          box.classList.add('punctuation');
+        }
+        box.textContent = char;
+        box.draggable = true;
+
+        box.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', char);
+          box.classList.add('dragging');
+        });
+
+        box.addEventListener('dragend', () => {
+          box.classList.remove('dragging');
+        });
+
+        charPool.appendChild(box);
+      });
+    });
+
+    // Вспомогательные функции
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+  </script>
+</body>
+</html>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script>-e 
+
+=== 📄 task19.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Что произошло в день 癸丑?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .pinyin-container {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pinyin-toggle:hover {
+      background: #eef7ff;
+    }
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .pinyin-text {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 15px;
+    }
+    .pinyin-text.expanded {
+      padding: 12px 15px;
+      max-height: 100px;
+    }
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+    .options {
+      margin: 20px 0;
+    }
+    .option {
+      margin: 10px 0;
+      padding: 12px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option:hover {
+      background: #eef7ff;
+      border-color: #3498db;
+    }
+    .option.selected {
+      background: #d4edff;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px #b3d7ff;
+    }
+    .option input {
+      margin-right: 10px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Что произошло в день 癸丑?</h2>
+
+  <div class="oracle-text">癸丑允其雨</div>
+
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+      Показать пиньинь ▼
+    </button>
+    <div class="pinyin-text">guǐ chǒu yǔn qí yǔ</div>
+  </div>
+
+  <div class="options" id="options-container">
+    <!-- Варианты будут добавлены динамически и перемешаны -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Варианты ответов: только значения (в контексте оракульных надписей)
+    const options = [
+      { value: "rain-coming", text: "Будет дождь", correct: false },
+      { value: "no-rain", text: "Не будет дождя", correct: false },
+      { value: "rained", text: "Действительно пошёл дождь", correct: true },
+      { value: "divined", text: "Правитель гадал", correct: false }
+    ];
+
+    let selectedValue = null;
+
+    // Функция перемешивания массива (Фишер-Йейтс)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация перемешанных вариантов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach(option => {
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = option.value;
+
+        input.onchange = () => {
+          selectedValue = option.value;
+          // Снимаем выделение
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          // Выделяем выбранный
+          label.classList.add('selected');
+        };
+
+        const textNode = document.createTextNode(option.text);
+        label.appendChild(input);
+        label.appendChild(textNode);
+        container.appendChild(label);
+      });
+    }
+
+    function check() {
+      if (!selectedValue) {
+        document.getElementById("result").textContent = "Выберите вариант ответа.";
+        document.getElementById("result").className = "error";
+        return;
+      }
+
+      const isCorrect = selectedValue === "rained";
+
+      const resultEl = document.getElementById("result");
+      if (isCorrect) {
+        resultEl.textContent = "✅ Верно! 允其雨 означает: «и в самом деле пошёл дождь» — подтверждение предсказания.";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Подумайте: 允 — это не предсказание, а подтверждение события.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в интерпретации 允");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно интерпретировано 允" : "Ошибка в интерпретации 允")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    window.onload = renderOptions;
+
+    // Сигнализация родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task2.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Задание 3: Значение 其</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin: 10px 0; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Что означает 其?</h2>
+  <p><strong>«其雨» — это:</strong></p>
+  <div class="pinyin-container">
+  <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+    Показать пиньинь ▼
+  </button>
+  <div class="pinyin-text">
+    qí yǔ
+  </div>
+</div>
+
+<style>
+  .pinyin-container {
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pinyin-toggle {
+    background: #f5f5f5;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pinyin-toggle:hover {
+    background: #eef7ff;
+  }
+  
+  .pinyin-toggle::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .pinyin-text {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #fafafa;
+    font-style: italic;
+    color: #666;
+    font-size: 15px;
+  }
+  
+  .pinyin-text.expanded {
+    padding: 12px 15px;
+    max-height: 100px;
+  }
+  
+  .pinyin-toggle.expanded::after {
+    transform: rotate(180deg);
+  }
+</style>
+  <label><input type="radio" name="q" value="0"> Дождь идёт</label>
+  <label><input type="radio" name="q" value="1"> Будет дождь</label>
+  <label><input type="radio" name="q" value="2"> Дождя не будет</label>
+  <label><input type="radio" name="q" value="3"> Дождь действительно был</label>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    function check() {
+      const selected = document.querySelector('input[name="q"]:checked');
+      if (!selected) {
+        document.getElementById("result").textContent = "Выберите вариант.";
+        return;
+      }
+
+      if (selected.value === "1") {
+        document.getElementById("result").textContent = "✅ Правильно! 其 — указывает на будущее действие.";
+        sendResult(true);
+      } else {
+        document.getElementById("result").textContent = "❌ Неверно. 其 — служебное слово будущего/предположения.";
+        sendResult(false, "Ошибка в интерпретации 其");
+      }
+    }
+  </script>
+</body>
+</html><script>// Сигнализируем родителю, что это — настоящее задание
+window.parent.postMessage({
+  type: "TASK_EXISTS",
+  valid: true
+}, "*");
+</script>
+-e 
+
+=== 📄 task20.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Собери фразу</title>
+  <style>
+    .hint-list {
+  margin: 5px 0 0;
+  padding-left: 20px;
+  color: #7f8c8d;
+  font-size: 14px;
+  list-style-type: "🔸 ";
+}
+
+.hint-list li {
+  margin: 3px 0;
+}
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #eef7ff;
+      font-size: 24px;
+      align-items: center;
+    }
+    #char-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 60px;
+      background: #f9f9f9;
+    }
+    .char-box {
+      width: 45px;
+      height: 45px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-size: 24px;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .char-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .char-box.dragging {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+    .punctuation {
+      font-size: 20px;
+      color: #7f8c8d;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .hint {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+
+  <div class="instructions">
+    <p><strong>Перетащите иероглифы в правильном порядке</strong>, чтобы перевести фразу:</p>
+    <p><em>Вопрос гласит: «Был ли дождь?»</em></p>
+    
+<p class="hint">💡 Подсказка: вспомните косвенные признаки времени</p>
+ </div>
+
+  <p><strong>Доступные иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area" class="drop-area">
+    <!-- Сюда перетаскиваются иероглифы -->
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Правильная последовательность
+    const expected = ['貞', '曰', '允', '雨'];
+
+    // Все иероглифы: нужные + обманки (только из урока 1)
+    const allChars = [
+      '己', '卯', '王', '不', '貞', '巳',
+      '丙', '寅', '爭', '雨', '曰', '其', 
+      '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
+    ];
+
+    // Перемешиваем
+    const shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Создаём блоки и добавляем в char-pool
+    shuffledChars.forEach(char => {
+      const box = document.createElement('div');
+      box.className = 'char-box';
+      if (char === '，') {
+        box.classList.add('punctuation');
+      }
+      box.textContent = char;
+      box.draggable = true;
+
+      box.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', char);
+        box.classList.add('dragging');
+      });
+
+      box.addEventListener('dragend', () => {
+        box.classList.remove('dragging');
+      });
+
+      charPool.appendChild(box);
+    });
+
+    // Обработка drop в целевой области
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#e67e22';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.borderColor = '#3498db';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#3498db';
+
+      const char = e.dataTransfer.getData('text/plain');
+      const draggedBox = document.querySelector(`#char-pool .char-box[draggable="true"]:not(.removed):not([style*='display: none'])[data-text='${char}']`) ||
+                        [...document.querySelectorAll('#char-pool .char-box')].find(b => b.textContent === char && b.draggable);
+
+      if (draggedBox) {
+        const clone = draggedBox.cloneNode(true);
+        clone.classList.add('removed');
+        clone.draggable = false;
+        clone.style.cursor = 'default';
+
+        // Удаляем оригинал из пула
+        draggedBox.remove();
+
+        // Добавляем в drop-area
+        dropArea.appendChild(clone);
+      }
+    });
+
+    // Проверка результата
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ <strong>Правильно!</strong> Это подлинная оракульная надпись.<br>貞曰允雨 = Вопрос гласит: «Был ли дождь?» ';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', () => {
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      charPool.innerHTML = '';
+
+      const shuffled = [...allChars].sort(() => Math.random() - 0.5);
+      shuffled.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        if (char === '，') {
+          box.classList.add('punctuation');
+        }
+        box.textContent = char;
+        box.draggable = true;
+
+        box.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', char);
+          box.classList.add('dragging');
+        });
+
+        box.addEventListener('dragend', () => {
+          box.classList.remove('dragging');
+        });
+
+        charPool.appendChild(box);
+      });
+    });
+
+    // Вспомогательные функции
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+  </script>
+</body>
+</html>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script>-e 
+
+=== 📄 task21.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Собери фразу</title>
+  <style>
+    .hint-list {
+  margin: 5px 0 0;
+  padding-left: 20px;
+  color: #7f8c8d;
+  font-size: 14px;
+  list-style-type: "🔸 ";
+}
+
+.hint-list li {
+  margin: 3px 0;
+}
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #eef7ff;
+      font-size: 24px;
+      align-items: center;
+    }
+    #char-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 60px;
+      background: #f9f9f9;
+    }
+    .char-box {
+      width: 45px;
+      height: 45px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-size: 24px;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .char-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .char-box.dragging {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+    .punctuation {
+      font-size: 20px;
+      color: #7f8c8d;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .hint {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+
+  <div class="instructions">
+    <p><strong>Перетащите иероглифы в правильном порядке</strong>, чтобы перевести фразу:</p>
+    <p><em>«На шестой день правитель не задавал вопросов»</em></p>
+    
+<p class="hint">💡 Подсказка: вспомните лексический комментарий по циклическим знакам</p>
+<ul class="hint-list">
+  <li>День 1: 甲 + 子 → 甲子</li>
+  <li>День 2: 乙 + 丑 → 乙丑</li>
+  <li>etc...</li>
+
+</ul>  </div>
+
+  <p><strong>Доступные иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area" class="drop-area">
+    <!-- Сюда перетаскиваются иероглифы -->
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Правильная последовательность
+    const expected = ['己', '巳', '王', '不', '貞'];
+
+    // Все иероглифы: нужные + обманки (только из урока 1)
+    const allChars = [
+      '己', '卯', '王', '不', '貞', '巳',
+      '丙', '寅', '爭', '雨', '曰', '其', 
+      '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
+    ];
+
+    // Перемешиваем
+    const shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Создаём блоки и добавляем в char-pool
+    shuffledChars.forEach(char => {
+      const box = document.createElement('div');
+      box.className = 'char-box';
+      if (char === '，') {
+        box.classList.add('punctuation');
+      }
+      box.textContent = char;
+      box.draggable = true;
+
+      box.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', char);
+        box.classList.add('dragging');
+      });
+
+      box.addEventListener('dragend', () => {
+        box.classList.remove('dragging');
+      });
+
+      charPool.appendChild(box);
+    });
+
+    // Обработка drop в целевой области
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#e67e22';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.borderColor = '#3498db';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#3498db';
+
+      const char = e.dataTransfer.getData('text/plain');
+      const draggedBox = document.querySelector(`#char-pool .char-box[draggable="true"]:not(.removed):not([style*='display: none'])[data-text='${char}']`) ||
+                        [...document.querySelectorAll('#char-pool .char-box')].find(b => b.textContent === char && b.draggable);
+
+      if (draggedBox) {
+        const clone = draggedBox.cloneNode(true);
+        clone.classList.add('removed');
+        clone.draggable = false;
+        clone.style.cursor = 'default';
+
+        // Удаляем оригинал из пула
+        draggedBox.remove();
+
+        // Добавляем в drop-area
+        dropArea.appendChild(clone);
+      }
+    });
+
+    // Проверка результата
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ <strong>Правильно!</strong> Это подлинная оракульная надпись.<br>己巳王不貞 = "На шестой день правитель не задавал вопросов"';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', () => {
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      charPool.innerHTML = '';
+
+      const shuffled = [...allChars].sort(() => Math.random() - 0.5);
+      shuffled.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        if (char === '，') {
+          box.classList.add('punctuation');
+        }
+        box.textContent = char;
+        box.draggable = true;
+
+        box.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', char);
+          box.classList.add('dragging');
+        });
+
+        box.addEventListener('dragend', () => {
+          box.classList.remove('dragging');
+        });
+
+        charPool.appendChild(box);
+      });
+    });
+
+    // Вспомогательные функции
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+  </script>
+</body>
+</html>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script>-e 
+
+=== 📄 task22.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставь иероглиф и значение</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  h2 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .instruction {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #555;
+  }
+  .pair {
+    margin: 15px 0;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  label {
+    font-weight: bold;
+    color: #333;
+  }
+  select {
+    width: 100%;
+    max-width: 300px;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+  button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto;
+  }
+  button:hover {
+    background: #2980b9;
+  }
+  #result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .success {
+    background: #e8f5e9;
+    color: #27ae60;
+  }
+  .error {
+    background: #ffebee;
+    color: #e74c3c;
+  }
+</style>
+</head>
+<body>
+
+  <h2>Сопоставь иероглиф и значение</h2>
+  <p class="instruction">Выберите правильное значение каждого иероглифа в контексте оракульных надписей эпохи Инь.</p>
+
+  <div id="pairs-container">
+    <!-- Пары будут добавлены динамически -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Словарь: иероглиф → правильное значение (в контексте оракульных надписей)
+    const wordBank = [
+      { char: "丙", correct: "3-й небесный ствол" },
+      { char: "卜", correct: "гадать" },
+      { char: "雨", correct: "дождь" },
+      { char: "王", correct: "правитель" },
+      { char: "貞", correct: "задавать вопрос оракулу" },
+      { char: "曰", correct: "сказать, произнести (вводит прямую речь)" },
+      { char: "允", correct: "и в самом деле, действительно (подтверждение)" },
+      { char: "占", correct: "истолковывать, предсказывать" }
+    ];
+
+    // Все возможные значения для перемешивания
+    const allValues = wordBank.map(item => item.correct);
+
+    // Функция Фишера-Йейтса
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация перемешанных пар
+    function renderPairs() {
+      const container = document.getElementById("pairs-container");
+      container.innerHTML = "";
+
+      // Перемешиваем порядок иероглифов
+      const shuffledChars = shuffleArray(wordBank);
+
+      shuffledChars.forEach(item => {
+        const pair = document.createElement("div");
+        pair.className = "pair";
+
+        // Перемешиваем варианты, но гарантируем, что правильный будет
+        const options = shuffleArray([...new Set([...allValues])]); // Убираем дубли, если есть
+
+        // Генерируем <select>
+        let selectHTML = `<select id="char_${item.char}">
+          <option value="">-- выберите --</option>`;
+        
+        options.forEach(value => {
+          selectHTML += `<option value="${value}">${value}</option>`;
+        });
+        
+        selectHTML += `</select>`;
+
+        pair.innerHTML = `<label>${item.char} →</label> ${selectHTML}`;
+        container.appendChild(pair);
+      });
+    }
+
+    function check() {
+      const results = {};
+      let allFilled = true;
+
+      wordBank.forEach(item => {
+        const select = document.getElementById(`char_${item.char}`);
+        if (!select || !select.value) {
+          allFilled = false;
+        }
+        results[item.char] = select?.value || null;
+      });
+
+      if (!allFilled) {
+        document.getElementById("result").textContent = "Заполните все поля.";
+        document.getElementById("result").className = "error";
+        return;
+      }
+
+      // Проверяем, все ли ответы верны
+      const isCorrect = wordBank.every(item => results[item.char] === item.correct);
+
+      const resultEl = document.getElementById("result");
+      if (isCorrect) {
+        resultEl.textContent = "✅ Все верно! Вы точно понимаете значения ключевых иероглифов оракульных надписей.";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        const hint = "Подсказка: 卜 — гадать, 王 — правитель, 貞 — задавать вопрос, 允 — действительно.";
+        resultEl.textContent = "❌ Проверьте свои ответы. " + hint;
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в сопоставлении значений");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все значения сопоставлены верно" : "Ошибка в сопоставлении")
+      }, "*");
+    }
+
+    // Инициализация
+    window.onload = renderPairs;
+
+    // Сигнализация родителю
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task3.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Перевод</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options {
+      margin-left: 20px;
+    }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+      color: #333;
+    }
+    .options input {
+      margin-right: 8px;
+    }
+    button { 
+      padding: 10px; 
+      margin-top: 20px; 
+    }
+    .pinyin-container {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pinyin-toggle:hover {
+      background: #eef7ff;
+    }
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .pinyin-text {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 15px;
+    }
+    .pinyin-text.expanded {
+      padding: 12px 15px;
+      max-height: 100px;
+    }
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Переведи словосочетание</h2>
+
+  <div id="questions-container">
+    <!-- Вопросы будут перемешаны при загрузке -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Определение вопросов (можно легко расширить)
+    const questions = [
+      {
+        id: "t1",
+        text: "丙寅卜",
+        pinyin: "bǐng yín bo",
+        options: [
+          "гадали в день бин-инь",
+          "правитель гадал",
+          "в день бинь-мао",
+          "жертвоприношение в храме"
+        ],
+        correct: "гадали в день бин-инь"
+      },
+      {
+        id: "t2",
+        text: "王占曰",
+        pinyin: "wáng zhàn yuē",
+        options: [
+          "правитель сказал",
+          "правитель истолковал",
+          "царь приказал",
+          "он записал"
+        ],
+        correct: "правитель истолковал"
+      }
+    ];
+
+    // Функция для перемешивания массива (алгоритм Фишера-Йейтса)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Вставляем вопросы в случайном порядке
+    function loadQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = ""; // очистим
+
+      const shuffled = shuffleArray(questions);
+
+      shuffled.forEach(q => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        questionDiv.innerHTML = `
+          <p><strong>${q.text}</strong></p>
+          <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+              Показать пиньинь ▼
+            </button>
+            <div class="pinyin-text">${q.pinyin}</div>
+          </div>
+          <div class="options">
+            ${q.options.map(option => `
+              <label>
+                <input type="radio" name="${q.id}" value="${option}">
+                ${option}
+              </label>
+            `).join("")}
+          </div>
+        `;
+        container.appendChild(questionDiv);
+      });
+    }
+
+    function check() {
+      const selectedT1 = document.querySelector('input[name="t1"]:checked');
+      const selectedT2 = document.querySelector('input[name="t2"]:checked');
+
+      if (!selectedT1 || !selectedT2) {
+        document.getElementById("result").textContent = "Выберите оба варианта.";
+        sendResult(false, "Не все поля заполнены");
+        return;
+      }
+
+      const correctT1 = questions.find(q => q.id === "t1").correct;
+      const correctT2 = questions.find(q => q.id === "t2").correct;
+
+      const match1 = selectedT1.value === correctT1;
+      const match2 = selectedT2.value === correctT2;
+
+      if (match1 && match2) {
+        document.getElementById("result").textContent = "✅ Верно!";
+        sendResult(true);
+      } else {
+        document.getElementById("result").textContent = "❌ Попробуйте снова. Подсказка: 曰 — вводит прямую речь, 占 — истолковывать.";
+        sendResult(false, "Неверный выбор");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Загружаем вопросы в случайном порядке при старте
+    window.onload = loadQuestions;
+
+    // Сигнализируем родителю, что задание загружено
+    window.parent.postMessage({
+      type: "TASK_EXISTS",
+      valid: true
+    }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task4.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Прямая речь в оракульных надписях</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .task {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .question {
+      font-weight: bold;
+      margin: 15px 0 10px;
+    }
+    .options {
+      margin-left: 20px;
+    }
+    .option {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .option:hover {
+      background: #eef7ff;
+    }
+    .option.selected {
+      background: #d4edff;
+      border-left: 3px solid #3498db;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding: 10px;
+      background: #fffde7;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    /* Стиль для пиньиня */
+    .pinyin-container {
+      margin: 15px 0;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pinyin-toggle:hover {
+      background: #eef7ff;
+    }
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .pinyin-text {
+      padding: 0 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 15px;
+    }
+    .pinyin-text.expanded {
+      padding: 12px 15px;
+      max-height: 100px;
+    }
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+  <h2>Прямая речь в оракульных надписях</h2>
+
+  <div class="task">
+    <p>Внимательно прочитайте надпись и ответьте на вопрос:</p>
+    
+    <div class="oracle-text">貞丁卯其雨王占曰其雨</div>
+    
+    <div class="pinyin-container">
+      <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+        Показать пиньинь ▼
+      </button>
+      <div class="pinyin-text">zhēn dīng mǎo qí yǔ wáng zhàn yuē qí yǔ</div>
+    </div>
+
+    <div class="question">Какая часть этого текста представляет собой прямой вопрос, заданный оракулу?</div>
+    
+    <div id="options-container" class="options">
+      <!-- Варианты будут вставлены динамически и перемешаны -->
+    </div>
+    
+    <button onclick="checkAnswer()">Проверить</button>
+    
+    <div id="result"></div>
+    
+    <div id="explanation" class="explanation" style="display: none;">
+      <p><strong>Объяснение:</strong> В оракульных надписях структура обычно включает:</p>
+      <ol>
+        <li><strong>Вопрос к оракулу</strong> — вводится иероглифом <strong>貞</strong> — это прямая речь</li>
+        <li><strong>Ответ</strong> — вводится фразой <strong>王占曰</strong> — "царь истолковал" — тоже прямая речь</li>
+      </ol>
+      <p>В данном случае <strong>「貞丁卯其雨」</strong> — это полная формулировка вопроса: "Гадание: будет ли дождь на четвертый день?"</p>
+    </div>
+  </div>
+
+  <script>
+    // Все варианты с указанием, какой из них правильный
+    const options = [
+      { id: 1, text: "貞丁卯其雨", correct: true },
+      { id: 2, text: "王占曰其雨", correct: false },
+      { id: 3, text: "丁卯其雨", correct: false },
+      { id: 4, text: "貞丁卯", correct: false }
+    ];
+
+    let selectedOptionId = null;
+
+    // Функция Фишера-Йейтса для перемешивания массива
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Генерация вариантов в случайном порядке
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach((option, index) => {
+        const optionEl = document.createElement("div");
+        optionEl.className = "option";
+        optionEl.textContent = option.text;
+        optionEl.dataset.id = option.id;
+        optionEl.onclick = () => selectOption(option.id);
+        container.appendChild(optionEl);
+      });
+    }
+
+    function selectOption(id) {
+      selectedOptionId = id;
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      // Находим элемент с нужным data-id
+      document.querySelector(`.option[data-id="${id}"]`).classList.add('selected');
+    }
+
+    function checkAnswer() {
+      const resultEl = document.getElementById('result');
+      const explanationEl = document.getElementById('explanation');
+
+      if (!selectedOptionId) {
+        resultEl.textContent = "Пожалуйста, выберите вариант ответа";
+        resultEl.className = "error";
+        return;
+      }
+
+      const selectedOption = options.find(opt => opt.id === selectedOptionId);
+
+      if (selectedOption.correct) {
+        resultEl.innerHTML = "✅ <strong>Верно!</strong> Это полная формулировка вопроса к оракулу.";
+        resultEl.className = "success";
+        explanationEl.style.display = 'block';
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Не совсем верно. Попробуйте еще раз.";
+        resultEl.className = "error";
+        explanationEl.style.display = 'block';
+        sendResult(false, "Ошибка в определении прямой речи");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Правильно определена прямая речь" : "Ошибка")
+      }, "*");
+    }
+
+    // Перемешиваем и отображаем варианты при загрузке
+    window.onload = renderOptions;
+
+    // Сигнализируем, что задание загружено
+    window.parent.postMessage({
+      type: "TASK_EXISTS",
+      valid: true
+    }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task5.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сказуемое</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Найди предикат</h2>
+  <p><strong>己卯卜貞雨？</strong></p>
+  <div class="pinyin-container">
+  <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+    Показать пиньинь ▼
+  </button>
+  <div class="pinyin-text">
+    jǐ mǎo bu zhēn yǔ?
+  </div>
+</div>
+
+<style>
+  .pinyin-container {
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pinyin-toggle {
+    background: #f5f5f5;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pinyin-toggle:hover {
+    background: #eef7ff;
+  }
+  
+  .pinyin-toggle::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .pinyin-text {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #fafafa;
+    font-style: italic;
+    color: #666;
+    font-size: 15px;
+  }
+  
+  .pinyin-text.expanded {
+    padding: 12px 15px;
+    max-height: 100px;
+  }
+  
+  .pinyin-toggle.expanded::after {
+    transform: rotate(180deg);
+  }
+</style>
+  <p>Какое слово является предикатом?</p>
+  <button onclick="answer('雨')">雨</button>
+  <button onclick="answer('貞')">貞</button>
+  <button onclick="answer('卜')">卜</button>
+  <button onclick="answer('己卯')">己卯</button>
+
+  <p id="result"></p>
+
+  <script>
+    function answer(sel) {
+      if (sel === "雨") {
+        document.getElementById("result").textContent = "✅ Верно! 雨 — предикат: «будет дождь?»";
+        sendResult(true);
+      } else {
+        document.getElementById("result").textContent = "❌ Неверно. Подумайте: что отвечает на вопрос «что будет?»";
+        sendResult(false, "Ошибка в определении сказуемого");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+  </script>
+</body>
+</html><script>// Сигнализируем родителю, что это — настоящее задание
+window.parent.postMessage({
+  type: "TASK_EXISTS",
+  valid: true
+}, "*");
+</script>
+-e 
+
+=== 📄 task6.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Собери перевод оракульной надписи</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    .instructions {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #eef7ff;
+      font-size: 24px;
+      align-items: center;
+    }
+    .word-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 60px;
+      background: #f9f9f9;
+      align-items: center;
+    }
+    .word-box {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-size: 18px;
+      padding: 8px 12px;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin: 2px;
+    }
+    .word-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .word-box.dragging {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+    .controls {
+      margin-top: 20px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+      text-align: center;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .hint {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .hint-list {
+      margin: 5px 0 0;
+      padding-left: 20px;
+      color: #7f8c8d;
+      font-size: 14px;
+      list-style-type: "🔸 ";
+    }
+    .hint-list li {
+      margin: 3px 0;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .task-container {
+      margin-bottom: 30px;
+    }
+    .task-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Собери перевод оракульной надписи</h2>
+
+  <div class="instructions">
+    <p><strong>Перетащите слова в правильном порядке</strong>, чтобы перевести оракульную надпись.</p>
+    
+  </div>
+
+  <div class="task-container">
+    <div class="task-title">1. Переведите надпись:</div>
+    <div class="oracle-text">不其雨</div>
+    
+    <p>Доступные слова:</p>
+    <div id="word-pool1" class="word-pool"></div>
+
+    <p>Соберите перевод здесь:</p>
+    <div id="drop-area1" class="drop-area"></div>
+  </div>
+
+  <div class="task-container">
+    <div class="task-title">2. Переведите надпись:</div>
+    <div class="oracle-text">貞不雨</div>
+    
+    <p>Доступные слова:</p>
+    <div id="word-pool2" class="word-pool"></div>
+
+    <p>Соберите перевод здесь:</p>
+    <div id="drop-area2" class="drop-area"></div>
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Возможные правильные переводы (без пунктуации)
+    const expected1 = [
+      ['не', 'будет', 'дождя'],
+      ['не', 'пойдёт', 'дождь'],
+      ['дождя', 'не', 'будет'],
+      ['дождь', 'не', 'пойдёт'],
+      ['не', 'будет', 'дождь'],
+      ['не', 'пойдёт', 'дождя']
+    ];
+    
+    const expected2 = [
+      ['спрашивали', 'не', 'будет', 'дождя'],
+      ['гадали', 'не', 'пойдёт', 'дождь'],
+      ['спрашивали', 'дождя', 'не', 'будет'],
+      ['гадали', 'дождь', 'не', 'пойдёт'],
+      ['спрашивали', 'не', 'пойдёт', 'дождь'],
+      ['гадали', 'не', 'будет', 'дождя']
+    ];
+
+    // Основные слова для каждого задания + несколько обманок
+    const words1 = ['не', 'будет', 'пойдёт', 'дождя', 'дождь', 'возможно', 'может', 'ли', 'дождливо'];
+    const words2 = ['спрашивали', 'гадали', 'не', 'будет', 'пойдёт', 'дождя', 'дождь', 'задавали', 'предсказывали'];
+
+    const wordPool1 = document.getElementById('word-pool1');
+    const wordPool2 = document.getElementById('word-pool2');
+    const dropArea1 = document.getElementById('drop-area1');
+    const dropArea2 = document.getElementById('drop-area2');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Инициализация
+    function init() {
+      wordPool1.innerHTML = '';
+      wordPool2.innerHTML = '';
+      dropArea1.innerHTML = '';
+      dropArea2.innerHTML = '';
+      
+      // Перемешиваем слова для каждого пула
+      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
+      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
+      
+      // Создаём блоки слов для первого задания
+      shuffled1.forEach(word => {
+        createWordBox(word, wordPool1, dropArea1);
+      });
+      
+      // Создаём блоки слов для второго задания
+      shuffled2.forEach(word => {
+        createWordBox(word, wordPool2, dropArea2);
+      });
+    }
+
+    // Создание перетаскиваемого элемента
+    function createWordBox(word, pool, dropArea) {
+      const box = document.createElement('div');
+      box.className = 'word-box';
+      box.textContent = word;
+      box.draggable = true;
+
+      box.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', word);
+        box.classList.add('dragging');
+      });
+
+      box.addEventListener('dragend', () => {
+        box.classList.remove('dragging');
+      });
+
+      pool.appendChild(box);
+      
+      // Обработка drop
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#e67e22';
+      });
+
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.style.borderColor = '#3498db';
+      });
+
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.style.borderColor = '#3498db';
+
+        const word = e.dataTransfer.getData('text/plain');
+        const draggedBox = [...pool.children].find(b => b.textContent === word && b.draggable);
+
+        if (draggedBox) {
+          const clone = draggedBox.cloneNode(true);
+          clone.draggable = false;
+          clone.style.cursor = 'default';
+          draggedBox.remove();
+          dropArea.appendChild(clone);
+        }
+      });
+    }
+
+    // Проверка результата
+    checkBtn.addEventListener('click', () => {
+      const current1 = Array.from(dropArea1.children).map(el => el.textContent.trim());
+      const current2 = Array.from(dropArea2.children).map(el => el.textContent.trim());
+      
+      // Проверяем первый перевод
+      const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+      const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+      
+      if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `✅ <strong>Верно!</strong> Вы правильно перевели обе надписи.<br>
+          <em>不其雨</em> = «${current1.join(' ')}»<br>
+          <em>貞 不雨</em> = «${current2.join(' ')}»`;
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        let message = '❌ Есть ошибки. Попробуйте ещё раз.';
+        if (!isCorrect1 && isCorrect2) {
+          message = '❌ Первый перевод неверен. Второй правильный.';
+        } else if (isCorrect1 && !isCorrect2) {
+          message = '❌ Второй перевод неверен. Первый правильный.';
+        }
+        resultEl.textContent = message;
+        resultEl.className = 'message';
+        sendResult(false, 'Ошибка в переводе');
+      }
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', init);
+
+    // Вспомогательные функции
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Перевод собран верно" : "Ошибка в порядке слов")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    init();
+  </script>
+</body>
+</html>
+
+<!-- Сигнал: это настоящее задание -->
+<script>
+  window.parent.postMessage({
+    type: "TASK_EXISTS",
+    valid: true
+  }, "*");
+</script> -e 
+
+=== 📄 task7.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Что означает 允?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .oracle-text {
+      font-size: 24px;
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .options {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .option {
+      margin: 8px 0;
+      padding: 12px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option:hover {
+      background: #eef7ff;
+      border-color: #3498db;
+    }
+    .option.selected {
+      background: #d4edff;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px #b3d7ff;
+    }
+    .option input {
+      margin-right: 10px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 20px auto;
+      display: block;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Что означает 允?</h2>
+
+  <div class="oracle-text">癸丑允其雨</div>
+<div class="pinyin-container">
+  <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+    Показать пиньинь ▼
+  </button>
+  <div class="pinyin-text">
+    guǐ chǒu yǔn qí yǔ
+  </div>
+</div>
+
+<style>
+  .pinyin-container {
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pinyin-toggle {
+    background: #f5f5f5;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pinyin-toggle:hover {
+    background: #eef7ff;
+  }
+  
+  .pinyin-toggle::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .pinyin-text {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #fafafa;
+    font-style: italic;
+    color: #666;
+    font-size: 15px;
+  }
+  
+  .pinyin-text.expanded {
+    padding: 12px 15px;
+    max-height: 100px;
+  }
+  
+  .pinyin-toggle.expanded::after {
+    transform: rotate(180deg);
+  }
+</style>
+  <div class="options" id="options-container">
+    <!-- Варианты будут добавлены динамически и в случайном порядке -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Все варианты с указанием правильного
+    const options = [
+      { value: "correct", text: "Действительно пошёл дождь", correct: true },
+      { value: "rain", text: "Будет дождь", correct: false },
+      { value: "no-rain", text: "Не будет дождя", correct: false },
+      { value: "said", text: "Правитель сказал", correct: false }
+    ];
+
+    let selectedValue = null;
+
+    // Функция случайного перемешивания
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Отображение перемешанных вариантов
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach(option => {
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = option.value;
+
+        input.onchange = () => {
+          selectedValue = option.value;
+          // Убираем выделение
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          // Выделяем выбранный
+          label.classList.add('selected');
+        };
+
+        const text = document.createTextNode(option.text);
+        label.appendChild(input);
+        label.appendChild(text);
+        container.appendChild(label);
+      });
+    }
+
+    function check() {
+      if (!selectedValue) {
+        document.getElementById("result").textContent = "Выберите вариант ответа.";
+        document.getElementById("result").className = "error";
+        return;
+      }
+
+      const isCorrect = selectedValue === "correct";
+
+      const resultEl = document.getElementById("result");
+      if (isCorrect) {
+        resultEl.textContent = "✅ Правильно! 允 — подтверждение события, «и в самом деле пошёл дождь».";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. 允 означает «действительно», «и в самом деле» — это подтверждение, а не предсказание.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в интерпретации 允");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage(
+        {
+          type: "TASK_RESULT",
+          success,
+          message: message || (success ? "Верно интерпретировано 允" : "Ошибка в интерпретации 允")
+        },
+        "*"
+      );
+    }
+
+    // Перемешиваем и рендерим при загрузке
+    window.onload = renderOptions;
+
+    // Сигнализируем, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task8.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ значение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его значение</h2>
+  <p>Кликните на иероглиф слева, затем — на значение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+    const pairs = [
+      { char: "壬", meaning: "Небесный ствол (9-й);" },
+      { char: "其", meaning: "Служебное наречие; указывает на будущее/возможность: «будет ли?»" },
+      { char: "己", meaning: "Небесный ствол (6-й);" },
+      { char: "卜", meaning: "Гадать/Гадатель" },
+      { char: "允", meaning: "Действительно; подтверждает: «и в самом деле пошёл дождь»" }
+    ];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 task9.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сопоставьте: иероглиф ↔ значение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2, p {
+      text-align: center;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    .column {
+      width: 45%;
+    }
+    .column h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .word-item, .def-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .word-item:hover, .def-item:hover {
+      background: #eef5ff;
+      border-color: #66aaff;
+    }
+    .word-item.selected {
+      background: #bbdefb;
+      border-color: #1976d2;
+      transform: scale(1.05);
+    }
+    .def-item.selected {
+      background: #c8e6c9;
+      border-color: #43a047;
+      transform: scale(1.05);
+    }
+    .matched {
+      background: #d4edda;
+      border: 2px solid #28a745 !important;
+      color: #155724;
+      opacity: 0.9;
+      cursor: default;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и его значение</h2>
+  <p>Кликните на иероглиф слева, затем — на значение справа</p>
+
+  <div class="match-container">
+    <!-- Левая колонка: иероглифы -->
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+
+    <!-- Правая колонка: значения -->
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+    // Пять пар из первой колонки
+const pairs = [
+  { char: "不", meaning: "Не; Как в «не будет дождя»" },
+  { char: "王", meaning: "Правитель / Царь" },
+  { char: "丙", meaning: "Небесный ствол (3-й)" },
+  { char: "占", meaning: "Истолковать гадание / прочитать гадание" },
+  { char: "曰", meaning: "Говорить; вводит прямую речь" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    // Перемешивает массив случайным образом
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      // Перемешиваем и иероглифы, и значения
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём левую колонку (иероглифы)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём правую колонку (значения)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        // Правильно — фиксируем пару
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          document.getElementById("result").textContent = "✅ Отлично! Все пары подобраны верно.";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Неверно. Попробуйте снова.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      init();
+    }
+
+    function sendResult(success, message = "") {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно!" : "Есть ошибки")
+      }, "*");
+    }
+
+    // Инициализация
+    init();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>-e 
+
+=== 📄 theory.html ===
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 1: Древнекитайский язык — Гадания о дожде</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+      line-height: 1.8;
+      color: #333;
+      background: #f9f7f4;
+      margin: 40px auto;
+      max-width: 900px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: white;
+    }
+    h1, h2, h3 {
+      color: #1a5fb4;
+    }
+    h1 {
+      text-align: center;
+      border-bottom: 3px double #1a5fb4;
+      padding-bottom: 10px;
+    }
+    h2 {
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+    .original {
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.8em;
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      letter-spacing: 3px;
+    }
+    .comment {
+      background: #f8f9fa;
+      padding: 15px;
+      border-left: 4px solid #1a5fb4;
+      margin: 15px 0;
+      font-size: 0.96em;
+    }
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #e6f2ff;
+    }
+    .footnote {
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+    }
+    .exercise {
+      background: #eef7ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px dashed #1a5fb4;
+    }
+    .char-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .char-item {
+      display: flex;
+      justify-content: space-between;
+      background: #f0f8ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'Noto Serif CJK SC', serif;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.9em;
+    }
+    .cycle-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 0.95em;
+    }
+    .cycle-table th, .cycle-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .cycle-table th {
+      background: #e6f2ff;
+    }
+    .pinyin {
+      font-size: 0.9em;
+      color: #555;
+      font-style: italic;
+      display: block;
+      margin-top: 2px;
+    }
+    .inline-char {
+      font-family: 'Noto Serif CJK SC', serif;
+      font-size: 1.1em;
+    }
+    .inline-pinyin {
+      font-size: 0.85em;
+      color: #555;
+      margin-left: 4px;
+    }
+  </style>
+    <!-- Вставьте этот CSS в <style> после вашего текущего -->
+<style>
+  /* === Интерактивные подсказки для иероглифов (без конфликтов) === */
+  
+  /* Контейнер для подсказки — не мешает основному стилю */
+  .char-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 260px;
+    background: #1a5fb4; /* основной акцентный цвет */
+    color: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    text-align: left;
+    white-space: normal;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    line-height: 1.5;
+  }
+
+  /* Показываем подсказку при наведении */
+  .char-item:hover .char-tooltip {
+    display: block;
+  }
+
+  /* Обеспечиваем позиционирование контейнера */
+  .char-item {
+    position: relative; /* важно для позиционирования подсказки */
+  }
+
+  /* Делаем иероглифы кликабельными/интерактивными */
+  .char-item > span:first-child {
+    cursor: help;
+  }
+</style>
+</head>
+<body>
+
+  <h1>Урок 1: Гадания о дожде</h1>
+
+  <div class="original">
+    丙寅卜，爭貞：「雨？」<br>
+    貞曰：「其雨。」<br>
+    貞：「癸亥，不其雨？」<br>
+    雨。允。不雨。貞：「不雨。」<br>
+    王占曰：「癸，其雨。」癸丑，允其雨。<br>
+    己卯卜，珏貞：「雨？」<br>
+    王占曰：「雨。」壬午，允雨。
+  </div>
+<!-- Тумблер для переключения между оригинальным и читаемым текстом -->
+<div style="margin: 15px 0; text-align: center;">
+  <label class="toggle-label">
+    <input type="checkbox" id="readableToggle">
+    Показать читаемый вариант
+  </label>
+</div>
+
+<script>
+  // Аутентичный вид: ТОЛЬКО иероглифы, без знаков препинания, без переносов
+  const originalText = `丙寅卜爭貞雨貞曰其雨貞癸亥不其雨雨允不雨貞不雨王占曰癸其雨癸丑允其雨己卯卜珏貞雨王占曰雨壬午允雨`;
+
+  // Читаемый вид: с пунктуацией, разбивкой и форматированием
+  const readableText = `丙寅卜，爭貞：「雨？」<br>
+貞曰：「其雨。」<br>
+貞：「癸亥，不其雨？」<br>
+雨。允。不雨。貞：「不雨。」<br>
+王占曰：「癸，其雨。」癸丑，允其雨。<br>
+己卯卜，珏貞：「雨？」<br>
+王占曰：「雨。」壬午，允雨。`;
+
+  // Находим элемент с текстом
+  const textElement = document.querySelector('.original');
+  const toggle = document.getElementById('readableToggle');
+
+  // Функция обновления текста
+  function updateText() {
+    textElement.innerHTML = toggle.checked ? readableText : originalText;
+  }
+
+  // Устанавливаем АВТОМАТИЧЕСКИ оригинальный (аутентичный) вид по умолчанию
+  textElement.innerHTML = originalText;
+
+  // Добавляем слушатель на изменение чекбокса
+  toggle.addEventListener('change', updateText);
+</script>
+
+<style>
+  .toggle-label {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.95em;
+    color: #1a5fb4;
+    cursor: pointer;
+  }
+
+  .toggle-label input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+  }
+</style>
+  <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+  <div class="comment">
+    <h3>1.1. Повествовательные и вопросительные предложения</h3>
+    <p>В текстах иньских надписей, как уже отмечалось, встречаются как повествовательные, так и вопросительные предложения. Последние выражают общий вопрос, т. е. требуют положительного или отрицательного ответа: «да» — «нет» (предложения, содержащие специальный вопрос, в иньских текстах не зафиксированы).</p>
+    <p>По своей форме повествовательные и вопросительные предложения не отличаются друг от друга:</p>
+    <ul>
+      <li>王田 wáng tián — «Правитель охотится»</li>
+      <li>貞：王田？ zhēn: wáng tián? — «Спрашивают: „Правитель охотится?“»</li>
+    </ul>
+    <p>По-видимому, в архаическом древнекитайском языке общий вопрос и утверждение различались только интонацией, о которой мы судить, естественно, не можем. Поэтому единственным указанием на то, что предложение является вопросительным, может служить для нас наличие перед этим предложением слова 貞 zhēn — «спрашивать».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.2. Прямая речь</h3>
+    <p>Показателем прямой речи в древнекитайском языке является слово 曰 yuē — «говорить».</p>
+    <p>Оно может употребляться самостоятельно: 貞曰 zhēn yuē — «Спрашивают: „…“».</p>
+    <p>Кроме того, это слово может стоять после другого знаменательного слова со значением «говорить», «спрашивать», «отвечать» и т. д.: 王占曰 wáng zhān yuē — «Правитель истолковал: „…“».</p>
+    <p>Прямая речь начинается непосредственно после слова 曰: 王占曰：「雨」 wáng zhān yuē: “yǔ” — «Правитель истолковал: „Будет дождь“».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.3. Сказуемое</h3>
+    <p>Анализируя строй древнекитайского предложения, мы исходим из того, что его центром, т. е. тем членом, без которого предложение как таковое перестает существовать, является сказуемое. Сказуемое — единственный член предложения, который ни при каких условиях не может быть опущен.</p>
+    <p>Серийность иньских надписей позволяет без труда найти по этому признаку сказуемое в каждом из предложений серии. Если мы запишем надписи урока 1 не сплошным текстом, а в виде дистрибутивной таблицы (т. е. разобьем предложения таким образом, чтобы слова, имеющие в разных предложениях одну и ту же грамматическую функцию, оказались в одном вертикальном столбце), то получим следующее:</p>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <tbody><tr><th>Подлежащее / обстоятельство</th><th>Сказуемое</th><th>Частицы / время</th><th>Сказуемое (дождь)</th></tr>
+      <tr><td>丙寅卜爭 bǐng yín bǔ zhēng</td><td>貞 zhēn</td><td>—</td><td>雨 yǔ</td></tr>
+      <tr><td>—</td><td>貞曰 zhēn yuē</td><td>其 qí</td><td>雨 yǔ</td></tr>
+      <tr><td>—</td><td>貞 zhēn</td><td>癸亥 guǐ hài 不 bù 其 qí</td><td>雨 yǔ</td></tr>
+      <tr><td>—</td><td>貞 zhēn</td><td>不 bù</td><td>雨 yǔ</td></tr>
+      <tr><td>王 wáng</td><td>占曰 zhān yuē</td><td>癸 guǐ 其 qí</td><td>雨 yǔ</td></tr>
+      <tr><td>—</td><td>—</td><td>癸丑 guǐ chǒu 允 yǔn 其 qí</td><td>雨 yǔ</td></tr>
+      <tr><td>己卯卜珏 jǐ mǎo bǔ jué</td><td>貞 zhēn</td><td>—</td><td>雨 yǔ</td></tr>
+      <tr><td>王 wáng</td><td>占曰 zhān yuē</td><td>—</td><td>雨 yǔ</td></tr>
+      <tr><td>—</td><td>—</td><td>壬午 rén wǔ 允 yǔn</td><td>雨 yǔ</td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="comment">
+    <p>В архаическом древнекитайском языке сказуемое всегда выражено предикативом, обозначающим действие или состояние. При этом грамматическая категория времени не выражается; одно и то же знаменательное слово в предикативной функции может обозначать действие, происходившее в прошлом, имеющее место в настоящем или ожидаемое в будущем. Время действия может быть определено только по контексту. Так, во второй части надписи сказуемое указывает на действие, которое произойдет в будущем: 其雨 qí yǔ — «Будет дождь?». В четвертой части надписи тот же предикатив передает действие, имевшее место в прошлом: 允雨 yǔn yǔ — «Действительно прошел дождь».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.4. Подлежащее</h3>
+    <p>Подлежащее в архаическом древнекитайском всегда предшествует сказуемому. В двух случаях подлежащее в предложении может отсутствовать: а) если оно известно из предшествующего контекста и опущено по стилистическим соображениям; б) если сказуемое выражено знаменательным словом со значением безличного предикатива (чаще всего для обозначения природных явлений) — 雨 yǔ «дождить», 風 fēng «дуть» (о ветре), 雷 léi «греметь» (о громе) и т. д.</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.5. Обстоятельство времени</h3>
+    <p>Обычная позиция обстоятельства времени — перед подлежащим. В этом случае оно, как правило, не сочетается с предлогом: 丙寅卜 bǐng yín bǔ — «В день бин-инь гадали» (подлежащее опущено); 癸亥 guǐ hài 其雨 qí yǔ — «В день гуй-хай будет дождь» (предложение с безличным сказуемым).</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.6. Наречие</h3>
+    <p>Одним из признаков сказуемого является его способность сочетаться с наречиями. Наречие всегда стоит перед сказуемым. По своему значению наречия архаического древнекитайского языка подразделяются на две группы: служебные и знаменательные.</p>
+    <p>Служебные наречия не имеют никакого знаменательного значения (или, по крайней мере, это значение нам неизвестно). Они указывают лишь на то, что после них следует сказуемое. В архаическом языке таким наречием является слово 其 qí: 其雨 qí yǔ — «Идет дождь».</p>
+    <p>Смысловые наречия в отличие от служебных имеют определенное знаменательное значение, уточняющее сказуемое. В данном уроке встречается одно наречие, относящееся к этой группе, — 允 yǔn «действительно», «и в самом деле», например: 允雨 yǔn yǔ — «Действительно прошел дождь».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.7. Отрицания</h3>
+    <p>Отрицание всегда ставится перед сказуемым. Если же перед сказуемым стоит уже служебное наречие, то отрицание ставится перед последним: 不其雨 bù qí yǔ — «Не идет дождь».</p>
+    <p>Отметим, что смысловое наречие может стоять перед отрицанием: 允不其雨 yǔn bù qí yǔ — «И в самом деле не идет дождь».</p>
+    <p>Наиболее употребительное из числа встречающихся в архаическом древнекитайском языке отрицаний — 不 bù отличается от других служебных слов той же группы тем, что является нейтральным, т. е. не несет никакой дополнительной смысловой нагрузки.</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.8. Приложение</h3>
+    <p>В тех случаях, когда то или иное лицо (предмет) обозначается одновременно и нарицательным, и собственным именем, мы имеем дело с приложением. В архаическом языке при этом имя нарицательное всегда предшествует собственному. В частности, личное имя следует за обозначением статуса (должности): 卜爭 bǔ zhēng — «гадатель Чжэн».</p>
+  </div>
+
+  <h2>СПИСОК СЛОВ УРОКА 1</h2>
+
+<div class="char-list">
+  <div class="char-item">
+    <span>丙<span class="inline-pinyin">bǐng</span></span>
+    <div class="char-tooltip">
+      Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>寅<span class="inline-pinyin">yín</span></span>
+    <div class="char-tooltip">
+      Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>卜<span class="inline-pinyin">bǔ</span></span>
+    <div class="char-tooltip">
+      Гадать; в составе 名 + 卜 — «гадатель по имени...»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>爭<span class="inline-pinyin">zhēng</span></span>
+    <div class="char-tooltip">
+      Имя гадателя; 卜爭 — «гадатель Чжэн»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>貞<span class="inline-pinyin">zhēn</span></span>
+    <div class="char-tooltip">
+      Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>雨<span class="inline-pinyin">yǔ</span></span>
+    <div class="char-tooltip">
+      Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>曰<span class="inline-pinyin">yuē</span></span>
+    <div class="char-tooltip">
+      Говорить; вводит прямую речь: «сказал: „...“»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>其<span class="inline-pinyin">qí</span></span>
+    <div class="char-tooltip">
+      Служебное наречие; указывает на будущее/возможность: «будет ли?»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>癸<span class="inline-pinyin">guǐ</span></span>
+    <div class="char-tooltip">
+      Небесный ствол (10-й); часть дат: 癸亥, 癸丑
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>亥<span class="inline-pinyin">hài</span></span>
+    <div class="char-tooltip">
+      Земная ветвь (12-я); в паре с 癸 — «гуй-хай»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>不<span class="inline-pinyin">bù</span></span>
+    <div class="char-tooltip">
+      Не; отрицание перед сказуемым: «не будет дождя»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>允<span class="inline-pinyin">yǔn</span></span>
+    <div class="char-tooltip">
+      Действительно; подтверждает: «и в самом деле пошёл дождь»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>王<span class="inline-pinyin">wáng</span></span>
+    <div class="char-tooltip">
+      Правитель; подлежащее: «царь сказал», «царь истолковал»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>占<span class="inline-pinyin">zhān</span></span>
+    <div class="char-tooltip">
+      Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>丑<span class="inline-pinyin">chǒu</span></span>
+    <div class="char-tooltip">
+      Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>己<span class="inline-pinyin">jǐ</span></span>
+    <div class="char-tooltip">
+      Небесный ствол (6-й); в паре с 卯 — «цзи-мао»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>卯<span class="inline-pinyin">mǎo</span></span>
+    <div class="char-tooltip">
+      Земная ветвь (4-я); день «цзи-мао»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>珏<span class="inline-pinyin">jué</span></span>
+    <div class="char-tooltip">
+      Имя гадателя; 卜珏 — «гадатель Цзюэ»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>壬<span class="inline-pinyin">rén</span></span>
+    <div class="char-tooltip">
+      Небесный ствол (9-й); в паре с 午 — «жэнь-у»
+    </div>
+  </div>
+
+  <div class="char-item">
+    <span>午<span class="inline-pinyin">wǔ</span></span>
+    <div class="char-tooltip">
+      Земная ветвь (7-я); день «жэнь-у»
+    </div>
+  </div>
+</div>
+
+
+  <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+  <div class="comment">
+    <h3>1—1. Циклические знаки</h3>
+    <p>В древнекитайском языке существует два набора, или цикла, знаков, расположенных в определенной последовательности и использовавшихся для обозначения дней. В первом цикле — десять знаков: 甲 jiǎ, 乙 yǐ, 丙 bǐng, 丁 dīng, 戊 wù, 己 jǐ, 庚 gēng, 辛 xīn, 壬 rén, 癸 guǐ; во втором — двенадцать: 子 zǐ, 丑 chǒu, 寅 yín, 卯 mǎo, 辰 chén, 巳 sì, 午 wǔ, 未 wèi, 申 shēn, 酉 yǒu, 戌 xū, 亥 hài.</p>
+    <p>Первый знак первого цикла сочетается с первым знаком второго цикла, второй знак — со вторым и т. д. В совокупности получается 60 сочетаний:</p>
+  </div>
+
+  <div class="table-container">
+  <table class="cycle-table">
+    <tbody>
+      <tr>
+        <td>1. 甲子<br>jiǎ zǐ</td>
+        <td>2. 乙丑<br>yǐ chǒu</td>
+        <td>3. 丙寅<br>bǐng yín</td>
+        <td>4. 丁卯<br>dīng mǎo</td>
+      </tr>
+      <tr>
+        <td>5. 戊辰<br>wù chén</td>
+        <td>6. 己巳<br>jǐ sì</td>
+        <td>7. 庚午<br>gēng wǔ</td>
+        <td>8. 辛未<br>xīn wèi</td>
+      </tr>
+      <tr>
+        <td>9. 壬申<br>rén shēn</td>
+        <td>10. 癸酉<br>guǐ yǒu</td>
+        <td>11. 甲戌<br>jiǎ xū</td>
+        <td>12. 乙亥<br>yǐ hài</td>
+      </tr>
+      <tr>
+        <td>13. 丙子<br>bǐng zǐ</td>
+        <td>14. 丁丑<br>dīng chǒu</td>
+        <td>15. 戊寅<br>wù yín</td>
+        <td>16. 己卯<br>jǐ mǎo</td>
+      </tr>
+      <tr>
+        <td>17. 庚辰<br>gēng chén</td>
+        <td>18. 辛巳<br>xīn sì</td>
+        <td>19. 壬午<br>rén wǔ</td>
+        <td>20. 癸未<br>guǐ wèi</td>
+      </tr>
+      <tr>
+        <td>21. 甲申<br>jiǎ shēn</td>
+        <td>22. 乙酉<br>yǐ yǒu</td>
+        <td>23. 丙戌<br>bǐng xū</td>
+        <td>24. 丁亥<br>dīng hài</td>
+      </tr>
+      <tr>
+        <td>25. 戊子<br>wù zǐ</td>
+        <td>26. 己丑<br>jǐ chǒu</td>
+        <td>27. 庚寅<br>gēng yín</td>
+        <td>28. 辛卯<br>xīn mǎo</td>
+      </tr>
+      <tr>
+        <td>29. 壬辰<br>rén chén</td>
+        <td>30. 癸巳<br>guǐ sì</td>
+        <td>31. 甲午<br>jiǎ wǔ</td>
+        <td>32. 乙未<br>yǐ wèi</td>
+      </tr>
+      <tr>
+        <td>33. 丙申<br>bǐng shēn</td>
+        <td>34. 丁酉<br>dīng yǒu</td>
+        <td>35. 戊戌<br>wù xū</td>
+        <td>36. 己亥<br>jǐ hài</td>
+      </tr>
+      <tr>
+        <td>37. 庚子<br>gēng zǐ</td>
+        <td>38. 辛丑<br>xīn chǒu</td>
+        <td>39. 壬寅<br>rén yín</td>
+        <td>40. 癸卯<br>guǐ mǎo</td>
+      </tr>
+      <tr>
+        <td>41. 甲辰<br>jiǎ chén</td>
+        <td>42. 乙巳<br>yǐ sì</td>
+        <td>43. 丙午<br>bǐng wǔ</td>
+        <td>44. 丁未<br>dīng wèi</td>
+      </tr>
+      <tr>
+        <td>45. 戊申<br>wù shēn</td>
+        <td>46. 己酉<br>jǐ yǒu</td>
+        <td>47. 庚戌<br>gēng xū</td>
+        <td>48. 辛亥<br>xīn hài</td>
+      </tr>
+      <tr>
+        <td>49. 壬子<br>rén zǐ</td>
+        <td>50. 癸丑<br>guǐ chǒu</td>
+        <td>51. 甲寅<br>jiǎ yín</td>
+        <td>52. 乙卯<br>yǐ mǎo</td>
+      </tr>
+      <tr>
+        <td>53. 丙辰<br>bǐng chén</td>
+        <td>54. 丁巳<br>dīng sì</td>
+        <td>55. 戊午<br>wù wǔ</td>
+        <td>56. 己未<br>jǐ wèi</td>
+      </tr>
+      <tr>
+        <td>57. 庚申<br>gēng shēn</td>
+        <td>58. 辛酉<br>xīn yǒu</td>
+        <td>59. 壬戌<br>rén xū</td>
+        <td>60. 癸亥<br>guǐ hài</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+  <div class="comment">
+    <p>Таким образом, первый день 60-ричного цикла обозначается сочетанием 甲子 jiǎ zǐ, последний — 癸亥 guǐ hài; затем снова следует 甲子 jiǎ zǐ и т. д. Если из контекста ясно, о какой десятидневке идет речь, второй знак в сочетании мог опускаться.</p>
+    <p>Сочетания циклических знаков употребляются в древнекитайском языке только в функции имени, конкретнее — в функции обстоятельства времени. Поэтому такое сочетание знаков, употребленное без предлога, может служить указанием на начало предложения: 甲子 jiǎ zǐ 允其雨 yǔn qí yǔ — «В день цзя-цзы действительно прошел дождь».</p>
+  </div>
+
+  <div class="footnote">
+    <p><strong>Примечание о знаке 珏:</strong> В оригинальных записях студентов имя гадателя передано как <code>jue4</code> — вероятно, из-за отсутствия в шрифтах редкого иероглифа. Здесь условно восстановлено как <strong>珏</strong> (U+7389), подходящее по произношению и использовавшееся в древних именах.</p>
+  </div>
+
+  <h2>ЗАДАНИЯ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+
+  <ol class="exercise">
+    <li>Проанализируйте текст грамматически и найдите в нём известные вам члены предложения.</li>
+    <li>Пользуясь словарём, дайте литературный перевод текста на русский язык.</li>
+    <li>Переведите на древнекитайский следующие предложения:
+      <ol type="a">
+        <li>На шестой день правитель не задавал вопросов.</li>
+        <li>Вопрос гласит: «Был ли дождь?»</li>
+        <li>Гадатель Чжэн сказал: «Правитель действительно не задаёт вопросов».</li>
+        <li>На десятый день правитель прочитал ответ на гадательной кости.</li>
+      </ol>
+    </li>
+  </ol>
+
+  <div class="footer">
+    Учебник: М.В. Крюков, Хуан Шуин — Архаический древнекитайский язык<br>
+    Восстановлено и оформлено в duolingo-подобном формате, 2025
+  </div>
+
+
+</body></html>-e 
+
+=== 📄 ДЛЯ ВСТАВКИ! pynyin.html ===
+<div class="pinyin-container">
+  <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
+    Показать пиньинь ▼
+  </button>
+  <div class="pinyin-text">
+    Zhēn:「jīn xī qí yǔ？」Wáng zhān yuē：「qí yǔ。」
+  </div>
+</div>
+
+<style>
+  .pinyin-container {
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pinyin-toggle {
+    background: #f5f5f5;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pinyin-toggle:hover {
+    background: #eef7ff;
+  }
+  
+  .pinyin-toggle::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .pinyin-text {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background: #fafafa;
+    font-style: italic;
+    color: #666;
+    font-size: 15px;
+  }
+  
+  .pinyin-text.expanded {
+    padding: 12px 15px;
+    max-height: 100px;
+  }
+  
+  .pinyin-toggle.expanded::after {
+    transform: rotate(180deg);
+  }
+</style>-e 
+
