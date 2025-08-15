@@ -2,162 +2,66 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Прямая речь в оракульных надписях</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Прямая речь</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
       margin: 0;
-      line-height: 1.6;
-      background: #f8f9fa;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff;
       color: #333;
     }
 
     h2 {
-      color: #2c3e50;
+      margin: 0 0 8px 0;
+      font-size: 16px;
       text-align: center;
-      margin: 20px 0;
-      font-size: 28px;
+      font-weight: bold;
+      color: #222;
     }
 
-    /* Убираем рамку — просто контент на всю ширину */
-    .task {
-      padding: 20px;
-      background: white;
-      border-radius: 0;
-      box-shadow: none;
-      margin: 0 auto;
-      width: 100%;
+    p.intro {
+      text-align: center;
+      font-size: 14px;
+      margin: 6px 0 10px 0;
+      color: #555;
     }
 
     .oracle-text {
-      font-size: 32px;
+      font-size: 20px;
       text-align: center;
-      margin: 30px 0;
+      margin: 10px 0;
       font-weight: bold;
-      letter-spacing: 1px;
-      color: #1a1a1a;
+      color: #111;
     }
 
-    .question {
-      font-weight: bold;
-      margin: 20px 0 10px;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    .options {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      max-width: 600px;
-      margin: 20px auto;
-    }
-
-    .option {
-      margin: 8px 0;
-      padding: 14px;
-      border-radius: 6px;
-      background: #f0f4f8;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid #d0d8e0;
-      font-size: 16px;
-      text-align: center;
-    }
-
-    .option:hover {
-      background: #e1effc;
-      transform: scale(1.02);
-    }
-
-    .option.selected {
-      background: #d4edff;
-      border-color: #3498db;
-      border-width: 2px;
-      font-weight: bold;
-    }
-
-    button {
-      padding: 14px 24px;
-      font-size: 18px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 30px auto;
-      display: block;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: #2980b9;
-    }
-
-    #result {
-      margin: 25px auto;
-      padding: 16px;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: bold;
-      max-width: 600px;
-      font-size: 16px;
-    }
-
-    .success {
-      background: #e8f5e9;
-      color: #27ae60;
-      border: 1px solid #a5d6a7;
-    }
-
-    .error {
-      background: #ffebee;
-      color: #e74c3c;
-      border: 1px solid #ef9a9a;
-    }
-
-    .explanation {
-      margin: 20px auto;
-      padding: 20px;
-      background: #fffde7;
-      border-radius: 6px;
-      font-size: 16px;
-      max-width: 700px;
-      line-height: 1.7;
-      border-left: 4px solid #ffb300;
-    }
-
-    /* Пиньинь — растягивается, но не ломает читаемость */
     .pinyin-container {
-      margin: 20px auto;
+      margin: 8px 0;
       border: 1px solid #ddd;
-      border-radius: 0;
+      border-radius: 4px;
       overflow: hidden;
-      max-width: 600px;
     }
 
     .pinyin-toggle {
-      background: #f5f5f5;
+      background: #f8f8f8;
       border: none;
-      padding: 12px 16px;
+      padding: 6px 10px;
       width: 100%;
       text-align: left;
       cursor: pointer;
-      font-size: 14px;
-      color: #555;
+      font-size: 13px;
+      color: #444;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .pinyin-toggle:hover {
-      background: #eef7ff;
-    }
-
     .pinyin-toggle::after {
       content: '▼';
-      font-size: 12px;
+      font-size: 10px;
       transition: transform 0.2s;
     }
 
@@ -166,72 +70,131 @@
     }
 
     .pinyin-text {
-      padding: 0 16px;
+      padding: 0 10px;
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease, padding 0.3s ease;
       background: #fafafa;
       font-style: italic;
       color: #666;
-      font-size: 15px;
+      font-size: 13px;
       border-top: 1px solid #eee;
     }
 
     .pinyin-text.expanded {
-      padding: 12px 16px;
-      max-height: 100px;
+      padding: 6px 10px;
+      max-height: 60px;
     }
 
-    /* На маленьких экранах — адаптация */
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-      .oracle-text {
-        font-size: 24px;
-      }
-      .options, #result, .explanation, .pinyin-container {
-        max-width: 100%;
-      }
-      .task {
-        padding: 15px;
-      }
+    .question {
+      font-weight: bold;
+      margin: 10px 0 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .options {
+      margin: 8px 0;
+    }
+
+    .option {
+      margin: 4px 0;
+      padding: 8px 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .option:hover,
+    .option.selected {
+      background: #e0f0ff;
+      border: 1px solid #3498db;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 6px 10px;
+      margin: 10px 0 0 0;
+      font-size: 14px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:active {
+      background: #0055aa;
+    }
+
+    #result {
+      margin: 10px 0 0 0;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+
+    #explanation {
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      background: #fffde7;
+      border-radius: 4px;
+      border-left: 3px solid #ffb300;
+    }
+
+    #explanation p, #explanation ol {
+      margin: 6px 0;
+    }
+
+    #explanation ol {
+      padding-left: 16px;
     }
   </style>
 </head>
 <body>
+
   <h2>Прямая речь в оракульных надписях</h2>
+  <p class="intro">Выберите часть текста, которая является прямым вопросом.</p>
 
-  <div class="task">
-    <p style="text-align: center; font-size: 18px;">Внимательно прочитайте надпись и ответьте на вопрос:</p>
-    
-    <div class="oracle-text">貞丁卯其雨王占曰其雨</div>
-    
-    <div class="pinyin-container">
-      <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded')">
-        Показать пиньинь ▼
-      </button>
-      <div class="pinyin-text">zhēn dīng mǎo qí yǔ wáng zhàn yuē qí yǔ</div>
-    </div>
+  <div class="oracle-text">貞丁卯其雨王占曰其雨</div>
 
-    <div class="question">Какая часть этого текста представляет собой прямой вопрос, заданный оракулу?</div>
-    
-    <div id="options-container" class="options">
-      <!-- Варианты будут вставлены динамически и перемешаны -->
-    </div>
-    
-    <button onclick="checkAnswer()">Проверить</button>
-    
-    <div id="result"></div>
-    
-    <div id="explanation" class="explanation" style="display: none;">
-      <p><strong>Объяснение:</strong> В оракульных надписях структура обычно включает:</p>
-      <ol>
-        <li><strong>Вопрос к оракулу</strong> — вводится иероглифом <strong>貞</strong> — это прямая речь</li>
-        <li><strong>Ответ</strong> — вводится фразой <strong>王占曰</strong> — "царь истолковал" — тоже прямая речь</li>
-      </ol>
-      <p>В данном случае <strong>「貞丁卯其雨」</strong> — это полная формулировка вопроса: "Гадание: будет ли дождь на четвертый день?"</p>
-    </div>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+      Показать пиньинь
+    </button>
+    <div class="pinyin-text">zhēn dīng mǎo qí yǔ wáng zhàn yuē qí yǔ</div>
+  </div>
+
+  <div class="question">Какая часть — прямой вопрос к оракулу?</div>
+
+  <div id="options-container" class="options"></div>
+
+  <button onclick="checkAnswer()">Проверить</button>
+  <div id="result"></div>
+  <div id="explanation" style="display: none;">
+    <p><strong>Объяснение:</strong></p>
+    <ol>
+      <li><strong>貞</strong> вводит вопрос — это прямая речь.</li>
+      <li><strong>王占曰</strong> — царь истолковал, тоже прямая речь, но это ответ.</li>
+    </ol>
+    <p><strong>「貞丁卯其雨」</strong> — полный вопрос: "Будет ли дождь?"</p>
   </div>
 
   <script>
@@ -271,8 +234,8 @@
 
     function selectOption(id) {
       selectedOptionId = id;
-      document.querySelectorAll('.option').forEach(opt => {
-        opt.classList.remove('selected');
+      document.querySelectorAll('.option').forEach(el => {
+        el.classList.remove('selected');
       });
       document.querySelector(`.option[data-id="${id}"]`).classList.add('selected');
     }
@@ -282,22 +245,22 @@
       const explanationEl = document.getElementById('explanation');
 
       if (!selectedOptionId) {
-        resultEl.textContent = "Пожалуйста, выберите вариант ответа";
+        resultEl.textContent = "Выберите вариант";
         resultEl.className = "error";
         return;
       }
 
-      const selectedOption = options.find(opt => opt.id === selectedOptionId);
+      const correct = options.find(o => o.id === selectedOptionId).correct;
 
-      if (selectedOption.correct) {
-        resultEl.innerHTML = "✅ <strong>Верно!</strong> Это полная формулировка вопроса к оракулу.";
+      if (correct) {
+        resultEl.innerHTML = "✅ <b>Верно!</b>";
         resultEl.className = "success";
-        explanationEl.style.display = 'block';
+        explanationEl.style.display = "block";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Не совсем верно. Попробуйте еще раз.";
+        resultEl.textContent = "❌ Неверно.";
         resultEl.className = "error";
-        explanationEl.style.display = 'block';
+        explanationEl.style.display = "block";
         sendResult(false, "Ошибка в определении прямой речи");
       }
     }
@@ -306,7 +269,7 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success: !!success,
-        message: message || (success ? "Правильно определена прямая речь" : "Ошибка")
+        message: message || (success ? "Правильно" : "Ошибка")
       }, "*");
     }
 
