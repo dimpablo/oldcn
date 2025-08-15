@@ -82,15 +82,25 @@
   </style>
 </head>
 <body>
-
   <!-- Основная таблица -->
   <table cellpadding="0" cellspacing="0">
-    <!-- Строка: СЕКЦИЯ -->
+    <!-- Строка: Интерфейс -->
     <tr>
       <td class="label-row">
-        <div style="background-color: pink;" class="unit-label">СЕКЦИЯ 1. АРХАИЧЕСКИЙ ДРЕВНЕКИТАЙСКИЙ ЯЗЫК</div>
+        <div style="background-color: pink;" class="unit-label">здесь можно изменить масштаб страницы</div>
       </td>
     </tr>
+
+<!-- Строка: Управление масштабом -->
+<tr>
+  <td class="label-row">
+    <div class="unit-label" style="display: flex; align-items: center; justify-content: center; gap: 10px; background-color: #e0f7fa;">
+      <button id="zoom-out" style="font-size: 20px; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 6px; background-color: #fff; cursor: pointer;">–</button>
+      <span id="zoom-value" style="font-weight: bold; font-size: 18px; min-width: 50px; text-align: center;">100%</span>
+      <button id="zoom-in" style="font-size: 20px; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 6px; background-color: #fff; cursor: pointer;">+</button>
+    </div>
+  </td>
+</tr>
 
     <!-- Строка: Урок 1 -->
     <tr>
@@ -155,5 +165,62 @@
       unit.style.transform = `translateX(${x}px)`;
     });
   </script>
+  <script>
+  // === УПРАВЛЕНИЕ МАСШТАБОМ ===
+  let scale = 1.0;
+  const minScale = 0.5;
+  const maxScale = 2.0;
+  const step = 0.1;
+
+  const body = document.body;
+  const zoomInBtn = document.getElementById('zoom-in');
+  const zoomOutBtn = document.getElementById('zoom-out');
+  const zoomValue = document.getElementById('zoom-value');
+
+  // Применяем масштаб
+  function applyScale() {
+    body.style.transform = `scale(${scale})`;
+    body.style.transformOrigin = 'top center';
+    // Корректируем ширину, чтобы избежать прыжков из-за scale
+    body.style.width = `${100 / scale}%`;
+
+    zoomValue.textContent = `${Math.round(scale * 100)}%`;
+  }
+
+  zoomInBtn.addEventListener('click', () => {
+    if (scale < maxScale) {
+      scale = Math.min(maxScale, scale + step);
+      applyScale();
+    }
+  });
+
+  zoomOutBtn.addEventListener('click', () => {
+    if (scale > minScale) {
+      scale = Math.max(minScale, scale - step);
+      applyScale();
+    }
+  });
+
+  // === АНИМАЦИЯ КРУЖКОВ (СИНУСОИДА) ===
+  function animateCircles() {
+    const amplitude = 200;
+    const frequency = 0.006;
+
+    const units = document.querySelectorAll('.unit-circle');
+
+    units.forEach(unit => {
+      const rect = unit.getBoundingClientRect();
+      const y = rect.top + window.scrollY + rect.height / 2;
+      const x = amplitude * Math.sin(frequency * y);
+      unit.style.transform = `translateX(${x}px)`;
+    });
+  }
+
+  // Запускаем анимацию при загрузке и при прокрутке
+  window.addEventListener('load', animateCircles);
+  window.addEventListener('scroll', animateCircles);
+  window.addEventListener('resize', animateCircles);
+</script>
+
 </body>
 </html>
