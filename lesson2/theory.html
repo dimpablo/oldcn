@@ -68,11 +68,88 @@
         ol {
             line-height: 1.8;
         }
+
+        /* === Интерактивные подсказки для иероглифов (совместимо с Уроком 1) === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
     <h1>УРОК 2</h1>
+
+    <div class="text">
+        <h2>Текст урока</h2>
+        <div class="original">
+            癸卯卜，爭貞：「今歲商受年？貞：來歲不其受年？」<br>
+            癸丑卜，珏貞：「冓受年？貞：冓不其受年？」<br>
+            癸卯卜，亘貞：「我受黍年？」<br>
+            癸巳卜，珏貞：「我受稻年？貞：今來歲我不其受年？」<br>
+            貞：「戔受？」貞：「甫弗其受黍年？」<br>
+            貞：「肅來牛？」貞：「肅弗其來牛？」<br>
+            貞：「重不其來犬？」<br>
+            貞：「今春奚來牛？奚不其来牛？」<br>
+            甲辰卜，珏貞：「奚來白馬？」<br>
+            王占曰：「吉。其來馬。」<br>
+            丙辰卜，珏貞：「今春方其自來？」
+        </div>
+    </div>
 
     <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
     <div class="grammar">
@@ -144,6 +221,206 @@
             <br><br>
             Но <strong>弗 (fú)</strong> не употребляется перед безличными предикативами, а также в тех случаях, когда дополнение к сказуемому выражено местоимением (см. 5.3).
         </p>
+    </div>
+
+    <h2>СПИСОК СЛОВ УРОКА 2</h2>
+
+    <div class="char-list">
+        <div class="char-item">
+            <span>弗<span class="inline-pinyin">fú</span></span>
+            <div class="char-tooltip">
+                Служебное слово: отрицание; аналог «не»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>肅<span class="inline-pinyin">sù</span></span>
+            <div class="char-tooltip">
+                Строгий; собственное имя: Су
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>牛<span class="inline-pinyin">niú</span></span>
+            <div class="char-tooltip">
+                Корова
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>重<span class="inline-pinyin">zhōng</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Чжун (введён как замена отсутствующего иньского символа)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>犬<span class="inline-pinyin">quǎn</span></span>
+            <div class="char-tooltip">
+                Собака; собственное имя: Цюань (название племени)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>春<span class="inline-pinyin">chūn</span></span>
+            <div class="char-tooltip">
+                Весна
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>奚<span class="inline-pinyin">xī</span></span>
+            <div class="char-tooltip">
+                Служебное слово: вопросительное местоимение «что»; собственное имя: Си
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>甲<span class="inline-pinyin">jiǎ</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (1-й); название первого знака 10-ричного цикла; доспехи
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>辰<span class="inline-pinyin">chén</span></span>
+            <div class="char-tooltip">
+                Созвездие; Земная ветвь (5-я); день «jiǎ chén»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>白<span class="inline-pinyin">bái</span></span>
+            <div class="char-tooltip">
+                Белый; говорить; собственное имя: Бай (фамилия)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>馬<span class="inline-pinyin">mǎ</span></span>
+            <div class="char-tooltip">
+                Лошадь
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>吉<span class="inline-pinyin">jí</span></span>
+            <div class="char-tooltip">
+                Благополучный
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>方<span class="inline-pinyin">fāng</span></span>
+            <div class="char-tooltip">
+                Племя; сторона света; плот; квадрат; служебное наречие: «и лишь после этого»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>自<span class="inline-pinyin">zì</span></span>
+            <div class="char-tooltip">
+                Служебное слово: предлог «из, от»; «сам, лично»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>今<span class="inline-pinyin">jīn</span></span>
+            <div class="char-tooltip">
+                Ныне
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>歲<span class="inline-pinyin">suì</span></span>
+            <div class="char-tooltip">
+                Год (в значении «год урожая», «год правления»)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>商<span class="inline-pinyin">shāng</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Шан (династия или личное имя)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>受<span class="inline-pinyin">shòu</span></span>
+            <div class="char-tooltip">
+                Давать; получать
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>年<span class="inline-pinyin">nián</span></span>
+            <div class="char-tooltip">
+                Урожай; год; возраст
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>來<span class="inline-pinyin">lái</span></span>
+            <div class="char-tooltip">
+                Приходить; присылать; будущий
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>冓<span class="inline-pinyin">gōu</span></span>
+            <div class="char-tooltip">
+                Постройка; собственное имя: Гоу
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>亘<span class="inline-pinyin">gèn</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Гэнь
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>我<span class="inline-pinyin">wǒ</span></span>
+            <div class="char-tooltip">
+                Служебное слово: личное местоимение первого лица — «я»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>黍<span class="inline-pinyin">shǔ</span></span>
+            <div class="char-tooltip">
+                Чумиза (древнее зерно)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>巳<span class="inline-pinyin">sì</span></span>
+            <div class="char-tooltip">
+                Земная ветвь (6-я); часть даты, например, «jiǎ sì»
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>稲<span class="inline-pinyin">dào</span></span>
+            <div class="char-tooltip">
+                Рис
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>戔<span class="inline-pinyin">jiān</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Цзянь
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>甫<span class="inline-pinyin">fǔ</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Фу
+            </div>
+        </div>
     </div>
 
     <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
