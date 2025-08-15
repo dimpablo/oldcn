@@ -2,195 +2,156 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Собери перевод оракульной надписи</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Собери перевод</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      line-height: 1.6;
       margin: 0;
-      background: #f7f9fc;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff;
       color: #333;
     }
 
     h2 {
-      color: #2c3e50;
+      margin: 0 0 8px 0;
+      font-size: 16px;
       text-align: center;
-      margin: 20px 0;
-      font-size: 28px;
+      font-weight: bold;
     }
 
     .instructions {
-      background: #f8f9fa;
-      padding: 18px;
-      border-radius: 8px;
-      margin-bottom: 25px;
-      font-size: 17px;
-      border: 1px solid #e0e0e0;
+      padding: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .instructions p {
+      margin: 4px 0;
+    }
+
+    .task-container {
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      margin: 6px 0;
+    }
+
+    .oracle-text {
+      font-size: 20px;
+      text-align: center;
+      margin: 8px 0;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .word-pool, .drop-area {
+      min-height: 30px;
+      padding: 6px;
+      margin: 6px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f9f9f9;
+      font-size: 14px;
+      justify-content: center;
     }
 
     .drop-area {
-      min-height: 60px;
-      border: 2px dashed #3498db;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 20px 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      border-color: #3498db;
       background: #eef7ff;
-      font-size: 24px;
-      align-items: center;
-      justify-content: center;
     }
 
-    .word-pool {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 15px 0;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      min-height: 60px;
-      background: #f9f9f9;
-      align-items: center;
-      justify-content: center;
+    .drop-area:empty::after {
+      content: '[пусто]';
+      color: #999;
+      font-style: italic;
     }
 
     .word-box {
       background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: grab;
-      font-size: 18px;
-      padding: 10px 14px;
+      border: 1px solid #aaa;
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
       user-select: none;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      transition: all 0.2s;
       white-space: nowrap;
     }
 
-    .word-box:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    }
-
-    .word-box.dragging {
-      opacity: 0.7;
-      transform: scale(1.05);
-    }
-
     .controls {
-      margin-top: 30px;
       text-align: center;
+      margin: 10px 0;
     }
 
     button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background: #3498db;
+      padding: 6px 10px;
+      margin: 0 6px;
+      font-size: 14px;
+      background: #0066cc;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
-      margin: 0 10px;
-      transition: background 0.2s;
     }
 
-    button:hover {
-      background: #2980b9;
+    button:active {
+      background: #0055aa;
     }
 
-    .message {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #e74c3c;
+    #result {
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 14px;
       text-align: center;
-      padding: 12px;
-      border-radius: 6px;
+      border-radius: 4px;
+      display: none;
     }
 
     .success {
-      color: #27ae60;
       background: #e8f5e9;
-      border: 1px solid #a5d6a7;
+      color: #27ae60;
     }
 
-    .oracle-text {
-      font-size: 30px;
-      text-align: center;
-      margin: 25px 0;
-      font-weight: bold;
-      color: #1a1a1a;
-    }
-
-    .task-container {
-      margin-bottom: 40px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 20px;
-    }
-
-    .task-title {
-      font-weight: bold;
-      font-size: 18px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    /* Мобильный режим — клик вместо drag */
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
-      }
-      .oracle-text {
-        font-size: 26px;
-      }
-      .drop-area, .word-pool {
-        font-size: 20px;
-      }
-      .word-box {
-        padding: 10px 12px;
-        font-size: 16px;
-      }
-      .instructions, .task-container {
-        padding: 12px;
-      }
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
     }
   </style>
 </head>
 <body>
-  <h2>Собери перевод оракульной надписи</h2>
+
+  <h2>Собери перевод</h2>
 
   <div class="instructions">
-    <p><strong>На ПК:</strong> перетащите слова в правильном порядке.</p>
-    <p><strong>На телефоне:</strong> просто кликайте по словам, чтобы добавить их в перевод. Клик по слову в поле — удалит его.</p>
+    <p><strong>Кликайте по словам</strong>, чтобы добавить их в перевод.</p>
+    <p>Клик по слову в поле — удалит его.</p>
   </div>
 
   <div class="task-container">
-    <div class="task-title">1. Переведите надпись:</div>
+    <div class="task-title">1. 不其雨</div>
     <div class="oracle-text">不其雨</div>
-    
-    <p>Доступные слова:</p>
     <div id="word-pool1" class="word-pool"></div>
-
-    <p>Соберите перевод здесь:</p>
-    <div id="drop-area1" class="drop-area">[пусто]</div>
+    <div id="drop-area1" class="drop-area"></div>
   </div>
 
   <div class="task-container">
-    <div class="task-title">2. Переведите надпись:</div>
+    <div class="task-title">2. 貞不雨</div>
     <div class="oracle-text">貞不雨</div>
-    
-    <p>Доступные слова:</p>
     <div id="word-pool2" class="word-pool"></div>
-
-    <p>Соберите перевод здесь:</p>
-    <div id="drop-area2" class="drop-area">[пусто]</div>
+    <div id="drop-area2" class="drop-area"></div>
   </div>
 
   <div class="controls">
@@ -198,10 +159,9 @@
     <button id="reset-btn">Сбросить</button>
   </div>
 
-  <p id="result" class="message" style="display: none;"></p>
+  <p id="result"></p>
 
   <script>
-    // Ожидаемые варианты переводов
     const expected1 = [
       ['не', 'будет', 'дождя'],
       ['не', 'пойдёт', 'дождь'],
@@ -231,152 +191,79 @@
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
 
-    // Определяем, мобильное ли устройство
-    const isMobile = () => {
-      return (
-        navigator.maxTouchPoints > 1 ||
-        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      );
-    };
-
-    // Создаём слово
-    function createWordBox(word, pool, dropArea, isMobileMode) {
+    function createWordBox(word, pool, dropArea) {
       const box = document.createElement('div');
       box.className = 'word-box';
       box.textContent = word;
-
-      if (isMobileMode) {
-        box.style.cursor = 'pointer';
-        box.onclick = () => {
-          // Удаляем из пула и добавляем в зону сбора
-          box.remove();
-          const clone = box.cloneNode(true);
-          clone.onclick = () => {
-            clone.remove();
-            if (dropArea.children.length === 0) {
-              const placeholder = document.createElement('span');
-              placeholder.textContent = '[пусто]';
-              placeholder.style.color = '#999';
-              dropArea.appendChild(placeholder);
-            }
-          };
-          // Убираем placeholder
-          if (dropArea.textContent.trim() === '[пусто]') {
-            dropArea.innerHTML = '';
-          }
-          dropArea.appendChild(clone);
-        };
-      } else {
-        box.draggable = true;
-        box.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', word);
-          box.classList.add('dragging');
-        });
-        box.addEventListener('dragend', () => {
-          box.classList.remove('dragging');
-        });
-      }
-
+      box.onclick = () => {
+        box.remove();
+        const clone = box.cloneNode(true);
+        clone.onclick = () => { clone.remove(); updatePlaceholder(dropArea); };
+        dropArea.appendChild(clone);
+        updatePlaceholder(dropArea);
+      };
       pool.appendChild(box);
     }
 
-    // Инициализация
-    function init() {
-      wordPool1.innerHTML = '';
-      wordPool2.innerHTML = '';
-      dropArea1.innerHTML = '<span style="color:#999">[пусто]</span>';
-      dropArea2.innerHTML = '<span style="color:#999">[пусто]</span>';
-      resultEl.style.display = 'none';
-
-      const isMobileMode = isMobile();
-
-      // Перемешиваем слова
-      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
-      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
-
-      shuffled1.forEach(word => {
-        createWordBox(word, wordPool1, dropArea1, isMobileMode);
-      });
-      shuffled2.forEach(word => {
-        createWordBox(word, wordPool2, dropArea2, isMobileMode);
-      });
-
-      // На мобильных — убираем dragover/leave/drop
-      if (!isMobileMode) {
-        setupDragDrop(dropArea1, wordPool1);
-        setupDragDrop(dropArea2, wordPool2);
+    function updatePlaceholder(dropArea) {
+      const hasWords = dropArea.children.length > 0 && !Array.from(dropArea.children).some(el => el.textContent.includes('[пусто]'));
+      if (!hasWords && dropArea.children.length === 0) {
+        dropArea.innerHTML = '';
+        const placeholder = document.createElement('span');
+        placeholder.style.color = '#999';
+        placeholder.style.fontStyle = 'italic';
+        placeholder.textContent = '[пусто]';
+        dropArea.appendChild(placeholder);
       }
     }
 
-    // Настройка drag-and-drop (только для ПК)
-    function setupDragDrop(dropArea, pool) {
-      dropArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropArea.style.borderColor = '#e67e22';
-      });
+    function init() {
+      wordPool1.innerHTML = '';
+      wordPool2.innerHTML = '';
+      dropArea1.innerHTML = '';
+      dropArea2.innerHTML = '';
+      resultEl.style.display = 'none';
+      updatePlaceholder(dropArea1);
+      updatePlaceholder(dropArea2);
 
-      dropArea.addEventListener('dragleave', () => {
-        dropArea.style.borderColor = '#3498db';
-      });
+      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
+      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
 
-      dropArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropArea.style.borderColor = '#3498db';
-
-        const word = e.dataTransfer.getData('text/plain');
-        const draggedBox = [...pool.children].find(b => b.textContent === word && b.draggable);
-
-        if (draggedBox) {
-          const clone = draggedBox.cloneNode(true);
-          clone.draggable = false;
-          clone.style.cursor = 'default';
-          draggedBox.remove();
-          // Убираем placeholder
-          if (dropArea.textContent.trim() === '[пусто]') {
-            dropArea.innerHTML = '';
-          }
-          dropArea.appendChild(clone);
-        }
-      });
+      shuffled1.forEach(word => createWordBox(word, wordPool1, dropArea1));
+      shuffled2.forEach(word => createWordBox(word, wordPool2, dropArea2));
     }
 
-    // Проверка результата
+    function getWords(dropArea) {
+      return Array.from(dropArea.children)
+        .filter(el => !el.textContent.includes('[пусто]'))
+        .map(el => el.textContent.trim());
+    }
+
     checkBtn.addEventListener('click', () => {
-      const current1 = Array.from(dropArea1.children)
-        .filter(el => !el.textContent.includes('[пусто]'))
-        .map(el => el.textContent.trim());
-      const current2 = Array.from(dropArea2.children)
-        .filter(el => !el.textContent.includes('[пусто]'))
-        .map(el => el.textContent.trim());
+      const current1 = getWords(dropArea1);
+      const current2 = getWords(dropArea2);
 
       const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
       const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
 
       if (isCorrect1 && isCorrect2) {
-        resultEl.innerHTML = `✅ <strong>Верно!</strong> Вы правильно перевели обе надписи.<br>
-          <em>不其雨</em> = «${current1.join(' ')}»<br>
-          <em>貞 不雨</em> = «${current2.join(' ')}»`;
+        resultEl.innerHTML = `✅ <b>Верно!</b>`;
         resultEl.className = 'message success';
         resultEl.style.display = 'block';
         sendResult(true);
       } else {
-        let message = '❌ Есть ошибки. Попробуйте ещё раз.';
-        if (!isCorrect1 && isCorrect2) {
-          message = '❌ Первый перевод неверен. Второй правильный.';
-        } else if (isCorrect1 && !isCorrect2) {
-          message = '❌ Второй перевод неверен. Первый правильный.';
-        }
+        let message = '❌ Ошибки в переводе.';
+        if (isCorrect1 && !isCorrect2) message = '❌ Второй неверен.';
+        else if (!isCorrect1 && isCorrect2) message = '❌ Первый неверен.';
         resultEl.textContent = message;
-        resultEl.className = 'message';
+        resultEl.className = 'message error';
         resultEl.style.display = 'block';
-        sendResult(false, 'Ошибка в переводе');
+        sendResult(false, 'Ошибка в порядке слов');
       }
     });
 
-    // Сброс
     resetBtn.addEventListener('click', init);
 
-    // Вспомогательные функции
     function arraysEqual(a, b) {
       if (a.length !== b.length) return false;
       for (let i = 0; i < a.length; i++) {
@@ -389,14 +276,14 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success: !!success,
-        message: message || (success ? "Перевод собран верно" : "Ошибка в порядке слов")
+        message: message || (success ? "Верно" : "Ошибка")
       }, "*");
     }
 
-    // Инициализация
-    init();
+    // Инициализация при загрузке
+    window.onload = init;
 
-    // Сигнал: задание загружено
+    // Сигнал о существовании задания
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
