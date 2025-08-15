@@ -142,10 +142,8 @@
 
   <div class="instructions">
     <p><strong>Нажмите на иероглифы</strong>, чтобы собрать:</p>
-    <p><em>"Задали вопрос: «Был ли дождь?»"</em></p>
-    <p class="hint">Как будет "задавали вопрос?"</p>
-    <p class="hint">Прошедшее время формируется косвенно</p>
-
+    <p><em>«Был ли дождь?»</em></p>
+    <p class="hint">💡 Время: прошлое</p>
   </div>
 
   <p><strong>Иероглифы:</strong></p>
@@ -213,7 +211,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = "Задали вопрос «Был ли дождь?"»';
+        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = «Был ли дождь?»';
         resultEl.className = 'message success';
         sendResult(true);
       } else {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Собери фразу</title>
   <style>
-    /* Минимализм */
+    /* Минималистичный сброс */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -16,20 +16,21 @@
       font-family: Arial, sans-serif;
       line-height: 1.4;
       font-size: 14px;
+      background: #fff;
       color: #2c3e50;
     }
 
     h2 {
-      font-size: 15px;
-      margin-bottom: 6px;
+      font-size: 16px;
+      margin-bottom: 8px;
     }
 
     .instructions {
       background: #f0f0f0;
       padding: 6px;
-      margin-bottom: 6px;
+      border-radius: 4px;
+      margin-bottom: 8px;
       font-size: 13px;
-      border-radius: 3px;
     }
 
     .instructions em {
@@ -37,15 +38,8 @@
       font-size: 12px;
     }
 
-    .hint {
-      font-size: 12px;
-      color: #7f8c8d;
-      margin-top: 3px;
-    }
-
     .hint-list {
       list-style: none;
-      padding-left: 0;
       color: #7f8c8d;
       font-size: 12px;
     }
@@ -55,48 +49,47 @@
     }
 
     .hint-list li {
-      margin: 1px 0;
+      margin: 2px 0;
     }
 
     p {
       font-size: 13px;
-      margin: 4px 0;
+      margin: 6px 0;
     }
 
-    /* Зона сборки */
+    /* Зона перетаскивания */
     #drop-area {
-      min-height: 36px;
+      min-height: 40px;
       border: 1px dashed #3498db;
-      border-radius: 3px;
+      border-radius: 4px;
       display: flex;
       flex-wrap: wrap;
-      gap: 3px;
-      padding: 3px;
+      gap: 4px;
+      padding: 4px;
       margin: 6px 0;
       font-size: 18px;
       align-items: center;
-      background: #f0f8ff;
     }
 
     /* Пул иероглифов */
     #char-pool {
       display: flex;
       flex-wrap: wrap;
-      gap: 3px;
+      gap: 4px;
       margin: 6px 0;
-      padding: 3px;
+      padding: 4px;
       border: 1px solid #ddd;
-      border-radius: 3px;
-      min-height: 36px;
+      border-radius: 4px;
+      min-height: 40px;
       background: #f9f9f9;
     }
 
     .char-box {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       background: white;
       border: 1px solid #ccc;
-      border-radius: 2px;
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,19 +104,23 @@
     }
 
     .controls {
-      margin-top: 6px;
+      margin-top: 8px;
       display: flex;
       gap: 6px;
     }
 
     button {
-      padding: 5px 10px;
+      padding: 6px 10px;
       font-size: 13px;
       background: #3498db;
       color: white;
       border: none;
       border-radius: 3px;
       cursor: pointer;
+    }
+
+    button:hover {
+      background: #2980b9;
     }
 
     .message {
@@ -135,24 +132,29 @@
     .success {
       color: #27ae60;
     }
+
+    .hint {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 3px;
+    }
   </style>
 </head>
 <body>
   <h2>Собери фразу</h2>
 
   <div class="instructions">
-    <p><strong>Нажмите на иероглифы</strong>, чтобы собрать:</p>
-    <p><em>"Задали вопрос: «Был ли дождь?»"</em></p>
-    <p class="hint">Как будет "задавали вопрос?"</p>
-    <p class="hint">Прошедшее время формируется косвенно</p>
-
+    <p><strong>Нажмите на иероглифы, чтобы собрать фразу:</strong></p>
+    <p><em>Гадатель Чжэн сказал: «Правитель действительно не задаёт вопросов».</em></p>
   </div>
 
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
 
   <p><strong>Соберите здесь:</strong></p>
-  <div id="drop-area" class="drop-area"></div>
+  <div id="drop-area" class="drop-area">
+    <!-- Сюда добавляются иероглифы -->
+  </div>
 
   <div class="controls">
     <button id="check-btn">Проверить</button>
@@ -162,12 +164,12 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['貞', '曰', '允', '雨'];
+    const expected = ['卜', '爭', '曰', '王', '允', '不', '貞'];
 
     const allChars = [
       '己', '卯', '王', '不', '貞', '巳',
-      '丙', '寅', '爭', '雨', '曰', '其', 
-      '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
+      '爭', '寅', '爭', '雨', '曰', '其', 
+      '癸', '亥', '允', '卜', '丑', '珏', '壬', '午'
     ];
 
     const charPool = document.getElementById('char-pool');
@@ -201,7 +203,9 @@
         box.textContent = char;
 
         box.style.cursor = 'pointer';
-        box.addEventListener('click', () => moveToDropArea(box));
+        box.addEventListener('click', function() {
+          moveToDropArea(this);
+        });
 
         charPool.appendChild(box);
       });
@@ -213,7 +217,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = "Задали вопрос «Был ли дождь?"»';
+        resultEl.innerHTML = '✅ Правильно!<br>卜爭曰王允不貞';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -229,14 +233,18 @@
     });
 
     function arraysEqual(a, b) {
-      return a.length === b.length && a.every((v, i) => v === b[i]);
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
     }
 
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
         success: !!success,
-        message: message || (success ? "Фраза собрана верно" : "Ошибка")
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
 

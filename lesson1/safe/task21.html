@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Собери фразу</title>
   <style>
-    /* Минимализм */
+    /* Полный минимализм */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,26 +15,25 @@
     body {
       font-family: Arial, sans-serif;
       line-height: 1.4;
-      font-size: 14px;
+      font-size: 13px;
       color: #2c3e50;
     }
 
     h2 {
       font-size: 15px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .instructions {
       background: #f0f0f0;
-      padding: 6px;
+      padding: 5px;
       margin-bottom: 6px;
-      font-size: 13px;
+      font-size: 12px;
       border-radius: 3px;
     }
 
     .instructions em {
       font-style: italic;
-      font-size: 12px;
     }
 
     .hint {
@@ -46,8 +45,9 @@
     .hint-list {
       list-style: none;
       padding-left: 0;
+      font-size: 11px;
       color: #7f8c8d;
-      font-size: 12px;
+      margin-top: 3px;
     }
 
     .hint-list li::before {
@@ -59,20 +59,20 @@
     }
 
     p {
-      font-size: 13px;
-      margin: 4px 0;
+      font-size: 12px;
+      margin: 3px 0;
     }
 
     /* Зона сборки */
     #drop-area {
-      min-height: 36px;
+      min-height: 34px;
       border: 1px dashed #3498db;
-      border-radius: 3px;
+      border-radius: 2px;
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
       padding: 3px;
-      margin: 6px 0;
+      margin: 5px 0;
       font-size: 18px;
       align-items: center;
       background: #f0f8ff;
@@ -83,11 +83,11 @@
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
-      margin: 6px 0;
+      margin: 5px 0;
       padding: 3px;
       border: 1px solid #ddd;
-      border-radius: 3px;
-      min-height: 36px;
+      border-radius: 2px;
+      min-height: 34px;
       background: #f9f9f9;
     }
 
@@ -105,11 +105,6 @@
       user-select: none;
     }
 
-    .punctuation {
-      font-size: 16px;
-      color: #7f8c8d;
-    }
-
     .controls {
       margin-top: 6px;
       display: flex;
@@ -118,22 +113,26 @@
 
     button {
       padding: 5px 10px;
-      font-size: 13px;
+      font-size: 12px;
       background: #3498db;
       color: white;
       border: none;
-      border-radius: 3px;
+      border-radius: 2px;
       cursor: pointer;
     }
 
     .message {
       margin-top: 6px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
     }
 
     .success {
       color: #27ae60;
+    }
+
+    .error {
+      color: #e74c3c;
     }
   </style>
 </head>
@@ -142,10 +141,8 @@
 
   <div class="instructions">
     <p><strong>Нажмите на иероглифы</strong>, чтобы собрать:</p>
-    <p><em>"Задали вопрос: «Был ли дождь?»"</em></p>
-    <p class="hint">Как будет "задавали вопрос?"</p>
-    <p class="hint">Прошедшее время формируется косвенно</p>
-
+    <p><em>«На шестой день правитель не задавал вопросов»</em></p>
+    <p class="hint">🔸 6-й день: 己 + 巳</p>
   </div>
 
   <p><strong>Иероглифы:</strong></p>
@@ -162,7 +159,7 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['貞', '曰', '允', '雨'];
+    const expected = ['己', '巳', '王', '不', '貞'];
 
     const allChars = [
       '己', '卯', '王', '不', '貞', '巳',
@@ -176,7 +173,7 @@
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
 
-    const isMobileDevice = 'ontouchstart' in window;
+    const isMobileDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
@@ -197,7 +194,6 @@
       shuffled.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
-        if (char === '，') box.classList.add('punctuation');
         box.textContent = char;
 
         box.style.cursor = 'pointer';
@@ -213,12 +209,12 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = "Задали вопрос «Был ли дождь?"»';
+        resultEl.innerHTML = '✅ Правильно!<br>己巳王不貞 = «На шестой день...»';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
         resultEl.textContent = '❌ Попробуйте снова.';
-        resultEl.className = 'message';
+        resultEl.className = 'message error';
         sendResult(false, 'Неверный порядок');
       }
     });
