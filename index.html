@@ -165,62 +165,6 @@
       unit.style.transform = `translateX(${x}px)`;
     });
   </script>
-  <script>
-  // === УПРАВЛЕНИЕ МАСШТАБОМ ===
-  let scale = 1.0;
-  const minScale = 0.5;
-  const maxScale = 2.0;
-  const step = 0.1;
-
-  const body = document.body;
-  const zoomInBtn = document.getElementById('zoom-in');
-  const zoomOutBtn = document.getElementById('zoom-out');
-  const zoomValue = document.getElementById('zoom-value');
-
-  // Применяем масштаб
-  function applyScale() {
-    body.style.transform = `scale(${scale})`;
-    body.style.transformOrigin = 'top center';
-    // Корректируем ширину, чтобы избежать прыжков из-за scale
-    body.style.width = `${100 / scale}%`;
-
-    zoomValue.textContent = `${Math.round(scale * 100)}%`;
-  }
-
-  zoomInBtn.addEventListener('click', () => {
-    if (scale < maxScale) {
-      scale = Math.min(maxScale, scale + step);
-      applyScale();
-    }
-  });
-
-  zoomOutBtn.addEventListener('click', () => {
-    if (scale > minScale) {
-      scale = Math.max(minScale, scale - step);
-      applyScale();
-    }
-  });
-
-  // === АНИМАЦИЯ КРУЖКОВ (СИНУСОИДА) ===
-  function animateCircles() {
-    const amplitude = 200;
-    const frequency = 0.006;
-
-    const units = document.querySelectorAll('.unit-circle');
-
-    units.forEach(unit => {
-      const rect = unit.getBoundingClientRect();
-      const y = rect.top + window.scrollY + rect.height / 2;
-      const x = amplitude * Math.sin(frequency * y);
-      unit.style.transform = `translateX(${x}px)`;
-    });
-  }
-
-  // Запускаем анимацию при загрузке и при прокрутке
-  window.addEventListener('load', animateCircles);
-  window.addEventListener('scroll', animateCircles);
-  window.addEventListener('resize', animateCircles);
-</script>
-
+  
 </body>
 </html>
