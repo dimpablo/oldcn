@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Дедовская верстка + Центрированные лэйблы</title>
+  <title>Курс по древнекитайскому — Duolingo-стиль</title>
     <!-- Скрипт автоматического увеличения масштаба -->
   <script>
     document.body.style.zoom = "140%";
@@ -78,85 +78,59 @@
       z-index: 1;
     }
 
-    /* Таблица — без границ */
-    table {
+    /* Современный контейнер вместо таблицы */
+    .units {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      border-collapse: collapse;
     }
   </style>
 </head>
 <body>
 
 
-  <!-- Основная таблица -->
-  <table cellpadding="0" cellspacing="0">
-    <!-- Строка: Урок 1 -->
-    <tr>
-      <td class="label-row">
-        <div class="unit-label">Урок 1. Гадание о дожде.</div>
-      </td>
-    </tr>
+  <div class="units">
+    <div class="label-row"><div class="unit-label">Урок 1. Гадание о дожде.</div></div>
+    <div class="unit-row">
+      <a href="./lesson1/theory.html" style="display: block; text-decoration: none;"><div class="unit-circle unit-theory">📚 Теория</div></a>
+    </div>
+    <div class="unit-row">
+      <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;"><div class="unit-circle unit-kanji">🪶 Иероглифы</div></a>
+    </div>
+    <div class="unit-row">
+      <a href="./lesson1/index.html" style="display: block; text-decoration: none;"><div class="unit-circle unit-exercise">📝 Задания</div></a>
+    </div>
 
-    <!-- Кружки -->
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson1/theory.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-theory">📚 Теория</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson1/index.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-exercise">📝 Задания</div>
-        </a>
-      </td>
-    </tr>
-
-    <!-- Строка: Урок 2 -->
-    <tr>
-      <td class="label-row">
-        <div class="unit-label">Урок 2. Новые частицы.</div>
-      </td>
-    </tr>
-
-    <!-- Остальные кружки -->
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson2/theory.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-theory">📚 Теория</div>
-        </a>
-      </td>
-    </tr>
-    <tr><td class="unit-row"><div class="unit-circle">6</div></td></tr>
-    <tr><td class="unit-row"><div class="unit-circle">7</div></td></tr>
-    <tr><td class="unit-row"><div class="unit-circle">8</div></td></tr>
-    <tr><td class="unit-row"><div class="unit-circle">9</div></td></tr>
-    <tr><td class="unit-row"><div class="unit-circle">10</div></td></tr>
-  </table>
+    <div class="label-row"><div class="unit-label">Урок 2. Новые частицы.</div></div>
+    <div class="unit-row">
+      <a href="./lesson2/theory.html" style="display: block; text-decoration: none;"><div class="unit-circle unit-theory">📚 Теория</div></a>
+    </div>
+    <div class="unit-row"><div class="unit-circle">6</div></div>
+    <div class="unit-row"><div class="unit-circle">7</div></div>
+    <div class="unit-row"><div class="unit-circle">8</div></div>
+    <div class="unit-row"><div class="unit-circle">9</div></div>
+    <div class="unit-row"><div class="unit-circle">10</div></div>
+  </div>
 
   <!-- Скрипт анимации -->
   <script>
-    // 🌊 Просторная синусоида
-    const amplitude = 200;    // амплитуда движения
+    // 🌊 Просторная синусоида (сохраняем визуальную идентичность)
+    const amplitude = 160;    // мягче на мобильных
     const frequency = 0.006;  // частота волны
 
-    const units = document.querySelectorAll('.unit-circle');
+    function layoutUnits() {
+      const units = document.querySelectorAll('.unit-circle');
+      units.forEach(unit => {
+        const rect = unit.getBoundingClientRect();
+        const y = rect.top + window.scrollY + rect.height / 2;
+        const x = amplitude * Math.sin(frequency * y);
+        unit.style.transform = `translateX(${x}px)`;
+      });
+    }
 
-    units.forEach(unit => {
-      const rect = unit.getBoundingClientRect();
-      const y = rect.top + window.scrollY + rect.height / 2;
-
-      const x = amplitude * Math.sin(frequency * y);
-      unit.style.transform = `translateX(${x}px)`;
-    });
+    layoutUnits();
+    window.addEventListener('scroll', layoutUnits, { passive: true });
+    window.addEventListener('resize', layoutUnits);
   </script>
   
 </body>

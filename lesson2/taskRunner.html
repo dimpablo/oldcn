@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Задания урока 2</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; color:#333; display:flex; flex-direction:column; gap:8px; padding:10px; }
+    .header { display:flex; justify-content:space-between; align-items:center; font-size:16px; color:#555; }
+    #progress-container { width:100%; height:6px; background:#e0e0e0; border-radius:3px; overflow:hidden; }
+    #progress-bar { height:100%; width:0%; background:#4caf50; transition:width .4s ease; border-radius:3px; }
+    #stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+    #card { width:min(960px, 100%); background:white; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.1); padding:14px; }
+    .title { font-weight:700; margin-bottom:8px; text-align:center; }
+    .oracle { text-align:center; font-size:20px; margin:8px 0; font-weight:700; }
+    .row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+    .pool, .drop { min-height:40px; border:1px solid #ccd; border-radius:8px; padding:8px; display:flex; flex-wrap:wrap; gap:6px; background:#f9fafb; }
+    .drop { border-style:dashed; background:#eef7ff; }
+    .tile { padding:6px 10px; border:1px solid #aaa; background:white; border-radius:8px; cursor:pointer; user-select:none; font-size:16px; touch-action:none; }
+    .controls { display:flex; justify-content:center; gap:8px; margin-top:10px; }
+    button { padding:10px 16px; border:none; border-radius:10px; background:#1976d2; color:#fff; font-weight:600; cursor:pointer; }
+    #result { margin-top:8px; text-align:center; font-weight:700; }
+    .success { color:#27ae60; }
+    .error { color:#e74c3c; }
+  </style>
+</head>
+<body>
+  <div class="header"><div id="status">🔍 Загружаем задания...</div></div>
+  <div id="progress-container"><div id="progress-bar"></div></div>
+  <div id="stage">
+    <div id="card">
+      <div class="title" id="title"></div>
+      <div class="oracle" id="oracle"></div>
+      <div class="row"><div class="pool" id="pool"></div></div>
+      <div class="row"><div class="drop" id="drop"></div></div>
+      <div class="controls">
+        <button id="check">Проверить</button>
+        <button id="reset">Сбросить</button>
+        <button id="next">Далее</button>
+      </div>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const progressBar = document.getElementById('progress-bar');
+    const titleEl = document.getElementById('title');
+    const oracleEl = document.getElementById('oracle');
+    const poolEl = document.getElementById('pool');
+    const dropEl = document.getElementById('drop');
+    const resultEl = document.getElementById('result');
+    const checkBtn = document.getElementById('check');
+    const resetBtn = document.getElementById('reset');
+    const nextBtn = document.getElementById('next');
+
+    let tasks = [];
+    let idx = 0;
+
+    let dragGhost = null; let dragged = null; let startParent = null;
+    function makeTile(text) {
+      const el = document.createElement('div');
+      el.className = 'tile';
+      el.textContent = text;
+      el.tabIndex = 0;
+      el.addEventListener('click', () => {
+        (el.parentElement === poolEl ? dropEl : poolEl).appendChild(el);
+      });
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); dragged = el; startParent = el.parentElement;
+        dragGhost = el.cloneNode(true);
+        dragGhost.style.position = 'fixed'; dragGhost.style.pointerEvents = 'none'; dragGhost.style.opacity = '.9'; dragGhost.style.zIndex = '9999';
+        document.body.appendChild(dragGhost);
+        moveGhost(e.clientX, e.clientY);
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp, { once:true });
+      });
+      return el;
+    }
+    function moveGhost(x, y) { if (dragGhost) dragGhost.style.transform = `translate(${x+6}px, ${y+6}px)`; }
+    function onMove(e) { moveGhost(e.clientX, e.clientY); }
+    function isInside(el, x, y) { const r = el.getBoundingClientRect(); return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; }
+    function onUp(e) {
+      if (dragGhost) { dragGhost.remove(); dragGhost = null; }
+      if (dragged) {
+        if (isInside(dropEl, e.clientX, e.clientY)) dropEl.appendChild(dragged);
+        else if (isInside(poolEl, e.clientX, e.clientY)) poolEl.appendChild(dragged);
+        else startParent.appendChild(dragged);
+      }
+      dragged = null; startParent = null; window.removeEventListener('pointermove', onMove);
+    }
+
+    function arraysEqual(a, b) { return a.length === b.length && a.every((v,i) => v === b[i]); }
+    function setProgress() { progressBar.style.width = `${tasks.length?(idx/tasks.length)*100:0}%`; }
+
+    function renderTask(t) {
+      titleEl.textContent = t.title || '';
+      oracleEl.textContent = t.oracleText || '';
+      resultEl.textContent = ''; resultEl.className = '';
+      poolEl.innerHTML=''; dropEl.innerHTML='';
+      const shuffled = [...t.pool].sort(()=>Math.random()-0.5);
+      shuffled.forEach(ch => poolEl.appendChild(makeTile(ch)));
+      checkBtn.onclick = () => {
+        const cur = Array.from(dropEl.children).map(x=>x.textContent);
+        if (arraysEqual(cur, t.expected)) { resultEl.textContent='✅ Верно!'; resultEl.className='success'; }
+        else { resultEl.textContent='❌ Попробуйте ещё'; resultEl.className='error'; }
+      };
+      resetBtn.onclick = () => renderTask(t);
+    }
+
+    async function start() {
+      const res = await fetch('tasks.json?_=' + Date.now());
+      const data = await res.json();
+      tasks = data.tasks || [];
+      statusEl.textContent = `✅ Найдено задач: ${tasks.length}`;
+      idx = 0; setProgress(); renderTask(tasks[idx]);
+      nextBtn.onclick = () => { idx++; setProgress(); if (idx>=tasks.length) { statusEl.textContent='🎉 Урок завершён'; nextBtn.disabled=true; } else { renderTask(tasks[idx]); } };
+    }
+
+    start();
+  </script>
+</body>
+</html>
