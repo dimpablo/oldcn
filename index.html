@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Дедовская верстка + Центрированные лэйблы</title>
+    <!-- Скрипт автоматического увеличения масштаба -->
+  <script>
+    document.body.style.zoom = "140%";
+  </script>
   <style>
     body {
       margin: 0;
@@ -82,26 +86,10 @@
   </style>
 </head>
 <body>
+
+
   <!-- Основная таблица -->
   <table cellpadding="0" cellspacing="0">
-    <!-- Строка: Интерфейс -->
-    <tr>
-      <td class="label-row">
-        <div style="background-color: pink;" class="unit-label">здесь можно изменить масштаб страницы</div>
-      </td>
-    </tr>
-
-<!-- Строка: Управление масштабом -->
-<tr>
-  <td class="label-row">
-    <div class="unit-label" style="display: flex; align-items: center; justify-content: center; gap: 10px; background-color: #e0f7fa;">
-      <button id="zoom-out" style="font-size: 20px; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 6px; background-color: #fff; cursor: pointer;">–</button>
-      <span id="zoom-value" style="font-weight: bold; font-size: 18px; min-width: 50px; text-align: center;">100%</span>
-      <button id="zoom-in" style="font-size: 20px; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 6px; background-color: #fff; cursor: pointer;">+</button>
-    </div>
-  </td>
-</tr>
-
     <!-- Строка: Урок 1 -->
     <tr>
       <td class="label-row">
@@ -109,29 +97,28 @@
       </td>
     </tr>
 
-<!-- Кружки -->
-<tr>
-  <td class="unit-row">
-    <a href="./lesson1/theory.html" style="display: block; text-decoration: none;">
-      <div class="unit-circle unit-theory">📚 Теория</div>
-    </a>
-  </td>
-</tr>
-<tr>
-  <td class="unit-row">
-    <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;">
-      <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
-    </a>
-  </td>
-</tr>
-<tr>
-  <td class="unit-row">
-    <a href="./lesson1/index.html" style="display: block; text-decoration: none;">
-      <div class="unit-circle unit-exercise">📝 Задания</div>
-    </a>
-  </td>
-</tr>
-
+    <!-- Кружки -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson1/theory.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-theory">📚 Теория</div>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson1/index.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-exercise">📝 Задания</div>
+        </a>
+      </td>
+    </tr>
 
     <!-- Строка: Урок 2 -->
     <tr>

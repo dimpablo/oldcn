@@ -2,105 +2,118 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Сопоставь иероглиф и значение</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставь</title>
   <style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-  h2 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .instruction {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #555;
-  }
-  .pair {
-    margin: 15px 0;
-    padding: 12px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid #eee;
-  }
-  label {
-    font-weight: bold;
-    color: #333;
-  }
-  select {
-    width: 100%;
-    max-width: 300px;
-    padding: 8px;
-    margin-top: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 15px;
-  }
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-    margin: 30px auto;
-  }
-  button:hover {
-    background: #2980b9;
-  }
-  #result {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
-  }
-  .success {
-    background: #e8f5e9;
-    color: #27ae60;
-  }
-  .error {
-    background: #ffebee;
-    color: #e74c3c;
-  }
-</style>
+    /* Минимализм */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+      font-size: 13px;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .instruction {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .pair {
+      margin: 4px 0;
+      padding: 6px;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 2px;
+      font-size: 13px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      font-size: 13px;
+      background: white;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 13px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      display: block;
+      margin: 8px auto;
+    }
+
+    #result {
+      margin-top: 8px;
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+  </style>
 </head>
 <body>
 
   <h2>Сопоставь иероглиф и значение</h2>
-  <p class="instruction">Выберите правильное значение каждого иероглифа в контексте оракульных надписей эпохи Инь.</p>
+  <p class="instruction">Выберите значение каждого иероглифа</p>
 
   <div id="pairs-container">
-    <!-- Пары будут добавлены динамически -->
+    <!-- Пары добавятся динамически -->
   </div>
 
   <button onclick="check()">Проверить</button>
   <p id="result"></p>
 
   <script>
-    // Словарь: иероглиф → правильное значение (в контексте оракульных надписей)
     const wordBank = [
       { char: "丙", correct: "3-й небесный ствол" },
       { char: "卜", correct: "гадать" },
       { char: "雨", correct: "дождь" },
       { char: "王", correct: "правитель" },
       { char: "貞", correct: "задавать вопрос оракулу" },
-      { char: "曰", correct: "сказать, произнести (вводит прямую речь)" },
-      { char: "允", correct: "и в самом деле, действительно (подтверждение)" },
-      { char: "占", correct: "истолковывать, предсказывать" }
+      { char: "曰", correct: "сказать, произнести" },
+      { char: "允", correct: "и в самом деле" },
+      { char: "占", correct: "истолковывать" }
     ];
 
-    // Все возможные значения для перемешивания
     const allValues = wordBank.map(item => item.correct);
 
-    // Функция Фишера-Йейтса
     function shuffleArray(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -110,24 +123,20 @@
       return arr;
     }
 
-    // Генерация перемешанных пар
     function renderPairs() {
       const container = document.getElementById("pairs-container");
       container.innerHTML = "";
 
-      // Перемешиваем порядок иероглифов
-      const shuffledChars = shuffleArray(wordBank);
+      const shuffled = shuffleArray(wordBank);
 
-      shuffledChars.forEach(item => {
+      shuffled.forEach(item => {
         const pair = document.createElement("div");
         pair.className = "pair";
 
-        // Перемешиваем варианты, но гарантируем, что правильный будет
-        const options = shuffleArray([...new Set([...allValues])]); // Убираем дубли, если есть
+        const options = shuffleArray([...allValues]);
 
-        // Генерируем <select>
         let selectHTML = `<select id="char_${item.char}">
-          <option value="">-- выберите --</option>`;
+          <option value="">— выберите —</option>`;
         
         options.forEach(value => {
           selectHTML += `<option value="${value}">${value}</option>`;
@@ -141,36 +150,33 @@
     }
 
     function check() {
-      const results = {};
       let allFilled = true;
+      let correctCount = 0;
 
       wordBank.forEach(item => {
         const select = document.getElementById(`char_${item.char}`);
-        if (!select || !select.value) {
-          allFilled = false;
-        }
-        results[item.char] = select?.value || null;
+        if (!select || !select.value) allFilled = false;
+        if (select?.value === item.correct) correctCount++;
       });
 
+      const resultEl = document.getElementById("result");
+
       if (!allFilled) {
-        document.getElementById("result").textContent = "Заполните все поля.";
-        document.getElementById("result").className = "error";
+        resultEl.textContent = "Заполните все.";
+        resultEl.className = "error";
+        sendResult(false, "Не все поля заполнены");
         return;
       }
 
-      // Проверяем, все ли ответы верны
-      const isCorrect = wordBank.every(item => results[item.char] === item.correct);
-
-      const resultEl = document.getElementById("result");
-      if (isCorrect) {
-        resultEl.textContent = "✅ Все верно! Вы точно понимаете значения ключевых иероглифов оракульных надписей.";
+      if (correctCount === wordBank.length) {
+        resultEl.textContent = "✅ Все верно!";
         resultEl.className = "success";
         sendResult(true);
       } else {
-        const hint = "Подсказка: 卜 — гадать, 王 — правитель, 貞 — задавать вопрос, 允 — действительно.";
-        resultEl.textContent = "❌ Проверьте свои ответы. " + hint;
+        const hint = "Подсказка: 卜 — гадать, 貞 — вопрос, 允 — действительно.";
+        resultEl.textContent = "❌ " + hint;
         resultEl.className = "error";
-        sendResult(false, "Ошибка в сопоставлении значений");
+        sendResult(false, "Ошибка в сопоставлении");
       }
     }
 
@@ -178,14 +184,11 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success,
-        message: message || (success ? "Все значения сопоставлены верно" : "Ошибка в сопоставлении")
+        message: message || (success ? "Все верно" : "Ошибка")
       }, "*");
     }
 
-    // Инициализация
     window.onload = renderPairs;
-
-    // Сигнализация родителю
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>

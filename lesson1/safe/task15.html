@@ -2,108 +2,77 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Какие предложения — безличные?</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
       margin: 0;
-      line-height: 1.6;
-      background: #f8f9fc;
+      padding: 6px;
+      line-height: 1.4;
+      background: #fff;
       color: #333;
+      font-size: 13px;
     }
 
     h2 {
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 15px;
-      font-size: 28px;
+      color: #222;
+      margin: 6px 0;
+      font-size: 16px;
+      font-weight: bold;
     }
 
     .instruction {
       text-align: center;
-      margin-bottom: 25px;
+      margin: 4px 0 10px;
       color: #555;
       font-style: italic;
-      font-size: 17px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
+      font-size: 12px;
     }
 
     #options-container {
-      margin: 20px auto;
-      max-width: 800px;
+      margin: 8px auto;
+      max-width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      align-items: stretch;
+      gap: 6px;
     }
 
     .option {
-      width: 100%;
-      max-width: 600px;
       display: flex;
       align-items: center;
-      margin: 6px 0;
-      padding: 14px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      padding: 7px 8px;
+      background: #f8f8f8;
+      border: 1px solid #ccc;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-
-    .option:hover {
-      background: #f0f8ff;
-      border-color: #007cba;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(0, 124, 186, 0.1);
-    }
-
-    .option.checked {
-      background: #e1f3ff;
-      border-color: #007cba;
-      box-shadow: 0 2px 8px rgba(0, 124, 186, 0.15);
+      font-size: 14px;
     }
 
     .option input {
-      margin-right: 12px;
+      margin-right: 8px;
       accent-color: #007cba;
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
     button {
       display: block;
-      margin: 30px auto;
-      padding: 12px 24px;
-      font-size: 16px;
+      margin: 10px auto 6px;
+      padding: 6px 12px;
+      font-size: 13px;
       background: #007cba;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    button:hover {
-      background: #005a87;
-      transform: translateY(-1px);
     }
 
     #result {
-      margin-top: 25px;
-      padding: 16px;
+      margin-top: 8px;
+      padding: 6px;
       text-align: center;
+      font-size: 13px;
       font-weight: bold;
-      font-size: 16px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 6px;
     }
 
     .success {
@@ -118,28 +87,33 @@
       border: 1px solid #f1b1b7;
     }
 
-    /* Мобильная адаптация */
-    @media (max-width: 600px) {
+    /* Адаптация под узкие экраны */
+    @media (max-width: 480px) {
       body {
-        padding: 15px;
+        padding: 4px;
+        font-size: 12px;
       }
       h2 {
-        font-size: 24px;
+        font-size: 15px;
       }
       .instruction {
-        font-size: 15px;
-        padding: 0 10px;
-      }
-      #options-container {
-        padding: 0 10px;
+        font-size: 11px;
+        margin: 4px 0 8px;
       }
       .option {
-        padding: 12px;
-        font-size: 15px;
+        font-size: 13px;
+        padding: 6px 6px;
+      }
+      .option input {
+        margin-right: 6px;
       }
       button {
-        padding: 10px 18px;
-        font-size: 15px;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      #result {
+        font-size: 12px;
+        padding: 5px;
       }
     }
   </style>
@@ -147,7 +121,7 @@
 <body>
 
   <h2>Какие предложения — безличные?</h2>
-  <p class="instruction">Выберите все предложения, в которых нет подлежащего — то есть действия происходят сами по себе (чаще всего — о погоде, судьбе и т.п.).</p>
+  <p class="instruction">Выберите предложения без подлежащего — действия происходят сами (погода, судьба и т.п.)</p>
 
   <div id="options-container">
     <!-- Варианты будут добавлены динамически -->
@@ -194,11 +168,7 @@
 
         checkbox.onchange = () => {
           userSelections[item.id] = checkbox.checked;
-          if (checkbox.checked) {
-            label.classList.add("checked");
-          } else {
-            label.classList.remove("checked");
-          }
+          label.classList.toggle("checked", checkbox.checked);
         };
 
         const textNode = document.createTextNode(item.text);
@@ -222,11 +192,11 @@
       });
 
       if (allCorrect) {
-        resultEl.innerHTML = "✅ <strong>Верно!</strong> Безличные предложения — те, где нет деятеля: погода, судьба, подтверждение.";
+        resultEl.textContent = "✅ Верно!";
         resultEl.className = "success";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Подумайте: 王占曰 — это действие субъекта (правитель говорит), значит — не безличное.";
+        resultEl.textContent = "❌ Меньше дождя — не значит не безличное.";
         resultEl.className = "error";
         sendResult(false, "Ошибка в определении безличных предложений");
       }
@@ -240,10 +210,7 @@
       }, "*");
     }
 
-    // Инициализация
     renderOptions();
-
-    // Сигнал родителю
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
