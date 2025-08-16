@@ -229,7 +229,7 @@
       if (currentTaskIndex >= totalTasks) return;
 
       const hanzi = getRandomHanzi();
-      const url = `task1.html?_=${Date.now()}#${hanzi}`;
+      const url = `tasks/task1.html?_=${Date.now()}#${hanzi}`;
 
       statusEl.textContent = `🔤 Задание ${currentTaskIndex + 1}/${totalTasks}: работайте с иероглифом «${hanzi}»`;
       nextBtn.disabled = true;
