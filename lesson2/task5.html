@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Задание: 弗</title>
+  <title>Задание: 自</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -105,14 +105,14 @@
 </head>
 <body>
 
-  <h2>Что означает 弗 в «弗受年»?</h2>
-  <p><strong>Пример: «我弗受年» — это:</strong></p>
+  <h2>Что означает 自 в «自來」?</h2>
+  <p><strong>Пример: «方其自來」 — это:</strong></p>
 
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
       Показать пиньинь
     </button>
-    <div class="pinyin-text">wǒ fú shòu nián</div>
+    <div class="pinyin-text">fāng qí zì lái</div>
   </div>
 
   <div id="answers"></div>
@@ -123,10 +123,10 @@
   <script>
     // Варианты ответов: [текст, правильный (true/false)]
 const options = [
-  { text: "Утверждение, что урожай будет", correct: false },
-  { text: "Отрицание получения урожая", correct: true },
-  { text: "Возможность получения урожая", correct: false },
-  { text: "Подтверждение, что урожай уже есть", correct: false }
+  { text: "Означает «другой»", correct: false },
+  { text: "Указывает на движение от места", correct: false },
+  { text: "Выражает самодвижение: «сам прийти»", correct: true },
+  { text: "Частица будущего времени", correct: false }
 ];
     // Перемешивание массива (Fisher-Yates)
     function shuffle(array) {
@@ -169,11 +169,11 @@ const options = [
       }
 
 if (selected.dataset.correct === "true") {
-  resultEl.textContent = "✅ Правильно! 弗 — это отрицание действия, как 不.";
+  resultEl.textContent = "✅ Правильно! 自 — «сам», в сочетании 自來 — «придёт сам».";
   sendResult(true);
 } else {
-  resultEl.textContent = "❌ Неверно. 弗 отрицает действие.";
-  sendResult(false);
+  resultEl.textContent = "❌ Неверно. 自 выражает самодействие.";
+  sendResult(false, "Ошибка в интерпретации 自");
 }
     }
 

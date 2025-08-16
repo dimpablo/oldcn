@@ -3,244 +3,192 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+  <title>Задание: 今</title>
   <style>
-    /* Минимализм */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      line-height: 1.4;
+      margin: 4px 0;
+      padding: 0;
       font-size: 14px;
-      color: #2c3e50;
+      line-height: 1.4;
+      background: #fff;
+      color: #333;
     }
 
     h2 {
+      margin: 0 0 6px 0;
       font-size: 15px;
-      margin-bottom: 6px;
-    }
-
-    .instructions {
-      background: #f0f0f0;
-      padding: 6px;
-      margin-bottom: 6px;
-      font-size: 13px;
-      border-radius: 3px;
-    }
-
-    .instructions em {
-      font-style: italic;
-      font-size: 12px;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #7f8c8d;
-      margin-top: 3px;
-    }
-
-    .hint-list {
-      list-style: none;
-      padding-left: 0;
-      color: #7f8c8d;
-      font-size: 12px;
-    }
-
-    .hint-list li::before {
-      content: "🔸 ";
-    }
-
-    .hint-list li {
-      margin: 1px 0;
+      font-weight: 500;
     }
 
     p {
-      font-size: 13px;
-      margin: 4px 0;
+      margin: 5px 0;
     }
 
-    /* Зона сборки */
-    #drop-area {
-      min-height: 36px;
-      border: 1px dashed #3498db;
-      border-radius: 3px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 3px;
-      padding: 3px;
+    .pinyin-container {
       margin: 6px 0;
-      font-size: 18px;
-      align-items: center;
-      background: #f0f8ff;
-    }
-
-    /* Пул иероглифов */
-    #char-pool {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 3px;
-      margin: 6px 0;
-      padding: 3px;
       border: 1px solid #ddd;
       border-radius: 3px;
-      min-height: 36px;
-      background: #f9f9f9;
+      overflow: hidden;
     }
 
-    .char-box {
-      width: 30px;
-      height: 30px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 5px 10px;
+      width: 100%;
+      text-align: left;
       cursor: pointer;
-      font-size: 18px;
-      user-select: none;
+      font-size: 13px;
+      color: #444;
+      margin: 0;
     }
 
-    .punctuation {
-      font-size: 16px;
-      color: #7f8c8d;
+    .pinyin-toggle::after {
+      content: '▼';
+      float: right;
+      font-size: 10px;
+      transition: transform 0.2s;
     }
 
-    .controls {
-      margin-top: 6px;
-      display: flex;
-      gap: 6px;
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
+    .pinyin-text {
+      padding: 0 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #f9f9f9;
+      font-style: italic;
+      color: #555;
+      font-size: 13px;
+    }
+
+    .pinyin-text.expanded {
+      padding: 5px 10px;
+      max-height: 60px;
+    }
+
+    label {
+      display: block;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    input[type="radio"] {
+      margin-right: 6px;
     }
 
     button {
-      padding: 5px 10px;
-      font-size: 13px;
-      background: #3498db;
+      padding: 6px 10px;
+      font-size: 14px;
+      background: #0066cc;
       color: white;
       border: none;
       border-radius: 3px;
       cursor: pointer;
+      margin-top: 8px;
     }
 
-    .message {
-      margin-top: 6px;
-      font-size: 13px;
-      font-weight: bold;
+    button:active {
+      background: #0055aa;
     }
 
-    .success {
-      color: #27ae60;
+    #result {
+      margin: 6px 0 0 0;
+      font-size: 14px;
+      min-height: 1.4em;
     }
   </style>
 </head>
 <body>
-  <h2>Собери фразу</h2>
 
-  <div class="instructions">
-    <p><strong>Нажмите на иероглифы</strong>, чтобы собрать:</p>
-    <p><em>"Задали вопрос: «Был ли дождь?»"</em></p>
-    <p class="hint">Как будет "задавали вопрос?"</p>
-    <p class="hint">Прошедшее время формируется косвенно</p>
+  <h2>Что означает 今 в «今歲」?</h2>
+  <p><strong>Пример: «今歲商受年» — это:</strong></p>
 
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+      Показать пиньинь
+    </button>
+    <div class="pinyin-text">jīn suì shāng shòu nián</div>
   </div>
 
-  <p><strong>Иероглифы:</strong></p>
-  <div id="char-pool"></div>
+  <div id="answers"></div>
 
-  <p><strong>Соберите здесь:</strong></p>
-  <div id="drop-area" class="drop-area"></div>
-
-  <div class="controls">
-    <button id="check-btn">Проверить</button>
-    <button id="reset-btn">Сбросить</button>
-  </div>
-
-  <p id="result" class="message"></p>
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
 
   <script>
-    const expected = ['貞', '曰', '允', '雨'];
-
-    const allChars = [
-      '己', '卯', '王', '不', '貞', '巳',
-      '丙', '寅', '爭', '雨', '曰', '其', 
-      '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
-    ];
-
-    const charPool = document.getElementById('char-pool');
-    const dropArea = document.getElementById('drop-area');
-    const checkBtn = document.getElementById('check-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const resultEl = document.getElementById('result');
-
-    const isMobileDevice = 'ontouchstart' in window;
-
-    function moveToDropArea(box) {
-      const clone = box.cloneNode(true);
-      clone.draggable = false;
-      clone.style.cursor = 'default';
-      clone.onclick = null;
-      clone.ontouchstart = null;
-
-      box.remove();
-      dropArea.appendChild(clone);
+    // Варианты ответов: [текст, правильный (true/false)]
+const options = [
+  { text: "Указывает на прошлое", correct: false },
+  { text: "Обозначает настоящее время или «нынешний»", correct: true },
+  { text: "Означает «будущий»", correct: false },
+  { text: "Выражает возможность", correct: false }
+];
+    // Перемешивание массива (Fisher-Yates)
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
-    function initCharPool(shuffled) {
-      charPool.innerHTML = '';
-      dropArea.innerHTML = '';
-      resultEl.textContent = '';
+    // Отображаем перемешанные ответы
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
 
-      shuffled.forEach(char => {
-        const box = document.createElement('div');
-        box.className = 'char-box';
-        if (char === '，') box.classList.add('punctuation');
-        box.textContent = char;
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index; // уникальное значение, но правильный = "1"
+        input.dataset.correct = opt.correct;
 
-        box.style.cursor = 'pointer';
-        box.addEventListener('click', () => moveToDropArea(box));
-
-        charPool.appendChild(box);
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
       });
     }
 
-    let shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
-    initCharPool(shuffledChars);
+    // Проверка: правильный ли ответ выбран
+    function check() {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById("result");
 
-    checkBtn.addEventListener('click', () => {
-      const current = Array.from(dropArea.children).map(el => el.textContent);
-      if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = "Задали вопрос «Был ли дождь?"»';
-        resultEl.className = 'message success';
-        sendResult(true);
-      } else {
-        resultEl.textContent = '❌ Попробуйте снова.';
-        resultEl.className = 'message';
-        sendResult(false, 'Неверный порядок');
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
       }
-    });
 
-    resetBtn.addEventListener('click', () => {
-      shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
-      initCharPool(shuffledChars);
-    });
-
-    function arraysEqual(a, b) {
-      return a.length === b.length && a.every((v, i) => v === b[i]);
+if (selected.dataset.correct === "true") {
+  resultEl.textContent = "✅ Правильно! 今 — указывает на настоящее: «сейчас», «нынешний».";
+  sendResult(true);
+} else {
+  resultEl.textContent = "❌ Неверно. 今 относится к настоящему времени.";
+  sendResult(false, "Ошибка в интерпретации 今");
+}
     }
 
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
-      window.parent.postMessage({
-        type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Фраза собрана верно" : "Ошибка")
-      }, "*");
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
     }
 
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+    // Генерация ответов при загрузке
+    window.onload = renderOptions;
   </script>
+
 </body>
 </html>
+
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
