@@ -3,24 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Какие предложения — безличные?</title>
+  <title>Что означает 受年？</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 6px;
       line-height: 1.4;
-      background: #fff;
       color: #333;
       font-size: 13px;
     }
 
     h2 {
       text-align: center;
-      color: #222;
       margin: 6px 0;
       font-size: 16px;
       font-weight: bold;
+      color: #222;
     }
 
     .instruction {
@@ -32,17 +31,12 @@
     }
 
     #options-container {
-      margin: 8px auto;
-      max-width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 6px;
+      margin: 8px 0;
     }
 
     .option {
-      display: flex;
-      align-items: center;
+      display: block;
+      margin: 4px 0;
       padding: 7px 8px;
       background: #f8f8f8;
       border: 1px solid #ccc;
@@ -51,9 +45,14 @@
     }
 
     .option input {
-      margin-right: 8px;
+      margin-right: 6px;
+      vertical-align: middle;
       accent-color: #007cba;
-      transform: scale(1.05);
+    }
+
+    .option.selected {
+      background: #e1f3ff;
+      border-color: #007cba;
     }
 
     button {
@@ -104,9 +103,6 @@
         font-size: 13px;
         padding: 6px 6px;
       }
-      .option input {
-        margin-right: 6px;
-      }
       button {
         padding: 5px 10px;
         font-size: 12px;
@@ -120,24 +116,25 @@
 </head>
 <body>
 
-  <h2>Какие предложения — безличные?</h2>
-  <p class="instruction">Выберите предложения без подлежащего — действия происходят сами (погода, судьба и т.п.)</p>
+  <h2>Что означает 受年？</h2>
+  <p class="instruction">В гадательных надписях фраза 受年 встречается часто. Что она означает?</p>
 
   <div id="options-container">
-    <!-- Варианты будут добавлены динамически -->
+    <!-- Варианты будут добавлены здесь -->
   </div>
 
   <button onclick="check()">Проверить</button>
   <p id="result"></p>
 
   <script>
-    const items = [
-      { id: "yu", text: "雨", isImpersonal: true },
-      { id: "qi-yu", text: "其雨", isImpersonal: true },
-      { id: "wang-zhan-yue", text: "王占曰", isImpersonal: false },
-      { id: "bu-yu", text: "不雨", isImpersonal: true },
-      { id: "yun-yu", text: "允雨", isImpersonal: true }
+    const options = [
+      { value: "harvest", text: "получить урожай", correct: true },
+      { value: "year", text: "в этом году", correct: false },
+      { value: "receive-year", text: "получить год (в смысле срока)", correct: false },
+      { value: "celebrate", text: "отметить год празднованием", correct: false }
     ];
+
+    let selectedValue = null;
 
     function shuffleArray(array) {
       const arr = [...array];
@@ -148,36 +145,34 @@
       return arr;
     }
 
-    const userSelections = {};
-
     function renderOptions() {
       const container = document.getElementById("options-container");
       container.innerHTML = "";
+      selectedValue = null;
 
-      const shuffled = shuffleArray(items);
+      const shuffled = shuffleArray(options);
 
-      shuffled.forEach(item => {
+      shuffled.forEach(option => {
         const label = document.createElement("label");
         label.className = "option";
-        label.dataset.id = item.id;
+        label.dataset.value = option.value;
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = `chk-${item.id}`;
-        checkbox.checked = false;
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "answer";
+        input.value = option.value;
 
-        checkbox.onchange = () => {
-          userSelections[item.id] = checkbox.checked;
-          label.classList.toggle("checked", checkbox.checked);
+        input.onchange = () => {
+          selectedValue = option.value;
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          label.classList.add('selected');
         };
 
-        const textNode = document.createTextNode(item.text);
+        const textNode = document.createTextNode(option.text);
 
-        label.appendChild(checkbox);
+        label.appendChild(input);
         label.appendChild(textNode);
         container.appendChild(label);
-
-        userSelections[item.id] = false;
       });
     }
 
@@ -185,20 +180,20 @@
       const resultEl = document.getElementById("result");
       resultEl.className = "";
 
-      const allCorrect = items.every(item => {
-        const expected = item.isImpersonal;
-        const actual = !!userSelections[item.id];
-        return expected === actual;
-      });
+      if (!selectedValue) {
+        resultEl.textContent = "Выберите вариант.";
+        resultEl.className = "error";
+        return;
+      }
 
-      if (allCorrect) {
-        resultEl.textContent = "✅ Верно!";
+      if (selectedValue === "harvest") {
+        resultEl.textContent = "✅ Верно! 受年 — «получить урожай». Глагол 受 здесь в каузативном значении.";
         resultEl.className = "success";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Меньше дождя — не значит не безличное.";
+        resultEl.textContent = "❌ Нет. 年 — не просто «год», а «урожай». 受年 — ключевая фраза гаданий об урожае.";
         resultEl.className = "error";
-        sendResult(false, "Ошибка в определении безличных предложений");
+        sendResult(false);
       }
     }
 
@@ -206,7 +201,7 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success,
-        message: message || (success ? "Верно определены безличные формы" : "Ошибка в определении безличности")
+        message: message || (success ? "Верно: 受年 = получить урожай" : "Ошибка в интерпретации 受年")
       }, "*");
     }
 

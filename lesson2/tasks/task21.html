@@ -5,123 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Сопоставьте</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 8px;
-      font-size: 14px;
-      line-height: 1.4;
-      background: #fff;
-      color: #333;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: #fff;
+    color: #333;
+  }
 
-    h2 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-    }
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+  }
 
-    p.intro {
-      text-align: center;
-      font-size: 14px;
-      margin: 4px 0 12px 0;
-      color: #555;
-    }
+  p.intro {
+    text-align: center;
+    font-size: 14px;
+    margin: 4px 0 12px 0;
+    color: #555;
+  }
 
-    .column {
-      margin-bottom: 12px;
-    }
+  /* Горизонтальный макет: две колонки рядом */
+  .match-container {
+    display: flex;
+    gap: 10px;
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
 
-    .column h3 {
-      font-size: 14px;
-      text-align: center;
-      margin: 6px 0;
-      color: #333;
-    }
+  .column {
+    flex: 1;
+    min-width: 140px;
+  }
 
-    .word-item, .def-item {
-      padding: 6px 8px;
-      margin: 4px 0;
-      background: #f8f8f8;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
-      text-align: center;
-      font-size: 14px;
-      font-weight: bold;
-    }
+  .column h3 {
+    font-size: 14px;
+    text-align: center;
+    margin: 6px 0;
+    color: #333;
+    background: #eee;
+    padding: 4px;
+    border-radius: 4px;
+  }
 
-    .word-item.selected, .def-item.selected {
-      background: #e0f0ff;
-      border-color: #0066cc;
-    }
+  .word-item, .def-item {
+    padding: 6px 8px;
+    margin: 4px 0;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    .matched {
-      background: #e8f5e9 !important;
-      border-color: #28a745 !important;
-      color: #27ae60;
-      font-weight: bold;
-      cursor: default;
-    }
+  .word-item.selected {
+    background: #e0f0ff;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px #0066cc;
+  }
 
-    button {
-      display: block;
-      width: 100%;
-      padding: 6px 10px;
-      margin: 12px 0 0 0;
-      font-size: 14px;
-      background: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+  .def-item.selected {
+    background: #e0f0ff;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px #0066cc;
+  }
 
-    button:active {
-      background: #0055aa;
-    }
+  .matched {
+    background: #e8f5e9 !important;
+    border-color: #28a745 !important;
+    color: #27ae60;
+    font-weight: bold;
+    opacity: 0.9;
+    cursor: default;
+    box-shadow: none;
+  }
 
-    #result {
-      margin: 10px 0 0 0;
-      padding: 8px;
-      font-size: 14px;
-      text-align: center;
-      border-radius: 4px;
-    }
+  button {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-    .success {
-      background: #e8f5e9;
-      color: #27ae60;
-    }
-  </style>
+  button:active {
+    background: #0055aa;
+  }
+
+  #result {
+    margin: 10px 0 0 0;
+    padding: 8px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  .success {
+    background: #e8f5e9;
+    color: #27ae60;
+  }
+</style>
 </head>
 <body>
 
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф, затем — на значение</p>
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
 
-  <div class="column">
-    <h3>Иероглифы</h3>
-    <div id="words"></div>
-  </div>
-
-  <div class="column">
-    <h3>Значения</h3>
-    <div id="defs"></div>
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
   </div>
 
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
 
   <script>
-    const pairs = [
-      { char: "不", meaning: "Не; как в «не будет дождя»" },
-      { char: "王", meaning: "Правитель / Царь" },
-      { char: "丙", meaning: "Небесный ствол (3-й)" },
-      { char: "占", meaning: "Истолковать гадание" },
-      { char: "曰", meaning: "Говорить; вводит речь" }
-    ];
+    // Словарь Урока 2 — только ключевые лексемы
+const pairs = [
+  { char: "甲", meaning: "jiǎ" },
+  { char: "辰", meaning: "chén" },
+  { char: "白", meaning: "bái" },
+  { char: "馬", meaning: "mǎ" },
+  { char: "自", meaning: "zì" }
+];
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -140,7 +166,7 @@
       const shuffledChars = shuffle(pairs);
       const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
 
-      // Создаём иероглифы
+      // Создаём иероглифы (слева)
       shuffledChars.forEach(item => {
         const el = document.createElement("div");
         el.className = "word-item";
@@ -150,7 +176,7 @@
         wordList.appendChild(el);
       });
 
-      // Создаём значения
+      // Создаём значения (справа)
       shuffledMeanings.forEach(meaning => {
         const el = document.createElement("div");
         el.className = "def-item";
@@ -184,9 +210,9 @@
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 5) {
+        if (matchedPairs === 10) {
           const resultEl = document.getElementById("result");
-          resultEl.textContent = "✅ Все верно!";
+          resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
           sendResult(true);
         }
@@ -211,12 +237,11 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success: !!success,
-        message: message || (success ? "Все пары верны" : "Ошибка")
+        message: message || (success ? "Все верно" : "Ошибка")
       }, "*");
     }
 
     window.onload = init;
-
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>

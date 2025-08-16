@@ -52,7 +52,7 @@
     }
 
     .hint-container.open {
-      max-height: 200px;
+      max-height: 220px;
     }
 
     .hint-list {
@@ -118,6 +118,11 @@
       user-select: none;
     }
 
+    .punctuation {
+      font-size: 16px;
+      color: #7f8c8d;
+    }
+
     .controls {
       margin-top: 6px;
       display: flex;
@@ -154,17 +159,18 @@
 
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>В следующем году племя не получит урожая.</em></p>
+    <p><em>Гадатель Цзюй спросил: «Придет ли в нынешнюю весну бык?»</em></p>
   </div>
 
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
 
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>来岁 — следующий год</li>
-      <li>方 — племя</li>
-      <li>弗 — не (отрицание с глаголами, особенно с дополнением)</li>
-      <li>受年 — получить урожай</li>
+      <li>己卯卜珏貞 — гадатель Цзюй спрашивает (формула начала)</li>
+      <li>：「...？」 — прямая речь в кавычках</li>
+      <li>今春 — в нынешнюю весну</li>
+      <li>來牛 — придет бык (来 = прислать/придет)</li>
+      <li>Вопрос в кавычках, после 貞</li>
     </ul>
   </div>
 
@@ -182,13 +188,12 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['来', '岁', '方', '弗', '受', '年'];
+    const expected = ['己', '卯', '卜', '珏', '貞', '：', '「', '今', '春', '來', '牛', '？」];
 
     const allChars = [
-      '来', '岁', '方', '弗', '受', '年',
-      '今', '我', '不', '雨', '其', '允',
-      '王', '占', '曰', '贞', '卜', '争',
-      '稻', '春', '自', '吉', '白', '马'
+      '己', '卯', '卜', '珏', '貞', '：', '「', '今', '春', '來', '牛', '？」,
+      '王', '占', '曰', '吉', '其', '雨', '不', '允', '方', '自',
+      '白', '馬', '受', '年', '犬', '弗', '我', '歲'
     ].sort(() => Math.random() - 0.5);
 
     const toggleBtn = document.getElementById('toggle-hint-btn');
@@ -218,9 +223,11 @@
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
       resultEl.textContent = '';
+
       allChars.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
+        if (['：', '「', '」', '？', '！」].includes(char)) box.classList.add('punctuation');
         box.textContent = char;
         box.addEventListener('click', () => moveToDropArea(box));
         charPool.appendChild(box);
@@ -230,7 +237,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>来岁方弗受年';
+        resultEl.innerHTML = '✅ Правильно!<br>己卯卜珏貞：「今春來牛？」';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
