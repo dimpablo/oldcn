@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери перевод</title>
+  <title>Задание: 今</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 8px;
+      margin: 4px 0;
+      padding: 0;
       font-size: 14px;
       line-height: 1.4;
       background: #fff;
@@ -16,95 +16,80 @@
     }
 
     h2 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      font-weight: 500;
     }
 
-    .instructions {
-      padding: 8px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      background: #f5f5f5;
+    p {
+      margin: 5px 0;
+    }
+
+    .pinyin-container {
+      margin: 6px 0;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 3px;
+      overflow: hidden;
     }
 
-    .instructions p {
-      margin: 4px 0;
-    }
-
-    .task-container {
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .task-title {
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      margin: 6px 0;
-    }
-
-    .oracle-text {
-      font-size: 20px;
-      text-align: center;
-      margin: 8px 0;
-      font-weight: bold;
-      color: #111;
-    }
-
-    .word-pool, .drop-area {
-      min-height: 30px;
-      padding: 6px;
-      margin: 6px 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #f9f9f9;
-      font-size: 14px;
-      justify-content: center;
-    }
-
-    .drop-area {
-      border-color: #3498db;
-      background: #eef7ff;
-    }
-
-    .drop-area:empty::after {
-      content: '[пусто]';
-      color: #999;
-      font-style: italic;
-    }
-
-    .word-box {
-      background: white;
-      border: 1px solid #aaa;
-      padding: 4px 8px;
-      font-size: 14px;
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 5px 10px;
+      width: 100%;
+      text-align: left;
       cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
+      font-size: 13px;
+      color: #444;
+      margin: 0;
     }
 
-    .controls {
-      text-align: center;
-      margin: 10px 0;
+    .pinyin-toggle::after {
+      content: '▼';
+      float: right;
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
+    .pinyin-text {
+      padding: 0 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #f9f9f9;
+      font-style: italic;
+      color: #555;
+      font-size: 13px;
+    }
+
+    .pinyin-text.expanded {
+      padding: 5px 10px;
+      max-height: 60px;
+    }
+
+    label {
+      display: block;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    input[type="radio"] {
+      margin-right: 6px;
     }
 
     button {
       padding: 6px 10px;
-      margin: 0 6px;
       font-size: 14px;
       background: #0066cc;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 3px;
       cursor: pointer;
+      margin-top: 8px;
     }
 
     button:active {
@@ -112,179 +97,98 @@
     }
 
     #result {
-      margin: 10px 0;
-      padding: 8px;
+      margin: 6px 0 0 0;
       font-size: 14px;
-      text-align: center;
-      border-radius: 4px;
-      display: none;
-    }
-
-    .success {
-      background: #e8f5e9;
-      color: #27ae60;
-    }
-
-    .error {
-      background: #ffebee;
-      color: #e74c3c;
+      min-height: 1.4em;
     }
   </style>
 </head>
 <body>
 
-  <h2>Собери перевод</h2>
+  <h2>Что означает 今 в «今歲」?</h2>
+  <p><strong>Пример: «今歲商受年» — это:</strong></p>
 
-  <div class="instructions">
-    <p><strong>Кликайте по словам</strong>, чтобы добавить их в перевод.</p>
-    <p>Клик по слову в поле — удалит его.</p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+      Показать пиньинь
+    </button>
+    <div class="pinyin-text">jīn suì shāng shòu nián</div>
   </div>
 
-  <div class="task-container">
-    <div class="task-title">1. 不其雨</div>
-    <div class="oracle-text">不其雨</div>
-    <div id="word-pool1" class="word-pool"></div>
-    <div id="drop-area1" class="drop-area"></div>
-  </div>
+  <div id="answers"></div>
 
-  <div class="task-container">
-    <div class="task-title">2. 貞不雨</div>
-    <div class="oracle-text">貞不雨</div>
-    <div id="word-pool2" class="word-pool"></div>
-    <div id="drop-area2" class="drop-area"></div>
-  </div>
-
-  <div class="controls">
-    <button id="check-btn">Проверить</button>
-    <button id="reset-btn">Сбросить</button>
-  </div>
-
+  <button onclick="check()">Проверить</button>
   <p id="result"></p>
 
   <script>
-    const expected1 = [
-      ['не', 'будет', 'дождя'],
-      ['не', 'пойдёт', 'дождь'],
-      ['дождя', 'не', 'будет'],
-      ['дождь', 'не', 'пойдёт'],
-      ['не', 'будет', 'дождь'],
-      ['не', 'пойдёт', 'дождя']
-    ];
-    
-    const expected2 = [
-      ['спрашивали', 'не', 'будет', 'дождя'],
-      ['гадали', 'не', 'пойдёт', 'дождь'],
-      ['спрашивали', 'дождя', 'не', 'будет'],
-      ['гадали', 'дождь', 'не', 'пойдёт'],
-      ['спрашивали', 'не', 'пойдёт', 'дождь'],
-      ['гадали', 'не', 'будет', 'дождя']
-    ];
-
-    const words1 = ['не', 'будет', 'пойдёт', 'дождя', 'дождь', 'возможно', 'может', 'ли', 'дождливо'];
-    const words2 = ['спрашивали', 'гадали', 'не', 'будет', 'пойдёт', 'дождя', 'дождь', 'задавали', 'предсказывали'];
-
-    const wordPool1 = document.getElementById('word-pool1');
-    const wordPool2 = document.getElementById('word-pool2');
-    const dropArea1 = document.getElementById('drop-area1');
-    const dropArea2 = document.getElementById('drop-area2');
-    const checkBtn = document.getElementById('check-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const resultEl = document.getElementById('result');
-
-    function createWordBox(word, pool, dropArea) {
-      const box = document.createElement('div');
-      box.className = 'word-box';
-      box.textContent = word;
-      box.onclick = () => {
-        box.remove();
-        const clone = box.cloneNode(true);
-        clone.onclick = () => { clone.remove(); updatePlaceholder(dropArea); };
-        dropArea.appendChild(clone);
-        updatePlaceholder(dropArea);
-      };
-      pool.appendChild(box);
-    }
-
-    function updatePlaceholder(dropArea) {
-      const hasWords = dropArea.children.length > 0 && !Array.from(dropArea.children).some(el => el.textContent.includes('[пусто]'));
-      if (!hasWords && dropArea.children.length === 0) {
-        dropArea.innerHTML = '';
-        const placeholder = document.createElement('span');
-        placeholder.style.color = '#999';
-        placeholder.style.fontStyle = 'italic';
-        placeholder.textContent = '[пусто]';
-        dropArea.appendChild(placeholder);
+    // Варианты ответов: [текст, правильный (true/false)]
+const options = [
+  { text: "Указывает на прошлое", correct: false },
+  { text: "Обозначает настоящее время или «нынешний»", correct: true },
+  { text: "Означает «будущий»", correct: false },
+  { text: "Выражает возможность", correct: false }
+];
+    // Перемешивание массива (Fisher-Yates)
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
+      return arr;
     }
 
-    function init() {
-      wordPool1.innerHTML = '';
-      wordPool2.innerHTML = '';
-      dropArea1.innerHTML = '';
-      dropArea2.innerHTML = '';
-      resultEl.style.display = 'none';
-      updatePlaceholder(dropArea1);
-      updatePlaceholder(dropArea2);
+    // Отображаем перемешанные ответы
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
 
-      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
-      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index; // уникальное значение, но правильный = "1"
+        input.dataset.correct = opt.correct;
 
-      shuffled1.forEach(word => createWordBox(word, wordPool1, dropArea1));
-      shuffled2.forEach(word => createWordBox(word, wordPool2, dropArea2));
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
     }
 
-    function getWords(dropArea) {
-      return Array.from(dropArea.children)
-        .filter(el => !el.textContent.includes('[пусто]'))
-        .map(el => el.textContent.trim());
-    }
+    // Проверка: правильный ли ответ выбран
+    function check() {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById("result");
 
-    checkBtn.addEventListener('click', () => {
-      const current1 = getWords(dropArea1);
-      const current2 = getWords(dropArea2);
-
-      const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
-      const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
-
-      if (isCorrect1 && isCorrect2) {
-        resultEl.innerHTML = `✅ <b>Верно!</b>`;
-        resultEl.className = 'message success';
-        resultEl.style.display = 'block';
-        sendResult(true);
-      } else {
-        let message = '❌ Ошибки в переводе.';
-        if (isCorrect1 && !isCorrect2) message = '❌ Второй неверен.';
-        else if (!isCorrect1 && isCorrect2) message = '❌ Первый неверен.';
-        resultEl.textContent = message;
-        resultEl.className = 'message error';
-        resultEl.style.display = 'block';
-        sendResult(false, 'Ошибка в порядке слов');
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
       }
-    });
 
-    resetBtn.addEventListener('click', init);
-
-    function arraysEqual(a, b) {
-      if (a.length !== b.length) return false;
-      for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
-      }
-      return true;
+if (selected.dataset.correct === "true") {
+  resultEl.textContent = "✅ Правильно! 今 — указывает на настоящее: «сейчас», «нынешний».";
+  sendResult(true);
+} else {
+  resultEl.textContent = "❌ Неверно. 今 относится к настоящему времени.";
+  sendResult(false, "Ошибка в интерпретации 今");
+}
     }
 
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
-      window.parent.postMessage({
-        type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Верно" : "Ошибка")
-      }, "*");
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
     }
 
-    // Инициализация при загрузке
-    window.onload = init;
-
-    // Сигнал о существовании задания
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+    // Генерация ответов при загрузке
+    window.onload = renderOptions;
   </script>
+
 </body>
 </html>
+
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>

@@ -3,222 +3,243 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Перевод</title>
+  <title>Собери фразу</title>
   <style>
+    /* Минимализм */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 8px;
-      font-size: 14px;
       line-height: 1.4;
-      background: #fff;
-      color: #333;
+      font-size: 14px;
+      color: #2c3e50;
     }
 
     h2 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
+      font-size: 15px;
+      margin-bottom: 6px;
     }
 
-    .question {
-      margin-bottom: 10px;
-    }
-
-    .pinyin-container {
-      margin: 6px 0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .pinyin-toggle {
-      background: #f8f8f8;
-      border: none;
-      padding: 5px 10px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      font-size: 13px;
-      color: #444;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .pinyin-toggle:hover {
+    .instructions {
       background: #f0f0f0;
-    }
-
-    .pinyin-toggle::after {
-      content: '▼';
-      font-size: 10px;
-      transition: transform 0.2s;
-    }
-
-    .pinyin-toggle.expanded::after {
-      transform: rotate(180deg);
-    }
-
-    .pinyin-text {
-      padding: 0 10px;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
-      background: #fafafa;
-      font-style: italic;
-      color: #666;
+      padding: 6px;
+      margin-bottom: 6px;
       font-size: 13px;
+      border-radius: 3px;
     }
 
-    .pinyin-text.expanded {
-      padding: 5px 10px;
-      max-height: 60px;
+    .instructions em {
+      font-style: italic;
+      font-size: 12px;
     }
 
-    .options label {
-      display: block;
-      margin: 5px 0;
-      font-size: 14px;
-      color: #333;
+    .hint {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 3px;
     }
 
-    .options input {
-      margin-right: 6px;
+    .hint-list {
+      list-style: none;
+      padding-left: 0;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+
+    .hint-list li::before {
+      content: "🔸 ";
+    }
+
+    .hint-list li {
+      margin: 1px 0;
+    }
+
+    p {
+      font-size: 13px;
+      margin: 4px 0;
+    }
+
+    /* Зона сборки */
+    #drop-area {
+      min-height: 36px;
+      border: 1px dashed #3498db;
+      border-radius: 3px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 3px;
+      margin: 6px 0;
+      font-size: 18px;
+      align-items: center;
+      background: #f0f8ff;
+    }
+
+    /* Пул иероглифов */
+    #char-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin: 6px 0;
+      padding: 3px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      min-height: 36px;
+      background: #f9f9f9;
+    }
+
+    .char-box {
+      width: 30px;
+      height: 30px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      user-select: none;
+    }
+
+    .punctuation {
+      font-size: 16px;
+      color: #7f8c8d;
+    }
+
+    .controls {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
     }
 
     button {
-      padding: 6px 10px;
-      font-size: 14px;
-      background: #0066cc;
+      padding: 5px 10px;
+      font-size: 13px;
+      background: #3498db;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 3px;
       cursor: pointer;
-      margin-top: 10px;
     }
 
-    button:active {
-      background: #0055aa;
+    .message {
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: bold;
     }
 
-    #result {
-      margin: 8px 0 0 0;
-      font-size: 14px;
-      min-height: 1.4em;
+    .success {
+      color: #27ae60;
     }
   </style>
 </head>
 <body>
+  <h2>Собери фразу</h2>
 
-  <h2>Переведи словосочетание</h2>
+  <div class="instructions">
+    <p><strong>Нажмите на иероглифы</strong>, чтобы собрать:</p>
+    <p><em>"Задали вопрос: «Был ли дождь?»"</em></p>
+    <p class="hint">Как будет "задавали вопрос?"</p>
+    <p class="hint">Прошедшее время формируется косвенно</p>
 
-  <div id="questions-container">
-    <!-- Вопросы будут добавлены скриптом -->
   </div>
 
-  <button onclick="check()">Проверить</button>
-  <p id="result"></p>
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area" class="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
 
   <script>
-    const questions = [
-      {
-        id: "t1",
-        text: "丙寅卜",
-        pinyin: "bǐng yín bo",
-        options: [
-          "гадали в день бин-инь",
-          "правитель гадал",
-          "в день бинь-мао",
-          "жертвоприношение в храме"
-        ],
-        correct: "гадали в день бин-инь"
-      },
-      {
-        id: "t2",
-        text: "王占曰",
-        pinyin: "wáng zhàn yuē",
-        options: [
-          "правитель сказал",
-          "правитель истолковал",
-          "царь приказал",
-          "он записал"
-        ],
-        correct: "правитель истолковал"
-      }
+    const expected = ['貞', '曰', '允', '雨'];
+
+    const allChars = [
+      '己', '卯', '王', '不', '貞', '巳',
+      '丙', '寅', '爭', '雨', '曰', '其', 
+      '癸', '亥', '允', '占', '丑', '珏', '壬', '午'
     ];
 
-    function shuffleArray(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    const isMobileDevice = 'ontouchstart' in window;
+
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      clone.ontouchstart = null;
+
+      box.remove();
+      dropArea.appendChild(clone);
     }
 
-    function loadQuestions() {
-      const container = document.getElementById("questions-container");
-      container.innerHTML = "";
+    function initCharPool(shuffled) {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
 
-      const shuffled = shuffleArray(questions);
+      shuffled.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        if (char === '，') box.classList.add('punctuation');
+        box.textContent = char;
 
-      shuffled.forEach(q => {
-        const questionDiv = document.createElement("div");
-        questionDiv.className = "question";
-        questionDiv.innerHTML = `
-          <p><strong>${q.text}</strong></p>
-          <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-              Показать пиньинь
-            </button>
-            <div class="pinyin-text">${q.pinyin}</div>
-          </div>
-          <div class="options">
-            ${q.options.map(option => `
-              <label>
-                <input type="radio" name="${q.id}" value="${option}">
-                ${option}
-              </label>
-            `).join("")}
-          </div>
-        `;
-        container.appendChild(questionDiv);
+        box.style.cursor = 'pointer';
+        box.addEventListener('click', () => moveToDropArea(box));
+
+        charPool.appendChild(box);
       });
     }
 
-    function check() {
-      const selectedT1 = document.querySelector('input[name="t1"]:checked');
-      const selectedT2 = document.querySelector('input[name="t2"]:checked');
-      const resultEl = document.getElementById("result");
+    let shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+    initCharPool(shuffledChars);
 
-      if (!selectedT1 || !selectedT2) {
-        resultEl.textContent = "Выберите оба варианта.";
-        sendResult(false, "Не все поля заполнены");
-        return;
-      }
-
-      const correctT1 = questions.find(q => q.id === "t1").correct;
-      const correctT2 = questions.find(q => q.id === "t2").correct;
-
-      const match1 = selectedT1.value === correctT1;
-      const match2 = selectedT2.value === correctT2;
-
-      if (match1 && match2) {
-        resultEl.textContent = "✅ Верно!";
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>貞曰允雨 = "Задали вопрос «Был ли дождь?"»';
+        resultEl.className = 'message success';
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Ошибка. 曰 — прямая речь, 占 — истолковать.";
-        sendResult(false, "Неверный выбор");
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
       }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      shuffledChars = [...allChars].sort(() => Math.random() - 0.5);
+      initCharPool(shuffledChars);
+    });
+
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
     }
 
     function sendResult(success, message) {
-      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка")
+      }, "*");
     }
 
-    window.onload = loadQuestions;
-
-    // Сигнал о существовании задания
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>

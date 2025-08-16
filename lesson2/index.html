@@ -199,10 +199,7 @@ body {
   </div>
 
   <script>
-    const lessonwords = [
-      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
-      '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
-    ];
+    const lessonwords = ['弗', '肅', '牛', '重', '犬', '春', '奚', '甲', '辰', '白', '馬', '吉', '方', '自', '今', '歲', '商', '受', '年', '來', '冓', '亘', '我', '黍', '巳', '稲', '戔', '甫'];
 
     let tasks = [];
     let currentTaskIndex = 0;
@@ -233,7 +230,7 @@ body {
 
     function checkTaskIsValid(n) {
   return new Promise((resolve) => {
-    const filename = `task${n}.html`;
+    const filename = `tasks/task${n}.html`;
     const frame = document.createElement("iframe");
     frame.classList.add("hidden-iframe");
     frame.setAttribute("data-check", n);
@@ -305,7 +302,7 @@ body {
         const result = await checkTaskIsValid(n);
 
         if (result.exists) {
-          existingTasks.push(`task${n}.html`);
+          existingTasks.push(`tasks/task${n}.html`);
           n++;
         } else {
           break;

@@ -2,259 +2,293 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Сопоставьте: иероглиф ↔ значение</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Собери перевод: Урок 2</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 8px;
+      font-size: 14px;
       line-height: 1.4;
       background: #fff;
       color: #333;
-      font-size: 14px;
     }
 
     h2 {
-      color: #222;
+      margin: 0 0 8px 0;
+      font-size: 16px;
       text-align: center;
-      margin: 8px 0;
-      font-size: 18px;
       font-weight: bold;
     }
 
-    p {
-      text-align: center;
+    .instructions {
+      padding: 8px;
+      margin-bottom: 10px;
       font-size: 13px;
-      color: #555;
-      margin: 6px 0 12px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
 
-    .match-container {
-      display: flex;
-      gap: 12px;
-      margin-top: 10px;
-      flex-wrap: wrap;
+    .instructions p {
+      margin: 4px 0;
     }
 
-    .column {
-      width: 48%;
-      min-width: 120px;
+    .task-container {
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
     }
 
-    .column h3 {
-      text-align: center;
-      margin-bottom: 8px;
-      color: #333;
+    .task-title {
       font-size: 14px;
       font-weight: bold;
-    }
-
-    .word-item, .def-item {
-      padding: 10px 8px;
-      margin: 4px 0;
-      background: #f5f5f5;
-      border: 1px solid #ccc;
-      cursor: pointer;
       text-align: center;
-      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    .oracle-text {
+      font-size: 20px;
+      text-align: center;
+      margin: 8px 0;
       font-weight: bold;
+      color: #111;
     }
 
-    .word-item.selected {
-      background: #ddf;
-      border-color: #38f;
+    .word-pool, .drop-area {
+      min-height: 30px;
+      padding: 6px;
+      margin: 6px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f9f9f9;
+      font-size: 14px;
+      justify-content: center;
     }
 
-    .def-item.selected {
-      background: #dfd;
-      border-color: #0a0;
+    .drop-area {
+      border-color: #3498db;
+      background: #eef7ff;
     }
 
-    .matched {
-      background: #d4edda;
-      border: 1px solid #28a745;
-      color: #155724;
-      opacity: 0.9;
-      cursor: default;
-      font-weight: bold;
+    .drop-area:empty::after {
+      content: '[пусто]';
+      color: #999;
+      font-style: italic;
+    }
+
+    .word-box {
+      background: white;
+      border: 1px solid #aaa;
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .controls {
+      text-align: center;
+      margin: 10px 0;
     }
 
     button {
-      display: block;
-      margin: 12px auto 8px;
-      padding: 8px 16px;
+      padding: 6px 10px;
+      margin: 0 6px;
       font-size: 14px;
-      background: #3498db;
+      background: #0066cc;
       color: white;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
 
-    #result {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      padding: 6px;
+    button:active {
+      background: #0055aa;
     }
 
-    /* Полная адаптация под узкий экран */
-    @media (max-width: 480px) {
-      body {
-        padding: 6px;
-        font-size: 13px;
-      }
-      h2 {
-        font-size: 16px;
-      }
-      p {
-        font-size: 12px;
-      }
-      .match-container {
-        gap: 10px;
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .column {
-        width: 100%;
-      }
-      .column h3 {
-        font-size: 13px;
-      }
-      .word-item, .def-item {
-        font-size: 15px;
-        padding: 8px 6px;
-      }
-      button {
-        padding: 6px 12px;
-        font-size: 13px;
-      }
-      #result {
-        font-size: 13px;
-        padding: 4px;
-      }
+    #result {
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 14px;
+      text-align: center;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
     }
   </style>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и его значение</h2>
-  <p>Кликните на иероглиф слева, затем — на значение справа</p>
 
-  <div class="match-container">
-    <div class="column">
-      <h3>Иероглифы</h3>
-      <div id="words"></div>
-    </div>
-    <div class="column">
-      <h3>Значения</h3>
-      <div id="defs"></div>
+  <h2>Собери перевод: Урок 2</h2>
+
+  <div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Каждое задание фокусируется на ключевой грамматической структуре Урока 2.</p>
+    <p>💡 <em>Обратите внимание на порядок слов и значение отрицаний!</em></p>
+  </div>
+
+  <div class="task-container">
+    <div class="task-title">1. 我受黍年？</div>
+    <div class="oracle-text">我受黍年？</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+      <p>💡 Эта фраза демонстрирует <strong>каузативное значение глагола 受</strong> (получить урожай) и <strong>прямое дополнение 黍年</strong> (урожай проса)</p>
     </div>
   </div>
 
-  <button onclick="reset()">Сбросить</button>
+  <div class="task-container">
+    <div class="task-title">2. 肅弗其來牛？</div>
+    <div class="oracle-text">肅弗其來牛？</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+      <p>💡 Здесь важно <strong>отрицание 弗</strong> перед глаголом и <strong>каузативное значение 來</strong> (прислать)</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
   <p id="result"></p>
 
   <script>
-    const pairs = [
-      { char: "丑", meaning: "Земная ветвь (2-я)" },
-      { char: "爭", meaning: "Чжэн (имя собств.)" },
-      { char: "雨", meaning: "Дождь / Дождь идет / Дождить" },
-      { char: "允", meaning: "Действительно!" },
-      { char: "亥", meaning: "Земная ветвь (12-я)" }
+    // Ключевые грамматические структуры Урока 2:
+    // 1. 我受黍年? - каузативное значение 受 (получить урожай), прямое дополнение 黍年
+    // 2. 肅弗其來牛? - отрицание 弗, каузативное значение 來 (прислать), прямое дополнение 牛
+    
+    const expected1 = [
+      ['мы', 'получим', 'урожай', 'проса'],
+      ['получим', 'ли', 'мы', 'урожай', 'проса'],
+      ['урожай', 'проса', 'мы', 'получим'],
+      ['мы', 'получим', 'урожай', 'из', 'проса']
     ];
 
-    let selectedWord = null;
-    let matchedPairs = 0;
+    const expected2 = [
+      ['су', 'не', 'присылает', 'ли', 'быков'],
+      ['не', 'присылает', 'ли', 'су', 'быков'],
+      ['су', 'не', 'пришлёт', 'ли', 'быков'],
+      ['быков', 'су', 'не', 'присылает', 'ли']
+    ];
 
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
+    const words1 = ['мы', 'получим', 'урожай', 'проса', 'из', 'ли', 'получили', 'урожая', 'плохой', 'в', 'этом', 'году'];
+    const words2 = ['су', 'не', 'присылает', 'ли', 'быков', 'пришлёт', 'он', 'быки', 'прислал', 'быка', 'сейчас', 'весной'];
+
+    const wordPool1 = document.getElementById('word-pool1');
+    const wordPool2 = document.getElementById('word-pool2');
+    const dropArea1 = document.getElementById('drop-area1');
+    const dropArea2 = document.getElementById('drop-area2');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    function createWordBox(word, pool, dropArea) {
+      const box = document.createElement('div');
+      box.className = 'word-box';
+      box.textContent = word;
+      box.onclick = () => {
+        box.remove();
+        const clone = box.cloneNode(true);
+        clone.onclick = () => { clone.remove(); updatePlaceholder(dropArea); };
+        dropArea.appendChild(clone);
+        updatePlaceholder(dropArea);
+      };
+      pool.appendChild(box);
     }
 
-    function init() {
-      const wordList = document.getElementById("words");
-      const defList = document.getElementById("defs");
-
-      wordList.innerHTML = "";
-      defList.innerHTML = "";
-
-      const shuffledChars = shuffle(pairs);
-      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
-
-      shuffledChars.forEach(item => {
-        const el = document.createElement("div");
-        el.className = "word-item";
-        el.dataset.char = item.char;
-        el.textContent = item.char;
-        el.onclick = () => selectWord(el);
-        wordList.appendChild(el);
-      });
-
-      shuffledMeanings.forEach(meaning => {
-        const el = document.createElement("div");
-        el.className = "def-item";
-        el.dataset.meaning = meaning;
-        el.textContent = meaning;
-        el.onclick = () => selectDefinition(el);
-        defList.appendChild(el);
-      });
-    }
-
-    function selectWord(el) {
-      if (el.classList.contains("matched")) return;
-      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
-      selectedWord = null;
-      el.classList.add("selected");
-      selectedWord = el;
-    }
-
-    function selectDefinition(el) {
-      if (el.classList.contains("matched") || !selectedWord) return;
-
-      const char = selectedWord.dataset.char;
-      const meaning = el.dataset.meaning;
-      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
-
-      if (isCorrect) {
-        el.classList.add("matched");
-        selectedWord.classList.add("matched");
-        selectedWord.onclick = null;
-        el.onclick = null;
-        selectedWord = null;
-        matchedPairs++;
-
-        if (matchedPairs === 5) {
-          document.getElementById("result").innerHTML = "✅ Все верно!";
-          document.getElementById("result").style.color = "#27ae60";
-          sendResult(true);
-        }
-      } else {
-        document.getElementById("result").textContent = "❌ Неверно.";
-        document.getElementById("result").style.color = "#e74c3c";
-        setTimeout(() => {
-          document.getElementById("result").textContent = "";
-        }, 1500);
-
-        selectedWord.classList.remove("selected");
-        selectedWord = null;
+    function updatePlaceholder(dropArea) {
+      const hasWords = dropArea.children.length > 0 && !Array.from(dropArea.children).some(el => el.textContent.includes('[пусто]'));
+      if (!hasWords && dropArea.children.length === 0) {
+        dropArea.innerHTML = '';
+        const placeholder = document.createElement('span');
+        placeholder.style.color = '#999';
+        placeholder.style.fontStyle = 'italic';
+        placeholder.textContent = '[пусто]';
+        dropArea.appendChild(placeholder);
       }
     }
 
-    function reset() {
-      matchedPairs = 0;
-      document.getElementById("result").textContent = "";
-      init();
+    function init() {
+      wordPool1.innerHTML = '';
+      wordPool2.innerHTML = '';
+      dropArea1.innerHTML = '';
+      dropArea2.innerHTML = '';
+      resultEl.style.display = 'none';
+      updatePlaceholder(dropArea1);
+      updatePlaceholder(dropArea2);
+
+      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
+      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
+
+      shuffled1.forEach(word => createWordBox(word, wordPool1, dropArea1));
+      shuffled2.forEach(word => createWordBox(word, wordPool2, dropArea2));
     }
 
-    function sendResult(success, message = "") {
+    function getWords(dropArea) {
+      return Array.from(dropArea.children)
+        .filter(el => !el.textContent.includes('[пусто]'))
+        .map(el => el.textContent.trim());
+    }
+
+    checkBtn.addEventListener('click', () => {
+      const current1 = getWords(dropArea1);
+      const current2 = getWords(dropArea2);
+
+      const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+      const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+
+      if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `✅ <b>Идеально!</b> Вы усвоили ключевые структуры Урока 2: каузативные глаголы и отрицание 弗.`;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+      } else {
+        let message = '❌ Проверьте порядок слов и значение частиц:';
+        if (!isCorrect1) message += '<br>• В первом задании: каузативное значение 受 (получить урожай)';
+        if (!isCorrect2) message += '<br>• Во втором: отрицание 弗 и значение 來 (прислать)';
+        
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
+      }
+    });
+
+    resetBtn.addEventListener('click', init);
+
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+
+    function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
-        success,
-        message: message || (success ? "Все пары верны" : "Ошибка")
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
       }, "*");
     }
 
-    init();
+    window.onload = init;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
