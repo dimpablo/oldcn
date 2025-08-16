@@ -5,134 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Иероглифика</title>
   <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    html, body {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 10px;
-  gap: 8px;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  color: #555;
-  flex-shrink: 0;
-}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 10px;
+      gap: 8px;
+      width: 100%;
+    }
 
-.scale-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      color: #555;
+      flex-shrink: 0;
+    }
 
-.scale-btn {
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
-  line-height: 28px;
-  text-align: center;
-  background-color: #e0e0e0;
-  border-radius: 50%;
-  cursor: pointer;
-  user-select: none;
-}
+    .scale-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-.scale-value {
-  min-width: 36px;
-  text-align: center;
-  font-weight: bold;
-}
+    .scale-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      line-height: 28px;
+      text-align: center;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+    }
 
-#progress-container {
-  width: 100%;
-  height: 6px;
-  background-color: #e0e0e0;
-  border-radius: 3px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
+    .scale-value {
+      min-width: 36px;
+      text-align: center;
+      font-weight: bold;
+    }
 
-#progress-bar {
-  height: 100%;
-  width: 0%;
-  background-color: #4caf50;
-  transition: width 0.4s ease;
-  border-radius: 3px;
-}
+    #progress-container {
+      width: 100%;
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
 
-#task-container {
-  flex: 1;
-  border: none;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease;
-  min-height: 0;
-  max-height: calc(100vh - 150px);
-}
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.4s ease;
+      border-radius: 3px;
+    }
 
-#task-frame {
-  width: 100%;
-  height: 100%;
-  border: none;
-  transform-origin: top left;
-  transform: scale(1);
-  transition: transform 0.2s ease;
-  overflow: auto;
-}
+    #task-container {
+      flex: 1;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      min-height: 0;
+      max-height: calc(100vh - 150px);
+    }
 
-.controls {
-  padding: 12px 0;
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-}
+    #task-container.active {
+      opacity: 1;
+      visibility: visible;
+    }
 
-#next-btn {
-  padding: 14px 24px;
-  font-size: 18px;
-  font-weight: 600;
-  color: white;
-  background-color: #1976d2;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  width: 90%;
-  max-width: 300px;
-}
+    #task-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      transform-origin: center top; /* Центрирование по X, привязка к верху по Y */
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      overflow: auto;
+    }
 
-#next-btn:active {
-  transform: scale(0.98);
-}
+    .controls {
+      padding: 12px 0;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+    }
 
-#next-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-  transform: none;
-}
+    #next-btn {
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      background-color: #1976d2;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      width: 90%;
+      max-width: 300px;
+    }
 
-#status {
-  font-size: 16px;
-  text-align: center;
-  color: #555;
-}
+    #next-btn:active {
+      transform: scale(0.98);
+    }
+
+    #next-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #status {
+      font-size: 16px;
+      text-align: center;
+      color: #555;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+      #task-container {
+        max-height: calc(100vh - 180px);
+      }
+      
+      .controls {
+        padding: 8px 0;
+      }
+      
+      #next-btn {
+        padding: 12px 16px;
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -163,7 +193,7 @@ body {
       '亥', '不', '允', '王', '占', '丑', '己', '卯', '珏', '壬', '午'
     ];
 
-    const totalTasks = 10; // Количество заданий, которые нужно выполнить
+    const totalTasks = 10;
     let currentTaskIndex = 0;
 
     let currentScale = 1.0;
@@ -181,7 +211,7 @@ body {
 
     // --- Масштабирование ---
     function setScale(scale) {
-      currentScale = Math.max(minScale, Math.min(maxScale, scale));
+      currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
       iframe.style.transform = `scale(${currentScale})`;
       scaleValueEl.textContent = currentScale.toFixed(1);
     }
@@ -194,21 +224,25 @@ body {
       return lessonwords[Math.floor(Math.random() * lessonwords.length)];
     }
 
-    // --- Загрузка задания с новым иероглифом ---
+    // --- Загрузка задания ---
     function loadNextTask() {
       if (currentTaskIndex >= totalTasks) return;
 
       const hanzi = getRandomHanzi();
       const url = `task1.html?_=${Date.now()}#${hanzi}`;
-      
-      // Очистка src и новая загрузка
+
+      statusEl.textContent = `🔤 Задание ${currentTaskIndex + 1}/${totalTasks}: работайте с иероглифом «${hanzi}»`;
+      nextBtn.disabled = true;
+
+      // Показываем контейнер, если скрыт
+      document.getElementById("task-container").classList.add("active");
+
+      // Перезагрузка iframe
       iframe.src = '';
       setTimeout(() => {
         iframe.src = url;
       }, 10);
 
-      statusEl.textContent = `🔤 Задание ${currentTaskIndex + 1}/${totalTasks}: работайте с иероглифом «${hanzi}»`;
-      nextBtn.disabled = true;
       updateProgress();
     }
 
@@ -218,7 +252,7 @@ body {
       progressBar.style.width = `${progress}%`;
     }
 
-    // --- Обработка сообщений от iframe ---
+    // --- Обработка результата задания ---
     window.addEventListener("message", (event) => {
       const { type, success } = event.data;
 
@@ -233,7 +267,6 @@ body {
       currentTaskIndex++;
 
       if (currentTaskIndex >= totalTasks) {
-        // Конец урока
         iframe.style.display = "none";
         nextBtn.disabled = true;
         statusEl.innerHTML = `<div style="text-align: center;">
@@ -248,12 +281,12 @@ body {
       }
     });
 
-    // --- Автомасштаб на мобильных ---
+    // --- Определение мобильного устройства ---
     function isMobile() {
       return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
     }
 
-    // --- Запуск при загрузке ---
+    // --- Запуск ---
     window.addEventListener("load", () => {
       if (isMobile()) {
         setScale(0.5);
