@@ -75,10 +75,14 @@
       background: #eef7ff;
     }
 
-    .drop-area:empty::after {
+    .drop-area::before {
       content: '[пусто]';
       color: #999;
       font-style: italic;
+    }
+
+    .drop-area.has-words::before {
+      content: none;
     }
 
     .word-box {
@@ -89,6 +93,10 @@
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
+    }
+
+    .word-box:hover {
+      background: #e0e0e0;
     }
 
     .controls {
@@ -157,7 +165,7 @@
     <div id="word-pool2" class="word-pool"></div>
     <div id="drop-area2" class="drop-area"></div>
     <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-      <p>💡 Здесь важно <strong>отрицание 弗</strong> перед глаголом и <strong>каузативное значение 來</strong> (прислать)</p>
+      <p>💡 Здесь важно <strong>отрицание 弗</strong> перед глаголом и <strong>каузативное значение 來</strong> (прислать), прямое дополнение 牛</p>
     </div>
   </div>
 
@@ -169,10 +177,7 @@
   <p id="result"></p>
 
   <script>
-    // Ключевые грамматические структуры Урока 2:
-    // 1. 我受黍年? - каузативное значение 受 (получить урожай), прямое дополнение 黍年
-    // 2. 肅弗其來牛? - отрицание 弗, каузативное значение 來 (прислать), прямое дополнение 牛
-    
+    // Ожидаемые правильные варианты
     const expected1 = [
       ['мы', 'получим', 'урожай', 'проса'],
       ['получим', 'ли', 'мы', 'урожай', 'проса'],
@@ -198,51 +203,87 @@
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
 
-    function createWordBox(word, pool, dropArea) {
-      const box = document.createElement('div');
-      box.className = 'word-box';
-      box.textContent = word;
-      box.onclick = () => {
-        box.remove();
-        const clone = box.cloneNode(true);
-        clone.onclick = () => { clone.remove(); updatePlaceholder(dropArea); };
-        dropArea.appendChild(clone);
-        updatePlaceholder(dropArea);
-      };
-      pool.appendChild(box);
+    // Перемешивание массива (алгоритм Фишера-Йейтса)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
-    function updatePlaceholder(dropArea) {
-      const hasWords = dropArea.children.length > 0 && !Array.from(dropArea.children).some(el => el.textContent.includes('[пусто]'));
-      if (!hasWords && dropArea.children.length === 0) {
-        dropArea.innerHTML = '';
-        const placeholder = document.createElement('span');
-        placeholder.style.color = '#999';
-        placeholder.style.fontStyle = 'italic';
-        placeholder.textContent = '[пусто]';
-        dropArea.appendChild(placeholder);
-      }
+    // Создаём DOM-элементы слов
+    function createWordElements(words, pool, dropArea) {
+      const shuffledWords = shuffleArray(words); // 🔁 Перемешиваем слова
+      return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+          // Перемещаем в drop-area
+          box.remove();
+          dropArea.appendChild(box);
+          updatePlaceholder(dropArea); // Обновляем состояние плейсхолдера
+        };
+
+        return box;
+      });
     }
+
+    // Обновляем видимость [пусто]
+    function updatePlaceholder(dropArea) {
+      const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+      dropArea.classList.toggle('has-words', hasWords);
+    }
+
+    let wordElements1 = [];
+    let wordElements2 = [];
 
     function init() {
+      // Очищаем
       wordPool1.innerHTML = '';
       wordPool2.innerHTML = '';
       dropArea1.innerHTML = '';
       dropArea2.innerHTML = '';
       resultEl.style.display = 'none';
+
+      // Пересоздаём элементы со случайным порядком
+      wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+      wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+
+      // Добавляем в пулы
+      wordElements1.forEach(el => wordPool1.appendChild(el));
+      wordElements2.forEach(el => wordPool2.appendChild(el));
+
+      // Обновляем плейсхолдеры
       updatePlaceholder(dropArea1);
       updatePlaceholder(dropArea2);
-
-      const shuffled1 = [...words1].sort(() => Math.random() - 0.5);
-      const shuffled2 = [...words2].sort(() => Math.random() - 0.5);
-
-      shuffled1.forEach(word => createWordBox(word, wordPool1, dropArea1));
-      shuffled2.forEach(word => createWordBox(word, wordPool2, dropArea2));
     }
+
+    // Обработка кликов в drop-area: возврат в пул
+    dropArea1.addEventListener('click', (e) => {
+      if (e.target.classList.contains('word-box')) {
+        const wordBox = e.target;
+        wordBox.remove();
+        wordPool1.appendChild(wordBox);
+        updatePlaceholder(dropArea1);
+      }
+    });
+
+    dropArea2.addEventListener('click', (e) => {
+      if (e.target.classList.contains('word-box')) {
+        const wordBox = e.target;
+        wordBox.remove();
+        wordPool2.appendChild(wordBox);
+        updatePlaceholder(dropArea2);
+      }
+    });
 
     function getWords(dropArea) {
       return Array.from(dropArea.children)
-        .filter(el => !el.textContent.includes('[пусто]'))
+        .filter(el => el.classList.contains('word-box'))
         .map(el => el.textContent.trim());
     }
 
@@ -288,6 +329,7 @@
       }, "*");
     }
 
+    // Инициализация
     window.onload = init;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
