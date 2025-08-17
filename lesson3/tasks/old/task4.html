@@ -118,6 +118,11 @@
       user-select: none;
     }
 
+    .punctuation {
+      font-size: 16px;
+      color: #7f8c8d;
+    }
+
     .controls {
       margin-top: 6px;
       display: flex;
@@ -154,20 +159,17 @@
 
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Мы вступим в город в наступающем втором месяце.</em></p>
+    <p><em>Прислали ли белых лошадей? Не прислали ли белых лошадей?</em></p>
   </div>
 
-  <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
 
-  <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>生二月 — в наступающем втором месяце</li>
-      <li>我 — мы</li>
-      <li>入 — вступить</li>
-      <li>于 — в (направление движения)</li>
-      <li>商 — город (Великий город Шан)</li>
+      <li>來白馬？ — Прислали ли белых лошадей?</li>
+      <li>貞 — спрашивают (во втором вопросе)</li>
+      <li>不其 — не будет ли? (отрицательный вопрос)</li>
+      <li>Структура: [вопрос]? 貞[отрицательный вопрос]?</li>
     </ul>
   </div>
 
@@ -185,13 +187,12 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['生', '二', '月', '我', '入', '于', '商'];
+    const expected = ['來', '白', '馬', '？', '貞', '不', '其', '來', '白', '馬', '？'];
 
     const allChars = [
-      '生', '二', '月', '我', '入', '于', '商',
-      '今', '来', '白', '马', '工', '方', '大', '邑',
-      '受', '年', '不', '其', '雨', '王', '占', '曰',
-      '告', '勿', '求', '六', '七', '九', '庚', '寅'
+      '來', '白', '馬', '？', '貞', '不', '其', '來', '白', '馬', '？',
+      '今', '岁', '我', '受', '年', '方', '弗', '雨', '允', '王',
+      '吉', '自', '春', '犬', '牛', '稻', '其', '曰'
     ].sort(() => Math.random() - 0.5);
 
     const toggleBtn = document.getElementById('toggle-hint-btn');
@@ -202,7 +203,6 @@
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
 
-    // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
@@ -214,7 +214,6 @@
       clone.draggable = false;
       clone.style.cursor = 'default';
       clone.onclick = null;
-
       box.remove();
       dropArea.appendChild(clone);
     }
@@ -227,8 +226,8 @@
       allChars.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
+        if (char === '？') box.classList.add('punctuation');
         box.textContent = char;
-
         box.addEventListener('click', () => moveToDropArea(box));
         charPool.appendChild(box);
       });
@@ -237,7 +236,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>生二月我入于商';
+        resultEl.innerHTML = '✅ Правильно!<br>來白馬？貞不其來白馬？';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -261,11 +260,9 @@
       }, "*");
     }
 
-    // Инициализация
     initCharPool();
-
-    // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
 </html>
+
