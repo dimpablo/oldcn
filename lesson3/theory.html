@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Урок 3 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+</head>
+<body onload="(function(){try{const PKEY='dk_points';const gp=()=>Number(localStorage.getItem(PKEY)||'0')|0;const sp=v=>localStorage.setItem(PKEY,String(v));sp(gp()+1);}catch(_){}})()">
+
+    <h1>УРОК 3</h1>
+
+    <div class="text">
+        <h2>Текст урока</h2>
+        <div class="original">
+            庚寅卜㱿貞來乙巳王勿入于商貞來<br>
+            辛丑王入于商王其入大邑商今六月<br>
+            王入于商王于生七月入于商九月我<br>
+            入 商<br>
+            貞勿求于妣庚貞今日求于大庚于大<br>
+            甲求求大甲求妣辛<br>
+            貞翌庚寅王告王于甲午告勿告于中<br>
+            丁勿于大甲告勿于大戊告貞告工方<br>
+            于上甲于大甲告于大丁告工方貞于<br>
+            河告貞于唐告
+        </div>
+    </div>
+
+    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+    <div class="grammar">
+        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>3.1. Предлог 于 yú</h3>
+        <p class="original">
+            Группа предлогов в архаическом языке немногочисленна.
+            Наиболее употребительным из них является 于 yú — слово, которое по праву может быть названо универсальным предлогом.
+            Предлог 于 yú в сочетании со следующим за ним словом может
+            передавать такие значения:
+            <br><br>
+            а) точка в пространстве или времени, в которой происходит
+            действие:<br>
+            <span class="example">田于宋 tián yú sòng</span> «охотиться в Сун»;<br>
+            <span class="example">于甲子田 yú jiă zǐ tián</span> «охотиться в день цзя-цзы»;
+            <br><br>
+            б) точка в пространстве или времени — конечный пункт движения в процессе действия:<br>
+            <span class="example">入于商 rù yú shāng</span> «вступить в Шан»;
+            <br><br>
+            в) лицо или предмет, являющийся адресатом действия:<br>
+            <span class="example">告于王 gào yú wáng</span> «сообщить правителю».
+        </p>
+
+        <h3>3.2. Косвенное дополнение</h3>
+        <p class="original">
+            В архаическом языке существует три типа косвенных дополнений — со значением времени, места и адресата. Обычная позиция косвенного дополнения места и адресата — после сказуемого.
+            Если сказуемое уже имеет прямое дополнение, косвенное дополнение ставится после него.
+            <br><br>
+            Особенностью косвенных дополнений является то, что они могут выступать как в беспредложной форме, так и быть оформленными предлогом. Однако, если косвенное дополнение следует за
+            прямым, наличие перед ним предлога обязательно:<br>
+            <span class="example">獲鹿于宋 huò lù yú sòng</span> «поймать оленей в Сун».
+            <br><br>
+            Заметим, что косвенное дополнение может стоять и перед сказуемым, но в этом случае оно также обязательно должно быть
+            оформлено предлогом:<br>
+            <span class="example">告上甲 gào shàng jiă</span><br>
+            <span class="example">于上甲告 yú shàng jiă gào</span> } «сообщить Верхнему Цзя»
+        </p>
+
+        <h3>3.3. Позиция дополнения со значением времени</h3>
+        <p class="original">
+            В архаическом древнекитайском языке дополнение, обозначающее время действия, обычно стоит без предлога перед подлежащим, но может занимать позицию и после него (перед сказуемым).
+            В этом случае такое дополнение обязательно оформляется предлогом:<br>
+            <span class="example">甲子王田 jiă zǐ wáng tián</span><br>
+            <span class="example">王于甲子田 wáng yú jiă zǐ tián</span> } «В день цзя-цзы ван охотился»
+        </p>
+
+        <h3>3.4. Модели предложения в архаическом языке</h3>
+        <p class="original">
+            Исходя из сказанного выше, мы можем построить несколько общих моделей предложения в архаическом древнекитайском языке.
+            Обозначим сказуемое через С, подлежащее — П, прямое дополнение — Дп, косвенное дополнение — Дк, косвенное дополнение
+            со значением времени действия — Дк (в).
+            <br><br>
+            Расположив члены предложения на их обычных позициях, получаем следующую модель:<br>
+            Дк (в) — П — С — Дп — (предлог) Дк
+            <br><br>
+            Учитывая возможную позицию дополнения со значением времени после подлежащего, эта основная модель может быть преобразована в следующую:<br>
+            П — (предлог) Дк (в) — С — Дп — (предлог) Дк
+            <br><br>
+            Наконец, возможен и еще один вариант модели предложения:<br>
+            Дк (в) — П — (предлог) Дк — С — Дп
+            <br><br>
+            Таким образом, мы можем вывести следующее правило: любой член предложения, способный сочетаться с предлогом, может
+            в предложной форме занимать позицию между подлежащим и сказуемым.
+            <br><br>
+            Отметим, что в отрицательной фразе такой член предложения
+            ставится после отрицания:<br>
+            <span class="example">辛亥王不于宋獲鹿 xīn hài wáng bù yú sòng huò lù</span><br>
+            «В день синь-хай ван не поймает оленя в Сун?»
+        </p>
+
+        <h3>3.5. Отрицания 勿 wù и 毋 wú</h3>
+        <p class="original">
+            В отличие от 不 bù, отрицания 勿 wù и 毋 wú, сочетаясь с предикативом, имеют дополнительный модальный оттенок значения,
+            указывая на нежелательность совершения соответствующего действия.
+            <br><br>
+            Сравните:<br>
+            <span class="example">王不田 wáng bù tián</span> «Правитель не охотится».<br>
+            <span class="example">王勿田 wáng wù tián</span> «Правителю не следует охотиться».<br>
+            <span class="example">王曰勿田 wáng yuē wù tián</span> «Правитель сказал: "Не надо ехать на охоту!"»
+        </p>
+
+        <h3>3.6. Служебное слово 翌 yì</h3>
+        <p class="original">
+            В данном уроке мы встречаем служебное слово, употребляемое
+            в качестве определения к имени, обозначающему дату, и имеющее
+            значение «будущий», «следующий», — 翌 yì.
+            <br><br>
+            В сходном значении употребляется также и знаменательное
+            слово 生 shēng «рождаться» (здесь: «наступающий» — о месяце).
+        </p>
+
+        <h3>3.7. Числительные</h3>
+        <p class="original">
+            Об особенностях системы древнекитайских числительных речь
+            еще пойдет ниже. Здесь мы отметим лишь тот факт, что в архаическом древнекитайском количественные числительные не имеют
+            формальных отличий от порядковых. Так, например, словосочетание <span class="example">六月 liù yuè</span> может означать и «шесть месяцев», и «шестой
+            месяц», так что его конкретное значение может быть определено
+            только по контексту.
+        </p>
+
+        <h3>3.8. Пространственные показатели</h3>
+        <p class="original">
+            В древнекитайском языке существует группа слов, которые могут быть названы пространственными показателями. Они обозначают подразделения пространства относительно той или иной его
+            точки: 上 shàng «верх»; 下 xià «низ»; 中 zhōng «середина»; 内 nèi
+            «внутри»; 外 wài «снаружи» и т. д. Сюда же относятся обозначения
+            стран света: 東 dōng «восток»; 西 xī «запад»; 南 nán «юг»; 北 běi
+            «север».
+            <br><br>
+            Будучи употребленным в качестве определения к имени, пространственный указатель выражает признак определяемого:<br>
+            <span class="example">北羌 běi qiāng</span> «северные цяны» (название племени);<br>
+            <span class="example">下危 xià wēi</span> «Нижнее Вэй» (географическое название).
+            <br><br>
+            Если пространственный показатель стоит после имени, он указывает на направление от той или иной точки:<br>
+            <span class="example">河東 hé dōng</span> «к востоку от реки».
+        </p>
+    </div>
+
+    <h2>СПИСОК СЛОВ УРОКА 3</h2>
+
+    <div class="char-list">
+        <div class="char-item">
+            <span>庚<span class="inline-pinyin">gēng</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (7-й); циклический знак
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>乙<span class="inline-pinyin">yǐ</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (2-й); циклический знак
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>勿<span class="inline-pinyin">wù</span></span>
+            <div class="char-tooltip">
+                Служебное слово: отрицание с модальным оттенком
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>入<span class="inline-pinyin">rù</span></span>
+            <div class="char-tooltip">
+                Входить, вступать
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>于<span class="inline-pinyin">yú</span></span>
+            <div class="char-tooltip">
+                Предлог: в, на, к (универсальный предлог)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>辛<span class="inline-pinyin">xīn</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (8-й); циклический знак
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>大<span class="inline-pinyin">dà</span></span>
+            <div class="char-tooltip">
+                Большой, великий
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>邑<span class="inline-pinyin">yì</span></span>
+            <div class="char-tooltip">
+                Город, поселение
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>六<span class="inline-pinyin">liù</span></span>
+            <div class="char-tooltip">
+                Шесть; шестой
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>月<span class="inline-pinyin">yuè</span></span>
+            <div class="char-tooltip">
+                Месяц; луна
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>生<span class="inline-pinyin">shēng</span></span>
+            <div class="char-tooltip">
+                Рождаться; наступающий (о времени)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>七<span class="inline-pinyin">qī</span></span>
+            <div class="char-tooltip">
+                Семь; седьмой
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>九<span class="inline-pinyin">jiǔ</span></span>
+            <div class="char-tooltip">
+                Девять; девятый
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>求<span class="inline-pinyin">qiú</span></span>
+            <div class="char-tooltip">
+                Просить, молить
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>妣<span class="inline-pinyin">bǐ</span></span>
+            <div class="char-tooltip">
+                Умершая мать, прародительница
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>日<span class="inline-pinyin">rì</span></span>
+            <div class="char-tooltip">
+                День; солнце
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>翌<span class="inline-pinyin">yì</span></span>
+            <div class="char-tooltip">
+                Следующий, будущий (о времени)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>告<span class="inline-pinyin">gào</span></span>
+            <div class="char-tooltip">
+                Сообщать, докладывать
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>中<span class="inline-pinyin">zhōng</span></span>
+            <div class="char-tooltip">
+                Середина; средний
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>丁<span class="inline-pinyin">dīng</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (4-й); циклический знак
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>戊<span class="inline-pinyin">wù</span></span>
+            <div class="char-tooltip">
+                Небесный ствол (5-й); циклический знак
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>工<span class="inline-pinyin">gōng</span></span>
+            <div class="char-tooltip">
+                Работа; племя Гун
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>上<span class="inline-pinyin">shàng</span></span>
+            <div class="char-tooltip">
+                Верх; верхний
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>河<span class="inline-pinyin">hé</span></span>
+            <div class="char-tooltip">
+                Река (особенно Хуанхэ)
+            </div>
+        </div>
+
+        <div class="char-item">
+            <span>唐<span class="inline-pinyin">táng</span></span>
+            <div class="char-tooltip">
+                Собственное имя: Тан (легендарный правитель)
+            </div>
+        </div>
+    </div>
+
+    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+    <div class="lexicon">
+        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>3.А. Циклические знаки в именах предков</h3>
+        <p class="original">
+            Знаки десятеричного цикла (甲 jiă, 乙 yǐ, 丙 bǐng, 丁 dīng, 戊
+            wù, 己 jǐ, 庚 gēng, 辛 xīn, 壬 rèn, 癸 guǐ) употребляются в архаическом древнекитайском языке не только для обозначения дней,
+            но и в именах усопших предков. Существует несколько точек зрения по поводу того, чем объясняется это совпадение. Согласно одной из них, имя покойного предка содержит указание на день его
+            рождения, согласно другой — на день смерти и пр. Так или иначе
+            циклические знаки сочетаются в именах предков со следующими
+            тремя категориями слов:
+            <br><br>
+            а) термины родства:<br>
+            <span class="example">父甲 fù jiă</span> «отец Цзя»;<br>
+            <span class="example">兄乙 xiōng yǐ</span> «брат И»;
+            <br><br>
+            б) пространственные показатели:<br>
+            <span class="example">上甲 shàng jiă</span> «Верхний Цзя»;<br>
+            <span class="example">外壬 wài rèn</span> «Внешний Жэнь»;
+            <br><br>
+            в) знаменательные слова со значением качества:<br>
+            <span class="example">大庚 dà gēng</span> «Великий Гэн»;<br>
+            <span class="example">小乙 xiăo yǐ</span> «Малый И».
+        </p>
+
+        <h3>3.Б. Термины родства</h3>
+        <p class="original">
+            Встречая в древнекитайском тексте термины родства, необходимо иметь в виду, что многие из них не имеют полных соответствий в русском языке и поэтому могут быть переведены на него
+            лишь условно.
+            <br><br>
+            Особенность древнекитайской системы терминов родства иньского времени заключается в том, что, в отличие от русской системы, в ней:
+            <br><br>
+            во-первых, четко разграничиваются линии отца и матери (поэтому в архаическом древнекитайском языке, например, нет термина, соответствующего русскому «дядя», — там брат матери и брат
+            отца обозначаются отдельными терминами);
+            <br><br>
+            во-вторых, в древнекитайской системе родства не разграничиваются прямая и боковая линии, различаемые в русской системе
+            (поэтому, в частности, брат отца обозначается тем же термином,
+            что и отец, а сестра матери терминологически не отличается от
+            матери и т. д.);
+            <br><br>
+            в-третьих, в ней не различаются родственники, отстоящие от
+            говорящего более чем на два поколения (поэтому дед, прадед, прапрадед и т. д. обозначаются одним и тем же термином);
+            <br><br>
+            в-четвертых, в иньской системе родства не различаются родственники и свойственники (например, в устах женщины сестра
+            отца и мать мужа обозначаются одним и тем же термином).
+            <br><br>
+            Такая система терминов родства отражала существовавшее
+            в прошлом правило, согласно которому два рода были связаны
+            между собой узами обязательного двустороннего брака. Однако
+            в иньское время реальные формы брака уже изменились, хотя запрет брать жену в своем собственном роду продолжал сохраняться.
+        </p>
+
+        <h3>3.В. Представления иньцев об эйкумене</h3>
+        <p class="original">
+            Как и у многих других оседлых народов древности, общая картина обитаемого мира носит у иньцев эгоцентрический характер.
+            В центре эйкумены находится столица иньского государства
+            <span class="example">大邑商 dà yì shāng</span> «Великий город Шан».
+            <br><br>
+            Со всех четырех сторон его окружают «земли», разделенные по
+            частям света:<br>
+            <span class="example">北土 běi tǔ</span> «северные земли»;<br>
+            <span class="example">南土 nán tǔ</span> «южные земли»;<br>
+            <span class="example">西土 xī tǔ</span> «западные земли»;<br>
+            <span class="example">東土 dōng tǔ</span> «восточные земли».
+            <br><br>
+            Вне пределов круга земель расположены враждебные племена
+            <span class="example">方 fāng</span>В надписях встречается несколько десятков названий таких племен. Иньские правители чаще всего воевали с племенами
+            Гун, Цян и некоторыми другими.
+            <br><br>
+            Однако четкой границы между «землями» и «племенами» не
+            было: признав власть вана, то или иное «племя» становилось членом иньской коалиции и входило в состав «земель». И наоборот, 
+            любая территория, первоначально подчинявшаяся иньскому правителю, но затем отделившаяся от него, становилась «племенем».
+        </p>
+    </div>
+<div style="text-align: center; margin-bottom: 40px;">
+    <img src="./img/5.png" alt="Обитаемый мир в представлении иньцев" class="original" style="border: none; padding: 0; max-width: 100%;">
+    <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Обитаемый мир в представлении иньцев</p>
+</div>
+    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+    <div class="assignment">
+        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+        <ol>
+            <li>Проанализируйте текст грамматически.</li>
+            <li>Переведите текст на русский язык.</li>
+            <li>Переведите на древнекитайский следующие предложения:
+                <ol type="1">
+                    <li>Сегодня племя Гун прислало белых лошадей в Великий город Шан.</li>
+                    <li>Мы вступим в город в наступающем втором месяце.</li>
+                    <li>Не сообщай правителю о дожде!</li>
+                    <li>Я попросил чумизы у гадателя. Гадатель пришлет чумизу в будущем году.</li>
+                </ol>
+            </li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        Учебник: В. А. Крюков — Архаический древнекитайский язык.<br>
+        Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
+        Все иероглифы — из текстов Уроков 1-3, либо из циклических знаков (甲子 – 癸亥).
+    </div>
+
+</body>
+</html>
