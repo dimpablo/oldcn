@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Урок 4 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+
+        /* Таблица текста */
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            word-break: keep-all;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+        }
+
+
+        .phrase-item {
+    display: inline-block;
+    margin: 5px;
+    font-size: 1.1em;
+}
+
+.phrase-char {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.phrase-pinyin {
+    font-style: italic;
+    color: #555;
+    margin: 0 8px;
+}
+
+.phrase-meaning {
+    color: #333;
+}
+    </style>
+</head>
+<body onload="(function(){try{const PKEY='dk_points';const gp=()=>Number(localStorage.getItem(PKEY)||'0')|0;const sp=v=>localStorage.setItem(PKEY,String(v));sp(gp()+1);}catch(_){}})()">
+
+    <h1>УРОК 4</h1>
+
+    <!-- ТЕКСТ УРОКА -->
+
+    <div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<style>
+   .oracle-table {
+    border-collapse: collapse;
+    margin: 20px auto; /* Центрируем таблицу, auto по бокам */
+    font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+    font-size: 1.3em;
+    table-layout: fixed; /* Фиксируем ширину колонок */
+    width: 95%; /* Занимаем 95% ширины, но не больше */
+    max-width: 1200px; /* Ограничиваем максимальную ширину */
+}
+
+.oracle-table td {
+    padding: 6px 8px; /* Уменьшаем отступы, чтобы сэкономить место */
+    border: 1px solid #d4d4d4;
+    text-align: center;
+    min-width: 0; /* Отключаем min-width, если был */
+    width: calc(95% / 16); /* Примерно равномерное распределение (15 колонок + 1 для номера строки) */
+    position: relative;
+    word-break: keep-all; /* Не разрывать иероглифы */
+    white-space: nowrap; /* Не переносим символы */
+}
+
+/* Уменьшаем размер для номеров */
+.line-num, .col-num {
+    background-color: #f0f4f8;
+    color: #1a4f72;
+    font-weight: bold;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 0.85em; /* Чуть меньше, чтобы не жрало место */
+    white-space: nowrap;
+}
+
+/* Tooltip — без изменений */
+.char-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 300px;
+    background: #1a4f72;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    text-align: left;
+    white-space: normal;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+    line-height: 1.5;
+}
+
+td:hover .char-tooltip {
+    display: block;
+}
+
+.lesson-badge {
+    display: inline-block;
+    background: #e6f2ff;
+    color: #1a4f72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+</style>
+
+<script>
+// Данные для иероглифов из всех уроков
+const charData = {
+    // Урок 1
+    '丙': {pinyin: 'bǐng', meaning: 'Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»', lesson: 1},
+    '寅': {pinyin: 'yín', meaning: 'Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»', lesson: 1},
+    '卜': {pinyin: 'bǔ', meaning: 'Гадать; в составе 名 + 卜 — «гадатель по имени...»', lesson: 1},
+    '爭': {pinyin: 'zhēng', meaning: 'Имя гадателя; 卜爭 — «гадатель Чжэн»', lesson: 1},
+    '貞': {pinyin: 'zhēn', meaning: 'Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»', lesson: 1},
+    '雨': {pinyin: 'yǔ', meaning: 'Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»', lesson: 1},
+    '曰': {pinyin: 'yuē', meaning: 'Говорить; вводит прямую речь: «сказал: „...“»', lesson: 1},
+    '其': {pinyin: 'qí', meaning: 'Служебное наречие; указывает на будущее/возможность: «будет ли?»', lesson: 1},
+    '癸': {pinyin: 'guǐ', meaning: 'Небесный ствол (10-й); часть дат: 癸亥, 癸丑', lesson: 1},
+    '亥': {pinyin: 'hài', meaning: 'Земная ветвь (12-я); в паре с 癸 — «гуй-хай»', lesson: 1},
+    '不': {pinyin: 'bù', meaning: 'Не; отрицание перед сказуемым: «не будет дождя»', lesson: 1},
+    '允': {pinyin: 'yǔn', meaning: 'Действительно; подтверждает: «и в самом деле пошёл дождь»', lesson: 1},
+    '王': {pinyin: 'wáng', meaning: 'Правитель; подлежащее: «царь сказал», «царь истолковал»', lesson: 1},
+    '占': {pinyin: 'zhān', meaning: 'Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»', lesson: 1},
+    '丑': {pinyin: 'chǒu', meaning: 'Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»', lesson: 1},
+    '己': {pinyin: 'jǐ', meaning: 'Небесный ствол (6-й); в паре с 卯 — «цзи-мао»', lesson: 1},
+    '卯': {pinyin: 'mǎo', meaning: 'Земная ветвь (4-я); день «цзи-мао»', lesson: 1},
+    '㱿': {pinyin: 'jué', meaning: 'Имя гадателя; 卜㱿 — «гадатель Цзюэ»', lesson: 1},
+    '壬': {pinyin: 'rén', meaning: 'Небесный ствол (9-й); в паре с 午 — «жэнь-у»', lesson: 1},
+    '午': {pinyin: 'wǔ', meaning: 'Земная ветвь (7-я); день «жэнь-у»', lesson: 1},
+    
+    // Урок 2
+    '弗': {pinyin: 'fú', meaning: 'Служебное слово: отрицание; аналог «не»', lesson: 2},
+    '肅': {pinyin: 'sù', meaning: 'Строгий; собственное имя: Су', lesson: 2},
+    '牛': {pinyin: 'niú', meaning: 'Корова', lesson: 2},
+    '重': {pinyin: 'zhòng', meaning: 'Собственное имя: Чжун', lesson: 2},
+    '犬': {pinyin: 'quǎn', meaning: 'Собака; собственное имя: Цюань (название племени)', lesson: 2},
+    '春': {pinyin: 'chūn', meaning: 'Весна', lesson: 2},
+    '奚': {pinyin: 'xī', meaning: 'Служебное слово: вопросительное местоимение «что»; собственное имя: Си', lesson: 2},
+    '甲': {pinyin: 'jiǎ', meaning: 'Небесный ствол (1-й); название первого знака 10-ричного цикла; доспехи', lesson: 2},
+    '辰': {pinyin: 'chén', meaning: 'Созвездие; Земная ветвь (5-я); день «jiǎ chén»', lesson: 2},
+    '白': {pinyin: 'bái', meaning: 'Белый; говорить; собственное имя: Бай (фамилия)', lesson: 2},
+    '馬': {pinyin: 'mǎ', meaning: 'Лошадь', lesson: 2},
+    '吉': {pinyin: 'jí', meaning: 'Благополучный', lesson: 2},
+    '方': {pinyin: 'fāng', meaning: 'Племя; сторона света; плот; квадрат; служебное наречие: «и лишь после этого»', lesson: 2},
+    '自': {pinyin: 'zì', meaning: 'Служебное слово: предлог «из, от»; «сам, лично»', lesson: 2},
+    '今': {pinyin: 'jīn', meaning: 'Ныне', lesson: 2},
+    '歲': {pinyin: 'suì', meaning: 'Год (в значении «год урожая», «год правления»', lesson: 2},
+    '商': {pinyin: 'shāng', meaning: 'Собственное имя: Шан (династия или личное имя)', lesson: 2},
+    '受': {pinyin: 'shòu', meaning: 'Давать; получать', lesson: 2},
+    '年': {pinyin: 'nián', meaning: 'Урожай; год; возраст', lesson: 2},
+    '來': {pinyin: 'lái', meaning: 'Приходить; присылать; будущий', lesson: 2},
+    '冓': {pinyin: 'gōu', meaning: 'Постройка; собственное имя: Гоу', lesson: 2},
+    '亘': {pinyin: 'gèn', meaning: 'Собственное имя: Гэнь', lesson: 2},
+    '我': {pinyin: 'wǒ', meaning: 'Служебное слово: личное местоимение первого лица — «я»', lesson: 2},
+    '黍': {pinyin: 'shǔ', meaning: 'Чумиза (древнее зерно)', lesson: 2},
+    '巳': {pinyin: 'sì', meaning: 'Земная ветвь (6-я); часть даты, например, «jiǎ sì»', lesson: 2},
+    '稻': {pinyin: 'dào', meaning: 'Рис', lesson: 2},
+    '戔': {pinyin: 'jiān', meaning: 'Собственное имя: Цзянь', lesson: 2},
+    '甫': {pinyin: 'fǔ', meaning: 'Собственное имя: Фу', lesson: 2},
+    
+    // Урок 3
+    '庚': {pinyin: 'gēng', meaning: 'Небесный ствол (7-й); циклический знак', lesson: 3},
+    '乙': {pinyin: 'yǐ', meaning: 'Небесный ствол (2-й); циклический знак', lesson: 3},
+    '勿': {pinyin: 'wù', meaning: 'Служебное слово: отрицание с модальным оттенком', lesson: 3},
+    '入': {pinyin: 'rù', meaning: 'Входить, вступать', lesson: 3},
+    '于': {pinyin: 'yú', meaning: 'Предлог: в, на, к (универсальный предлог)', lesson: 3},
+    '辛': {pinyin: 'xīn', meaning: 'Небесный ствол (8-й); циклический знак', lesson: 3},
+    '大': {pinyin: 'dà', meaning: 'Большой, великий', lesson: 3},
+    '邑': {pinyin: 'yì', meaning: 'Город, поселение', lesson: 3},
+    '六': {pinyin: 'liù', meaning: 'Шесть; шестой', lesson: 3},
+    '月': {pinyin: 'yuè', meaning: 'Месяц; луна', lesson: 3},
+    '生': {pinyin: 'shēng', meaning: 'Рождаться; наступающий (о времени)', lesson: 3},
+    '七': {pinyin: 'qī', meaning: 'Семь; седьмой', lesson: 3},
+    '九': {pinyin: 'jiǔ', meaning: 'Девять; девятый', lesson: 3},
+    '求': {pinyin: 'qiú', meaning: 'Просить, молить', lesson: 3},
+    '妣': {pinyin: 'bǐ', meaning: 'Умершая мать, прародительница', lesson: 3},
+    '日': {pinyin: 'rì', meaning: 'День; солнце', lesson: 3},
+    '翌': {pinyin: 'yì', meaning: 'Следующий, будущий (о времени)', lesson: 3},
+    '告': {pinyin: 'gào', meaning: 'Сообщать, докладывать', lesson: 3},
+    '中': {pinyin: 'zhōng', meaning: 'Середина; средний', lesson: 3},
+    '丁': {pinyin: 'dīng', meaning: 'Небесный ствол (4-й); циклический знак', lesson: 3},
+    '戊': {pinyin: 'wù', meaning: 'Небесный ствол (5-й); циклический знак', lesson: 3},
+    '工': {pinyin: 'gōng', meaning: 'Работа; племя Гун', lesson: 3},
+    '上': {pinyin: 'shàng', meaning: 'Верх; верхний', lesson: 3},
+    '河': {pinyin: 'hé', meaning: 'Река (особенно Хуанхэ)', lesson: 3},
+    '唐': {pinyin: 'táng', meaning: 'Собственное имя: Тан (легендарный правитель)', lesson: 3},
+
+        // Урок 4
+    '至': {pinyin: 'zhì', meaning: 'Достигать; до', lesson: 4},
+    '后': {pinyin: 'hòu', meaning: 'Князь (титул)', lesson: 4},
+    '子': {pinyin: 'zǐ', meaning: 'Вождь племени (титул)', lesson: 4},
+    '示': {pinyin: 'shì', meaning: 'Жертвенный алтарь; предок', lesson: 4},
+    '烖': {pinyin: 'zāi', meaning: 'Опасность, бедствие', lesson: 4},
+    '基': {pinyin: 'jī', meaning: 'Племя Цзи', lesson: 4},
+    '賽': {pinyin: 'sài', meaning: 'Приносить жертву', lesson: 4},
+    '毋': {pinyin: 'wú', meaning: 'Не (запрет)', lesson: 4},
+    '多': {pinyin: 'duō', meaning: 'Много', lesson: 4},
+    '五': {pinyin: 'wǔ', meaning: 'Пять', lesson: 4},
+    '西': {pinyin: 'xī', meaning: 'Запад', lesson: 4},
+    '東': {pinyin: 'dōng', meaning: 'Восток', lesson: 4},
+    '南': {pinyin: 'nán', meaning: 'Юг', lesson: 4},
+    '北': {pinyin: 'běi', meaning: 'Север', lesson: 4}
+};
+
+// Данные текста урока 4
+
+        const lessonText = [
+            "壬寅卜㱿貞自今至于甲辰子商烖基",
+            "方自今至于甲辰子商弗其烖基方自",
+            "今壬寅至于甲辰子商烖基方自今至",
+            "于丁巳我烖賽王占曰丁巳我毋其烖",
+            "于來甲子烖",
+            "甲子卜中貞求年自上甲求自上甲癸",
+            "亥卜中貞求年自上甲至于多后貞于",
+            "示壬求年",
+            "其自西來雨其自東來雨其自南來雨",
+            "其自北來雨來雨自西自今五日不雨"
+        ];
+
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    
+    // Создаём строку с номерами колонок
+    const headerRow = document.createElement('tr');
+    
+    // Пустая ячейка для выравнивания с номерами строк
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    
+    // Номера колонок: от 1 до 15
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    
+    // Создаём строки с текстом
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        
+        // Номер строки
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        
+        // Разбиваем строку на символы
+        const chars = Array.from(lessonText[i]);
+        
+        // Заполняем ячейки для позиций 1–15
+        for (let j = 0; j < 15; j++) {  // Ровно 15 ячеек
+            const td = document.createElement('td');
+            
+            // Если есть символ на этой позиции — ставим его
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
+                }
+            }
+            // Если символа нет — ячейка остаётся пустой (ничего не делаем)
+            row.appendChild(td);
+        }
+        
+        table.appendChild(row);
+    }
+}
+
+// Инициализация таблицы при загрузке страницы
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+
+
+    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+    <div class="grammar">
+        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>4.1. Предлог 自 zì</h3>
+        <p class="original">
+            Вторым из числа наиболее употребительных предлогов архаического языка является 自 zì (это слово уже встречалось нам в ином значении — «сам», «лично»).<br><br>
+            В известном смысле 自 zì составляет семантическую пару предлогу 于 yú: если одним из значений последнего является конечный пункт движения или иного действия, связанного с перемещением, то 自 zì указывает на исходную точку этого движения (в пространстве или во времени):<br><br>
+            <span class="example">步于商 bù yú shāng</span> «охотиться в Шан»;<br>
+            <span class="example">步自商 bù zì shāng</span> «отправиться из Шан».<br><br>
+            Вместе с тем в употреблении предлогов 于 yú и 自 zì наблюдается существенное различие.<br><br>
+            Предлог 于 yú при определенных условиях (когда перед косвенным дополнением, стоящим в постпозиции к сказуемому, нет прямого дополнения) может быть опущен без ущерба для смысла.<br><br>
+            Предлог 自 zì при тех же условиях опущен быть не может. Поэтому косвенное дополнение, отвечающее на вопрос «когда?», стоит на своем обычном месте (перед подлежащим) без предлога; аналогичное дополнение, отвечающее на вопрос «начиная с какого времени?», употребляется в той же позиции непременно с предлогом 自 zì:<br><br>
+            <span class="example">今歲我受年 jīn suì wǒ shòu nián</span> «В этом году мы получим урожай?»<br>
+            <span class="example">自今歲我受年 zì jīn suì wǒ shòu nián</span> «Мы будем получать урожай, начиная с этого года?»
+        </p>
+
+        <h3>4.2. Предложная конструкция 自...至于 zì... zhì yú</h3>
+        <p class="original">
+            В тех случаях, когда необходимо очертить хронологические или пространственные рамки того или иного действия, в архаическом древнекитайском языке употребляется конструкция, включающая оба предлога 自 zì и 于 yú.<br><br>
+            Первая особенность этой конструкции — в употреблении перед 于 yú знаменательного слова 至 zhì «достигать», «прибывать».<br><br>
+            Вторая ее особенность заключается в том, что член предложения, оформленный данной конструкцией, обычно занимает свое привычное место — перед подлежащим (косвенное дополнение, обозначающее время действия) или после сказуемого (косвенное дополнение со значением места).<br><br>
+            На русский язык эта конструкция переводится оборотами «от... до», «начиная с... и кончая» и т. д.<br><br>
+            <span class="example">自今至于癸亥王求 zì jīn zhì yú guǐ hài wáng qiú</span> «Ван будет молить [о дожде], начиная с сегодняшнего дня и кончая днем гуй-хай?»<br><br>
+            <span class="example">求自上甲至于中丁 qiú zì shāng jiă zhì yú zhōng dīng</span> «Молить [предков], начиная с Верхнего Цзя и кончая Средним Дином?»<br><br>
+            Предлог 于 yú в данной конструкции иногда может опускаться:<br>
+            <span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> «Будет ли дождь, начиная с сегодняшнего дня и до дня цзи-ю?»
+        </p>
+
+        <h3>4.3. Обстоятельство длительности действия</h3>
+        <p class="original">
+            От косвенного дополнения со значением времени действия, выраженного конструкцией 自... 至于 zì... zhì yú, следует отличать обстоятельство длительности действия.<br><br>
+            Разобранная выше конструкция указывает на временные рамки, в пределах которых может иметь место то или иное действие, т. е. отвечает на вопрос «с какого времени по какое время?». Поэтому в предложении <span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> говорится не о том, что дождь будет идти все время в указанном промежутке времени, а о том, что дождь может пойти в какой-то момент в указанных хронологических пределах.<br><br>
+            Для обозначения же длительности действия в архаическом языке используется обстоятельство, занимающее позицию перед сказуемым:<br>
+            <span class="example">旬雨 xún yǔ</span> «Дождь будет идти в течение декады».
+        </p>
+    </div>
+
+    <!-- СПИСОК СЛОВ УРОКА -->
+    <h2>СПИСОК СЛОВ УРОКА</h2>
+    <div class="char-list">
+        <div class="char-item">
+            <span>至<span class="inline-pinyin">zhì</span></span>
+            <div class="char-tooltip">Достигать; до</div>
+        </div>
+        <div class="char-item">
+            <span>后<span class="inline-pinyin">hòu</span></span>
+            <div class="char-tooltip">Князь (титул)</div>
+        </div>
+        <div class="char-item">
+            <span>子<span class="inline-pinyin">zǐ</span></span>
+            <div class="char-tooltip">Вождь племени (титул)</div>
+        </div>
+        <div class="char-item">
+            <span>示<span class="inline-pinyin">shì</span></span>
+            <div class="char-tooltip">Жертвенный алтарь; предок</div>
+        </div>
+        <div class="char-item">
+            <span>烖<span class="inline-pinyin">zāi</span></span>
+            <div class="char-tooltip">Опасность, бедствие</div>
+        </div>
+        <div class="char-item">
+            <span>基<span class="inline-pinyin">jī</span></span>
+            <div class="char-tooltip">Племя Цзи</div>
+        </div>
+        <div class="char-item">
+            <span>賽<span class="inline-pinyin">sài</span></span>
+            <div class="char-tooltip">Приносить жертву</div>
+        </div>
+        <div class="char-item">
+            <span>毋<span class="inline-pinyin">wú</span></span>
+            <div class="char-tooltip">Не (запрет)</div>
+        </div>
+        <div class="char-item">
+            <span>多<span class="inline-pinyin">duō</span></span>
+            <div class="char-tooltip">Много</div>
+        </div>
+        <div class="char-item">
+            <span>五<span class="inline-pinyin">wǔ</span></span>
+            <div class="char-tooltip">Пять</div>
+        </div>
+        <div class="char-item">
+            <span>西<span class="inline-pinyin">xī</span></span>
+            <div class="char-tooltip">Запад</div>
+        </div>
+        <div class="char-item">
+            <span>東<span class="inline-pinyin">dōng</span></span>
+            <div class="char-tooltip">Восток</div>
+        </div>
+        <div class="char-item">
+            <span>南<span class="inline-pinyin">nán</span></span>
+            <div class="char-tooltip">Юг</div>
+        </div>
+        <div class="char-item">
+            <span>北<span class="inline-pinyin">běi</span></span>
+            <div class="char-tooltip">Север</div>
+        </div>
+    </div>
+    <div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
+    <strong>Словосочетания</strong><br><br>
+    <span class="phrase-item">
+        <span class="phrase-char">子商</span>
+        <span class="phrase-pinyin">zǐ shāng</span>
+        <span class="phrase-meaning">«цзы Шан» (см. 4.А)</span>
+    </span><br>
+    <span class="phrase-item">
+        <span class="phrase-char">基方</span>
+        <span class="phrase-pinyin">jī fāng</span>
+        <span class="phrase-meaning">«племя Цзи»</span>
+    </span><br>
+    <span class="phrase-item">
+        <span class="phrase-char">上甲</span>
+        <span class="phrase-pinyin">shàng jiă</span>
+        <span class="phrase-meaning">«Верхний Цзя»</span>
+    </span>
+</div>
+
+    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+    <div class="lexicon">
+        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+        <h3>4.А. Титулы вождей подчиненных племен</h3>
+        <p class="original">
+            Вожди племенных объединений, относившихся к категории «земель» и подчинявшихся верховной власти иньского вана, получали от него специальные титулы — своеобразный символ их статуса в системе иньской коалиции.<br><br>
+            В надписях встречаются три таких титула: хоу 侯 hóu, бо 伯 bó, цзы 子 zǐ.<br><br>
+            По общему правилу, личное имя вождя стоит после его титула (см. 1.8): 侯虎 hóu hǔ и т. д. Иногда, впрочем, встречаются и более полные наименования, включающие два собственных имени (например, 而伯龜 ér bó guī). В этих случаях мы имеем указание на то, какое племя возглавляет тот или иной вождь такого-то ранга (в данном случае — Гуй, вождь племени Эр в ранге бо). Наконец, титул зачастую может быть опущен: 洗震 xǐ zhèn «Чжэнь [вождь племени] Си» и т. д.
+        </p>
+    </div>
+
+    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+    <div class="assignment">
+        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+        <ol>
+            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
+            <li>Проанализируйте текст грамматически.</li>
+            <li>Переведите текст на русский язык.</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.<br>
+        Восстановлено по OCR с сохранением авторского стиля.<br>
+        Все иероглифы — из текстов Уроков 1–4 или из циклических знаков.
+    </div>
+
+</body>
+</html>
