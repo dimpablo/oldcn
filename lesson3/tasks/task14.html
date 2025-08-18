@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Урок 2 — Частицы</title>
+  <title>Урок 3 — Частицы и предлоги</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -159,19 +159,19 @@
 
   <div class="grid">
     <div class="cell" onclick="openModal('q1')">
-      <strong>今歲</strong>
+      <strong>入于商</strong>
       <span class="status" id="status-q1">?</span>
     </div>
     <div class="cell" onclick="openModal('q2')">
-      <strong>來歲</strong>
+      <strong>王勿入于商</strong>
       <span class="status" id="status-q2">?</span>
     </div>
     <div class="cell" onclick="openModal('q3')">
-      <strong>不其受年</strong>
+      <strong>翌庚寅</strong>
       <span class="status" id="status-q3">?</span>
     </div>
     <div class="cell" onclick="openModal('q4')">
-      <strong>自來</strong>
+      <strong>上甲</strong>
       <span class="status" id="status-q4">?</span>
     </div>
   </div>
@@ -182,16 +182,16 @@
   <!-- Модальные окна -->
   <div id="modal-q1" class="modal">
     <div class="modal-content">
-      <div class="modal-header">今歲</div>
+      <div class="modal-header">入于商</div>
       <div class="pinyin-container">
         <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-        <div class="pinyin-text">jīn suì</div>
+        <div class="pinyin-text">rù yú shāng</div>
       </div>
       <div class="options">
-        <label><input type="radio" name="q1" value="нынешний год"> нынешний год</label>
-        <label><input type="radio" name="q1" value="будущий год"> будущий год</label>
-        <label><input type="radio" name="q1" value="прошлый год"> прошлый год</label>
-        <label><input type="radio" name="q1" value="ежегодно"> ежегодно</label>
+        <label><input type="radio" name="q1" value="выйти из Шан">выйти из Шан</label>
+        <label><input type="radio" name="q1" value="вступить в Шан">вступить в Шан</label>
+        <label><input type="radio" name="q1" value="охотиться в Шан">охотиться в Шан</label>
+        <label><input type="radio" name="q1" value="сообщить в Шан">сообщить в Шан</label>
       </div>
       <button onclick="closeModal('q1')">OK</button>
     </div>
@@ -199,16 +199,16 @@
 
   <div id="modal-q2" class="modal">
     <div class="modal-content">
-      <div class="modal-header">來歲</div>
+      <div class="modal-header">王勿入于商</div>
       <div class="pinyin-container">
         <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-        <div class="pinyin-text">lái suì</div>
+        <div class="pinyin-text">wáng wù rù yú shāng</div>
       </div>
       <div class="options">
-        <label><input type="radio" name="q2" value="нынешний год"> нынешний год</label>
-        <label><input type="radio" name="q2" value="будущий год"> будущий год</label>
-        <label><input type="radio" name="q2" value="прошлый год"> прошлый год</label>
-        <label><input type="radio" name="q2" value="в день лай"> в день лай</label>
+        <label><input type="radio" name="q2" value="Правитель не вступит в Шан">Правитель не вступит в Шан</label>
+        <label><input type="radio" name="q2" value="Правителю не следует вступать в Шан">Правителю не следует вступать в Шан</label>
+        <label><input type="radio" name="q2" value="Правитель вступит не в Шан">Правитель вступит не в Шан</label>
+        <label><input type="radio" name="q2" value="Правитель не должен вступать в Шан">Правитель не должен вступать в Шан</label>
       </div>
       <button onclick="closeModal('q2')">OK</button>
     </div>
@@ -216,16 +216,16 @@
 
   <div id="modal-q3" class="modal">
     <div class="modal-content">
-      <div class="modal-header">不其受年</div>
+      <div class="modal-header">翌庚寅</div>
       <div class="pinyin-container">
         <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-        <div class="pinyin-text">bù qí shòu nián</div>
+        <div class="pinyin-text">yì gēng yín</div>
       </div>
       <div class="options">
-        <label><input type="radio" name="q3" value="уже получил урожай"> уже получил урожай</label>
-        <label><input type="radio" name="q3" value="не получим урожай"> не получим урожай</label>
-        <label><input type="radio" name="q3" value="будет ли урожай?"> будет ли урожай?</label>
-        <label><input type="radio" name="q3" value="не будет ли урожая?"> не будет ли урожая?</label>
+        <label><input type="radio" name="q3" value="прошедший день гэн-инь">прошедший день гэн-инь</label>
+        <label><input type="radio" name="q3" value="следующий день гэн-инь">следующий день гэн-инь</label>
+        <label><input type="radio" name="q3" value="великий день гэн-инь">великий день гэн-инь</label>
+        <label><input type="radio" name="q3" value="наступающий месяц гэн-инь">наступающий месяц гэн-инь</label>
       </div>
       <button onclick="closeModal('q3')">OK</button>
     </div>
@@ -233,16 +233,16 @@
 
   <div id="modal-q4" class="modal">
     <div class="modal-content">
-      <div class="modal-header">自來</div>
+      <div class="modal-header">上甲</div>
       <div class="pinyin-container">
         <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-        <div class="pinyin-text">zì lái</div>
+        <div class="pinyin-text">shàng jiǎ</div>
       </div>
       <div class="options">
-        <label><input type="radio" name="q4" value="придут оттуда"> придут оттуда</label>
-        <label><input type="radio" name="q4" value="придут сами"> придут сами</label>
-        <label><input type="radio" name="q4" value="не придут"> не придут</label>
-        <label><input type="radio" name="q4" value="послать назад"> послать назад</label>
+        <label><input type="radio" name="q4" value="Верхний Цзя (по положению или рангу)">Верхний Цзя (по положению или рангу)</label>
+        <label><input type="radio" name="q4" value="Младший Цзя">Младший Цзя</label>
+        <label><input type="radio" name="q4" value="Цзя из племени Шан">Цзя из племени Шан</label>
+        <label><input type="radio" name="q4" value="Цзя, который правил весной">Цзя, который правил весной</label>
       </div>
       <button onclick="closeModal('q4')">OK</button>
     </div>
@@ -250,10 +250,10 @@
 
   <script>
     const correctAnswers = {
-      q1: "нынешний год",
-      q2: "будущий год",
-      q3: "не будет ли урожая?",
-      q4: "придут сами"
+      q1: "вступить в Шан",
+      q2: "Правителю не следует вступать в Шан",
+      q3: "следующий день гэн-инь",
+      q4: "Верхний Цзя (по положению или рангу)"
     };
 
     let userAnswers = { q1: null, q2: null, q3: null, q4: null };
@@ -304,4 +304,3 @@
   </script>
 </body>
 </html>
-

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Задание: 自</title>
+  <title>Задание: 王勿入于商</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -105,14 +105,14 @@
 </head>
 <body>
 
-  <h2>Что означает 自 в «自來」?</h2>
-  <p><strong>Пример: «方其自來」 — это:</strong></p>
+  <h2>Что означает 勿 в «王勿入于商»?</h2>
+  <p><strong>Пример: «王勿入于商» — это:</strong></p>
 
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
       Показать пиньинь
     </button>
-    <div class="pinyin-text">fāng qí zì lái</div>
+    <div class="pinyin-text">wáng wù rù yú shāng</div>
   </div>
 
   <div id="answers"></div>
@@ -122,12 +122,13 @@
 
   <script>
     // Варианты ответов: [текст, правильный (true/false)]
-const options = [
-  { text: "Означает «другой»", correct: false },
-  { text: "Указывает на движение от места", correct: false },
-  { text: "Выражает самодвижение: «сам прийти»", correct: true },
-  { text: "Частица будущего времени", correct: false }
-];
+    const options = [
+      { text: "Простое отрицание действия: «Правитель не вступит в Шан»", correct: false },
+      { text: "Модальное отрицание: «Правителю не следует вступать в Шан»", correct: true },
+      { text: "Безличное отрицание: «Не будет вступления в Шан»", correct: false },
+      { text: "Отрицание будущего времени: «Правитель вступит не в Шан»", correct: false }
+    ];
+
     // Перемешивание массива (Fisher-Yates)
     function shuffle(array) {
       const arr = [...array];
@@ -149,7 +150,7 @@ const options = [
         const input = document.createElement("input");
         input.type = "radio";
         input.name = "q";
-        input.value = opt.correct ? "1" : "0_" + index; // уникальное значение, но правильный = "1"
+        input.value = opt.correct ? "1" : "0_" + index;
         input.dataset.correct = opt.correct;
 
         label.appendChild(input);
@@ -168,13 +169,13 @@ const options = [
         return;
       }
 
-if (selected.dataset.correct === "true") {
-  resultEl.textContent = "✅ Правильно! 自 — «сам», в сочетании 自來 — «придёт сам».";
-  sendResult(true);
-} else {
-  resultEl.textContent = "❌ Неверно. 自 выражает самодействие.";
-  sendResult(false, "Ошибка в интерпретации 自");
-}
+      if (selected.dataset.correct === "true") {
+        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание — запрет или рекомендацию, как \"не следует\".";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. 勿 — это не простое отрицание, а модальное: «не следует», «не надо».";
+        sendResult(false);
+      }
     }
 
     // Отправка результата в родительское окно
@@ -185,11 +186,9 @@ if (selected.dataset.correct === "true") {
     // Генерация ответов при загрузке
     window.onload = renderOptions;
   </script>
-
 </body>
 </html>
 
 <script>
   window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
-
