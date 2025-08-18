@@ -416,13 +416,7 @@ function createOracleTable() {
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 
-<!-- Тумблер для переключения между оригинальным и читаемым текстом -->
-<div style="margin: 15px 0; text-align: center;">
-  <label class="toggle-label">
-    <input type="checkbox" id="readableToggle">
-    Показать читаемый вариант
-  </label>
-</div>
+
 
 <!-- Аудиоозвучка текста -->
 <div style="text-align: center; margin: 10px 0;">
@@ -435,34 +429,7 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
   </div>
 </div>
 
-<script>
-  // Аутентичный вид: ТОЛЬКО иероглифы, без знаков препинания, без переносов
-  const originalText = `丙寅卜爭貞雨貞曰其雨貞癸亥不其雨雨允不雨貞不雨王占曰癸其雨癸丑允其雨己卯卜㱿貞雨王占曰雨壬午允雨`;
 
-  // Читаемый вид: с пунктуацией, разбивкой и форматированием
-  const readableText = `丙寅卜，爭貞：「雨？」<br>
-貞曰：「其雨。」<br>
-貞：「癸亥，不其雨？」<br>
-雨。允。不雨。貞：「不雨。」<br>
-王占曰：「癸，其雨。」癸丑，允其雨。<br>
-己卯卜，㱿貞：「雨？」<br>
-王占曰：「雨。」壬午，允雨。`;
-
-  // Находим элемент с текстом
-  const textElement = document.querySelector('.original');
-  const toggle = document.getElementById('readableToggle');
-
-  // Функция обновления текста
-  function updateText() {
-    textElement.innerHTML = toggle.checked ? readableText : originalText;
-  }
-
-  // Устанавливаем АВТОМАТИЧЕСКИ оригинальный (аутентичный) вид по умолчанию
-  textElement.innerHTML = originalText;
-
-  // Добавляем слушатель на изменение чекбокса
-  toggle.addEventListener('change', updateText);
-</script>
 
 <style>
   .toggle-label {
