@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Инкозатив vs Каузатив</title>
+  <title>Пространство vs Модальность</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -90,7 +90,7 @@
     .toggle-switch {
       position: relative;
       display: inline-block;
-      width: 40px;
+      width: 60px;
       height: 20px;
     }
 
@@ -107,7 +107,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #e74c3c; /* красный — каузатив */
+      background-color: #3498db; /* синий — пространство/время */
       transition: .2s;
       border-radius: 10px;
     }
@@ -125,24 +125,97 @@
     }
 
     input:checked + .slider {
-      background-color: #27ae60; /* зелёный — инкозатив */
+      background-color: #9b59b6; /* фиолетовый — модальность */
     }
 
     input:checked + .slider:before {
-      transform: translateX(18px);
+      transform: translateX(38px);
+    }
+
+    button {
+      padding: 6px 12px;
+      margin: 4px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f5f5f5;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <h2>Инкозатив vs Каузатив</h2>
+  <h2>Пространство/Время vs Модальность</h2>
 
-  <div class="instructions">
-    <p><strong>Определите тип значения глагола</strong> в каждом предложении:</p>
-    <p>🔴 <em>красный</em> — каузативное значение</p>
-    <p>🟢 <em>зеленый</em> — инкозативное значение</p>
-    <p><em>Все 4 глагола (雨, 來, 受, 出) представлены в обоих значениях</em></p>
+<div class="instructions">
+  <div class="instructions-header" onclick="toggleInstructions()">
+    <strong>📌 Инструкция (нажми для развертывания)</strong>
+    <span class="arrow">▼</span>
   </div>
+  <div class="instructions-content" style="display:none">
+    <p><strong>Пространство/Время vs Модальность</strong></p>
+    <p>В древнекитайском языке предложения организуются вокруг двух ключевых аспектов:</p>
+    
+    <p>🔵 <strong>Пространство/Время</strong> (синий):</p>
+    <ul>
+      <li>Предлог 于 (yú) указывает место/время: <em>"于商"</em> = "в Шан"</li>
+      <li>Циклические даты: <em>"甲子"</em> = "день цзя-цзы"</li>
+      <li>Обстоятельства всегда стоят ДО сказуемого</li>
+    </ul>
+    
+    <p>🟣 <strong>Модальность</strong> (фиолетовый):</p>
+    <ul>
+      <li>勿 (wù)/毋 (wú) = запрет: <em>"勿入"</em> = "не входи!"</li>
+      <li>翌 (yì)/生 (shēng) = будущее время: <em>"翌庚寅"</em> = "след. день гэн-инь"</li>
+      <li>Стоят непосредственно перед глаголом</li>
+    </ul>
+    
+    <p><em>Примеры:</em><br>
+      "于商入" → 🔵 (место)<br>
+      "勿告" → 🟣 (запрет)</p>
+  </div>
+</div>
+
+<style>
+.instructions-header {
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.instructions-content {
+  padding: 8px 0;
+  border-top: 1px dashed #ccc;
+}
+.arrow {
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.instructions-header.collapsed .arrow {
+  transform: rotate(-90deg);
+}
+</style>
+
+<script>
+function toggleInstructions() {
+  const header = document.querySelector('.instructions-header');
+  const content = document.querySelector('.instructions-content');
+  const isHidden = content.style.display === 'none';
+  
+  content.style.display = isHidden ? 'block' : 'none';
+  header.classList.toggle('collapsed', !isHidden);
+  
+  // Адаптация для iframe (отправляем родителю новый размер)
+  setTimeout(() => {
+    window.parent.postMessage({
+      type: "UPDATE_HEIGHT",
+      height: document.body.scrollHeight
+    }, "*");
+  }, 100);
+}
+</script>
 
   <div class="columns">
     <div id="column1" class="column"></div>
@@ -158,16 +231,16 @@
 
   <script>
     const sentences = [
-      { text: "其雨", type: "inc", explanation: "дождь идет (безличный глагол)" },
-      { text: "肅來牛", type: "caus", explanation: "Су присылает быков (каузатив 來)" },
-      { text: "我受年", type: "inc", explanation: "мы получаем урожай (инкозатив 受)" },
-      { text: "王出方", type: "caus", explanation: "правитель посылает племя (каузатив 出)" },
-      { text: "方來", type: "inc", explanation: "племя приходит (инкозатив 來)" },
-      { text: "神受年", type: "caus", explanation: "бог дает урожай (каузатив 受)" },
-      { text: "方出", type: "inc", explanation: "племя выходит (инкозатив 出)" },
-      { text: "卜雨", type: "caus", explanation: "гадание посылает дождь (каузатив 雨)" },
-      { text: "來牛", type: "inc", explanation: "быки приходят (инкозатив 來)" },
-      { text: "允受年", type: "inc", explanation: "действительно получили урожай (инкозатив 受)" }
+      { text: "于商入", type: "space", explanation: "вступить в Шан (пространство)" },
+      { text: "勿告王", type: "mod", explanation: "не сообщай правителю (модальность)" },
+      { text: "于甲子田", type: "space", explanation: "охотиться в день цзя-цзы (время)" },
+      { text: "翌庚寅", type: "mod", explanation: "в следующий день гэн-инь (будущее время)" },
+      { text: "告于上甲", type: "space", explanation: "сообщить Верхнему Цзя (адресат)" },
+      { text: "王毋入", type: "mod", explanation: "правителю не следует входить (модальность)" },
+      { text: "于大邑商", type: "space", explanation: "в Великом городе Шан (пространство)" },
+      { text: "生七月", type: "mod", explanation: "наступающий седьмой месяц (будущее время)" },
+      { text: "于河告", type: "space", explanation: "сообщить у реки (место)" },
+      { text: "弗其來", type: "mod", explanation: "не придет (отрицание)" }
     ];
 
     function shuffleArray(array) {
@@ -186,12 +259,12 @@
       item.innerHTML = `
         <div class="oracle-text">${sentence.text}</div>
         <div class="toggle-container">
-          <span class="toggle-text">кауз</span>
+          <span class="toggle-text">пространство</span>
           <label class="toggle-switch">
             <input type="checkbox">
             <span class="slider"></span>
           </label>
-          <span class="toggle-text">инко</span>
+          <span class="toggle-text">модальность</span>
         </div>
       `;
       
@@ -231,8 +304,8 @@
         const index = item.dataset.index;
         const input = item.querySelector('input');
         const expectedType = sentences[index].type;
-        const isCorrect = (input.checked && expectedType === "inc") || 
-                          (!input.checked && expectedType === "caus");
+        const isCorrect = (input.checked && expectedType === "mod") || 
+                          (!input.checked && expectedType === "space");
 
         item.classList.remove('correct', 'incorrect');
         if (isCorrect) {
@@ -245,7 +318,7 @@
       
       const resultEl = document.getElementById('result');
       if (allCorrect) {
-        resultEl.innerHTML = `✅ <b>Отлично!</b> Все значения определены верно.`;
+        resultEl.innerHTML = `✅ <b>Отлично!</b> Все конструкции определены верно.`;
         resultEl.className = 'success';
         sendResult(true);
       } else {
@@ -282,4 +355,3 @@
   </script>
 </body>
 </html>
-

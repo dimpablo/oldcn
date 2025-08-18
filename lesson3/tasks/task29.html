@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Что означает 受年？</title>
+  <title>Что означает 入于商？</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -116,8 +116,8 @@
 </head>
 <body>
 
-  <h2>Что означает 受年？</h2>
-  <p class="instruction">В гадательных надписях фраза 受年 встречается часто. Что она означает?</p>
+  <h2>Что означает 入于商？</h2>
+  <p class="instruction">В гадательных надписях часто встречается конструкция с предлогом 于. Что означает фраза 入于商?</p>
 
   <div id="options-container">
     <!-- Варианты будут добавлены здесь -->
@@ -128,10 +128,30 @@
 
   <script>
     const options = [
-      { value: "harvest", text: "получить урожай", correct: true },
-      { value: "year", text: "в этом году", correct: false },
-      { value: "receive-year", text: "получить год (в смысле срока)", correct: false },
-      { value: "celebrate", text: "отметить год празднованием", correct: false }
+      { 
+        value: "enter-shang", 
+        text: "войти в Шан", 
+        correct: true,
+        explanation: "入于商 — классический пример косвенного дополнения места с предлогом 于. См. Урок 3, 3.1 и 3.2."
+      },
+      { 
+        value: "from-shang", 
+        text: "прийти из Шан", 
+        correct: false,
+        explanation: "于 не выражает исходного пункта. Для «из» использовались другие конструкции, например 自商."
+      },
+      { 
+        value: "about-shang", 
+        text: "говорить о Шане", 
+        correct: false,
+        explanation: "于 может выражать адресата действия, но не тему речи. Это не «о», а «в направлении к»."
+      },
+      { 
+        value: "ruler-enter", 
+        text: "правитель войдёт", 
+        correct: false,
+        explanation: "王 отсутствует. 入于商 — действие и его направление, но не подлежащее."
+      }
     ];
 
     let selectedValue = null;
@@ -186,12 +206,14 @@
         return;
       }
 
-      if (selectedValue === "harvest") {
-        resultEl.textContent = "✅ Верно! 受年 — «получить урожай». Глагол 受 здесь в каузативном значении.";
+      const selectedOption = options.find(opt => opt.value === selectedValue);
+
+      if (selectedOption.correct) {
+        resultEl.innerHTML = '✅ Верно!<br>入于商 — «войти в Шан». Предлог 于 указывает на направление действия — конечный пункт движения. См. Урок 3: 于 — универсальный предлог (3.1), косвенное дополнение места (3.2).';
         resultEl.className = "success";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Нет. 年 — не просто «год», а «урожай». 受年 — ключевая фраза гаданий об урожае.";
+        resultEl.textContent = `❌ Нет. ${selectedOption.explanation} Правильно: 入于商 = войти в Шан.`;
         resultEl.className = "error";
         sendResult(false);
       }
@@ -201,7 +223,7 @@
       window.parent.postMessage({
         type: "TASK_RESULT",
         success,
-        message: message || (success ? "Верно: 受年 = получить урожай" : "Ошибка в интерпретации 受年")
+        message: message || (success ? "Верно: 入于商 = войти в Шан" : "Ошибка в интерпретации 入于商")
       }, "*");
     }
 
@@ -210,4 +232,3 @@
   </script>
 </body>
 </html>
-
