@@ -134,22 +134,203 @@
 
     <h1>УРОК 2</h1>
 
-    <div class="text">
-        <h2>Текст урока</h2>
-        <div class="original">
-            癸卯卜，爭貞：「今歲商受年？貞：來歲不其受年？」<br>
-            癸丑卜，珏貞：「冓受年？貞：冓不其受年？」<br>
-            癸卯卜，亘貞：「我受黍年？」<br>
-            癸巳卜，珏貞：「我受稻年？貞：今來歲我不其受年？」<br>
-            貞：「戔受？」貞：「甫弗其受黍年？」<br>
-            貞：「肅來牛？」貞：「肅弗其來牛？」<br>
-            貞：「冓不其來犬？」<br>
-            貞：「今春奚來牛？奚不其来牛？」<br>
-            甲辰卜，珏貞：「奚來白馬？」<br>
-            王占曰：「吉。其來馬。」<br>
-            丙辰卜，珏貞：「今春方其自來？」
-        </div>
-    </div>
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<style>
+    .oracle-table {
+        border-collapse: collapse;
+        margin: 20px auto;
+        font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+        font-size: 1.3em;
+        table-layout: fixed;
+        width: 95%;
+        max-width: 1200px;
+    }
+
+    .oracle-table td {
+        padding: 6px 8px;
+        border: 1px solid #d4d4d4;
+        text-align: center;
+        position: relative;
+        word-break: keep-all;
+        white-space: nowrap;
+    }
+
+    .line-num, .col-num {
+        background-color: #f0f4f8;
+        color: #1a4f72;
+        font-weight: bold;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        font-size: 0.85em;
+        white-space: nowrap;
+    }
+
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+
+    td:hover .char-tooltip {
+        display: block;
+    }
+
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+</style>
+
+<script>
+// Полный словарь иероглифов из уроков 1 и 2
+const charData = {
+    // Урок 1
+    '丙': {pinyin: 'bǐng', meaning: 'Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»', lesson: 1},
+    '寅': {pinyin: 'yín', meaning: 'Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»', lesson: 1},
+    '卜': {pinyin: 'bǔ', meaning: 'Гадать; в составе 名 + 卜 — «гадатель по имени...»', lesson: 1},
+    '爭': {pinyin: 'zhēng', meaning: 'Имя гадателя; 卜爭 — «гадатель Чжэн»', lesson: 1},
+    '貞': {pinyin: 'zhēn', meaning: 'Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»', lesson: 1},
+    '雨': {pinyin: 'yǔ', meaning: 'Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»', lesson: 1},
+    '曰': {pinyin: 'yuē', meaning: 'Говорить; вводит прямую речь: «сказал: „...“»', lesson: 1},
+    '其': {pinyin: 'qí', meaning: 'Служебное наречие; указывает на будущее/возможность: «будет ли?»', lesson: 1},
+    '癸': {pinyin: 'guǐ', meaning: 'Небесный ствол (10-й); часть дат: 癸亥, 癸丑', lesson: 1},
+    '亥': {pinyin: 'hài', meaning: 'Земная ветвь (12-я); в паре с 癸 — «гуй-хай»', lesson: 1},
+    '不': {pinyin: 'bù', meaning: 'Не; отрицание перед сказуемым: «не будет дождя»', lesson: 1},
+    '允': {pinyin: 'yǔn', meaning: 'Действительно; подтверждает: «и в самом деле пошёл дождь»', lesson: 1},
+    '王': {pinyin: 'wáng', meaning: 'Правитель; подлежащее: «царь сказал», «царь истолковал»', lesson: 1},
+    '占': {pinyin: 'zhān', meaning: 'Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»', lesson: 1},
+    '丑': {pinyin: 'chǒu', meaning: 'Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»', lesson: 1},
+    '己': {pinyin: 'jǐ', meaning: 'Небесный ствол (6-й); в паре с 卯 — «цзи-мао»', lesson: 1},
+    '卯': {pinyin: 'mǎo', meaning: 'Земная ветвь (4-я); день «цзи-мао»', lesson: 1},
+    '㱿': {pinyin: 'jué', meaning: 'Имя гадателя; 卜㱿 — «гадатель Цзюэ»', lesson: 1},
+    '壬': {pinyin: 'rén', meaning: 'Небесный ствол (9-й); в паре с 午 — «жэнь-у»', lesson: 1},
+    '午': {pinyin: 'wǔ', meaning: 'Земная ветвь (7-я); день «жэнь-у»', lesson: 1},
+
+    // Урок 2
+    '弗': {pinyin: 'fú', meaning: 'Служебное слово: отрицание; аналог «не»', lesson: 2},
+    '肅': {pinyin: 'sù', meaning: 'Строгий; собственное имя: Су', lesson: 2},
+    '牛': {pinyin: 'niú', meaning: 'Корова', lesson: 2},
+    '重': {pinyin: 'zhòng', meaning: 'Собственное имя: Чжун', lesson: 2},
+    '犬': {pinyin: 'quǎn', meaning: 'Собака; собственное имя: Цюань (название племени)', lesson: 2},
+    '春': {pinyin: 'chūn', meaning: 'Весна', lesson: 2},
+    '奚': {pinyin: 'xī', meaning: 'Служебное слово: вопросительное местоимение «что»; собственное имя: Си', lesson: 2},
+    '甲': {pinyin: 'jiǎ', meaning: 'Небесный ствол (1-й); название первого знака 10-ричного цикла; доспехи', lesson: 2},
+    '辰': {pinyin: 'chén', meaning: 'Созвездие; Земная ветвь (5-я); день «jiǎ chén»', lesson: 2},
+    '白': {pinyin: 'bái', meaning: 'Белый; говорить; собственное имя: Бай (фамилия)', lesson: 2},
+    '馬': {pinyin: 'mǎ', meaning: 'Лошадь', lesson: 2},
+    '吉': {pinyin: 'jí', meaning: 'Благополучный', lesson: 2},
+    '方': {pinyin: 'fāng', meaning: 'Племя; сторона света; плот; квадрат; служебное наречие: «и лишь после этого»', lesson: 2},
+    '自': {pinyin: 'zì', meaning: 'Служебное слово: предлог «из, от»; «сам, лично»', lesson: 2},
+    '今': {pinyin: 'jīn', meaning: 'Ныне', lesson: 2},
+    '歲': {pinyin: 'suì', meaning: 'Год (в значении «год урожая», «год правления»)', lesson: 2},
+    '商': {pinyin: 'shāng', meaning: 'Собственное имя: Шан (династия или личное имя)', lesson: 2},
+    '受': {pinyin: 'shòu', meaning: 'Давать; получать', lesson: 2},
+    '年': {pinyin: 'nián', meaning: 'Урожай; год; возраст', lesson: 2},
+    '來': {pinyin: 'lái', meaning: 'Приходить; присылать; будущий', lesson: 2},
+    '冓': {pinyin: 'gōu', meaning: 'Постройка; собственное имя: Гоу', lesson: 2},
+    '亘': {pinyin: 'gèn', meaning: 'Собственное имя: Гэнь', lesson: 2},
+    '我': {pinyin: 'wǒ', meaning: 'Служебное слово: личное местоимение первого лица — «я»', lesson: 2},
+    '黍': {pinyin: 'shǔ', meaning: 'Чумиза (древнее зерно)', lesson: 2},
+    '巳': {pinyin: 'sì', meaning: 'Земная ветвь (6-я); часть даты, например, «jiǎ sì»', lesson: 2},
+    '稻': {pinyin: 'dào', meaning: 'Рис', lesson: 2},
+    '戔': {pinyin: 'jiān', meaning: 'Собственное имя: Цзянь', lesson: 2},
+    '甫': {pinyin: 'fǔ', meaning: 'Собственное имя: Фу', lesson: 2}
+};
+
+// Текст урока 2 (без пунктуации, как в оригинале)
+const lessonText = [
+    "癸卯卜爭貞今歳商受年貞來歳不其",
+    "受年癸丑卜㱿貞冓受年貞冓不其受",
+    "年癸卯卜亘貞我受黍年癸巳卜㱿貞",
+    "我受稻年貞今來歳我不其受年貞戔",
+    "受貞甫弗其受黍年",
+    "貞肅來牛貞肅弗其來牛貞冓不其來",
+    "犬貞今春奚來牛奚不其來牛甲辰卜",
+    "㱿貞奚來白馬王占曰吉其來馬丙辰",
+    "卜㱿貞今春方其自來"
+    
+];
+
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    
+    // Заголовок с номерами колонок
+    const headerRow = document.createElement('tr');
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    
+    // Строки текста
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        
+        const chars = Array.from(lessonText[i]);
+        
+        for (let j = 0; j < 15; j++) {
+            const td = document.createElement('td');
+            
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
+                }
+            }
+            row.appendChild(td);
+        }
+        
+        table.appendChild(row);
+    }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+
 
     <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
     <div class="grammar">

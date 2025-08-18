@@ -253,15 +253,169 @@
 
   <h1>Урок 1: Гадания о дожде</h1>
 
-  <div class="original">
-    丙寅卜，爭貞：「雨？」<br>
-    貞曰：「其雨。」<br>
-    貞：「癸亥，不其雨？」<br>
-    雨。允。不雨。貞：「不雨。」<br>
-    王占曰：「癸，其雨。」癸丑，允其雨。<br>
-    己卯卜，㱿貞：「雨？」<br>
-    王占曰：「雨。」壬午，允雨。
-  </div>
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<style>
+    .oracle-table {
+        border-collapse: collapse;
+        margin: 20px auto;
+        font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+        font-size: 1.3em;
+        table-layout: fixed;
+        width: 95%;
+        max-width: 1200px;
+    }
+
+    .oracle-table td {
+        padding: 6px 8px;
+        border: 1px solid #d4d4d4;
+        text-align: center;
+        position: relative;
+        word-break: keep-all;
+        white-space: nowrap;
+    }
+
+    .line-num, .col-num {
+        background-color: #f0f4f8;
+        color: #1a4f72;
+        font-weight: bold;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        font-size: 0.85em;
+        white-space: nowrap;
+    }
+
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+
+    td:hover .char-tooltip {
+        display: block;
+    }
+
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+</style>
+
+<script>
+// Полный словарь иероглифов из уроков 1 и 2
+const charData = {
+    // Урок 1
+    '丙': {pinyin: 'bǐng', meaning: 'Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»', lesson: 1},
+    '寅': {pinyin: 'yín', meaning: 'Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»', lesson: 1},
+    '卜': {pinyin: 'bǔ', meaning: 'Гадать; в составе 名 + 卜 — «гадатель по имени...»', lesson: 1},
+    '爭': {pinyin: 'zhēng', meaning: 'Имя гадателя; 卜爭 — «гадатель Чжэн»', lesson: 1},
+    '貞': {pinyin: 'zhēn', meaning: 'Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»', lesson: 1},
+    '雨': {pinyin: 'yǔ', meaning: 'Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»', lesson: 1},
+    '曰': {pinyin: 'yuē', meaning: 'Говорить; вводит прямую речь: «сказал: „...“»', lesson: 1},
+    '其': {pinyin: 'qí', meaning: 'Служебное наречие; указывает на будущее/возможность: «будет ли?»', lesson: 1},
+    '癸': {pinyin: 'guǐ', meaning: 'Небесный ствол (10-й); часть дат: 癸亥, 癸丑', lesson: 1},
+    '亥': {pinyin: 'hài', meaning: 'Земная ветвь (12-я); в паре с 癸 — «гуй-хай»', lesson: 1},
+    '不': {pinyin: 'bù', meaning: 'Не; отрицание перед сказуемым: «не будет дождя»', lesson: 1},
+    '允': {pinyin: 'yǔn', meaning: 'Действительно; подтверждает: «и в самом деле пошёл дождь»', lesson: 1},
+    '王': {pinyin: 'wáng', meaning: 'Правитель; подлежащее: «царь сказал», «царь истолковал»', lesson: 1},
+    '占': {pinyin: 'zhān', meaning: 'Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»', lesson: 1},
+    '丑': {pinyin: 'chǒu', meaning: 'Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»', lesson: 1},
+    '己': {pinyin: 'jǐ', meaning: 'Небесный ствол (6-й); в паре с 卯 — «цзи-мао»', lesson: 1},
+    '卯': {pinyin: 'mǎo', meaning: 'Земная ветвь (4-я); день «цзи-мао»', lesson: 1},
+    '㱿': {pinyin: 'jué', meaning: 'Имя гадателя; 卜㱿 — «гадатель Цзюэ»', lesson: 1},
+    '壬': {pinyin: 'rén', meaning: 'Небесный ствол (9-й); в паре с 午 — «жэнь-у»', lesson: 1},
+    '午': {pinyin: 'wǔ', meaning: 'Земная ветвь (7-я); день «жэнь-у»', lesson: 1},
+
+};
+
+// Текст урока 2 (без пунктуации, как в оригинале)
+const lessonText = [
+    "丙寅卜爭貞雨貞曰其雨貞癸亥不其",
+    "雨允不雨貞不雨王占曰癸其雨癸丑",
+    "允其雨己卯卜㱿貞雨王占曰雨壬午",
+    "允雨"
+
+];
+
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    
+    // Заголовок с номерами колонок
+    const headerRow = document.createElement('tr');
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    
+    // Строки текста
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        
+        const chars = Array.from(lessonText[i]);
+        
+        for (let j = 0; j < 15; j++) {
+            const td = document.createElement('td');
+            
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
+                }
+            }
+            row.appendChild(td);
+        }
+        
+        table.appendChild(row);
+    }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+
 <!-- Тумблер для переключения между оригинальным и читаемым текстом -->
 <div style="margin: 15px 0; text-align: center;">
   <label class="toggle-label">
