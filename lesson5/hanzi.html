@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Иероглифика</title>
+  <style>
+    html, body {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 10px;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      color: #555;
+      flex-shrink: 0;
+    }
+
+    .scale-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scale-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      line-height: 28px;
+      text-align: center;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .scale-value {
+      min-width: 36px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #progress-container {
+      width: 100%;
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.4s ease;
+      border-radius: 3px;
+    }
+
+    #task-container {
+      flex: 1;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      min-height: 0;
+      max-height: calc(100vh - 150px);
+    }
+
+    #task-container.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #task-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      transform-origin: center top; /* Центрирование по X, привязка к верху по Y */
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      overflow: auto;
+    }
+
+    .controls {
+      padding: 12px 0;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #next-btn {
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      background-color: #1976d2;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    #next-btn:active {
+      transform: scale(0.98);
+    }
+
+    #next-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #status {
+      font-size: 16px;
+      text-align: center;
+      color: #555;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+      #task-container {
+        max-height: calc(100vh - 180px);
+      }
+      
+      .controls {
+        padding: 8px 0;
+      }
+      
+      #next-btn {
+        padding: 12px 16px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="status">🔤 Готов к заданию</div>
+    <div class="scale-controls">
+      <div class="scale-btn" id="zoom-out">−</div>
+      <div class="scale-value" id="scale-value">1.0</div>
+      <div class="scale-btn" id="zoom-in">+</div>
+    </div>
+  </div>
+
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="task-container">
+    <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <div class="controls">
+    <button id="next-btn" disabled>Следующее задание</button>
+  </div>
+
+  <script>
+const lessonwords = [
+  '帝', '熯', '申', '降', '伐', '佑', '洹', '作', '茲', '禍',
+  '余', '得', '汝', '使', '合', '乃', '以', '羌', '朕'
+];
+    const totalTasks = 10;
+    let currentTaskIndex = 0;
+
+    let currentScale = 1.0;
+    const minScale = 0.25;
+    const maxScale = 2.0;
+    const scaleStep = 0.1;
+
+    const iframe = document.getElementById("task-frame");
+    const statusEl = document.getElementById("status");
+    const nextBtn = document.getElementById("next-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const scaleValueEl = document.getElementById("scale-value");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+
+    // --- Масштабирование ---
+    function setScale(scale) {
+      currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
+      iframe.style.transform = `scale(${currentScale})`;
+      scaleValueEl.textContent = currentScale.toFixed(1);
+    }
+
+    zoomInBtn.addEventListener("click", () => setScale(currentScale + scaleStep));
+    zoomOutBtn.addEventListener("click", () => setScale(currentScale - scaleStep));
+
+    // --- Получение случайного иероглифа ---
+    function getRandomHanzi() {
+      return lessonwords[Math.floor(Math.random() * lessonwords.length)];
+    }
+
+    // --- Загрузка задания ---
+    function loadNextTask() {
+      if (currentTaskIndex >= totalTasks) return;
+
+      const hanzi = getRandomHanzi();
+      const url = `tasks/task1.html?_=${Date.now()}#${hanzi}`;
+
+      statusEl.textContent = `🔤 Задание ${currentTaskIndex + 1}/${totalTasks}: работайте с иероглифом «${hanzi}»`;
+      nextBtn.disabled = true;
+
+      // Показываем контейнер, если скрыт
+      document.getElementById("task-container").classList.add("active");
+
+      // Перезагрузка iframe
+      iframe.src = '';
+      setTimeout(() => {
+        iframe.src = url;
+      }, 10);
+
+      updateProgress();
+    }
+
+    // --- Обновление прогресса ---
+    function updateProgress() {
+      const progress = (currentTaskIndex / totalTasks) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    // --- Обработка результата задания ---
+    window.addEventListener("message", (event) => {
+      const { type, success } = event.data;
+
+      if (type === "TASK_RESULT" && success === true) {
+        statusEl.textContent = "✅ Задание выполнено! Нажмите 'Следующее задание'";
+        nextBtn.disabled = false;
+      }
+    });
+
+    // --- Кнопка "Следующее задание" ---
+    nextBtn.addEventListener("click", () => {
+      currentTaskIndex++;
+
+      if (currentTaskIndex >= totalTasks) {
+        iframe.style.display = "none";
+        nextBtn.disabled = true;
+        statusEl.innerHTML = `<div style="text-align: center;">
+          <h2>🎉 Поздравляем!</h2>
+          <p>Вы завершили урок<br><strong>Иероглифика</strong>!</p>
+          <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
+        </div>`;
+        createFireworks();
+        setTimeout(() => window.location.href = "../", 5000);
+      } else {
+        loadNextTask();
+      }
+    });
+
+    // --- Определение мобильного устройства ---
+    function isMobile() {
+      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+    }
+
+    // --- Запуск ---
+    window.addEventListener("load", () => {
+      if (isMobile()) {
+        setScale(1);
+      }
+      loadNextTask(); // Загружаем первое задание
+    });
+
+    // --- Фейерверки ---
+    function createFireworks() {
+      const container = document.getElementById("fireworks");
+      const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
+      const particles = 50;
+
+      function createExplosion(x, y) {
+        for (let i = 0; i < particles; i++) {
+          const particle = document.createElement("div");
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1 + Math.random() * 3;
+          const size = 2 + Math.random() * 4;
+
+          particle.style.position = "absolute";
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          particle.style.borderRadius = "50%";
+          particle.style.boxShadow = "0 0 6px currentColor";
+          particle.style.left = `${x}px`;
+          particle.style.top = `${y}px`;
+          particle.style.pointerEvents = "none";
+
+          container.appendChild(particle);
+
+          let dx = Math.cos(angle) * speed;
+          let dy = Math.sin(angle) * speed;
+          let opacity = 1;
+          let posX = x;
+          let posY = y;
+
+          const animate = () => {
+            opacity -= 0.02;
+            posX += dx;
+            posY += dy + 0.1;
+            dy += 0.05;
+
+            particle.style.opacity = opacity;
+            particle.style.left = `${posX}px`;
+            particle.style.top = `${posY}px`;
+
+            if (opacity > 0) {
+              requestAnimationFrame(animate);
+            } else {
+              container.removeChild(particle);
+            }
+          };
+
+          requestAnimationFrame(animate);
+        }
+      }
+
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          const x = 50 + Math.random() * (container.offsetWidth - 100);
+          const y = 100 + Math.random() * (container.offsetHeight - 100);
+          createExplosion(x, y);
+        }, i * 300);
+      }
+    }
+  </script>
+</body>
+</html>
