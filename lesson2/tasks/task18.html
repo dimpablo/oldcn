@@ -139,7 +139,7 @@
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
 
-  <script>
+<script>
     // Словарь Урока 2 — только ключевые лексемы
 const pairs = [
   { char: "受", meaning: "shòu" },
@@ -148,6 +148,7 @@ const pairs = [
   { char: "雨", meaning: "yǔ" },
   { char: "弗", meaning: "fú" }
 ];
+
     let selectedWord = null;
     let matchedPairs = 0;
 
@@ -209,7 +210,8 @@ const pairs = [
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        // ИСПРАВЛЕНИЕ: проверяем на количество пар (5 вместо 10)
+        if (matchedPairs === pairs.length) {
           const resultEl = document.getElementById("result");
           resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
@@ -242,7 +244,7 @@ const pairs = [
 
     window.onload = init;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
-  </script>
+</script>
 </body>
 </html>
 

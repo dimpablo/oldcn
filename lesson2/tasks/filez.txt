@@ -58,6 +58,35 @@
       width: 300px;
       height: 300px;
     }
+
+    /* === Мерцающий overlay === */
+    #feedback-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0s;
+      z-index: 9999;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { opacity: 0; }
+    }
+
+    #feedback-overlay.success {
+      background: green;
+    }
+
+    #feedback-overlay.error {
+      background: red;
+    }
+
+    #feedback-overlay.animate {
+      opacity: 0.7;
+      animation: flash 0.8s ease-out;
+    }
   </style>
 </head>
 <body>
@@ -68,8 +97,11 @@
   <p>любой иероглиф из словаря урока!</p>
 </div>
 
-<!-- Контейнер для HanziWriter (скрыт сначала) -->
+<!-- Контейнер для HanziWriter -->
 <div id="character-target-div"></div>
+
+<!-- Overlay для мерцания -->
+<div id="feedback-overlay"></div>
 
 <script>
   // ✅ Универсальная функция отправки результата
@@ -81,11 +113,23 @@
     }, "*");
   }
 
+  // ✅ Функция мерцания экрана
+  function flashScreen(color) {
+    const overlay = document.getElementById('feedback-overlay');
+    overlay.className = ''; // сброс
+    overlay.classList.add(color === 'success' ? 'success' : 'error');
+    overlay.classList.add('animate');
+
+    // Сброс класса после анимации
+    setTimeout(() => {
+      overlay.classList.remove('animate');
+    }, 800);
+  }
+
   window.onload = function() {
     const splashScreen = document.getElementById('splash-screen');
     const characterDiv = document.getElementById('character-target-div');
 
-    // Через 1 секунду скрываем заставку и показываем поле для рисования
     setTimeout(() => {
       splashScreen.style.display = 'none';
       characterDiv.style.display = 'block';
@@ -108,33 +152,34 @@
         padding: 5
       });
 
+      // Запуск квиза с визуальной обратной связью
       writer.quiz({
+        leniency: 2.0,
+
+        onCorrectStroke: function(strokeData) {
+          // Можно добавить тихое одобрение, если нужно
+          // flashScreen('success'); // только если хочешь мигать на каждый правильный штрих
+        },
+
+        onMistake: function(strokeData) {
+          console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
+          flashScreen('error'); // 🔴 Красное мерцание при ошибке
+        },
+
         onComplete: function(summaryData) {
           console.log("🎯 Квиз завершён:", summaryData);
+          flashScreen('success'); // 🟢 Зелёное мерцание при успехе
           sendResult(true, "Иероглиф нарисован верно");
-        },
-        onIncorrectStroke: function(strokeData) {
-          // Можно обрабатывать ошибки
         }
       });
-    }, 1000); // 1 секунда
+    }, 1000);
   };
 </script>
 
-<!-- Сигнал: это настоящее задание -->
+<!-- Сигналы родительскому окну -->
 <script>
-  window.parent.postMessage({
-    type: "TASK_EXISTS",
-    valid: true
-  }, "*");
-</script>
-
-<!-- Сигнал: это задание с hanziwriter -->
-<script>
-  window.parent.postMessage({
-    type: "DO_HANZI",
-    valid: true
-  }, "*");
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  window.parent.postMessage({ type: "DO_HANZI", valid: true }, "*");
 </script>
 
 </body>
@@ -479,6 +524,8 @@
 </body>
 </html>
 
+
+
 === 📄 task11.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -765,6 +812,8 @@
 </body>
 </html>
 
+
+
 === 📄 task12.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -1014,6 +1063,8 @@
   </script>
 </body>
 </html>
+
+
 
 === 📄 task13.html ===
 <!DOCTYPE html>
@@ -1265,6 +1316,8 @@
 </body>
 </html>
 
+
+
 === 📄 task14.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -1515,6 +1568,8 @@
 </body>
 </html>
 
+
+
 === 📄 task15.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -1764,6 +1819,8 @@
   </script>
 </body>
 </html>
+
+
 
 === 📄 task16.html ===
 <!DOCTYPE html>
@@ -2016,6 +2073,8 @@
 </body>
 </html>
 
+
+
 === 📄 task17.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -2267,6 +2326,8 @@
 </body>
 </html>
 
+
+
 === 📄 task18.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -2515,6 +2576,8 @@ const pairs = [
   </script>
 </body>
 </html>
+
+
 
 === 📄 task19.html ===
 <!DOCTYPE html>
@@ -2765,6 +2828,8 @@ const pairs = [
   </script>
 </body>
 </html>
+
+
 
 === 📄 task2.html ===
 <!DOCTYPE html>
@@ -3038,6 +3103,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task20.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -3287,6 +3354,8 @@ const pairs = [
   </script>
 </body>
 </html>
+
+
 
 === 📄 task21.html ===
 <!DOCTYPE html>
@@ -3538,6 +3607,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task22.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -3787,6 +3858,8 @@ const pairs = [
   </script>
 </body>
 </html>
+
+
 
 === 📄 task23.html ===
 <!DOCTYPE html>
@@ -4038,6 +4111,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task24.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -4252,6 +4327,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task25.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -4453,6 +4530,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task26.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -4574,11 +4653,6 @@ const pairs = [
       user-select: none;
     }
 
-    .punctuation {
-      font-size: 16px;
-      color: #7f8c8d;
-    }
-
     .controls {
       margin-top: 6px;
       display: flex;
@@ -4615,7 +4689,7 @@ const pairs = [
 
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Гадатель Цзюй спросил: «Придет ли в нынешнюю весну бык?»</em></p>
+    <p><em>Гадатель Цзюй спросил: Придет ли в нынешнюю весну бык</em></p>
   </div>
 
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
@@ -4623,10 +4697,9 @@ const pairs = [
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
       <li>己卯卜㱿貞 — гадатель Цзюй спрашивает (формула начала)</li>
-      <li>：「...？」 — прямая речь в кавычках</li>
       <li>今春 — в нынешнюю весну</li>
-      <li>來牛 — придет бык (来 = прислать/придет)</li>
-      <li>Вопрос в кавычках, после 貞</li>
+      <li>來牛 — придет бык (来 = придет)</li>
+      <li>Фраза начинается с гадательной формулы, далее — вопрос</li>
     </ul>
   </div>
 
@@ -4644,10 +4717,12 @@ const pairs = [
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['己', '卯', '卜', '㱿', '貞', '：', '「', '今', '春', '來', '牛', '？」];
+    // Целевая последовательность БЕЗ пунктуации
+    const expected = ['己', '卯', '卜', '㱿', '貞', '今', '春', '來', '牛'];
 
+    // Все доступные иероглифы (без пунктуации)
     const allChars = [
-      '己', '卯', '卜', '㱿', '貞', '：', '「', '今', '春', '來', '牛', '？」,
+      '己', '卯', '卜', '㱿', '貞', '今', '春', '來', '牛',
       '王', '占', '曰', '吉', '其', '雨', '不', '允', '方', '自',
       '白', '馬', '受', '年', '犬', '弗', '我', '歲'
     ].sort(() => Math.random() - 0.5);
@@ -4683,7 +4758,6 @@ const pairs = [
       allChars.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
-        if (['：', '「', '」', '？', '！」].includes(char)) box.classList.add('punctuation');
         box.textContent = char;
         box.addEventListener('click', () => moveToDropArea(box));
         charPool.appendChild(box);
@@ -4693,7 +4767,7 @@ const pairs = [
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>己卯卜㱿貞：「今春來牛？」';
+        resultEl.innerHTML = '✅ Правильно!<br>己卯卜㱿貞今春來牛';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -4988,6 +5062,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task28.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -5259,6 +5335,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task3.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -5522,6 +5600,8 @@ const pairs = [
 </body>
 </html>
 
+
+
 === 📄 task4.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -5712,7 +5792,7 @@ const pairs = [
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['來', '白', '馬', '？', '貞', '不', '其', '來', '白', '馬', '？'];
+    const expected = ['來', '白', '馬', '？', '不', '其', '來', '白', '馬', '？'];
 
     const allChars = [
       '來', '白', '馬', '？', '貞', '不', '其', '來', '白', '馬', '？',
@@ -5790,6 +5870,8 @@ const pairs = [
   </script>
 </body>
 </html>
+
+
 
 === 📄 task5.html ===
 <!DOCTYPE html>
@@ -5987,6 +6069,8 @@ if (selected.dataset.correct === "true") {
   window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 
+
+
 === 📄 task6.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -6182,6 +6266,8 @@ if (selected.dataset.correct === "true") {
 <script>
   window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
+
+
 
 === 📄 task7.html ===
 <!DOCTYPE html>
@@ -6379,6 +6465,8 @@ if (selected.dataset.correct === "true") {
   window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 
+
+
 === 📄 task8.html ===
 <!DOCTYPE html>
 <html lang="ru">
@@ -6574,6 +6662,8 @@ if (selected.dataset.correct === "true") {
 <script>
   window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
+
+
 
 === 📄 task9.html ===
 <!DOCTYPE html>
@@ -6882,4 +6972,6 @@ if (selected.dataset.correct === "true") {
   </script>
 </body>
 </html>
+
+
 
