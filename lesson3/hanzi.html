@@ -192,19 +192,28 @@
 <script src="./../dictionary.js"></script>
 
 <script>
-  // Проверим, загрузился ли словарь
+  // === НАСТРОЙКА УРОКА ===
+  const LESSON = 3;  // ← Меняй номер урока здесь
+
+  // Проверка словаря
   if (typeof charData === 'undefined') {
-    console.error('❌ Словарь charData не загружен! Проверь путь к dictionary.js');
+    console.error('❌ Не загружен dictionary.js');
     alert('Ошибка: не удалось загрузить словарь иероглифов.');
+    throw new Error('charData not found');
   }
 
-  // Берём только те иероглифы, что есть в lessonwords (наш урок)
-const lessonwords = [
-  '庚', '乙', '勿', '入', '于', '辛', '大', '邑', '六', '月',
-  '生', '七', '九', '求', '妣', '日', '翌', '告', '中', '丁',
-  '戊', '工', '上', '河', '唐'
-];
-  // Перемешиваем случайно
+  // === Собираем иероглифы нужного урока ===
+  const lessonwords = Object.keys(charData).filter(key => {
+    const data = charData[key];
+    return data.lesson === LESSON;
+  });
+
+  if (lessonwords.length === 0) {
+    console.error(`❌ Нет иероглифов для урока ${LESSON}`);
+    alert(`Нет иероглифов для урока ${LESSON}. Проверь поле 'lesson' в dictionary.js`);
+  }
+
+  // === Перемешиваем ===
   function shuffleArray(array) {
     const arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -218,7 +227,7 @@ const lessonwords = [
   const totalTasks = shuffledLesson.length;
   let currentTaskIndex = 0;
 
-  // Настройки масштаба
+  // === Настройки масштаба ===
   let currentScale = 1.0;
   const minScale = 0.25;
   const maxScale = 2.0;
@@ -247,17 +256,20 @@ const lessonwords = [
     const data = charData[hanzi];
     if (!data || !data.pinyin) return;
 
-    // Убираем тон из пиньиня, если есть (например, bǐng → bing2)
-    let pinyinKey = data.pinyin
-      .normalize('NFD') // убираем диакритику
-      .replace(/[\u0300-\u036f]/g, '') // акценты
-      .replace(/ü/g, 'u') // ü → u
-      .replace(/v/g, 'u') // v → u
-      + (data.pinyin.includes('ā') ? '1' :
-         data.pinyin.includes('á') ? '2' :
-         data.pinyin.includes('ǎ') ? '3' :
-         data.pinyin.includes('à') ? '4' : '1');
+    // Конвертируем пиньинь с диакритикой → с цифровым тоном
+    let cleanPinyin = data.pinyin
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ü/g, 'u')
+      .replace(/v/g, 'u');
 
+    let tone = '1';
+    if (data.pinyin.includes('ā') || data.pinyin.includes('ē') || data.pinyin.includes('ī') || data.pinyin.includes('ō') || data.pinyin.includes('ū') || data.pinyin.includes('ǖ')) tone = '1';
+    else if (data.pinyin.includes('á') || data.pinyin.includes('é') || data.pinyin.includes('í') || data.pinyin.includes('ó') || data.pinyin.includes('ú') || data.pinyin.includes('ǘ')) tone = '2';
+    else if (data.pinyin.includes('ǎ') || data.pinyin.includes('ě') || data.pinyin.includes('ǐ') || data.pinyin.includes('ǒ') || data.pinyin.includes('ǔ') || data.pinyin.includes('ǚ')) tone = '3';
+    else if (data.pinyin.includes('à') || data.pinyin.includes('è') || data.pinyin.includes('ì') || data.pinyin.includes('ò') || data.pinyin.includes('ù') || data.pinyin.includes('ǜ')) tone = '4';
+
+    const pinyinKey = cleanPinyin + tone;
     const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
     const audio = new Audio(url);
 
@@ -266,35 +278,38 @@ const lessonwords = [
     });
   }
 
-// --- Загрузка задания ---
-function loadNextTask() {
-  if (currentTaskIndex >= totalTasks) return;
+  // --- Загрузка задания ---
+  function loadNextTask() {
+    if (currentTaskIndex >= totalTasks) return;
 
-  const hanzi = shuffledLesson[currentTaskIndex];
-  const data = charData[hanzi] || { pinyin: 'неизвестно', meaning: 'значение не найдено', lesson: '?' };
-  const pinyin = data.pinyin;
-  const lessonNum = data.lesson;
+    const hanzi = shuffledLesson[currentTaskIndex];
+    const data = charData[hanzi] || { pinyin: 'неизвестно', meaning: 'значение не найдено' };
+    const pinyin = data.pinyin;
 
-  const url = `tasks/task1.html?_=${Date.now()}#${hanzi}`;
+    const url = `tasks/task1.html?_=${Date.now()}#${hanzi}`;
 
-  // Компактное отображение: не ломает верстку
-statusEl.textContent = `${hanzi} • ${pinyin} • урок ${lessonNum}: ${data.meaning}`;
-  statusEl.title = data.meaning; // всплывающая подсказка
+    // Сокращаем значение, если оно длинное
+    const meaningDisplay = data.meaning.length > 50 
+      ? data.meaning.slice(0, 47) + '...' 
+      : data.meaning;
 
-  document.getElementById("task-container").classList.add("active");
+    statusEl.textContent = `${hanzi} • ${pinyin} • урок ${LESSON}: ${meaningDisplay}`;
+    statusEl.title = `Урок ${LESSON}: ${data.meaning}`;
 
-  // Перезагрузка iframe
-  iframe.src = '';
-  setTimeout(() => {
-    iframe.src = url;
-  }, 10);
+    document.getElementById("task-container").classList.add("active");
 
-  // Проигрываем звук
-  setTimeout(() => playHanziSound(hanzi), 500);
+    // Перезагрузка iframe
+    iframe.src = '';
+    setTimeout(() => {
+      iframe.src = url;
+    }, 10);
 
-  // Прогресс
-  progressBar.style.width = `${(currentTaskIndex / totalTasks) * 100}%`;
-}
+    // Проигрываем звук
+    setTimeout(() => playHanziSound(hanzi), 500);
+
+    // Прогресс
+    progressBar.style.width = `${(currentTaskIndex / totalTasks) * 100}%`;
+  }
 
   // --- Кнопка "Старт!" → "Следующее задание" ---
   nextBtn.addEventListener("click", () => {
@@ -316,7 +331,7 @@ statusEl.textContent = `${hanzi} • ${pinyin} • урок ${lessonNum}: ${data
     nextBtn.disabled = true;
     statusEl.innerHTML = `<div style="text-align: center;">
       <h2>🎉 Поздравляем!</h2>
-      <p>Вы завершили урок<br><strong>Иероглифика</strong>!</p>
+      <p>Вы завершили урок ${LESSON}<br><strong>Иероглифика</strong>!</p>
       <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
     </div>`;
     createFireworks();
@@ -386,7 +401,7 @@ statusEl.textContent = `${hanzi} • ${pinyin} • урок ${lessonNum}: ${data
 
   // --- Запуск ---
   window.addEventListener("load", () => {
-    console.log("📚 Словарь charData загружен:", charData);
+    console.log(`📚 Урок ${LESSON}: найдено ${lessonwords.length} иероглифов`, lessonwords);
     console.log("🎲 Перемешанный порядок:", shuffledLesson);
 
     if (window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1)) {
