@@ -10,6 +10,7 @@
       margin: 0;
       padding: 0;
     }
+
     body {
       font-family: Arial, sans-serif;
       line-height: 1.4;
@@ -17,20 +18,24 @@
       background: #fff;
       color: #2c3e50;
     }
+
     h2 {
       font-size: 15px;
       margin-bottom: 6px;
     }
+
     .instructions {
       background: #f0f0f0;
       padding: 5px;
       border-radius: 4px;
       margin-bottom: 6px;
     }
+
     .instructions em {
       font-style: italic;
       font-size: 12px;
     }
+
     .toggle-hint {
       font-size: 12px;
       color: #3498db;
@@ -39,14 +44,17 @@
       margin: 4px 0;
       display: inline-block;
     }
+
     .hint-container {
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.3s ease;
     }
+
     .hint-container.open {
       max-height: 200px;
     }
+
     .hint-list {
       list-style: none;
       background: #f9f9f9;
@@ -57,16 +65,20 @@
       font-size: 12px;
       color: #7f8c8d;
     }
+
     .hint-list li::before {
       content: "🔹 ";
     }
+
     .hint-list li {
       margin: 2px 0;
     }
+
     p {
       font-size: 12px;
       margin: 4px 0;
     }
+
     #drop-area {
       min-height: 36px;
       border: 1px dashed #3498db;
@@ -79,6 +91,7 @@
       font-size: 16px;
       align-items: center;
     }
+
     #char-pool {
       display: flex;
       flex-wrap: wrap;
@@ -90,6 +103,7 @@
       min-height: 36px;
       background: #f9f9f9;
     }
+
     .char-box {
       width: 28px;
       height: 28px;
@@ -103,11 +117,13 @@
       font-size: 16px;
       user-select: none;
     }
+
     .controls {
       margin-top: 6px;
       display: flex;
       gap: 6px;
     }
+
     button {
       padding: 5px 9px;
       font-size: 12px;
@@ -117,14 +133,17 @@
       border-radius: 3px;
       cursor: pointer;
     }
+
     button:hover {
       background: #2980b9;
     }
+
     .message {
       margin-top: 5px;
       font-size: 12px;
       font-weight: bold;
     }
+
     .success {
       color: #27ae60;
     }
@@ -132,42 +151,50 @@
 </head>
 <body>
   <h2>Собери фразу</h2>
+
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Молить [предков], начиная с Верхнего Цзя и кончая Средним Дином.</em></p>
+    <p><em>Я попросил чумизы у гадателя. Гадатель пришлет чумизу в будущем году.</em></p>
   </div>
+
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>求 — молить, просить</li>
-      <li>自 — начиная с</li>
-      <li>上甲 — Верхний Цзя</li>
-      <li>至于 — и кончая</li>
-      <li>中丁 — Средний Дин</li>
-      <li>上 — верхний</li>
-      <li>甲 — Цзя (циклический знак)</li>
-      <li>中 — средний</li>
-      <li>丁 — Дин (циклический знак)</li>
+      <li>我 — я</li>
+      <li>求 — просить</li>
+      <li>于 — у (адресат действия)</li>
+      <li>卜 — гадатель</li>
+      <li>来 — пришлет (каузативное значение)</li>
+      <li>黍 — чумиза</li>
+      <li>来岁 — в будущем году</li>
     </ul>
   </div>
+
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
+
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
+
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
+
   <p id="result" class="message"></p>
+
   <script>
-    const expected = ['求', '自', '上', '甲', '至', '于', '中', '丁'];
+    const expected = ['我', '求', '黍', '于', '卜', '來', '歲', '卜', '來', '黍'];
+
     const allChars = [
-      '求', '自', '上', '甲', '至', '于', '中', '丁',
-      '壬', '寅', '卜', '貞', '子', '商', '烖', '基', '方', '今', '亥',
-      '我', '受', '年', '不', '弗', '春', '其', '雨', '犬', '岁', '入'
+      '我', '求', '黍', '于', '卜', '來', '歲', '卜', '來', '黍',
+      '今', '白', '马', '工', '方', '大', '邑', '商', '入', '王',
+      '勿', '告', '雨', '受', '年', '不', '其', '六', '月', '生'
     ].sort(() => Math.random() - 0.5);
+
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -175,36 +202,43 @@
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
       clone.style.cursor = 'default';
       clone.onclick = null;
+
       box.remove();
       dropArea.appendChild(clone);
     }
+
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
       resultEl.textContent = '';
+
       allChars.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
         box.textContent = char;
+
         box.addEventListener('click', () => moveToDropArea(box));
         charPool.appendChild(box);
       });
     }
+
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>求自上甲至于中丁';
+        resultEl.innerHTML = '✅ Правильно!<br>我求黍于卜。來歲卜來黍';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -213,10 +247,13 @@
         sendResult(false, 'Неверный порядок');
       }
     });
+
     resetBtn.addEventListener('click', initCharPool);
+
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -224,8 +261,10 @@
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
+
     // Инициализация
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>

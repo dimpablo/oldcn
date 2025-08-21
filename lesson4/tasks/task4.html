@@ -10,7 +10,6 @@
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: Arial, sans-serif;
       line-height: 1.4;
@@ -18,24 +17,20 @@
       background: #fff;
       color: #2c3e50;
     }
-
     h2 {
       font-size: 15px;
       margin-bottom: 6px;
     }
-
     .instructions {
       background: #f0f0f0;
       padding: 5px;
       border-radius: 4px;
       margin-bottom: 6px;
     }
-
     .instructions em {
       font-style: italic;
       font-size: 12px;
     }
-
     .toggle-hint {
       font-size: 12px;
       color: #3498db;
@@ -44,17 +39,14 @@
       margin: 4px 0;
       display: inline-block;
     }
-
     .hint-container {
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.3s ease;
     }
-
     .hint-container.open {
       max-height: 200px;
     }
-
     .hint-list {
       list-style: none;
       background: #f9f9f9;
@@ -65,20 +57,16 @@
       font-size: 12px;
       color: #7f8c8d;
     }
-
     .hint-list li::before {
       content: "🔹 ";
     }
-
     .hint-list li {
       margin: 2px 0;
     }
-
     p {
       font-size: 12px;
       margin: 4px 0;
     }
-
     #drop-area {
       min-height: 36px;
       border: 1px dashed #3498db;
@@ -91,7 +79,6 @@
       font-size: 16px;
       align-items: center;
     }
-
     #char-pool {
       display: flex;
       flex-wrap: wrap;
@@ -103,7 +90,6 @@
       min-height: 36px;
       background: #f9f9f9;
     }
-
     .char-box {
       width: 28px;
       height: 28px;
@@ -117,13 +103,11 @@
       font-size: 16px;
       user-select: none;
     }
-
     .controls {
       margin-top: 6px;
       display: flex;
       gap: 6px;
     }
-
     button {
       padding: 5px 9px;
       font-size: 12px;
@@ -133,17 +117,14 @@
       border-radius: 3px;
       cursor: pointer;
     }
-
     button:hover {
       background: #2980b9;
     }
-
     .message {
       margin-top: 5px;
       font-size: 12px;
       font-weight: bold;
     }
-
     .success {
       color: #27ae60;
     }
@@ -151,49 +132,39 @@
 </head>
 <body>
   <h2>Собери фразу</h2>
-
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Не сообщай правителю о дожде!</em></p>
+    <p><em>Будет ли дождь, начиная с сегодняшнего дня и до дня цзи-ю?</em></p>
   </div>
-
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
-
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>勿 — не (запрет)</li>
-      <li>告 — сообщать</li>
+      <li>自 — начиная с</li>
+      <li>今 — сегодня</li>
+      <li>至 — до</li>
+      <li>己酉 — день цзи-ю (циклические знаки)</li>
       <li>雨 — дождь</li>
-      <li>于 — о, правителю (предлог для адресата)</li>
-      <li>王 — правитель</li>
+      <li>注意: 于 может опускаться в конструкции 自...至</li>
     </ul>
   </div>
-
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
-
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
-
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
-
   <p id="result" class="message"></p>
-
   <script>
-    const expected = ['勿', '告', '雨', '于', '王'];
-
+    const expected = ['自', '今', '至', '己', '酉', '雨'];
     const allChars = [
-      '勿', '告', '雨', '于', '王',
-      '今', '来', '白', '马', '工', '方', '大', '邑', '商',
-      '我', '受', '年', '不', '其', '求', '六', '月', '入',
-      '生', '七', '九', '日', '翌', '中', '丁', '戊', '上'
+      '自', '今', '至', '己', '酉', '雨',
+      '壬', '寅', '卜', '貞', '甲', '辰', '子', '商', '烖', '基', '方',
+      '我', '受', '年', '不', '弗', '春', '其', '犬', '岁', '入', '王'
     ].sort(() => Math.random() - 0.5);
-
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -201,43 +172,36 @@
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
-
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
-
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
       clone.style.cursor = 'default';
       clone.onclick = null;
-
       box.remove();
       dropArea.appendChild(clone);
     }
-
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
       resultEl.textContent = '';
-
       allChars.forEach(char => {
         const box = document.createElement('div');
         box.className = 'char-box';
         box.textContent = char;
-
         box.addEventListener('click', () => moveToDropArea(box));
         charPool.appendChild(box);
       });
     }
-
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>勿告雨于王';
+        resultEl.innerHTML = '✅ Правильно!<br>自今至己酉雨';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -246,13 +210,10 @@
         sendResult(false, 'Неверный порядок');
       }
     });
-
     resetBtn.addEventListener('click', initCharPool);
-
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
-
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -260,10 +221,8 @@
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
-
     // Инициализация
     initCharPool();
-
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
