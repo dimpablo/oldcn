@@ -57,6 +57,35 @@
       position: relative;
       overflow: hidden;
       text-align: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  
+  /* Отступы и размеры */
+  padding: 20px 30px;
+  border-radius: 16px;
+  
+  /* Тень для объёмности */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  
+  /* Центрирование текста */
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  
+  /* Плавное изменение при наведении */
+  transition: all 0.3s ease;
+  
+  /* Эффект при наведении (если нужно) */
+  cursor: pointer;
+}
+
+/* Опционально: эффект при наведении */
+div:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+
     }
 
     .google-row {
