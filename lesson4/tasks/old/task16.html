@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Пространство vs Модальность</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff;
+      color: #333;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .instructions {
+      padding: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .instructions p {
+      margin: 4px 0;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sentence-item {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+
+    .sentence-item.correct {
+      background-color: #e8f5e9; /* салатово-зелёный */
+      border-color: #a5d6a7;
+    }
+
+    .sentence-item.incorrect {
+      background-color: #ffebee; /* розово-красный */
+      border-color: #ef9a9a;
+    }
+
+    .oracle-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 4px 0;
+      color: #111;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .toggle-text {
+      color: #555;
+    }
+
+    /* Переключатель */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 20px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #3498db; /* синий — пространство/время */
+      transition: .2s;
+      border-radius: 10px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    input:checked + .slider {
+      background-color: #9b59b6; /* фиолетовый — модальность */
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(38px);
+    }
+
+    button {
+      padding: 6px 12px;
+      margin: 4px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Пространство/Время vs Модальность</h2>
+
+<div class="instructions">
+  <div class="instructions-header" onclick="toggleInstructions()">
+    <strong>📌 Инструкция (нажми для развертывания)</strong>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="instructions-content" style="display:none">
+    <p><strong>Пространство/Время vs Модальность</strong></p>
+    <p>В древнекитайском языке предложения организуются вокруг двух ключевых аспектов:</p>
+    
+    <p>🔵 <strong>Пространство/Время</strong> (синий):</p>
+    <ul>
+      <li>Предлог 于 (yú) указывает место/время: <em>"于商"</em> = "в Шан"</li>
+      <li>Циклические даты: <em>"甲子"</em> = "день цзя-цзы"</li>
+      <li>Обстоятельства всегда стоят ДО сказуемого</li>
+    </ul>
+    
+    <p>🟣 <strong>Модальность</strong> (фиолетовый):</p>
+    <ul>
+      <li>勿 (wù)/毋 (wú) = запрет: <em>"勿入"</em> = "не входи!"</li>
+      <li>翌 (yì)/生 (shēng) = будущее время: <em>"翌庚寅"</em> = "след. день гэн-инь"</li>
+      <li>Стоят непосредственно перед глаголом</li>
+    </ul>
+    
+    <p><em>Примеры:</em><br>
+      "于商入" → 🔵 (место)<br>
+      "勿告" → 🟣 (запрет)</p>
+  </div>
+</div>
+
+<style>
+.instructions-header {
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.instructions-content {
+  padding: 8px 0;
+  border-top: 1px dashed #ccc;
+}
+.arrow {
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.instructions-header.collapsed .arrow {
+  transform: rotate(-90deg);
+}
+</style>
+
+<script>
+function toggleInstructions() {
+  const header = document.querySelector('.instructions-header');
+  const content = document.querySelector('.instructions-content');
+  const isHidden = content.style.display === 'none';
+  
+  content.style.display = isHidden ? 'block' : 'none';
+  header.classList.toggle('collapsed', !isHidden);
+  
+  // Адаптация для iframe (отправляем родителю новый размер)
+  setTimeout(() => {
+    window.parent.postMessage({
+      type: "UPDATE_HEIGHT",
+      height: document.body.scrollHeight
+    }, "*");
+  }, 100);
+}
+</script>
+
+  <div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
+  </div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result"></p>
+
+  <script>
+    const sentences = [
+      { text: "于商入", type: "space", explanation: "вступить в Шан (пространство)" },
+      { text: "勿告王", type: "mod", explanation: "не сообщай правителю (модальность)" },
+      { text: "于甲子田", type: "space", explanation: "охотиться в день цзя-цзы (время)" },
+      { text: "翌庚寅", type: "mod", explanation: "в следующий день гэн-инь (будущее время)" },
+      { text: "告于上甲", type: "space", explanation: "сообщить Верхнему Цзя (адресат)" },
+      { text: "王毋入", type: "mod", explanation: "правителю не следует входить (модальность)" },
+      { text: "于大邑商", type: "space", explanation: "в Великом городе Шан (пространство)" },
+      { text: "生七月", type: "mod", explanation: "наступающий седьмой месяц (будущее время)" },
+      { text: "于河告", type: "space", explanation: "сообщить у реки (место)" },
+      { text: "弗其來", type: "mod", explanation: "не придет (отрицание)" }
+    ];
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function createSentenceElement(sentence, index) {
+      const item = document.createElement('div');
+      item.className = 'sentence-item';
+      item.dataset.index = index;
+      
+      item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+          <span class="toggle-text">пространство</span>
+          <label class="toggle-switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-text">модальность</span>
+        </div>
+      `;
+      
+      return item;
+    }
+
+    function init() {
+      const shuffled = shuffleArray([...sentences]);
+      const column1 = document.getElementById('column1');
+      const column2 = document.getElementById('column2');
+      
+      column1.innerHTML = '';
+      column2.innerHTML = '';
+      document.getElementById('result').style.display = 'none';
+      
+      // Очистка предыдущих стилей
+      document.querySelectorAll('.sentence-item').forEach(el => {
+        el.classList.remove('correct', 'incorrect');
+      });
+
+      shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+      });
+      
+      shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+      });
+    }
+
+    function checkAnswers() {
+      const items = document.querySelectorAll('.sentence-item');
+      let allCorrect = true;
+      
+      items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "mod") || 
+                          (!input.checked && expectedType === "space");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+          item.classList.add('correct');
+        } else {
+          item.classList.add('incorrect');
+          allCorrect = false;
+        }
+      });
+      
+      const resultEl = document.getElementById('result');
+      if (allCorrect) {
+        resultEl.innerHTML = `✅ <b>Отлично!</b> Все конструкции определены верно.`;
+        resultEl.className = 'success';
+        sendResult(true);
+      } else {
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
+      }
+      resultEl.style.display = 'block';
+    }
+
+    function reset() {
+      document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+      });
+      document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+      });
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: success,
+        message: success ? "Верно" : "Ошибка"
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+    document.getElementById('check-btn').addEventListener('click', checkAnswers);
+    document.getElementById('reset-btn').addEventListener('click', reset);
+  </script>
+</body>
+</html>

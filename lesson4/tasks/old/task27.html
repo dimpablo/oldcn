@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Собери фразу</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+      font-size: 13px;
+      background: #fff;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .instructions {
+      background: #f0f0f0;
+      padding: 5px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .instructions em {
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    .toggle-hint {
+      font-size: 12px;
+      color: #3498db;
+      text-decoration: underline;
+      cursor: pointer;
+      margin: 4px 0;
+      display: inline-block;
+    }
+
+    .hint-container {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+
+    .hint-container.open {
+      max-height: 250px;
+    }
+
+    .hint-list {
+      list-style: none;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      padding: 6px;
+      margin: 4px 0;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+
+    .hint-list li::before {
+      content: "🔹 ";
+    }
+
+    .hint-list li {
+      margin: 2px 0;
+    }
+
+    p {
+      font-size: 12px;
+      margin: 4px 0;
+    }
+
+    #drop-area {
+      min-height: 36px;
+      border: 1px dashed #3498db;
+      border-radius: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 3px;
+      margin: 6px 0;
+      font-size: 16px;
+      align-items: center;
+    }
+
+    #char-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin: 6px 0;
+      padding: 3px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-height: 36px;
+      background: #f9f9f9;
+    }
+
+    .char-box {
+      width: 28px;
+      height: 28px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      user-select: none;
+    }
+
+    .controls {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+    }
+
+    button {
+      padding: 5px 9px;
+      font-size: 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+
+    .message {
+      margin-top: 5px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>В день гэн-инь гадатель Цзюй спросил: Войдёт ли правитель в Шан?</em></p>
+  </div>
+
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>庚寅卜㱿貞 — стандартная формула начала гадания (дата + гадатель)</li>
+      <li>入于商 — «войти в Шан» (入 = войти, 于 = в)</li>
+      <li>王 — «правитель», подлежащее</li>
+      <li>于 — предлог, указывает направление действия (в, к, перед именем места)</li>
+      <li>Порядок: дата → гадание → вопрос о действии с косвенным дополнением места</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Целевая фраза: "В день гэн-инь гадатель Цзюй спросил: войдёт ли правитель в Шан?"
+    // Без пунктуации, как в оракульных надписях
+    const expected = ['庚', '寅', '卜', '㱿', '貞', '王', '入', '于', '商'];
+
+    // Все доступные иероглифы (из Урока 3 и циклических знаков)
+    const allChars = [
+      '庚', '寅', '卜', '㱿', '貞', '王', '入', '于', '商',
+      '辛', '丑', '勿', '大', '邑', '六', '月', '生', '七', '九',
+      '求', '妣', '日', '翌', '告', '中', '丁', '戊', '工', '上',
+      '河', '唐', '乙', '巳', '其', '今', '来', '甲', '午', '大'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>庚寅卜㱿貞王入于商';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    resetBtn.addEventListener('click', initCharPool);
+
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    initCharPool();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

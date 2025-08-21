@@ -1,0 +1,108 @@
+/* mobile.css — Стили ТОЛЬКО для мобильных устройств */
+
+/* Применяем только на экранах до 768px */
+@media (max-width: 768px) {
+    /* Адаптация шрифтов и отступов */
+    body {
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 15px auto;
+        padding: 0 12px;
+    }
+
+    h1 {
+        font-size: 1.6em;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 1.4em;
+        margin: 25px 0 15px;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        font-size: 1.15em;
+        margin-top: 20px;
+    }
+
+    .original {
+        font-size: 1em;
+        padding: 14px;
+        line-height: 1.6;
+        border-radius: 0 6px 6px 0;
+    }
+
+    /* Адаптация списка иероглифов */
+    .char-list {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+    }
+
+    .char-item {
+        font-size: 1.2em;
+        padding: 9px 10px;
+    }
+
+    .char-tooltip {
+        font-size: 0.85em;
+        max-width: 220px;
+        padding: 8px 10px;
+    }
+
+    /* Адаптация таблицы */
+    .oracle-table-container {
+        overflow-x: auto;
+        margin: 15px 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .oracle-table {
+        min-width: 600px;
+        width: auto !important;
+        display: table;
+        border-collapse: collapse;
+    }
+
+    .oracle-table td,
+    .oracle-table th {
+        padding: 5px 6px;
+        min-width: 36px;
+    }
+
+    .line-num, .col-num {
+        font-size: 0.75em;
+        padding: 3px 5px;
+    }
+
+    /* Фразы */
+    .phrase-item {
+        display: block;
+        margin: 8px auto;
+        text-align: center;
+    }
+
+    .phrase-char {
+        font-size: 1.2em;
+        margin-right: 0;
+    }
+
+    .phrase-pinyin, .phrase-meaning {
+        font-size: 0.9em;
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* Подвал */
+    .footer {
+        font-size: 0.75em;
+        margin-top: 35px;
+        padding-top: 12px;
+    }
+}
+
+/* Дополнительно: только для тач-устройств (опционально, через JS-класс) */
+.touch .char-tooltip {
+    display: none !important;
+}
