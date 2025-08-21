@@ -104,7 +104,7 @@
       width: 100%;
       height: 100%;
       border: none;
-      transform-origin: center top; /* Центрирование по X, привязка к верху по Y */
+      transform-origin: center top;
       transform: scale(1);
       transition: transform 0.2s ease;
       overflow: auto;
@@ -142,13 +142,16 @@
       transform: none;
     }
 
-    #status {
-      font-size: 16px;
-      text-align: center;
-      color: #555;
-    }
+#status {
+  font-size: 16px;
+  text-align: center;
+  color: #555;
+  white-space: nowrap;        /* Запрещаем перенос */
+  overflow: hidden;           /* Обрезаем, если не влезает */
+  text-overflow: ellipsis;    /* Многоточие, если обрезаем */
+  padding: 0 8px;
+}
 
-    /* Мобильная адаптация */
     @media (max-width: 768px) {
       #task-container {
         max-height: calc(100vh - 180px);
@@ -167,7 +170,7 @@
 </head>
 <body>
   <div class="header">
-    <div id="status">🔤 Готов к заданию</div>
+    <div id="status">🔤 Готов к уроку</div>
     <div class="scale-controls">
       <div class="scale-btn" id="zoom-out">−</div>
       <div class="scale-value" id="scale-value">1.0</div>
@@ -184,176 +187,209 @@
   </div>
 
   <div class="controls">
-    <button id="next-btn" disabled>Следующее задание</button>
+    <button id="next-btn">▶️ Старт!</button>
   </div>
+<script src="./../dictionary.js"></script>
 
-  <script>
-    const lessonwords = [
-      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
-      '亥', '不', '允', '王', '占', '丑', '己', '卯', '㱿', '壬', '午'
-    ];
+<script>
+  // Проверим, загрузился ли словарь
+  if (typeof charData === 'undefined') {
+    console.error('❌ Словарь charData не загружен! Проверь путь к dictionary.js');
+    alert('Ошибка: не удалось загрузить словарь иероглифов.');
+  }
 
-    const totalTasks = 10;
-    let currentTaskIndex = 0;
+  // Берём только те иероглифы, что есть в lessonwords (наш урок)
+  const lessonwords = ['弗', '肅', '牛', '冓', '犬', '春', '奚', '甲', '辰', '白', '馬', '吉', '方', '自', '今', '歲', '商', '受', '年', '來', '冓', '亘', '我', '黍', '巳', '稲', '戔', '甫'];
 
-    let currentScale = 1.0;
-    const minScale = 0.25;
-    const maxScale = 2.0;
-    const scaleStep = 0.1;
-
-    const iframe = document.getElementById("task-frame");
-    const statusEl = document.getElementById("status");
-    const nextBtn = document.getElementById("next-btn");
-    const progressBar = document.getElementById("progress-bar");
-    const scaleValueEl = document.getElementById("scale-value");
-    const zoomInBtn = document.getElementById("zoom-in");
-    const zoomOutBtn = document.getElementById("zoom-out");
-
-    // --- Масштабирование ---
-    function setScale(scale) {
-      currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
-      iframe.style.transform = `scale(${currentScale})`;
-      scaleValueEl.textContent = currentScale.toFixed(1);
+  // Перемешиваем случайно
+  function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
+  }
 
-    zoomInBtn.addEventListener("click", () => setScale(currentScale + scaleStep));
-    zoomOutBtn.addEventListener("click", () => setScale(currentScale - scaleStep));
+  const shuffledLesson = shuffleArray(lessonwords);
+  const totalTasks = shuffledLesson.length;
+  let currentTaskIndex = 0;
 
-    // --- Получение случайного иероглифа ---
-    function getRandomHanzi() {
-      return lessonwords[Math.floor(Math.random() * lessonwords.length)];
-    }
+  // Настройки масштаба
+  let currentScale = 1.0;
+  const minScale = 0.25;
+  const maxScale = 2.0;
+  const scaleStep = 0.1;
 
-    // --- Загрузка задания ---
-    function loadNextTask() {
-      if (currentTaskIndex >= totalTasks) return;
+  const iframe = document.getElementById("task-frame");
+  const statusEl = document.getElementById("status");
+  const nextBtn = document.getElementById("next-btn");
+  const progressBar = document.getElementById("progress-bar");
+  const scaleValueEl = document.getElementById("scale-value");
+  const zoomInBtn = document.getElementById("zoom-in");
+  const zoomOutBtn = document.getElementById("zoom-out");
 
-      const hanzi = getRandomHanzi();
-      const url = `task1.html?_=${Date.now()}#${hanzi}`;
+  // --- Масштабирование ---
+  function setScale(scale) {
+    currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
+    iframe.style.transform = `scale(${currentScale})`;
+    scaleValueEl.textContent = currentScale.toFixed(1);
+  }
 
-      statusEl.textContent = `🔤 Задание ${currentTaskIndex + 1}/${totalTasks}: работайте с иероглифом «${hanzi}»`;
-      nextBtn.disabled = true;
+  zoomInBtn.addEventListener("click", () => setScale(currentScale + scaleStep));
+  zoomOutBtn.addEventListener("click", () => setScale(currentScale - scaleStep));
 
-      // Показываем контейнер, если скрыт
-      document.getElementById("task-container").classList.add("active");
+  // --- Проигрывание звука ---
+  function playHanziSound(hanzi) {
+    const data = charData[hanzi];
+    if (!data || !data.pinyin) return;
 
-      // Перезагрузка iframe
-      iframe.src = '';
-      setTimeout(() => {
-        iframe.src = url;
-      }, 10);
+    // Убираем тон из пиньиня, если есть (например, bǐng → bing2)
+    let pinyinKey = data.pinyin
+      .normalize('NFD') // убираем диакритику
+      .replace(/[\u0300-\u036f]/g, '') // акценты
+      .replace(/ü/g, 'u') // ü → u
+      .replace(/v/g, 'u') // v → u
+      + (data.pinyin.includes('ā') ? '1' :
+         data.pinyin.includes('á') ? '2' :
+         data.pinyin.includes('ǎ') ? '3' :
+         data.pinyin.includes('à') ? '4' : '1');
 
-      updateProgress();
-    }
+    const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+    const audio = new Audio(url);
 
-    // --- Обновление прогресса ---
-    function updateProgress() {
-      const progress = (currentTaskIndex / totalTasks) * 100;
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // --- Обработка результата задания ---
-    window.addEventListener("message", (event) => {
-      const { type, success } = event.data;
-
-      if (type === "TASK_RESULT" && success === true) {
-        statusEl.textContent = "✅ Задание выполнено! Нажмите 'Следующее задание'";
-        nextBtn.disabled = false;
-      }
+    audio.play().catch(e => {
+      console.error(`❌ Не удалось проиграть звук для '${hanzi}':`, e);
     });
+  }
 
-    // --- Кнопка "Следующее задание" ---
-    nextBtn.addEventListener("click", () => {
+// --- Загрузка задания ---
+function loadNextTask() {
+  if (currentTaskIndex >= totalTasks) return;
+
+  const hanzi = shuffledLesson[currentTaskIndex];
+  const data = charData[hanzi] || { pinyin: 'неизвестно', meaning: 'значение не найдено', lesson: '?' };
+  const pinyin = data.pinyin;
+  const lessonNum = data.lesson;
+
+  const url = `/task1.html?_=${Date.now()}#${hanzi}`;
+
+  // Компактное отображение: не ломает верстку
+statusEl.textContent = `${hanzi} • ${pinyin} • урок ${lessonNum}: ${data.meaning}`;
+  statusEl.title = data.meaning; // всплывающая подсказка
+
+  document.getElementById("task-container").classList.add("active");
+
+  // Перезагрузка iframe
+  iframe.src = '';
+  setTimeout(() => {
+    iframe.src = url;
+  }, 10);
+
+  // Проигрываем звук
+  setTimeout(() => playHanziSound(hanzi), 500);
+
+  // Прогресс
+  progressBar.style.width = `${(currentTaskIndex / totalTasks) * 100}%`;
+}
+
+  // --- Кнопка "Старт!" → "Следующее задание" ---
+  nextBtn.addEventListener("click", () => {
+    if (currentTaskIndex === 0) {
+      nextBtn.textContent = "▶️ Следующее задание";
+      loadNextTask();
       currentTaskIndex++;
-
-      if (currentTaskIndex >= totalTasks) {
-        iframe.style.display = "none";
-        nextBtn.disabled = true;
-        statusEl.innerHTML = `<div style="text-align: center;">
-          <h2>🎉 Поздравляем!</h2>
-          <p>Вы завершили урок<br><strong>Иероглифика</strong>!</p>
-          <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
-        </div>`;
-        createFireworks();
-        setTimeout(() => window.location.href = "../", 5000);
-      } else {
-        loadNextTask();
-      }
-    });
-
-    // --- Определение мобильного устройства ---
-    function isMobile() {
-      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+      return;
     }
 
-    // --- Запуск ---
-    window.addEventListener("load", () => {
-      if (isMobile()) {
-        setScale(1);
-      }
-      loadNextTask(); // Загружаем первое задание
-    });
+    if (currentTaskIndex < totalTasks) {
+      loadNextTask();
+      currentTaskIndex++;
+      return;
+    }
 
-    // --- Фейерверки ---
-    function createFireworks() {
-      const container = document.getElementById("fireworks");
-      const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
-      const particles = 50;
+    // Конец урока
+    iframe.style.display = "none";
+    nextBtn.disabled = true;
+    statusEl.innerHTML = `<div style="text-align: center;">
+      <h2>🎉 Поздравляем!</h2>
+      <p>Вы завершили урок<br><strong>Иероглифика</strong>!</p>
+      <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
+    </div>`;
+    createFireworks();
+    setTimeout(() => window.location.href = "../", 5000);
+  });
 
-      function createExplosion(x, y) {
-        for (let i = 0; i < particles; i++) {
-          const particle = document.createElement("div");
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 1 + Math.random() * 3;
-          const size = 2 + Math.random() * 4;
+  // --- Фейерверки ---
+  function createFireworks() {
+    const container = document.getElementById("fireworks");
+    const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
+    const particles = 50;
 
-          particle.style.position = "absolute";
-          particle.style.width = `${size}px`;
-          particle.style.height = `${size}px`;
-          particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-          particle.style.borderRadius = "50%";
-          particle.style.boxShadow = "0 0 6px currentColor";
-          particle.style.left = `${x}px`;
-          particle.style.top = `${y}px`;
-          particle.style.pointerEvents = "none";
+    function createExplosion(x, y) {
+      for (let i = 0; i < particles; i++) {
+        const particle = document.createElement("div");
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 3;
+        const size = 2 + Math.random() * 4;
 
-          container.appendChild(particle);
+        particle.style.position = "absolute";
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = "50%";
+        particle.style.boxShadow = "0 0 6px currentColor";
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.pointerEvents = "none";
 
-          let dx = Math.cos(angle) * speed;
-          let dy = Math.sin(angle) * speed;
-          let opacity = 1;
-          let posX = x;
-          let posY = y;
+        container.appendChild(particle);
 
-          const animate = () => {
-            opacity -= 0.02;
-            posX += dx;
-            posY += dy + 0.1;
-            dy += 0.05;
+        let dx = Math.cos(angle) * speed;
+        let dy = Math.sin(angle) * speed;
+        let opacity = 1;
+        let posX = x;
+        let posY = y;
 
-            particle.style.opacity = opacity;
-            particle.style.left = `${posX}px`;
-            particle.style.top = `${posY}px`;
+        const animate = () => {
+          opacity -= 0.02;
+          posX += dx;
+          posY += dy + 0.1;
+          dy += 0.05;
 
-            if (opacity > 0) {
-              requestAnimationFrame(animate);
-            } else {
-              container.removeChild(particle);
-            }
-          };
+          particle.style.opacity = opacity;
+          particle.style.left = `${posX}px`;
+          particle.style.top = `${posY}px`;
 
-          requestAnimationFrame(animate);
-        }
-      }
+          if (opacity > 0) {
+            requestAnimationFrame(animate);
+          } else {
+            container.removeChild(particle);
+          }
+        };
 
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          const x = 50 + Math.random() * (container.offsetWidth - 100);
-          const y = 100 + Math.random() * (container.offsetHeight - 100);
-          createExplosion(x, y);
-        }, i * 300);
+        requestAnimationFrame(animate);
       }
     }
-  </script>
+
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const x = 50 + Math.random() * (container.offsetWidth - 100);
+        const y = 100 + Math.random() * (container.offsetHeight - 100);
+        createExplosion(x, y);
+      }, i * 300);
+    }
+  }
+
+  // --- Запуск ---
+  window.addEventListener("load", () => {
+    console.log("📚 Словарь charData загружен:", charData);
+    console.log("🎲 Перемешанный порядок:", shuffledLesson);
+
+    if (window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1)) {
+      setScale(1);
+    }
+  });
+</script>
 </body>
 </html>
