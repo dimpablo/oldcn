@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Дистрибутивная таблица: Пор-Ройяльская грамматика</title>
+    <title>Дистрибутивная таблица: Предикативная грамматика</title>
     <style>
         * {
             box-sizing: border-box;
@@ -216,8 +216,7 @@
                 font-size: 1em;
             }
         }
-
-.header-container {
+        .header-container {
     position: relative;
     margin: 10px 0;
     padding-bottom: 8px;
@@ -259,14 +258,14 @@ h1 {
 </head>
 <body>
 <div class="header-container">
-    <h1>Дистрибутивная таблица: Пор-Ройяльская грамматика</h1>
-    <button onclick='document.location.href="predicat_table.html"' id="switchBtn" class="switch-btn">Перейти к Предикативной Грамматике</button>
-</div> 
+    <h1>Дистрибутивная таблица: Предикативная грамматика</h1>
+    <button onclick='document.location.href="table.html"' id="switchBtn" class="switch-btn">Перейти к Пор-Ройяльской Грамматике</button>
+</div>     
     <div class="instructions collapsed">
         <div class="content">
             <h3 style="margin: 0 0 6px; font-size: 1em; color: #1a5fb4;">Как работать с таблицей</h3>
             <p style="margin: 0 0 8px; font-size: 0.95em;">
-                <strong>Цель:</strong> Распределите иероглифы по категориям Пор-Ройяльской грамматики.
+                <strong>Цель:</strong> Распределите иероглифы по категориям предикативной грамматики.
             </p>
             <ol style="margin: 0 0 8px; padding-left: 18px; font-size: 0.9em;">
                 <li>Нажмите на иероглиф в исходном тексте</li>
@@ -276,7 +275,7 @@ h1 {
                 <li>Нажмите «Проверить» после заполнения</li>
             </ol>
             <p style="margin: 0; font-size: 0.85em; color: #555; font-style: italic;">
-                Подсказка: в Пор-Ройяльской грамматике все слова делятся на 8 категорий
+                Подсказка: в предикативной грамматике анализируются функции слов в предложении
             </p>
         </div>
     </div>
@@ -287,18 +286,15 @@ h1 {
         <table class="distribution-table" id="distributionTable">
             <thead>
                 <tr>
-                    <th>Имя существительное</th>
-                    <th>Имя прилагательное</th>
-                    <th>Глагол</th>
-                    <th>Предлог</th>
-                    <th>Наречие</th>
-                    <th>Союз</th>
-                    <th>Частица</th>
-                    <th>Междометие</th>
+                    <th>Предикат</th>
+                    <th>Агент</th>
+                    <th>Пациент</th>
+                    <th>Темпоральный маркер</th>
+                    <th>Каузативный маркер</th>
+                    <th>Модальный оператор</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Строки будут добавлены через JS -->
             </tbody>
         </table>
     </div>
@@ -309,11 +305,11 @@ h1 {
     
     <div class="controls">
         <button class="reset" id="resetBtn">Сбросить</button>
-        <button class="check" id="checkBtn" disabled>Проверить</button>
+        <button class="check" id="checkBtn">Проверить</button>
     </div>
     
     <div class="message success" id="successMsg">
-        Отлично! Вы правильно распределили иероглифы по категориям Пор-Ройяльской грамматики.
+        Отлично! Вы правильно распределили иероглифы по категориям предикативной грамматики.
     </div>
     
     <div class="message incorrect" id="errorMsg">
@@ -334,33 +330,10 @@ h1 {
         "卜㱿貞今春方其自來"
     ];
     
-    // Эталонная дистрибутивная таблица для проверки (Пор-Ройяльская грамматика)
-    const referenceTable = [
-        // Строка 1: "癸卯卜爭貞今歳商受年貞來歳不其"
-        ["癸卯,歳,商,年,歳", "白", "受,來", "自", "今", "", "卜,爭,貞,其", ""],
-        // Строка 2: "受年癸丑卜㱿貞冓受年貞冓不其受"
-        ["年,癸丑", "", "受", "", "", "", "卜,㱿,貞,冓,其,不", ""],
-        // Строка 3: "年癸卯卜亘貞我受黍年癸巳卜㱿貞"
-        ["年,癸卯,黍,癸巳", "", "受", "", "", "", "卜,亘,貞,我", ""],
-        // Строка 4: "我受稻年貞今來歳我不其受年貞戔"
-        ["我,年,歳", "稻", "受", "", "今,來", "", "貞,不,其,戔", ""],
-        // Строка 5: "受貞甫弗其受黍年"
-        ["黍,年", "", "受", "", "", "", "貞,甫,弗,其", ""],
-        // Строка 6: "貞肅來牛貞肅弗其來牛貞冓不其來"
-        ["牛", "", "來", "", "", "", "貞,肅,弗,其,冓,不", ""],
-        // Строка 7: "犬貞今春奚來牛奚不其來牛甲辰卜"
-        ["犬,牛,甲辰", "", "來", "", "今,春", "", "貞,奚,其,不,卜", ""],
-        // Строка 8: "㱿貞奚來白馬王占曰吉其來馬丙辰"
-        ["㱿,馬,王,曰,吉,馬,丙辰", "白", "來,占", "", "奚", "", "其", ""],
-        // Строка 9: "卜㱿貞今春方其自來"
-        ["方", "", "來", "自", "今,春", "", "卜,㱿,貞,其", ""]
-    ];
+    // Хранилище для отслеживания местоположения иероглифов
+    let charPositions = [];
     
-    // Переменные состояния
-    let selectedChar = null;
-    let charsLeft = 0;
-    
-    // Инициализация после загрузки DOM
+    // Создаем таблицу при загрузке
     document.addEventListener('DOMContentLoaded', function() {
         createSourceTable();
         createDistributionTable();
@@ -378,6 +351,9 @@ h1 {
     function createSourceTable() {
         const table = document.getElementById('sourceTable');
         table.innerHTML = ''; // Очищаем таблицу
+        
+        // Инициализируем хранилище позиций
+        charPositions = [];
         
         // Заголовок с номерами колонок
         const headerRow = document.createElement('tr');
@@ -403,13 +379,20 @@ h1 {
             row.appendChild(lineNumCell);
             
             const chars = Array.from(lessonText[i]);
-            charsLeft += chars.length;
             
             for (let j = 0; j < 15; j++) {
                 const td = document.createElement('td');
                 
                 if (j < chars.length && chars[j].trim() !== '') {
                     td.textContent = chars[j];
+                    
+                    // Сохраняем позицию иероглифа
+                    charPositions.push({
+                        char: chars[j],
+                        row: i,
+                        col: j,
+                        cell: td
+                    });
                 }
                 row.appendChild(td);
             }
@@ -425,8 +408,8 @@ h1 {
         for (let i = 0; i < lessonText.length; i++) {
             const row = document.createElement('tr');
             
-            // Создаем 8 столбцов для каждой строки (Пор-Ройяльская грамматика)
-            for (let j = 0; j < 8; j++) {
+            // Создаем 6 столбцов для каждой строки (предикативная грамматика)
+            for (let j = 0; j < 6; j++) {
                 const td = document.createElement('td');
                 td.dataset.row = i;
                 td.dataset.col = j;
@@ -438,22 +421,22 @@ h1 {
     }
     
     function setupEventListeners() {
+        let selectedChar = null;
+        
         // Обработчик кликов по исходной таблице
         document.querySelectorAll('#sourceTable tr:not(:first-child) td:not(.line-num):not(.col-num)').forEach(cell => {
             cell.addEventListener('click', function() {
                 if (this.textContent.trim() !== '') {
-                    const rowIdx = this.parentElement.rowIndex - 1;
-                    const colIdx = this.cellIndex - 1;
-                    
                     selectedChar = {
                         char: this.textContent,
                         cell: this,
-                        sourceRow: rowIdx,
-                        sourceCol: colIdx
+                        originalRow: this.parentElement.rowIndex - 1,
+                        originalCol: this.cellIndex - 1
                     };
                     
                     document.getElementById('selectedChar').textContent = this.textContent;
                     
+                    // Очистка предыдущих выделений
                     document.querySelectorAll('#sourceTable td.selected').forEach(el => {
                         el.classList.remove('selected');
                     });
@@ -466,40 +449,47 @@ h1 {
         document.querySelectorAll('#distributionTable td').forEach(cell => {
             cell.addEventListener('click', function() {
                 if (selectedChar) {
+                    // Добавляем символ
                     this.textContent += selectedChar.char;
                     
+                    // Удаляем символ из исходной таблицы
+                    selectedChar.cell.textContent = '';
+                    selectedChar.cell.classList.remove('selected');
+                    
+                    // Сохраняем информацию о том, откуда пришел символ
                     if (!this.dataset.sources) {
                         this.dataset.sources = '[]';
                     }
                     const sources = JSON.parse(this.dataset.sources);
                     sources.push({
                         char: selectedChar.char,
-                        sourceRow: selectedChar.sourceRow,
-                        sourceCol: selectedChar.sourceCol
+                        originalRow: selectedChar.originalRow,
+                        originalCol: selectedChar.originalCol
                     });
                     this.dataset.sources = JSON.stringify(sources);
-                    
-                    selectedChar.cell.textContent = '';
-                    selectedChar.cell.classList.remove('selected');
                     
                     selectedChar = null;
                     document.getElementById('selectedChar').textContent = '-';
                 }
-                // Возврат иероглифа
+                // Возврат иероглифа при клике на символ в таблице
                 else if (this.textContent.trim() !== '') {
+                    // Возвращаем последний символ
+                    const lastChar = this.textContent.slice(-1);
+                    this.textContent = this.textContent.slice(0, -1);
+                    
+                    // Находим оригинальную позицию из dataset.sources
                     if (this.dataset.sources) {
                         const sources = JSON.parse(this.dataset.sources);
                         if (sources.length > 0) {
                             const lastSource = sources.pop();
-                            
-                            this.textContent = this.textContent.slice(0, -1);
                             this.dataset.sources = JSON.stringify(sources);
                             
-                            const sourceRows = document.querySelectorAll('#sourceTable tr');
-                            if (sourceRows[lastSource.sourceRow + 1]) {
-                                const rowCells = sourceRows[lastSource.sourceRow + 1].querySelectorAll('td');
-                                if (rowCells[lastSource.sourceCol + 1]) {
-                                    rowCells[lastSource.sourceCol + 1].textContent = lastSource.char;
+                            // Находим ячейку по оригинальным координатам
+                            const rows = document.querySelectorAll('#sourceTable tr');
+                            if (rows[lastSource.originalRow + 1]) {
+                                const cells = rows[lastSource.originalRow + 1].querySelectorAll('td');
+                                if (cells[lastSource.originalCol + 1]) {
+                                    cells[lastSource.originalCol + 1].textContent = lastSource.char;
                                 }
                             }
                         }
@@ -509,88 +499,24 @@ h1 {
         });
         
         // Кнопка сброса
-        document.getElementById('resetBtn').addEventListener('click', resetGame);
-        
-        // Кнопка проверки — ВСЕГДА активна
-        const checkBtn = document.getElementById('checkBtn');
-        checkBtn.disabled = false;
-        checkBtn.addEventListener('click', checkAnswer);
-    }
-    
-    function checkAnswer() {
-        // Сбрасываем фон только у тех ячеек, которые были подсвечены
-        document.querySelectorAll('#distributionTable td').forEach(cell => {
-            cell.style.backgroundColor = '';
-        });
-
-        let allCorrect = true;
-
-        // Проверяем каждую строку и столбец
-        for (let i = 0; i < referenceTable.length; i++) {
-            for (let j = 0; j < referenceTable[i].length; j++) {
-                const cell = document.querySelector(`#distributionTable tr:nth-child(${i+1}) td:nth-child(${j+1})`);
-                const expected = referenceTable[i][j];
-                const actual = cell.textContent.trim();
-
-                // Пропускаем пустые ячейки (пользователь ничего не ввёл)
-                if (actual === '') {
-                    continue;
-                }
-
-                // Если пользователь что-то ввёл — проверяем
-                if (expected) {
-                    // Разделяем эталонные значения на массив для проверки
-                    const expectedParts = expected.split(',').map(s => s.trim()).filter(s => s);
-                    const actualParts = actual.split('').sort().join('');
-                    
-                    // Проверяем, содержит ли ячейка все нужные символы
-                    let isCorrect = true;
-                    for (const part of expectedParts) {
-                        for (const char of part) {
-                            if (!actual.includes(char)) {
-                                isCorrect = false;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (isCorrect) {
-                        cell.style.backgroundColor = '#d4edda'; // зелёный
-                    } else {
-                        cell.style.backgroundColor = '#f8d7da'; // красный
-                        allCorrect = false;
-                    }
-                } else {
-                    // Ячейка пустая по эталону, но пользователь что-то ввёл
-                    cell.style.backgroundColor = '#f8d7da';
-                    allCorrect = false;
-                }
-            }
-        }
-
-        // Показываем сообщения
-        document.getElementById('successMsg').style.display = allCorrect ? 'block' : 'none';
-        document.getElementById('errorMsg').style.display = allCorrect ? 'none' : 'block';
-    }
-    
-    function resetGame() {
-        document.querySelectorAll('#distributionTable td').forEach(cell => {
-            cell.textContent = '';
-            delete cell.dataset.sources;
-            cell.style.backgroundColor = ''; // Сброс фона
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            document.querySelectorAll('#distributionTable td').forEach(cell => {
+                cell.textContent = '';
+                delete cell.dataset.sources;
+            });
+            
+            createSourceTable();
+            document.getElementById('selectedChar').textContent = '-';
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
         });
         
-        createSourceTable();
-        
-        selectedChar = null;
-        document.getElementById('selectedChar').textContent = '-';
-        
-        // Скрываем сообщения
-        document.getElementById('successMsg').style.display = 'none';
-        document.getElementById('errorMsg').style.display = 'none';
+        // Кнопка проверки
+        document.getElementById('checkBtn').addEventListener('click', function() {
+            alert("Функция проверки временно недоступна. Таблица готова к использованию.");
+        });
     }
 </script>
-
 <script>
     // После загрузки DOM
     document.addEventListener('DOMContentLoaded', function() {
