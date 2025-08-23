@@ -2,133 +2,104 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Сопоставьте</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу: нападение</title>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-  <div class="match-container">
-    <div class="column">
-      <h3>Иероглифы</h3>
-      <div id="words"></div>
-    </div>
-    <div class="column">
-      <h3>Значения</h3>
-      <div id="defs"></div>
-    </div>
-  </div>
-  <button onclick="reset()">Сбросить</button>
-  <p id="result"></p>
-  <script>
-    // Словарь Урока 4 — только ключевые лексемы
-    const pairs = [
-      { char: "弗", meaning: "Отрицание: не (нейтральное отрицание)" },
-      { char: "其", meaning: "Частица будущего времени или вопроса" },
-      { char: "烖", meaning: "Бедствие, несчастье" },
-      { char: "賽", meaning: "Жертвоприношение в благодарность" },
-      { char: "王", meaning: "Правитель, ван" }
-    ];
-    let selectedWord = null;
-    let matchedPairs = 0;
+<h2>Собери фразу</h2>
+<div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Племя Ту напало на нашу восточную окраину.</em></p>
+</div>
 
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
+<div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+<div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+        <li>土方 — племя Ту</li>
+        <li>征 — нападать</li>
+        <li>于 — на</li>
+        <li>我 — нашу</li>
+        <li>東鄙 — восточную окраину</li>
+        <li>注意: 征于我東鄙 — «напало на нашу восточную окраину»</li>
+    </ul>
+</div>
+
+<p><strong>Иероглифы:</strong></p>
+<div id="char-pool"></div>
+
+<p><strong>Соберите здесь:</strong></p>
+<div id="drop-area"></div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+<p id="result" class="message"></p>
+
+<script>
+    const expected = ['土', '方', '征', '于', '我', '東', '鄙'];
+    const allChars = ['土', '方', '征', '于', '我', '東', '鄙', '西', '侵', '工', '艱', '來', '自', '王', '占'];
+    let charPool, dropArea, resultEl;
+
+    function initCharPool() {
+        charPool = document.getElementById("char-pool");
+        dropArea = document.getElementById("drop-area");
+        resultEl = document.getElementById("result");
+        dropArea.innerHTML = '';
+        charPool.innerHTML = '';
+        allChars.forEach(char => {
+            const box = document.createElement('div');
+            box.className = 'char-box';
+            box.textContent = char;
+            box.addEventListener('click', () => moveToDropArea(box));
+            charPool.appendChild(box);
+        });
     }
 
-    function init() {
-      const wordList = document.getElementById("words");
-      const defList = document.getElementById("defs");
-      wordList.innerHTML = "";
-      defList.innerHTML = "";
-      const shuffledChars = shuffle(pairs);
-      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
-
-      // Создаём иероглифы (слева)
-      shuffledChars.forEach(item => {
-        const el = document.createElement("div");
-        el.className = "word-item";
-        el.dataset.char = item.char;
-        el.textContent = item.char;
-        el.onclick = () => selectWord(el);
-        wordList.appendChild(el);
-      });
-
-      // Создаём значения (справа)
-      shuffledMeanings.forEach(meaning => {
-        const el = document.createElement("div");
-        el.className = "def-item";
-        el.dataset.meaning = meaning;
-        el.textContent = meaning;
-        el.onclick = () => selectDefinition(el);
-        defList.appendChild(el);
-      });
+    function moveToDropArea(box) {
+        const clone = box.cloneNode(true);
+        clone.addEventListener('click', function() {
+            this.remove();
+            charPool.appendChild(box);
+        });
+        dropArea.appendChild(clone);
     }
 
-    function selectWord(el) {
-      if (el.classList.contains("matched")) return;
-      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
-      selectedWord = null;
-
-      el.classList.add("selected");
-      selectedWord = el;
-    }
-
-    function selectDefinition(el) {
-      if (el.classList.contains("matched") || !selectedWord) return;
-
-      el.classList.add("selected");
-      const selectedMeaning = el.dataset.meaning;
-      const selectedChar = selectedWord.dataset.char;
-
-      // Поиск соответствующей пары
-      const correctPair = pairs.find(p => p.char === selectedChar);
-      if (correctPair && correctPair.meaning === selectedMeaning) {
-        // Верное сопоставление
-        selectedWord.classList.add("matched");
-        el.classList.add("matched");
-        selectedWord.onclick = null;
-        el.onclick = null;
-        selectedWord = null;
-        matchedPairs++;
-
-        if (matchedPairs === 5) {
-          const resultEl = document.getElementById("result");
-          resultEl.textContent = "✅ Все пары верны!";
-          resultEl.className = "success";
-          sendResult(true);
+    document.getElementById("check-btn").addEventListener('click', () => {
+        const current = Array.from(dropArea.children).map(el => el.textContent);
+        if (arraysEqual(current, expected)) {
+            resultEl.innerHTML = '✅ Правильно!<br>土方征于我東鄙';
+            resultEl.className = 'message success';
+            sendResult(true);
+        } else {
+            resultEl.textContent = '❌ Попробуйте снова.';
+            resultEl.className = 'message';
+            sendResult(false, 'Неверный порядок');
         }
-      } else {
-        // Ошибка
-        document.getElementById("result").textContent = "❌ Ошибка.";
-        setTimeout(() => {
-          document.getElementById("result").textContent = "";
-        }, 1500);
-        selectedWord.classList.remove("selected");
-        el.classList.remove("selected");
-        selectedWord = null;
-      }
-    }
+    });
 
-    function reset() {
-      matchedPairs = 0;
-      document.getElementById("result").textContent = "";
-      document.getElementById("result").className = "";
-      init();
+    document.getElementById("reset-btn").addEventListener('click', initCharPool);
+
+    function arraysEqual(a, b) {
+        return a.length === b.length && a.every((v, i) => v === b[i]);
     }
 
     function sendResult(success, message) {
-      window.parent.postMessage({
-        type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Все верно" : "Ошибка")
-      }, "*");
+        window.parent.postMessage({
+            type: "TASK_RESULT",
+            success: !!success,
+            message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+        }, "*");
     }
 
-    window.onload = init;
+    document.getElementById("toggle-hint-btn").addEventListener("click", function () {
+        this.classList.toggle("active");
+        document.getElementById("hint-container").classList.toggle("show");
+    });
+
+    initCharPool();
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
-  </script>
+</script>
 </body>
 </html>
-

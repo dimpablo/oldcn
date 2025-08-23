@@ -3,85 +3,75 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: 勿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Какая фраза содержит инверсию?</title>
 </head>
 <body>
-<h2>Как переводится устойчивое выражение 有來艱?</h2>
-<p><strong>Пример: «洗震告曰: ...工方亦侵我西鄙田。四日庚申亦有來艱自北»</strong></p>
-
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">Xǐ Zhèn gào yuē: ... Gōng fāng yì qīn wǒ xī bǐ tián. sì rì gēng shēn yì yǒu lái jiān zì běi</div>
-</div>
+<h2>Какая из следующих фраз содержит инверсию дополнения?</h2>
 
 <div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
+<p id="result" class="message"></p>
 
 <script>
-  const options = [
-    { text: "Сообщение о победе: «Пришла весть о победе»", correct: false },
-    { text: "Формальное донесение: «Поступил доклад»", correct: false },
-    { text: "Сообщение о беде: «(Ко мне) пришла беда»", correct: true },
-    { text: "Предсказание беды: «Будет беда»", correct: false }
-  ];
+    const options = [
+        { text: "帝降我熯", correct: false },
+        { text: "帝不我降熯", correct: true },
+        { text: "我伐馬方", correct: false },
+        { text: "帝其受佑", correct: false }
+    ];
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function renderOptions() {
-    const shuffled = shuffle(options);
-    const container = document.getElementById("answers"); // ✅ Исправлено: answers
-    container.innerHTML = "";
-
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct;
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  // ✅ Принимаем параметры: containerId не используется, но resultId — нужен
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId); // ✅ Используем переданный ID
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+    function shuffle(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно!";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно.";
-      sendResult(false);
+    function renderOptions() {
+        const shuffled = shuffle(options);
+        const container = document.getElementById("answers");
+        container.innerHTML = "";
+        shuffled.forEach((opt, index) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "q";
+            input.value = index;
+            input.dataset.correct = opt.correct;
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt.text));
+            container.appendChild(label);
+        });
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    function check() {
+        const selected = document.querySelector('input[name="q"]:checked');
+        const resultEl = document.getElementById("result");
+        if (!selected) {
+            resultEl.textContent = "Выберите вариант.";
+            return;
+        }
+        if (selected.dataset.correct === "true") {
+            resultEl.innerHTML = '✅ Верно!<br>«帝不我降熯» — классический пример инверсии при 不 + 我.';
+            sendResult(true);
+        } else {
+            resultEl.textContent = '❌ Неверно. Ищите конструкцию с 不 + местоимение перед глаголом.';
+            sendResult(false);
+        }
+    }
 
-  window.onload = renderOptions;
+    document.getElementById("check-btn").addEventListener("click", check);
+
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
 </script>
+
+<button id="check-btn">Проверить</button>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
 </body>
 </html>
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

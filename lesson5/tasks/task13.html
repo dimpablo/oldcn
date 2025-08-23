@@ -3,93 +3,81 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: 勿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Значение слова 又</title>
 </head>
 <body>
-<h2>Какую функцию выполняет частица 亦 в тексте?</h2>
-<p><strong>Пример: «工方亦侵我西鄙田» ... «四日庚申亦有來艱自北»</strong></p>
+<h2>Что означает слово «又» в фразе «鹿五十又六»?</h2>
+<p><strong>Пример: «鹿五十又六» — 56 оленей.</strong></p>
 
 <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">Gōng fāng yì qīn wǒ xī bǐ tián... sì rì gēng shēn yì yǒu lái jiān zì běi</div>
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-content">lù wǔ shí yòu liù</div>
 </div>
 
 <div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
+<p id="result" class="message"></p>
 
 <script>
-  // ✅ Переименовали options6 → options
-  const options = [
-    { text: "Усиливает отрицание: «И племя Гун совсем не напало...»", correct: false },
-    { text: "Указывает на альтернативу: «Или племя Гун напало...»", correct: false },
-    { text: "Вводит перечисление: «Племя Гун и напало...»", correct: false },
-    { text: "Указывает на добавление: «Племя Гун ТАКЖЕ напало...»", correct: true }
-  ];
+    const options = [
+        { text: "И добавляет: «ещё шесть»", correct: true },
+        { text: "Означает «снова»", correct: false },
+        { text: "Это союз «и» между подлежащими", correct: false },
+        { text: "Это частица неопределённости", correct: false }
+    ];
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function renderOptions() {
-    const shuffled = shuffle(options); // ✅ Используем options
-    const container = document.getElementById("answers"); // ✅ Правильный ID
-    if (!container) {
-      console.error("Элемент #answers не найден");
-      return;
-    }
-    container.innerHTML = "";
-
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct.toString();
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  // ✅ Принимаем параметры, используем resultId
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+    function shuffle(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно!";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно.";
-      sendResult(false);
+    function renderOptions() {
+        const shuffled = shuffle(options);
+        const container = document.getElementById("answers");
+        container.innerHTML = "";
+        shuffled.forEach((opt, index) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "q";
+            input.value = opt.correct ? "1" : "0_" + index;
+            input.dataset.correct = opt.correct;
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt.text));
+            container.appendChild(label);
+        });
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    function check() {
+        const selected = document.querySelector('input[name="q"]:checked');
+        const resultEl = document.getElementById("result");
+        if (!selected) {
+            resultEl.textContent = "Выберите вариант.";
+            return;
+        }
+        if (selected.dataset.correct === "true") {
+            resultEl.innerHTML = '✅ Верно!<br>又 — «ещё», используется для сложения чисел: 50 + 6.';
+            sendResult(true);
+        } else {
+            resultEl.textContent = '❌ Неверно. 又 — это арифметический союз «плюс».';
+            sendResult(false);
+        }
+    }
 
-  // Загрузка вариантов при старте
-  window.onload = renderOptions;
+    document.getElementById("check-btn").addEventListener("click", check);
+
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
 </script>
+
+<button id="check-btn">Проверить</button>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
 </body>
 </html>
-
-<!-- Уведомление, что задание существует -->
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

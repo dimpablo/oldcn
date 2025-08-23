@@ -3,83 +3,104 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: 勿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте конструкции</title>
 </head>
 <body>
-<h2>Что означает частица 允 в данном контексте?</h2>
-<p><strong>Пример: «允有來艱自西»</strong></p>
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">yǔn yǒu lái jiān zì xī</div>
+<h2>Сопоставьте: инверсия и прямой порядок</h2>
+<p><strong>Соедините фразу с её грамматическим типом.</strong></p>
+
+<div id="matching-container">
+    <div class="pair">
+        <span class="source">帝不我降熯</span>
+        <select class="target">
+            <option value="">— Выберите —</option>
+            <option value="инверсия">Инверсия при 不 + 我</option>
+            <option value="прямой">Прямой порядок</option>
+            <option value="эмфаза">Эмфатическая конструкция</option>
+        </select>
+    </div>
+    <div class="pair">
+        <span class="source">帝降我熯</span>
+        <select class="target">
+            <option value="">— Выберите —</option>
+            <option value="инверсия">Инверсия при 不 + 我</option>
+            <option value="прямой">Прямой порядок</option>
+            <option value="эмфаза">Эмфатическая конструкция</option>
+        </select>
+    </div>
+    <div class="pair">
+        <span class="source">帝其受我佑</span>
+        <select class="target">
+            <option value="">— Выберите —</option>
+            <option value="инверсия">Инверсия при 不 + 我</option>
+            <option value="прямой">Прямой порядок</option>
+            <option value="эмфаза">Эмфатическая конструкция</option>
+        </select>
+    </div>
+    <div class="pair">
+        <span class="source">余受馬方佑</span>
+        <select class="target">
+            <option value="">— Выберите —</option>
+            <option value="инверсия">Инверсия при 不 + 我</option>
+            <option value="прямой">Прямой порядок</option>
+            <option value="эмфаза">Эмфатическая конструкция</option>
+        </select>
+    </div>
 </div>
 
-<div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+<p id="result" class="message"></p>
 
 <script>
-  const options = [
-    { text: "Условная частица: «Если бы пришла беда с запада...»", correct: false },
-    { text: "Частица подтверждения: «Действительно пришла беда с запада»", correct: true },
-    { text: "Отрицательная частица: «Не пришла беда с запада»", correct: false },
-    { text: "Вопросительная частица: «Пришла ли беда с запада?»", correct: false }
-  ];
+    const answers = [
+        "инверсия",
+        "прямой",
+        "прямой",
+        "прямой"
+    ];
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
+    function check() {
+        const selects = document.querySelectorAll('.target');
+        let correct = 0;
+        const results = [];
 
-  function renderOptions() {
-    const shuffled = shuffle(options); // ✅ Исправлено
-    const container = document.getElementById("answers"); // ✅ Исправлено
-    container.innerHTML = "";
+        selects.forEach((select, i) => {
+            const val = select.value;
+            if (val === answers[i]) correct++;
+            results.push(`${select.previousElementSibling.textContent} → ${val || 'не выбрано'} ${val === answers[i] ? '✅' : '❌'}`);
+        });
 
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct;
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+        const resultEl = document.getElementById("result");
+        if (correct === 4) {
+            resultEl.innerHTML = '✅ Все верно!<br>' + results.join('<br>');
+            sendResult(true);
+        } else {
+            resultEl.innerHTML = `❌ ${correct}/4 верно.<br>` + results.join('<br>');
+            sendResult(false);
+        }
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно!";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно.";
-      sendResult(false);
+    function reset() {
+        document.querySelectorAll('.target').forEach(s => s.value = '');
+        document.getElementById("result").textContent = '';
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    document.getElementById("check-btn").addEventListener("click", check);
+    document.getElementById("reset-btn").addEventListener("click", reset);
 
-  window.onload = renderOptions;
+    function sendResult(success) {
+        window.parent.postMessage({
+            type: "TASK_RESULT",
+            success,
+            message: success ? "Все соответствия верны" : "Есть ошибки"
+        }, "*");
+    }
+
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 </body>
 </html>
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

@@ -3,93 +3,72 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: 勿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Когда происходит инверсия?</title>
 </head>
 <body>
-<h2>Какой оттенок значения появляется у глагола 告 в военных донесениях?</h2>
-<p><strong>Пример: «子商告曰: 昔甲辰方征于臿»</strong></p>
-
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">Zǐ Shāng gào yuē: xī jiǎ chén fāng zhēng yú Chā</div>
-</div>
+<h2>В каких случаях происходит инверсия дополнения в древнекитайском?</h2>
+<p><strong>Выберите все правильные варианты.</strong></p>
 
 <div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
+<p id="result" class="message"></p>
 
 <script>
-  // ✅ Теперь массив называется options
-  const options = [
-    { text: "Молиться, просить: «цзы Шан молился»", correct: false },
-    { text: "Приказывать: «цзы Шан приказал»", correct: false },
-    { text: "Спрашивать, гадать: «цзы Шан спросил»", correct: false },
-    { text: "Докладывать, доносить: «цзы Шан доложил»", correct: true }
-  ];
+    const options = [
+        { text: "При отрицании 不 и личном дополнении (我, 余, 朕)", correct: true },
+        { text: "При использовании вопросительной частицы 其", correct: false },
+        { text: "При эмфатической конструкции с 唯", correct: false },
+        { text: "При каузативных глаголах, таких как 受", correct: false },
+        { text: "При отрицании 不 и прямом дополнении-местоимении", correct: true }
+    ];
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function renderOptions() {
-    const shuffled = shuffle(options); // ✅ Используем options
-    const container = document.getElementById("answers"); // ✅ Правильный ID
-    if (!container) {
-      console.error("Элемент #answers не найден");
-      return;
-    }
-    container.innerHTML = "";
-
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct.toString();
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  // ✅ Принимаем параметры: используем resultId
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+    function renderOptions() {
+        const container = document.getElementById("answers");
+        container.innerHTML = "";
+        options.forEach((opt, index) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.name = "q";
+            input.value = index;
+            input.dataset.correct = opt.correct;
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt.text));
+            container.appendChild(label);
+        });
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно!";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно.";
-      sendResult(false);
+    function check() {
+        const selected = document.querySelectorAll('input[name="q"]:checked');
+        const resultEl = document.getElementById("result");
+        if (selected.length === 0) {
+            resultEl.textContent = "Выберите хотя бы один вариант.";
+            return;
+        }
+        const correctSelected = Array.from(selected).filter(cb => cb.dataset.correct === "true").length;
+        const totalCorrect = options.filter(o => o.correct).length;
+        const selectedCorrect = Array.from(selected).every(cb => cb.dataset.correct === "true");
+        const allCorrect = selectedCorrect && correctSelected === totalCorrect;
+
+        if (allCorrect) {
+            resultEl.innerHTML = '✅ Все верно!<br>Инверсия происходит при 不 + местоимение.';
+            sendResult(true);
+        } else {
+            resultEl.textContent = `❌ Неверно. Правильно: ${totalCorrect} варианта.`;
+            sendResult(false);
+        }
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    document.getElementById("check-btn").addEventListener("click", check);
 
-  // Загружаем варианты при открытии страницы
-  window.onload = renderOptions;
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
 </script>
+
+<button id="check-btn">Проверить</button>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
 </body>
 </html>
-
-<!-- Уведомление, что задание существует -->
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

@@ -2,276 +2,101 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Собери перевод: Урок 4</title>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу: набор людей</title>
 </head>
 <body>
-
-<h2>Собери перевод: Урок 4</h2>
-
+<h2>Собери фразу</h2>
 <div class="instructions">
-<p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
-<p>Каждое задание фокусируется на ключевых грамматических структурах Урока 4.</p>
-<p>💡 <em>Обратите внимание на конструкцию "自...至于..." и выражение длительности действия!</em></p>
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Набрать три тысячи человек, приказать нападать на племя Гун.</em></p>
 </div>
 
-<div class="task-container">
-<div class="task-title">1. 自今</div>
-<div class="oracle-text">自今</div>
-<div id="word-pool1" class="word-pool"></div>
-<div id="drop-area1" class="drop-area"></div>
-<div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-<p>💡 Эта фраза демонстрирует <strong>предлог 自</strong> в значении <strong>"начиная с"</strong></p>
-</div>
-</div>
-
-<div class="task-container">
-<div class="task-title">2. 自今至于甲辰</div>
-<div class="oracle-text">自今至于甲辰</div>
-<div id="word-pool2" class="word-pool"></div>
-<div id="drop-area2" class="drop-area"></div>
-<div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-<p>💡 Здесь важно <strong>конструкция 自...至于...</strong> для обозначения временных рамок</p>
-</div>
+<div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+<div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+        <li>登 — набирать</li>
+        <li>人 — человек</li>
+        <li>三千 — три тысячи</li>
+        <li>令 — приказать</li>
+        <li>伐 — нападать</li>
+        <li>工方 — племя Гун</li>
+        <li>注意: 登人三千 — «набрать три тысячи человек»</li>
+    </ul>
 </div>
 
-<div class="task-container">
-<div class="task-title">3. 自上甲</div>
-<div class="oracle-text">自上甲</div>
-<div id="word-pool3" class="word-pool"></div>
-<div id="drop-area3" class="drop-area"></div>
-<div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-<p>💡 Обратите внимание, что <strong>自</strong> может использоваться с именами предков</p>
-</div>
-</div>
+<p><strong>Иероглифы:</strong></p>
+<div id="char-pool"></div>
 
-<div class="task-container">
-<div class="task-title">4. 旬雨</div>
-<div class="oracle-text">旬雨</div>
-<div id="word-pool4" class="word-pool"></div>
-<div id="drop-area4" class="drop-area"></div>
-<div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-<p>💡 Эта фраза показывает, как выражается <strong>длительность действия</strong></p>
-</div>
-</div>
+<p><strong>Соберите здесь:</strong></p>
+<div id="drop-area"></div>
 
 <div class="controls">
-<button id="check-btn">Проверить</button>
-<button id="reset-btn">Сбросить</button>
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
 </div>
-
-<p id="result"></p>
+<p id="result" class="message"></p>
 
 <script>
-// Ожидаемые правильные варианты
-const expected1 = [
-['начиная', 'с', 'сегодня'],
-['от', 'сегодня', 'и', 'до'],
-['с', 'сегодняшнего', 'дня']
-];
+    const expected = ['登', '人', '三', '千', '令', '伐', '工', '方'];
+    const allChars = ['登', '人', '三', '千', '令', '伐', '工', '方', '王', '勿', '呼', '婦', '好'];
+    let charPool, dropArea, resultEl;
 
-const expected2 = [
-['начиная', 'с', 'сегодня', 'и', 'до', 'дня', 'цзя-чен'],
-['с', 'сегодня', 'по', 'день', 'цзя-чен'],
-['от', 'сегодняшнего', 'дня', 'и', 'до', 'дня', 'цзя-чен']
-];
+    function initCharPool() {
+        charPool = document.getElementById("char-pool");
+        dropArea = document.getElementById("drop-area");
+        resultEl = document.getElementById("result");
+        dropArea.innerHTML = '';
+        charPool.innerHTML = '';
+        allChars.forEach(char => {
+            const box = document.createElement('div');
+            box.className = 'char-box';
+            box.textContent = char;
+            box.addEventListener('click', () => moveToDropArea(box));
+            charPool.appendChild(box);
+        });
+    }
 
-const expected3 = [
-['начиная', 'с', 'Верхнего', 'Цзя'],
-['с', 'Верхнего', 'Цзя'],
-['от', 'Верхнего', 'Цзя', 'и', 'далее']
-];
+    function moveToDropArea(box) {
+        const clone = box.cloneNode(true);
+        clone.addEventListener('click', function() {
+            this.remove();
+            charPool.appendChild(box);
+        });
+        dropArea.appendChild(clone);
+    }
 
-const expected4 = [
-['дождь', 'будет', 'идти', 'в', 'течение', 'декады'],
-['дождь', 'в', 'течение', 'десяти', 'дней'],
-['дождь', 'на', 'протяжении', 'декады']
-];
+    document.getElementById("check-btn").addEventListener('click', () => {
+        const current = Array.from(dropArea.children).map(el => el.textContent);
+        if (arraysEqual(current, expected)) {
+            resultEl.innerHTML = '✅ Правильно!<br>登人三千令伐工方';
+            resultEl.className = 'message success';
+            sendResult(true);
+        } else {
+            resultEl.textContent = '❌ Попробуйте снова.';
+            resultEl.className = 'message';
+            sendResult(false, 'Неверный порядок');
+        }
+    });
 
-const words1 = ['начиная', 'с', 'сегодня', 'после', 'сейчас', 'в', 'этот', 'день', 'до', 'из', 'после', 'этого'];
-const words2 = ['начиная', 'с', 'сегодня', 'и', 'до', 'дня', 'цзя-чен', 'после', 'этого', 'месяца', 'в', 'течение', 'этого', 'времени'];
-const words3 = ['начиная', 'с', 'Верхнего', 'Цзя', 'после', 'этого', 'предка', 'в', 'эпоху', 'этого', 'правителя'];
-const words4 = ['дождь', 'будет', 'идти', 'в', 'течение', 'декады', 'сейчас', 'завтра', 'после', 'этого', 'месяца', 'утром', 'вечером'];
+    document.getElementById("reset-btn").addEventListener('click', initCharPool);
 
-const wordPool1 = document.getElementById('word-pool1');
-const wordPool2 = document.getElementById('word-pool2');
-const wordPool3 = document.getElementById('word-pool3');
-const wordPool4 = document.getElementById('word-pool4');
-const dropArea1 = document.getElementById('drop-area1');
-const dropArea2 = document.getElementById('drop-area2');
-const dropArea3 = document.getElementById('drop-area3');
-const dropArea4 = document.getElementById('drop-area4');
-const checkBtn = document.getElementById('check-btn');
-const resetBtn = document.getElementById('reset-btn');
-const resultEl = document.getElementById('result');
+    function arraysEqual(a, b) {
+        return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
 
-// Перемешивание массива (алгоритм Фишера-Йейтса)
-function shuffleArray(array) {
-const arr = [...array];
-for (let i = arr.length - 1; i > 0; i--) {
-const j = Math.floor(Math.random() * (i + 1));
-[arr[i], arr[j]] = [arr[j], arr[i]];
-}
-return arr;
-}
+    function sendResult(success, message) {
+        window.parent.postMessage({
+            type: "TASK_RESULT",
+            success: !!success,
+            message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+        }, "*");
+    }
 
-// Создаём DOM-элементы слов
-function createWordElements(words, pool, dropArea) {
-const shuffledWords = shuffleArray(words); // 🔁 Перемешиваем слова
-return shuffledWords.map(word => {
-const box = document.createElement('div');
-box.className = 'word-box';
-box.textContent = word;
+    document.getElementById("toggle-hint-btn").addEventListener("click", function () {
+        this.classList.toggle("active");
+        document.getElementById("hint-container").classList.toggle("show");
+    });
 
-box.onclick = () => {
-// Перемещаем в drop-area
-box.remove();
-dropArea.appendChild(box);
-updatePlaceholder(dropArea); // Обновляем состояние плейсхолдера
-};
-
-return box;
-});
-}
-
-// Обновляем видимость [пусто]
-function updatePlaceholder(dropArea) {
-const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
-dropArea.classList.toggle('has-words', hasWords);
-}
-
-let wordElements1 = [];
-let wordElements2 = [];
-let wordElements3 = [];
-let wordElements4 = [];
-
-function init() {
-// Очищаем
-wordPool1.innerHTML = '';
-wordPool2.innerHTML = '';
-wordPool3.innerHTML = '';
-wordPool4.innerHTML = '';
-dropArea1.innerHTML = '';
-dropArea2.innerHTML = '';
-dropArea3.innerHTML = '';
-dropArea4.innerHTML = '';
-resultEl.style.display = 'none';
-
-// Пересоздаём элементы со случайным порядком
-wordElements1 = createWordElements(words1, wordPool1, dropArea1);
-wordElements2 = createWordElements(words2, wordPool2, dropArea2);
-wordElements3 = createWordElements(words3, wordPool3, dropArea3);
-wordElements4 = createWordElements(words4, wordPool4, dropArea4);
-
-// Добавляем в пулы
-wordElements1.forEach(el => wordPool1.appendChild(el));
-wordElements2.forEach(el => wordPool2.appendChild(el));
-wordElements3.forEach(el => wordPool3.appendChild(el));
-wordElements4.forEach(el => wordPool4.appendChild(el));
-
-// Обновляем плейсхолдеры
-updatePlaceholder(dropArea1);
-updatePlaceholder(dropArea2);
-updatePlaceholder(dropArea3);
-updatePlaceholder(dropArea4);
-}
-
-// Обработка кликов в drop-area: возврат в пул
-dropArea1.addEventListener('click', (e) => {
-if (e.target.classList.contains('word-box')) {
-const wordBox = e.target;
-wordBox.remove();
-wordPool1.appendChild(wordBox);
-updatePlaceholder(dropArea1);
-}
-});
-
-dropArea2.addEventListener('click', (e) => {
-if (e.target.classList.contains('word-box')) {
-const wordBox = e.target;
-wordBox.remove();
-wordPool2.appendChild(wordBox);
-updatePlaceholder(dropArea2);
-}
-});
-
-dropArea3.addEventListener('click', (e) => {
-if (e.target.classList.contains('word-box')) {
-const wordBox = e.target;
-wordBox.remove();
-wordPool3.appendChild(wordBox);
-updatePlaceholder(dropArea3);
-}
-});
-
-dropArea4.addEventListener('click', (e) => {
-if (e.target.classList.contains('word-box')) {
-const wordBox = e.target;
-wordBox.remove();
-wordPool4.appendChild(wordBox);
-updatePlaceholder(dropArea4);
-}
-});
-
-function getWords(dropArea) {
-return Array.from(dropArea.children)
-.filter(el => el.classList.contains('word-box'))
-.map(el => el.textContent.trim());
-}
-
-checkBtn.addEventListener('click', () => {
-const current1 = getWords(dropArea1);
-const current2 = getWords(dropArea2);
-const current3 = getWords(dropArea3);
-const current4 = getWords(dropArea4);
-
-const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
-const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
-const isCorrect3 = expected3.some(option => arraysEqual(current3, option));
-const isCorrect4 = expected4.some(option => arraysEqual(current4, option));
-
-if (isCorrect1 && isCorrect2 && isCorrect3 && isCorrect4) {
-resultEl.innerHTML = `✅ <b>Идеально!</b> Вы усвоили ключевые структуры Урока 4: конструкцию "自...至于..." и выражение длительности действия.`;
-resultEl.className = 'message success';
-resultEl.style.display = 'block';
-sendResult(true);
-} else {
-let message = '❌ Проверьте порядок слов и значение конструкций:';
-if (!isCorrect1) message += '<br>• В первом задании: предлог 自 в значении "начиная с"';
-if (!isCorrect2) message += '<br>• Во втором: конструкция 自...至于... для временных рамок';
-if (!isCorrect3) message += '<br>• В третьем: использование 自 с именами предков';
-if (!isCorrect4) message += '<br>• В четвертом: выражение длительности действия (旬)';
-
-resultEl.innerHTML = message;
-resultEl.className = 'message error';
-resultEl.style.display = 'block';
-sendResult(false, message);
-}
-});
-
-resetBtn.addEventListener('click', init);
-
-function arraysEqual(a, b) {
-if (a.length !== b.length) return false;
-for (let i = 0; i < a.length; i++) {
-if (a[i] !== b[i]) return false;
-}
-return true;
-}
-
-function sendResult(success, message) {
-window.parent.postMessage({
-type: "TASK_RESULT",
-success: !!success,
-message: message || (success ? "Верно" : "Ошибка")
-}, "*");
-}
-
-// Инициализация
-window.onload = init;
-window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
-</script>
-</body>
-</html>
+    init

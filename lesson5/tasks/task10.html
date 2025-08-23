@@ -3,93 +3,104 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: 勿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Восстановите порядок слов</title>
 </head>
 <body>
-<h2>Что указывает предлог 自 в сочетании со стороной света?</h2>
-<p><strong>Пример: «有來艱自西»</strong></p>
-
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">yǒu lái jiān zì xī</div>
+<h2>Восстановите порядок слов</h2>
+<div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Небесный Владыка не пошлёт ли нам помощь?</em></p>
 </div>
 
-<div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
+<div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+<div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+        <li>帝 — Небесный Владыка</li>
+        <li>不 — не</li>
+        <li>我 — нам (местоимение, инвертируется)</li>
+        <li>受 — даровать</li>
+        <li>佑 — помощь</li>
+        <li>其 — ли (вопрос)</li>
+        <li>注意: 不我受佑 — инверсия при отрицании</li>
+    </ul>
+</div>
+
+<p><strong>Иероглифы:</strong></p>
+<div id="char-pool"></div>
+
+<p><strong>Соберите здесь:</strong></p>
+<div id="drop-area"></div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+<p id="result" class="message"></p>
 
 <script>
-  // ✅ Переменная называется options
-  const options = [
-    { text: "Указывает на конечный пункт: «Беда ушла на запад»", correct: false },
-    { text: "Указывает на место действия: «Беда на западе»", correct: false },
-    { text: "Указывает на направление: «Беда пришла С запада»", correct: true },
-    { text: "Указывает на время: «Беда пришла с заходом солнца»", correct: false }
-  ];
+    const expected = ['帝', '不', '我', '受', '佑'];
+    const allChars = ['帝', '不', '我', '受', '佑', '其', '有', '雨', '貞'];
+    let charPool, dropArea, resultEl;
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    function initCharPool() {
+        charPool = document.getElementById("char-pool");
+        dropArea = document.getElementById("drop-area");
+        resultEl = document.getElementById("result");
+        dropArea.innerHTML = '';
+        charPool.innerHTML = '';
+        allChars.forEach(char => {
+            const box = document.createElement('div');
+            box.className = 'char-box';
+            box.textContent = char;
+            box.addEventListener('click', () => moveToDropArea(box));
+            charPool.appendChild(box);
+        });
     }
-    return arr;
-  }
 
-  function renderOptions() {
-    const shuffled = shuffle(options); // ✅ Используем options
-    const container = document.getElementById("answers"); // ✅ Правильный ID
-    if (!container) {
-      console.error("Элемент #answers не найден");
-      return;
+    function moveToDropArea(box) {
+        const clone = box.cloneNode(true);
+        clone.addEventListener('click', function() {
+            this.remove();
+            charPool.appendChild(box);
+        });
+        dropArea.appendChild(clone);
     }
-    container.innerHTML = "";
 
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct;
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
+    document.getElementById("check-btn").addEventListener('click', () => {
+        const current = Array.from(dropArea.children).map(el => el.textContent);
+        if (arraysEqual(current, expected)) {
+            resultEl.innerHTML = '✅ Правильно!<br>帝不我受佑';
+            resultEl.className = 'message success';
+            sendResult(true);
+        } else {
+            resultEl.textContent = '❌ Попробуйте снова.';
+            resultEl.className = 'message';
+            sendResult(false, 'Неверный порядок');
+        }
     });
-  }
 
-  // ✅ Принимаем параметры, используем resultId
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
+    document.getElementById("reset-btn").addEventListener('click', initCharPool);
 
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+    function arraysEqual(a, b) {
+        return a.length === b.length && a.every((v, i) => v === b[i]);
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно!";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно.";
-      sendResult(false);
+    function sendResult(success, message) {
+        window.parent.postMessage({
+            type: "TASK_RESULT",
+            success: !!success,
+            message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+        }, "*");
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    document.getElementById("toggle-hint-btn").addEventListener("click", function () {
+        this.classList.toggle("active");
+        document.getElementById("hint-container").classList.toggle("show");
+    });
 
-  // Запускаем после загрузки страницы
-  window.onload = renderOptions;
+    initCharPool();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 </body>
 </html>
-
-<!-- Уведомление о существовании задания -->
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
