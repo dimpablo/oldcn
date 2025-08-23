@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Собери фразу</title>
   <style>
+  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -148,13 +149,14 @@
       color: #27ae60;
     }
   </style>
+  </style>
 </head>
 <body>
   <h2>Собери фразу</h2>
 
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Мы вступим в город в наступающем втором месяце.</em></p>
+    <p><em>Начиная с сегодняшнего дня и кончая днем цзя-чэнь, будет ли дождь? Затем, начиная с дня цзи-сы, мы будем молить о дожде.</em></p>
   </div>
 
   <!-- Кнопка для раскрытия подсказок -->
@@ -163,11 +165,11 @@
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>生二月 — в наступающем втором месяце</li>
-      <li>我 — мы</li>
-      <li>入 — вступить</li>
-      <li>于 — в (направление движения)</li>
-      <li>商 — город (Великий город Шан)</li>
+      <li>自今至于甲辰 — начиная с сегодняшнего дня и кончая днем цзя-чэнь</li>
+      <li>其雨？ — будет ли дождь?</li>
+      <li>自丁巳 — начиная с дня цзи-сы</li>
+      <li>我求 — мы будем молить</li>
+      <li>其 — частица, указывающая на будущее/возможность (вопрос)</li>
     </ul>
   </div>
 
@@ -185,13 +187,15 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['生', '二', '月', '我', '入', '于', '商'];
+    // Изменено: Ожидаемая последовательность теперь соответствует новому, более сложному предложению.
+    const expected = ['自', '今', '至', '于', '甲', '辰', '其', '雨', '自', '丁', '巳', '我', '求'];
 
+    // Изменено: Пул иероглифов обновлен, чтобы включить необходимые для нового предложения.
     const allChars = [
-      '生', '二', '月', '我', '入', '于', '商',
-      '今', '来', '白', '马', '工', '方', '大', '邑',
-      '受', '年', '不', '其', '雨', '王', '占', '曰',
-      '告', '勿', '求', '六', '七', '九', '庚', '寅'
+      '自', '今', '至', '于', '甲', '辰', '其', '雨', '丁', '巳', '我', '求',
+      '壬', '寅', '卜', '㱿', '貞', '弗', '子', '商', '烖', '基', '方', '弗',
+      '戊', '申', '爭', '帝', '降', '馬', '佑', '工', '洹', '作', '邑', '合',
+      '乙', '亥', '侯', '虎', '得', '汝', '使', '不', '朕', '羌', '余', '弗'
     ].sort(() => Math.random() - 0.5);
 
     const toggleBtn = document.getElementById('toggle-hint-btn');
@@ -201,6 +205,7 @@
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
 
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
@@ -237,7 +242,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>生二月我入于商';
+        resultEl.innerHTML = '✅ Правильно!<br>自今至于癸亥王求';
         resultEl.className = 'message success';
         sendResult(true);
       } else {

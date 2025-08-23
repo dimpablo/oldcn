@@ -1,162 +1,87 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 勿</title>
-<style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 4px 0;
-      padding: 0;
-      font-size: 14px;
-      line-height: 1.4;
-      background: #fff;
-      color: #333;
-    }
-
-    h2 {
-      margin: 0 0 6px 0;
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    p {
-      margin: 5px 0;
-    }
-
-    .pinyin-container {
-      margin: 6px 0;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .pinyin-toggle {
-      background: #f5f5f5;
-      border: none;
-      padding: 5px 10px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      font-size: 13px;
-      color: #444;
-      margin: 0;
-    }
-
-    .pinyin-toggle::after {
-      content: '▼';
-      float: right;
-      font-size: 10px;
-      transition: transform 0.2s;
-    }
-
-    .pinyin-toggle.expanded::after {
-      transform: rotate(180deg);
-    }
-
-    .pinyin-text {
-      padding: 0 10px;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
-      background: #f9f9f9;
-      font-style: italic;
-      color: #555;
-      font-size: 13px;
-    }
-
-    .pinyin-text.expanded {
-      padding: 5px 10px;
-      max-height: 60px;
-    }
-
-    label {
-      display: block;
-      margin: 5px 0;
-      font-size: 14px;
-    }
-
-    input[type="radio"] {
-      margin-right: 6px;
-    }
-
-    button {
-      padding: 6px 10px;
-      font-size: 14px;
-      background: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-
-    button:active {
-      background: #0055aa;
-    }
-
-    #result {
-      margin: 6px 0 0 0;
-      font-size: 14px;
-      min-height: 1.4em;
-    }
-  </style></head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: 勿</title>
+</head>
 <body>
-<h2>Как переводится устойчивое выражение 有來艱?</h2> <p><strong>Пример: «洗震告曰: ...工方亦侵我西鄙田。四日庚申亦有來艱自北»</strong></p> <div class="pinyin-container"> <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')"> Показать пиньинь </button> <div class="pinyin-text">Xǐ Zhèn gào yuē: ... Gōng fāng yì qīn wǒ xī bǐ tián. sì rì gēng shēn yì yǒu lái jiān zì běi</div> </div> <div id="answers-2"></div> <button onclick="check('answers-2', 'result-2', options2)">Проверить</button> <p id="result-2"></p> <script> const options2 = [ { text: "Сообщение о победе: «Пришла весть о победе»", correct: false }, { text: "Формальное донесение: «Поступил доклад»", correct: false }, { text: "Сообщение о беде: «(Ко мне) пришла беда»", correct: true }, { text: "Предсказание беды: «Будет беда»", correct: false } ];
+<h2>Как переводится устойчивое выражение 有來艱?</h2>
+<p><strong>Пример: «洗震告曰: ...工方亦侵我西鄙田。四日庚申亦有來艱自北»</strong></p>
 
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">Xǐ Zhèn gào yuē: ... Gōng fāng yì qīn wǒ xī bǐ tián. sì rì gēng shēn yì yǒu lái jiān zì běi</div>
+</div>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { text: "Сообщение о победе: «Пришла весть о победе»", correct: false },
+    { text: "Формальное донесение: «Поступил доклад»", correct: false },
+    { text: "Сообщение о беде: «(Ко мне) пришла беда»", correct: true },
+    { text: "Предсказание беды: «Будет беда»", correct: false }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers"); // ✅ Исправлено: answers
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct;
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  // ✅ Принимаем параметры: containerId не используется, но resultId — нужен
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId); // ✅ Используем переданный ID
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
     }
 
-    function renderOptions() {
-      const shuffled = shuffle(options);
-      const container = document.getElementById("answers");
-      container.innerHTML = "";
-
-      shuffled.forEach((opt, index) => {
-        const label = document.createElement("label");
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "q";
-        input.value = opt.correct ? "1" : "0_" + index;
-        input.dataset.correct = opt.correct;
-
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(opt.text));
-        container.appendChild(label);
-      });
+    if (selected.dataset.correct === "true") {
+      resultEl.textContent = "✅ Правильно!";
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно.";
+      sendResult(false);
     }
+  }
 
-    function check() {
-      const selected = document.querySelector('input[name="q"]:checked');
-      const resultEl = document.getElementById("result");
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
 
-      if (!selected) {
-        resultEl.textContent = "Выберите вариант.";
-        return;
-      }
-
-      if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
-        sendResult(true);
-      } else {
-        resultEl.textContent = "❌ Неверно.";
-        sendResult(false);
-      }
-    }
-
-    function sendResult(success) {
-      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-    }
-
-    window.onload = renderOptions;
-  </script>
+  window.onload = renderOptions;
+</script>
 </body>
 </html>
 <script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
