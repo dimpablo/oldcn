@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Тест</title>
+</head>
+<body>
+<h2>Почему в фразе «帝不我受佑» местоимение «我» стоит перед глаголом?</h2>
+<div class="toggle-hint" id="toggle-hint-btn">💡 Подсказка</div>
+<div class="hint-container" id="hint-container">
+    <p>Правило из грамматики: при отрицании 不 и личном дополнении — инверсия.</p>
+</div>
+<div id="answers"></div>
+<button id="check-btn">Проверить</button>
+<p id="result" class="message"></p>
+<script>
+    const options = [
+        { text: "Потому что 不 требует инверсии прямого дополнения-местоимения", correct: true },
+        { text: "Потому что 我 — подлежащее", correct: false },
+        { text: "Потому что это вопрос", correct: false },
+        { text: "Потому что глагол редкий", correct: false }
+    ];
+
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function render() {
+        const container = document.getElementById("answers");
+        shuffle(options).forEach(opt => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "q";
+            input.dataset.correct = opt.correct;
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt.text));
+            container.appendChild(label);
+        });
+    }
+
+    document.getElementById("check-btn").addEventListener("click", () => {
+        const selected = document.querySelector('input[name="q"]:checked');
+        const result = document.getElementById("result");
+        if (!selected) {
+            result.textContent = "Выберите вариант.";
+            return;
+        }
+        if (selected.dataset.correct === "true") {
+            result.innerHTML = "✅ Верно! При 不 и местоименном дополнении — инверсия обязательна.";
+            sendResult(true);
+        } else {
+            result.textContent = "❌ Неверно. Это грамматическое правило инверсии при отрицании.";
+            sendResult(false);
+        }
+    });
+
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    document.getElementById("toggle-hint-btn").addEventListener("click", () => {
+        this.classList.toggle("active");
+        document.getElementById("hint-container").classList.toggle("show");
+    });
+
+    render();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

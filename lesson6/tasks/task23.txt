@@ -2,37 +2,33 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 10</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Сопоставление</title>
 </head>
 <body>
-<h2>Сопоставьте иероглиф и значение</h2>
-<p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-
+<h2>Сопоставьте фразу и её тип</h2>
+<p class="intro">Кликните на фразу, затем — на правильный тип.</p>
 <div class="match-container">
     <div class="column">
-        <h3>Иероглифы</h3>
+        <h3>Фразы</h3>
         <div id="words"></div>
     </div>
     <div class="column">
-        <h3>Значения</h3>
+        <h3>Тип</h3>
         <div id="defs"></div>
     </div>
 </div>
-
 <button onclick="reset()">Сбросить</button>
 <p id="result"></p>
-
 <script>
     const pairs = [
-        { char: "艰", meaning: "бедствие, трудность" },
-        { char: "来", meaning: "приходить" },
-        { char: "自", meaning: "из, от" },
-        { char: "西", meaning: "запад" },
-        { char: "侵", meaning: "вторгаться" }
+        { char: "不我降熯", meaning: "инверсия при 不 + 我" },
+        { char: "帝受我佑", meaning: "стандартный порядок" },
+        { char: "不余降災", meaning: "инверсия при 不 + 余" },
+        { char: "王令婦好伐", meaning: "стандартный порядок" },
+        { char: "不朕受福", meaning: "инверсия при 不 + 朕" }
     ];
-
     let selectedWord = null;
     let matchedPairs = 0;
     const wordList = document.getElementById("words");
@@ -40,12 +36,7 @@
     const resultEl = document.getElementById("result");
 
     function shuffle(array) {
-        const arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
+        return [...array].sort(() => Math.random() - 0.5);
     }
 
     function init() {
@@ -55,10 +46,7 @@
         matchedPairs = 0;
         resultEl.textContent = '';
 
-        const shuffledChars = shuffle(pairs);
-        const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
-
-        shuffledChars.forEach(item => {
+        shuffle(pairs).forEach(item => {
             const el = document.createElement("div");
             el.className = "word-item";
             el.dataset.char = item.char;
@@ -67,7 +55,7 @@
             wordList.appendChild(el);
         });
 
-        shuffledMeanings.forEach(meaning => {
+        shuffle(pairs.map(p => p.meaning)).forEach(meaning => {
             const el = document.createElement("div");
             el.className = "def-item";
             el.dataset.meaning = meaning;
@@ -87,15 +75,13 @@
     function selectDefinition(el) {
         if (el.classList.contains("matched")) return;
         if (!selectedWord) {
-            resultEl.textContent = "Сначала выберите иероглиф.";
+            resultEl.textContent = "Выберите фразу.";
             setTimeout(() => resultEl.textContent = "", 1500);
             return;
         }
-
         const char = selectedWord.dataset.char;
         const meaning = el.dataset.meaning;
         const correctMeaning = pairs.find(p => p.char === char).meaning;
-
         if (meaning === correctMeaning) {
             selectedWord.classList.add("matched");
             el.classList.add("matched");
@@ -104,15 +90,13 @@
             selectedWord = null;
             matchedPairs++;
             if (matchedPairs === 5) {
-                resultEl.textContent = "✅ Все пары верны!";
+                resultEl.innerHTML = "✅ Все верно! Вы усвоили правило инверсии.";
                 resultEl.className = "success";
                 sendResult(true);
             }
         } else {
             resultEl.textContent = "❌ Ошибка.";
-            setTimeout(() => {
-                resultEl.textContent = "";
-            }, 1500);
+            setTimeout(() => resultEl.textContent = "", 1500);
             selectedWord.classList.remove("selected");
             selectedWord = null;
         }
@@ -123,11 +107,7 @@
     }
 
     function sendResult(success) {
-        window.parent.postMessage({
-            type: "TASK_RESULT",
-            success: !!success,
-            message: success ? "Все значения верны" : "Есть ошибки"
-        }, "*");
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
     }
 
     init();

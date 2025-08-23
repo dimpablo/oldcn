@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Перевод</title>
+</head>
+<body>
+<h2>Сопоставьте фразу и её перевод</h2>
+<p>Кликните на фразу, затем на перевод.</p>
+<div class="match-container">
+    <div class="column">
+        <div id="phrases"></div>
+    </div>
+    <div class="column">
+        <div id="translates"></div>
+    </div>
+</div>
+<button onclick="reset()">Сбросить</button>
+<p id="result"></p>
+<script>
+    const pairs = [
+        { p: "不我降熯", t: "Не пошлёт ли нам засуху?" },
+        { p: "帝不我受佑", t: "Не дарует ли Ван нам помощь?" },
+        { p: "帝受我佑", t: "Ван дарует нам помощь" },
+        { p: "不我熯", t: "Не иссушит ли он нас?" },
+        { p: "王令婦好伐", t: "Ван приказывает Хао нападать" }
+    ];
+    let selPhrase = null;
+    let matched = 0;
+
+    function init() {
+        document.getElementById("phrases").innerHTML = '';
+        document.getElementById("translates").innerHTML = '';
+        selPhrase = null;
+        matched = 0;
+        document.getElementById("result").textContent = '';
+
+        shuffle(pairs).forEach(p => {
+            const el = document.createElement("div");
+            el.className = "word-item";
+            el.dataset.p = p.p;
+            el.textContent = p.p;
+            el.onclick = () => selectPhrase(el);
+            document.getElementById("phrases").appendChild(el);
+        });
+
+        shuffle(pairs.map(p => p.t)).forEach(t => {
+            const el = document.createElement("div");
+            el.className = "def-item";
+            el.dataset.t = t;
+            el.textContent = t;
+            el.onclick = () => selectTrans(el);
+            document.getElementById("translates").appendChild(el);
+        });
+    }
+
+    function selectPhrase(el) {
+        if (el.classList.contains("matched")) return;
+        if (selPhrase) selPhrase.classList.remove("selected");
+        selPhrase = el;
+        el.classList.add("selected");
+    }
+
+    function selectTrans(el) {
+        if (el.classList.contains("matched") || !selPhrase) return;
+        const p = selPhrase.dataset.p;
+        const t = el.dataset.t;
+        const correct = pairs.find(x => x.p === p).t;
+        if (t === correct) {
+            selPhrase.classList.add("matched");
+            el.classList.add("matched");
+            selPhrase.onclick = null;
+            el.onclick = null;
+            selPhrase = null;
+            matched++;
+            if (matched === 5) {
+                document.getElementById("result").innerHTML = "✅ Все верно!";
+                sendResult(true);
+            }
+        } else {
+            selPhrase.classList.remove("selected");
+            selPhrase = null;
+        }
+    }
+
+    function reset() { init(); }
+    function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    init();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

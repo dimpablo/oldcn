@@ -2,37 +2,33 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: фразы</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Сопоставление</title>
 </head>
 <body>
-<h2>Сопоставьте фразу и её перевод</h2>
-<p class="intro">Кликните на фразу слева, затем — на правильный перевод справа</p>
-
+<h2>Сопоставьте иероглиф и его грамматическую роль</h2>
+<p class="intro">Кликните на иероглиф, затем — на правильное описание.</p>
 <div class="match-container">
     <div class="column">
-        <h3>Фразы</h3>
+        <h3>Иероглифы</h3>
         <div id="words"></div>
     </div>
     <div class="column">
-        <h3>Переводы</h3>
+        <h3>Описание</h3>
         <div id="defs"></div>
     </div>
 </div>
-
 <button onclick="reset()">Сбросить</button>
 <p id="result"></p>
-
 <script>
     const pairs = [
-        { char: "土方征于我東鄙", meaning: "Племя Ту напало на нашу восточную окраину" },
-        { char: "工方亦侵我西鄙", meaning: "Племя Гун также вторглось на нашу западную окраину" },
-        { char: "有來艱自西", meaning: "Пришло бедствие с запада" },
-        { char: "王占曰：有祟", meaning: "Ван гаданием сказал: есть опасность" },
-        { char: "允有來艱", meaning: "Действительно пришло бедствие" }
+        { char: "不", meaning: "отрицание, вызывает инверсию дополнения" },
+        { char: "我", meaning: "местоимение, при 不 — инвертируется перед глаголом" },
+        { char: "有", meaning: "иметь (в значении 'наличие')" },
+        { char: "亡", meaning: "не иметь (отрицание вместо 不有)" },
+        { char: "及", meaning: "предлог «к моменту...», «когда наступит...»" }
     ];
-
     let selectedWord = null;
     let matchedPairs = 0;
     const wordList = document.getElementById("words");
@@ -55,10 +51,10 @@
         matchedPairs = 0;
         resultEl.textContent = '';
 
-        const shuffledPhrases = shuffle(pairs);
-        const shuffledTranslations = shuffle(pairs.map(p => p.meaning));
+        const shuffledChars = shuffle(pairs);
+        const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
 
-        shuffledPhrases.forEach(item => {
+        shuffledChars.forEach(item => {
             const el = document.createElement("div");
             el.className = "word-item";
             el.dataset.char = item.char;
@@ -67,7 +63,7 @@
             wordList.appendChild(el);
         });
 
-        shuffledTranslations.forEach(meaning => {
+        shuffledMeanings.forEach(meaning => {
             const el = document.createElement("div");
             el.className = "def-item";
             el.dataset.meaning = meaning;
@@ -87,15 +83,13 @@
     function selectDefinition(el) {
         if (el.classList.contains("matched")) return;
         if (!selectedWord) {
-            resultEl.textContent = "Сначала выберите фразу.";
+            resultEl.textContent = "Сначала выберите иероглиф.";
             setTimeout(() => resultEl.textContent = "", 1500);
             return;
         }
-
         const char = selectedWord.dataset.char;
         const meaning = el.dataset.meaning;
         const correctMeaning = pairs.find(p => p.char === char).meaning;
-
         if (meaning === correctMeaning) {
             selectedWord.classList.add("matched");
             el.classList.add("matched");
@@ -104,7 +98,7 @@
             selectedWord = null;
             matchedPairs++;
             if (matchedPairs === 5) {
-                resultEl.textContent = "✅ Все пары верны!";
+                resultEl.innerHTML = "✅ Все верно! Вы усвоили ключевые элементы Урока 6.";
                 resultEl.className = "success";
                 sendResult(true);
             }
@@ -126,7 +120,7 @@
         window.parent.postMessage({
             type: "TASK_RESULT",
             success: !!success,
-            message: success ? "Все фразы сопоставлены верно" : "Есть ошибки"
+            message: success ? "Все соответствия верны" : "Есть ошибки"
         }, "*");
     }
 

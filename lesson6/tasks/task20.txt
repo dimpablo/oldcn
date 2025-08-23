@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Определение типа</title>
+    <style>
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+        .modal-content { background: white; margin: 10% auto; padding: 20px; width: 80%; max-width: 500px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<h2>Определите тип конструкции</h2>
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')"><strong>不我降熯</strong> <span id="s1">?</span></div>
+    <div class="cell" onclick="openModal('q2')"><strong>帝受我佑</strong> <span id="s2">?</span></div>
+</div>
+<button onclick="checkAll()">Проверить</button>
+<p id="result"></p>
+
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <h3>不我降熯</h3>
+        <div class="options">
+            <label><input type="radio" name="q1" value="инверсия">инверсия</label>
+            <label><input type="radio" name="q1" value="прямой">прямой порядок</label>
+        </div>
+        <button onclick="close('q1')">OK</button>
+    </div>
+</div>
+
+<script>
+    const ans = { q1: "инверсия", q2: "прямой" };
+    let user = { q1: null, q2: null };
+
+    function openModal(id) { document.getElementById(`modal-${id}`).style.display = "flex"; }
+    function close(id) {
+        const sel = document.querySelector(`input[name="${id}"]:checked`);
+        if (sel) {
+            user[id] = sel.value;
+            document.getElementById(`s${id.replace('q','')}`).textContent = "✓";
+            document.getElementById(`s${id.replace('q','')}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
+    }
+    function checkAll() {
+        if (!user.q1 || !user.q2) {
+            document.getElementById("result").textContent = "Ответьте на всё.";
+            return;
+        }
+        const correct = (user.q1 === ans.q1 && user.q2 === ans.q2);
+        const result = document.getElementById("result");
+        if (correct) {
+            result.innerHTML = "✅ Все верно! Инверсия при 不 + 我 — обязательна.";
+            sendResult(true);
+        } else {
+            result.textContent = "❌ Ошибка.";
+            sendResult(false);
+        }
+    }
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
+    window.parent.postMessage({ type: "TASK_EXISTS", valid

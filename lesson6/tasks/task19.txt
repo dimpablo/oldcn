@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Сборка</title>
+</head>
+<body>
+<h2>Соберите фразу: «Не пошлёт ли Небесный Владыка нам засуху?»</h2>
+<div id="pool">帝 不 我 降 熯 其</div>
+<div id="drop"></div>
+<button id="check">Проверить</button>
+<p id="result"></p>
+<script>
+    const expected = ['帝', '不', '我', '降', '熯', '其'];
+    const pool = document.getElementById('pool');
+    const drop = document.getElementById('drop');
+    const check = document.getElementById('check');
+    const result = document.getElementById('result');
+
+    pool.querySelectorAll('div').forEach(el => el.remove());
+    expected.sort(() => Math.random() - 0.5).forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.onclick = () => {
+            const clone = box.cloneNode(true);
+            clone.onclick = () => { clone.remove(); pool.appendChild(box); };
+            drop.appendChild(clone);
+        };
+        pool.appendChild(box);
+    });
+
+    check.onclick = () => {
+        const current = Array.from(drop.children).map(c => c.textContent);
+        if (JSON.stringify(current) === JSON.stringify(expected)) {
+            result.innerHTML = "✅ Правильно! <strong>帝不我降熯其</strong> — классическая инверсия при 不 + 我.";
+            sendResult(true);
+        } else {
+            result.textContent = "❌ Попробуйте снова.";
+            sendResult(false);
+        }
+    };
+
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

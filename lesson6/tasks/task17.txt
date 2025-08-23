@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Причина инверсии</title>
+</head>
+<body>
+<h2>Почему в фразе «帝不我降熯» местоимение «我» стоит перед глаголом?</h2>
+<div id="options">
+    <label><input type="radio" name="q" value="0">Потому что это вопрос</label>
+    <label><input type="radio" name="q" value="1">Из-за сочетания 不 и местоименного дополнения — обязательная инверсия</label>
+    <label><input type="radio" name="q" value="0">Потому что «我» — подлежащее</label>
+    <label><input type="radio" name="q" value="0">Глагол «降» требует инверсии</label>
+</div>
+<button id="check">Проверить</button>
+<p id="result"></p>
+<script>
+    document.getElementById("check").addEventListener("click", () => {
+        const selected = document.querySelector('input[name="q"]:checked');
+        const result = document.getElementById("result");
+        if (!selected) {
+            result.textContent = "Выберите вариант.";
+            return;
+        }
+        if (selected.value === "1") {
+            result.innerHTML = "✅ Верно. Это грамматическое правило: при 不 + местоимение — инверсия дополнения обязательна.";
+            sendResult(true);
+        } else {
+            result.textContent = "❌ Неверно. Инверсия вызвана не смыслом, а синтаксисом.";
+            sendResult(false);
+        }
+    });
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

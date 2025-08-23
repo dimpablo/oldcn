@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 6: Сборка</title>
+</head>
+<body>
+<h2>Соберите фразу</h2>
+<div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>В день Синь будет ли дождь?</em></p>
+</div>
+<div class="toggle-hint" id="toggle-hint-btn">💡 Подсказка</div>
+<div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+        <li>辛 — день Синь (из циклических знаков)</li>
+        <li>有 — будет (иметь)</li>
+        <li>雨 — дождь</li>
+        <li>其 — ли (вопрос)</li>
+        <li>⚠️ 及辛 — «к моменту дня Синь»</li>
+    </ul>
+</div>
+<p><strong>Иероглифы:</strong></p>
+<div id="char-pool"></div>
+<p><strong>Соберите здесь:</strong></p>
+<div id="drop-area"></div>
+<button id="check-btn">Проверить</button>
+<button id="reset-btn">Сбросить</button>
+<p id="result" class="message"></p>
+<script>
+    const expected = ['及', '辛', '有', '雨', '其'];
+    const allChars = ['及', '辛', '有', '雨', '其', '二', '月', '不', '亡', '贞'];
+    let charPool, dropArea, resultEl;
+
+    function init() {
+        charPool = document.getElementById("char-pool");
+        dropArea = document.getElementById("drop-area");
+        resultEl = document.getElementById("result");
+        renderChars();
+    }
+
+    function renderChars() {
+        charPool.innerHTML = '';
+        dropArea.innerHTML = '';
+        allChars.forEach(char => {
+            const box = document.createElement('div');
+            box.className = 'char-box';
+            box.textContent = char;
+            box.onclick = () => addToDrop(box);
+            charPool.appendChild(box);
+        });
+    }
+
+    function addToDrop(box) {
+        const clone = box.cloneNode(true);
+        clone.onclick = () => { clone.remove(); charPool.appendChild(box); };
+        dropArea.appendChild(clone);
+    }
+
+    document.getElementById("check-btn").addEventListener("click", () => {
+        const current = Array.from(dropArea.children).map(c => c.textContent);
+        if (arraysEqual(current, expected)) {
+            resultEl.innerHTML = "✅ Правильно!<br><strong>及辛有雨其</strong> — «Будет ли дождь к моменту дня Синь?»";
+            resultEl.className = "message success";
+            sendResult(true);
+        } else {
+            resultEl.textContent = "❌ Попробуйте снова.";
+            resultEl.className = "message";
+            sendResult(false);
+        }
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", init);
+
+    function arraysEqual(a, b) {
+        return a.length === b.length && a.every((v,i) => v === b[i]);
+    }
+
+    function sendResult(success) {
+        window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    document.getElementById("toggle-hint-btn").addEventListener("click", () => {
+        this.classList.toggle("active");
+        document.getElementById("hint-container").classList.toggle("show");
+    });
+
+    init();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
