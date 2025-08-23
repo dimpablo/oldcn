@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Синтаксис — Древний Китай</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1a5fb4;
+            font-size: 1.4em;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        #sentence {
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            padding: 8px 12px;
+            background: #e9f5ff;
+            border-radius: 6px;
+            margin: 10px 15px;
+            color: #154080;
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        #sentence::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #workspace {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            overflow: hidden;
+            margin: 15px 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .word-tag {
+            position: absolute;
+            background: #e6f2ff;
+            border: 1px solid #9cc8ff;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-size: 1.1em;
+            font-family: 'Noto Serif CJK SC', serif;
+            cursor: pointer;
+            user-select: none;
+            transform: translate(-50%, -50%);
+            transition: none;
+            pointer-events: auto;
+            min-width: 36px;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 2;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .word-tag.selected {
+            border-color: #ff9800;
+            background: #fff3e0;
+            box-shadow: 0 0 0 3px #ffe0b2;
+            z-index: 20;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 15px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            background: #e74c3c;
+            color: white;
+            transition: background 0.2s;
+        }
+        
+        button:active {
+            background: #c0392b;
+        }
+        
+        #feedback {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 15px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .syntax-label {
+            position: absolute;
+            font-family: 'Noto Serif CJK SC', 'Segoe UI', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #1a5fb4;
+            background: rgba(233, 245, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #b3d9ff;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 15;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Синтаксические связи</h1>
+    
+    <div id="sentence">癸卯卜爭貞今歳商受年</div>
+    
+    <div id="workspace">
+        <canvas id="canvas"></canvas>
+    </div>
+    
+    <div id="feedback"></div>
+    
+    <div class="controls">
+        <button id="resetBtn">Сбросить связи</button>
+    </div>
+
+<script>
+    // Единый источник данных
+ 
+    const syntaxData = {
+    words: ["癸卯", "卜", "爭", "貞", "今歳", "商", "受", "年"],
+    links: [
+        // ОСНОВНОЕ ПРЕДЛОЖЕНИЕ: [Кто?][Что сделал?][Когда?]
+        
+        // Сказуемое "貞" (задал) контролируется подлежащим "爭" (Чжэн). Вопрос: что сделал Чжэн? Задал вопрос.
+        { from: "爭", to: "貞", fromRole: "Подлежащее", toRole: "Сказуемое" },
+        
+        // Подлежащее "爭" (Чжэн) контролирует свое приложение "卜" (гадатель). Вопрос: Чжэн (какой?) -> гадатель.
+        { from: "爭", to: "卜", fromRole: "Подлежащее", toRole: "Приложение" },
+        
+        // Сказуемое "貞" (задал) контролирует обстоятельство "癸卯" (в день гуй-мао). Вопрос: задал (когда?) -> в день гуй-мао.
+        { from: "貞", to: "癸卯", fromRole: "Сказуемое", toRole: "Обстоятельство времени" },
+        
+        
+        // СОДЕРЖАНИЕ ВОПРОСА: [Кто?][Что сделает?][Что?][Когда?]
+        
+        // Подлежащее "商" (Шан)контролирует сказуемое "受" (получит). Вопрос: Шан что сделает? Получит.
+        { from: "商", to: "受", fromRole: "Подлежащее", toRole: "Сказуемое" },
+        
+        // Сказуемое "受" (получит) контролирует дополнение "年" (урожай). Вопрос: получит (что?) -> урожай.
+        { from: "受", to: "年", fromRole: "Сказуемое", toRole: "Дополнение" },
+        
+        // Сказуемое "受" (получит) контролирует обстоятельство "今歳" (в этом году). Вопрос: получит (когда?) -> в этом году.
+        { from: "受", to: "今歳", fromRole: "Сказуемое", toRole: "Обстоятельство времени" },
+        
+        
+        // СВЯЗЬ МЕЖДУ ЧАСТЯМИ:
+        // Сказуемое главного предложения "貞" (задал) контролирует все содержание вопроса.
+        // Упрощенно: "задал" (что?) -> "вопрос о том, получит ли...".
+        // На графе это показывается связью от "貞" к ядру вопроса ("受").
+        { from: "貞", to: "受", fromRole: "Сказуемое", toRole: "Содержание вопроса" }
+    ]
+};
+
+    // Автоматически извлекаем данные
+    const words = syntaxData.words;
+    const correctLinks = syntaxData.links.map(link => [link.from, link.to]);
+
+    const linkLabels = {};
+    syntaxData.links.forEach(link => {
+        linkLabels[`${link.from}-${link.to}`] = {
+            from: link.fromRole,
+            to: link.toRole
+        };
+    });
+
+    let selectedWord = null;
+    let drawnLinks = [];
+    const workspace = document.getElementById('workspace');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        canvas.width = workspace.offsetWidth;
+        canvas.height = workspace.offsetHeight;
+        placeWordsWithoutOverlap();
+        drawAllLinks();
+    }
+
+    window.addEventListener('resize', () => setTimeout(resizeCanvas, 100));
+    document.addEventListener('DOMContentLoaded', resizeCanvas);
+
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function doOverlap(el1, el2) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+        return !(
+            rect1.right < rect2.left || 
+            rect1.left > rect2.right || 
+            rect1.bottom < rect2.top || 
+            rect1.top > rect2.bottom
+        );
+    }
+
+    function clearWords() {
+        document.querySelectorAll('.word-tag').forEach(el => el.remove());
+    }
+
+    function placeWordsWithoutOverlap() {
+        clearWords();
+        const shuffled = shuffle(words);
+        const placed = [];
+
+        shuffled.forEach(word => {
+            let attempts = 0;
+            const maxAttempts = 300;
+            let success = false;
+
+            while (attempts < maxAttempts && !success) {
+                const x = 40 + Math.random() * (canvas.width - 80);
+                const y = 40 + Math.random() * (canvas.height - 80);
+
+                const tag = document.createElement('div');
+                tag.className = 'word-tag';
+                tag.textContent = word;
+                tag.dataset.word = word;
+                tag.style.left = `${x}px`;
+                tag.style.top = `${y}px`;
+                tag.style.opacity = '0';
+                workspace.appendChild(tag);
+
+                let overlaps = false;
+                for (const el of placed) {
+                    if (doOverlap(tag, el)) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+
+                if (!overlaps) {
+                    tag.style.opacity = '1';
+                    placed.push(tag);
+                    success = true;
+                } else {
+                    tag.remove();
+                }
+
+                attempts++;
+            }
+
+            if (!success) {
+                const grid = generateGrid(60, 60);
+                const available = grid.filter(cell => {
+                    const tag = document.createElement('div');
+                    tag.className = 'word-tag';
+                    tag.textContent = word;
+                    tag.style = `position: absolute; left: ${cell.x}px; top: ${cell.y}px; transform: translate(-50%, -50%); opacity: 0;`;
+                    workspace.appendChild(tag);
+                    const overlaps = placed.some(el => doOverlap(tag, el));
+                    tag.remove();
+                    return !overlaps;
+                });
+
+                const chosen = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : grid[0];
+                const tag = document.createElement('div');
+                tag.className = 'word-tag';
+                tag.textContent = word;
+                tag.dataset.word = word;
+                tag.style.left = `${chosen.x}px`;
+                tag.style.top = `${chosen.y}px`;
+                workspace.appendChild(tag);
+                placed.push(tag);
+            }
+        });
+
+        placed.forEach(tag => {
+            tag.addEventListener('click', () => handleWordClick(tag));
+        });
+    }
+
+    function generateGrid(stepX, stepY) {
+        const grid = [];
+        for (let x = 60; x < canvas.width - 60; x += stepX) {
+            for (let y = 60; y < canvas.height - 60; y += stepY) {
+                grid.push({ x, y });
+            }
+        }
+        return shuffle(grid);
+    }
+
+    function handleWordClick(tag) {
+        const word = tag.dataset.word;
+
+        if (!selectedWord) {
+            selectedWord = tag;
+            tag.classList.add('selected');
+        } else {
+            if (selectedWord === tag) {
+                selectedWord.classList.remove('selected');
+                selectedWord = null;
+                return;
+            }
+
+            const fromWord = selectedWord.dataset.word;
+            const toWord = word;
+
+            const isDuplicate = drawnLinks.some(link => link.from === fromWord && link.to === toWord);
+            if (isDuplicate) {
+                flash('#e74c3c');
+                showFeedback(false);
+            } else {
+                const isCorrect = correctLinks.some(link => link[0] === fromWord && link[1] === toWord);
+                flash(isCorrect ? '#27ae60' : '#e74c3c');
+                showFeedback(isCorrect);
+
+                if (isCorrect) {
+                    const fromPos = getCenter(selectedWord);
+                    const toPos = getCenter(tag);
+                    const link = { from: fromWord, to: toWord, fromPos, toPos };
+                    drawnLinks.push(link);
+
+                    // Создаём метку над линией
+                    const midX = (fromPos.x + toPos.x) / 2;
+                    const midY = (fromPos.y + toPos.y) / 2 - 25;
+
+                    const label = document.createElement('div');
+                    label.className = 'syntax-label';
+                    const roles = linkLabels[`${fromWord}-${toWord}`];
+                    label.textContent = `${roles.from} → ${roles.to}`;
+                    label.style.left = `${midX}px`;
+                    label.style.top = `${midY}px`;
+                    workspace.appendChild(label);
+
+                    drawAllLinks();
+                }
+            }
+
+            selectedWord.classList.remove('selected');
+            selectedWord = null;
+        }
+    }
+
+    function flash(color) {
+        document.body.style.backgroundColor = `rgba(${hexToRgb(color)}, 0.18)`;
+        setTimeout(() => document.body.style.backgroundColor = '', 300);
+    }
+
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r}, ${g}, ${b}`;
+    }
+
+    function getCenter(el) {
+        const rect = el.getBoundingClientRect();
+        const wrk = workspace.getBoundingClientRect();
+        return {
+            x: rect.left - wrk.left + rect.width / 2,
+            y: rect.top - wrk.top + rect.height / 2
+        };
+    }
+
+    function lineIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
+        const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (denom === 0) return null;
+
+        const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+        const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+
+        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+            return {
+                x: x1 + ua * (x2 - x1),
+                y: y1 + ua * (y2 - y1)
+            };
+        }
+        return null;
+    }
+
+    function getIntersection(from, to, targetEl) {
+        const rect = targetEl.getBoundingClientRect();
+        const wrk = workspace.getBoundingClientRect();
+        const left = rect.left - wrk.left;
+        const right = left + rect.width;
+        const top = rect.top - wrk.top;
+        const bottom = top + rect.height;
+        const centerX = (left + right) / 2;
+        const centerY = (top + bottom) / 2;
+
+        const lines = [
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: left, y1: bottom, x2: right, y2: bottom },
+            { x1: left, y1: top, x2: left, y2: bottom }
+        ];
+
+        let closest = null;
+        let minDist = Infinity;
+
+        for (const side of lines) {
+            const inter = lineIntersection(from.x, from.y, to.x, to.y, side.x1, side.y1, side.x2, side.y2);
+            if (inter) {
+                const dist = Math.hypot(inter.x - to.x, inter.y - to.y);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = inter;
+                }
+            }
+        }
+
+        return closest || { x: centerX, y: centerY };
+    }
+
+    function drawAllLinks() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.querySelectorAll('.arrow-tip').forEach(el => el.remove());
+
+        drawnLinks.forEach(link => {
+            const from = link.fromPos;
+            const toCenter = link.toPos;
+
+            const targetTag = [...document.querySelectorAll('.word-tag')].find(el => el.dataset.word === link.to);
+            if (!targetTag) return;
+
+            const intersection = getIntersection(from, toCenter, targetTag);
+
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(intersection.x, intersection.y);
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            const tip = document.createElement('div');
+            tip.className = 'arrow-tip';
+            tip.textContent = '⏩';
+            tip.style.position = 'absolute';
+            tip.style.left = `${intersection.x}px`;
+            tip.style.top = `${intersection.y}px`;
+            tip.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(toCenter.y - from.y, toCenter.x - from.x)}rad)`;
+            tip.style.fontSize = '18px';
+            tip.style.pointerEvents = 'none';
+            tip.style.zIndex = 10;
+            workspace.appendChild(tip);
+        });
+    }
+
+    function showFeedback(isCorrect) {
+        const fb = document.getElementById('feedback');
+        fb.textContent = isCorrect ? '✅ Правильно!' : '❌ Неверно';
+        fb.className = isCorrect ? 'success' : 'error';
+        fb.style.opacity = '1';
+        setTimeout(() => fb.style.opacity = '0', 1500);
+    }
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        drawnLinks = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.querySelectorAll('.arrow-tip, .syntax-label').forEach(el => el.remove());
+        selectedWord = null;
+        document.querySelectorAll('.word-tag.selected').forEach(el => el.classList.remove('selected'));
+        placeWordsWithoutOverlap();
+    });
+</script>
+</body>
+</html>
