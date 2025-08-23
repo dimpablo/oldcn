@@ -103,29 +103,7 @@
     }
   </style></head>
 <body>
-<h2>Что означает 于 в «告于王»?</h2>
-<p><strong>Пример: «告于王» — это:</strong></p>
-
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-      Показать пиньинь
-    </button>
-    <div class="pinyin-text">gào yú wáng</div>
-  </div>
-
-
-  <div id="answers"></div>
-
-  <button onclick="check()">Проверить</button>
-  <p id="result"></p>
-
-  <script>
-  const options = [
-    { text: "Откуда: «выйти из Шан»", correct: false },
-    { text: "Конечный пункт: «вступить в Шан»", correct: true },
-    { text: "Место действия: «действовать в Шан»", correct: false },
-    { text: "Средство: «с помощью Шан»", correct: false }
-  ];
+<h2>Как переводится устойчивое выражение 有來艱?</h2> <p><strong>Пример: «洗震告曰: ...工方亦侵我西鄙田。四日庚申亦有來艱自北»</strong></p> <div class="pinyin-container"> <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')"> Показать пиньинь </button> <div class="pinyin-text">Xǐ Zhèn gào yuē: ... Gōng fāng yì qīn wǒ xī bǐ tián. sì rì gēng shēn yì yǒu lái jiān zì běi</div> </div> <div id="answers-2"></div> <button onclick="check('answers-2', 'result-2', options2)">Проверить</button> <p id="result-2"></p> <script> const options2 = [ { text: "Сообщение о победе: «Пришла весть о победе»", correct: false }, { text: "Формальное донесение: «Поступил доклад»", correct: false }, { text: "Сообщение о беде: «(Ко мне) пришла беда»", correct: true }, { text: "Предсказание беды: «Будет беда»", correct: false } ];
 
     function shuffle(array) {
       const arr = [...array];
@@ -165,10 +143,10 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Правильно!";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно.";
         sendResult(false);
       }
     }

@@ -103,29 +103,7 @@
     }
   </style></head>
 <body>
-<h2>Что означает 翌 в «翌庚寅»?</h2>
-<p><strong>Пример: «翌庚寅» — это:</strong></p>
-
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-      Показать пиньинь
-    </button>
-    <div class="pinyin-text">yì gēng yín</div>
-  </div>
-
-
-  <div id="answers"></div>
-
-  <button onclick="check()">Проверить</button>
-  <p id="result"></p>
-
-  <script>
-  const options = [
-    { text: "Прошедший день гэн-инь", correct: false },
-    { text: "Следующий день гэн-инь", correct: true },
-    { text: "Великий день гэн-инь", correct: false },
-    { text: "Наступающий месяц гэн-инь", correct: false }
-  ];
+<h2>Что означает частица 允 в данном контексте?</h2> <p><strong>Пример: «允有來艱自西»</strong></p> <div class="pinyin-container"> <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')"> Показать пиньинь </button> <div class="pinyin-text">yǔn yǒu lái jiān zì xī</div> </div> <div id="answers-1"></div> <button onclick="check('answers-1', 'result-1', options1)">Проверить</button> <p id="result-1"></p> <script> const options1 = [ { text: "Условная частица: «Если бы пришла беда с запада...»", correct: false }, { text: "Частица подтверждения: «Действительно пришла беда с запада»", correct: true }, { text: "Отрицательная частица: «Не пришла беда с запада»", correct: false }, { text: "Вопросительная частица: «Пришла ли беда с запада?»", correct: false } ]; 
 
     function shuffle(array) {
       const arr = [...array];
@@ -165,10 +143,10 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Правильно!";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно.";
         sendResult(false);
       }
     }

@@ -154,7 +154,7 @@
 
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Сегодня племя Гун прислало белых лошадей в Великий город Шан.</em></p>
+    <p><em>Гадатель пришлет лошадей.</em></p>
   </div>
 
   <!-- Кнопка для раскрытия подсказок -->
@@ -163,12 +163,9 @@
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>今 — сегодня</li>
-      <li>工方 — племя Гун</li>
-      <li>来 — прислать</li>
-      <li>白马 — белые лошади</li>
-      <li>于 — в (направление движения)</li>
-      <li>大邑商 — Великий город Шан</li>
+      <li>马 — лошадь</li>
+      <li>卜 — гадатель</li>
+      <li>来 — пришлет (каузативное значение)</li>
     </ul>
   </div>
 
@@ -186,12 +183,12 @@
   <p id="result" class="message"></p>
 
   <script>
-    const expected = ['今', '工', '方', '来', '白', '马', '于', '大', '邑', '商'];
+    const expected = ['卜', '來', '马'];
 
     const allChars = [
-      '今', '工', '方', '来', '白', '马', '于', '大', '邑', '商',
-      '我', '受', '稻', '年', '不', '弗', '春', '王', '卜', '貞',
-      '雨', '其', '争', '吉', '犬', '岁', '入', '告', '勿', '上'
+      '我', '求', '黍', '于', '卜', '來', '歲', '卜', '來', '黍',
+      '今', '白', '马', '工', '方', '大', '邑', '商', '入', '王',
+      '勿', '告', '雨', '受', '年', '不', '其', '六', '月', '生'
     ].sort(() => Math.random() - 0.5);
 
     const toggleBtn = document.getElementById('toggle-hint-btn');
@@ -237,7 +234,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>今工方来白马于大邑商';
+        resultEl.innerHTML = '✅ Правильно!<br>我求黍于卜。來歲卜來黍';
         resultEl.className = 'message success';
         sendResult(true);
       } else {

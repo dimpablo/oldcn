@@ -103,28 +103,7 @@
     }
   </style></head>
 <body>
-  <h2>Что означает 勿 в «王勿入于商»?</h2>
-  <p><strong>Пример: «王勿入于商» — это:</strong></p>
-
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-      Показать пиньинь
-    </button>
-    <div class="pinyin-text">wáng wù rù yú shāng</div>
-  </div>
-
-  <div id="answers"></div>
-
-  <button onclick="check()">Проверить</button>
-  <p id="result"></p>
-
-  <script>
-    const options = [
-      { text: "Правитель не вступит в Шан (простое отрицание)", correct: false },
-      { text: "Правителю не следует вступать в Шан (рекомендация/запрет)", correct: true },
-      { text: "Возможно, правитель не вступит в Шан", correct: false },
-      { text: "Не было вступления в Шан", correct: false }
-    ];
+<h2>Какой оттенок значения появляется у глагола 告 в военных донесениях?</h2> <p><strong>Пример: «子商告曰: 昔甲辰方征于臿»</strong></p> <div class="pinyin-container"> <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')"> Показать пиньинь </button> <div class="pinyin-text">Zǐ Shāng gào yuē: xī jiǎ chén fāng zhēng yú Chā</div> </div> <div id="answers-4"></div> <button onclick="check('answers-4', 'result-4', options4)">Проверить</button> <p id="result-4"></p> <script> const options4 = [ { text: "Молиться, просить: «цзы Шан молился»", correct: false }, { text: "Приказывать: «цзы Шан приказал»", correct: false }, { text: "Спрашивать, гадать: «цзы Шан спросил»", correct: false }, { text: "Докладывать, доносить: «цзы Шан доложил»", correct: true } ]; 
 
     function shuffle(array) {
       const arr = [...array];
@@ -164,10 +143,10 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Правильно!";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно.";
         sendResult(false);
       }
     }

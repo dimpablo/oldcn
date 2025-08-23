@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 勿</title>
-<style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Задание: 王勿入于商</title>
+  <style>
     body {
       font-family: Arial, sans-serif;
       margin: 4px 0;
@@ -101,18 +101,19 @@
       font-size: 14px;
       min-height: 1.4em;
     }
-  </style></head>
+  </style>
+</head>
 <body>
-<h2>Что означает 于 в «入于商»?</h2>
-<p><strong>Пример: «入于商» — это:</strong></p>
+
+<h2>Какое значение имеет предлог 自 в начале предложения?</h2>
+  <p><strong>Пример: «自今壬寅至于甲辰子商烖基方» — что делает 自?</strong></p>
 
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
       Показать пиньинь
     </button>
-    <div class="pinyin-text">rù yú shāng</div>
+    <div class="pinyin-text">zì jīn rén yín zhì yú jiǎ chén zǐ shāng zāi jī fāng</div>
   </div>
-
 
   <div id="answers"></div>
 
@@ -120,13 +121,15 @@
   <p id="result"></p>
 
   <script>
-  const options = [
-    { text: "Откуда: «выйти из Шан»", correct: false },
-    { text: "Конечный пункт: «вступить в Шан»", correct: true },
-    { text: "Место действия: «действовать в Шан»", correct: false },
-    { text: "Средство: «с помощью Шан»", correct: false }
-  ];
-
+    // Варианты ответов: [текст, правильный (true/false)]
+    const options = [
+      { text: "Указывает на направление движения «из» или «от»", correct: false },
+      { text: "Указывает на исходную точку во времени «с», «начиная с»", correct: true },
+      { text: "Усиливает значение следующего за ним слова («сам», «лично»)", correct: false },
+      { text: "Является формой глагола «следовать»", correct: false }
+    ];
+    
+    // Перемешивание массива (Fisher-Yates)
     function shuffle(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -136,6 +139,7 @@
       return arr;
     }
 
+    // Отображаем перемешанные ответы
     function renderOptions() {
       const shuffled = shuffle(options);
       const container = document.getElementById("answers");
@@ -155,6 +159,7 @@
       });
     }
 
+    // Проверка: правильный ли ответ выбран
     function check() {
       const selected = document.querySelector('input[name="q"]:checked');
       const resultEl = document.getElementById("result");
@@ -165,20 +170,26 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Верно! В сочетании с временны́ми обозначениями (今, 壬寅) 自 выступает как предлог со значением «с», «начиная с».";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно. Хотя 自 может означать «сам» или «из», здесь, перед указанием времени, это предлог, задающий начало промежутка.";
         sendResult(false);
       }
     }
 
-    function sendResult(success) {
-      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
     }
 
+    // Генерация ответов при загрузке
     window.onload = renderOptions;
   </script>
 </body>
 </html>
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>

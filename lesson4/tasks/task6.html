@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 勿</title>
-<style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Задание: 王勿入于商</title>
+  <style>
     body {
       font-family: Arial, sans-serif;
       margin: 4px 0;
@@ -101,15 +101,19 @@
       font-size: 14px;
       min-height: 1.4em;
     }
-  </style></head>
+  </style>
+</head>
 <body>
-<h2>Что означает 于 в «告于王»?</h2>
-<p><strong>Пример: «告于王» — это:</strong></p>
 
-<div class="pinyin-container">
-  <button class="pinyin-toggle" onclick="...">Показать пиньинь</button>
-  <div class="pinyin-text">gào yú wáng</div>
-</div>
+<h2>Как переводится конструкция 自...至于...?</h2>
+  <p><strong>Пример: «自今至于甲辰子商烖基方» — это:</strong></p>
+
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+      Показать пиньинь
+    </button>
+    <div class="pinyin-text">zì jīn zhì yú jiǎ chén zǐ shāng zāi jī fāng</div>
+  </div>
 
   <div id="answers"></div>
 
@@ -117,13 +121,15 @@
   <p id="result"></p>
 
   <script>
-  const options = [
-    { text: "Место действия: «сообщить в месте Ван»", correct: false },
-    { text: "Адресат действия: «сообщить правителю»", correct: true },
-    { text: "Средство действия: «с помощью Ван»", correct: false },
-    { text: "Время действия: «в день Ван»", correct: false }
-  ];
+    // Варианты ответов: [текст, правильный (true/false)]
+    const options = [
+      { text: "Указание на немедленное действие: «Сейчас, в день цзя-чэнь, цзы Шан нанесёт поражение...»", correct: false },
+      { text: "Указание на временны́е рамки: «Начиная с сегодняшнего дня и до дня цзя-чэнь, цзы Шан нанесёт поражение...»", correct: true },
+      { text: "Перечисление мест: «Из местности Цзинь в местность Цзячэнь цзы Шан нанесёт поражение...»", correct: false },
+      { text: "Указание на причину: «Из-за Цзинь и из-за Цзячэнь цзы Шан нанесёт поражение...»", correct: false }
+    ];
 
+    // Перемешивание массива (Fisher-Yates)
     function shuffle(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -133,6 +139,7 @@
       return arr;
     }
 
+    // Отображаем перемешанные ответы
     function renderOptions() {
       const shuffled = shuffle(options);
       const container = document.getElementById("answers");
@@ -152,6 +159,7 @@
       });
     }
 
+    // Проверка: правильный ли ответ выбран
     function check() {
       const selected = document.querySelector('input[name="q"]:checked');
       const resultEl = document.getElementById("result");
@@ -162,20 +170,26 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Правильно! Конструкция 自 A 至于 B задаёт временной или пространственный промежуток «от А до Б», «начиная с А и кончая Б».";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно. Ключевая функция 自...至于... — обозначить промежуток (время или место), а не момент, перечисление или причину.";
         sendResult(false);
       }
     }
 
-    function sendResult(success) {
-      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
     }
 
+    // Генерация ответов при загрузке
     window.onload = renderOptions;
   </script>
 </body>
 </html>
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>

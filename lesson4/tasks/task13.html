@@ -103,31 +103,7 @@
     }
   </style></head>
 <body>
-<h2>Что означает 上 в «上甲»?</h2>
-<p><strong>Пример: «上甲» — это:</strong></p>
-
-
-
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-      Показать пиньинь
-    </button>
-    <div class="pinyin-text">shàng jiǎ</div>
-  </div>
-
-
-  <div id="answers"></div>
-
-  <button onclick="check()">Проверить</button>
-  <p id="result"></p>
-
-  <script>
-  const options = [
-    { text: "Верхний Цзя (по положению или рангу)", correct: true },
-    { text: "Младший Цзя", correct: false },
-    { text: "Цзя из племени Шан", correct: false },
-    { text: "Цзя, который правил весной", correct: false }
-  ];
+<h2>Какую функцию выполняет частица 亦 в тексте?</h2> <p><strong>Пример: «工方亦侵我西鄙田» ... «四日庚申亦有來艱自北»</strong></p> <div class="pinyin-container"> <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')"> Показать пиньинь </button> <div class="pinyin-text">Gōng fāng yì qīn wǒ xī bǐ tián... sì rì gēng shēn yì yǒu lái jiān zì běi</div> </div> <div id="answers-6"></div> <button onclick="check('answers-6', 'result-6', options6)">Проверить</button> <p id="result-6"></p> <script> const options6 = [ { text: "Усиливает отрицание: «И племя Гун совсем не напало...»", correct: false }, { text: "Указывает на альтернативу: «Или племя Гун напало...»", correct: false }, { text: "Вводит перечисление: «Племя Гун и напало...»", correct: false }, { text: "Указывает на добавление: «Племя Гун ТАКЖЕ напало...»", correct: true } ]; 
 
     function shuffle(array) {
       const arr = [...array];
@@ -167,10 +143,10 @@
       }
 
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно! 勿 выражает модальное отрицание: «не следует», «не надо».";
+        resultEl.textContent = "✅ Правильно!";
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. 勿 — это не просто «не», а «не следует».";
+        resultEl.textContent = "❌ Неверно.";
         sendResult(false);
       }
     }
