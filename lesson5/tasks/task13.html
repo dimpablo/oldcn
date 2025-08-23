@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 5: Божественная помощь и человеческие дела</title>
+</head>
+<body>
+<h2>Как правильно понять предложение «帝不我其受佑»?</h2>
+<p><strong>Пример из текста: «帝不我其受佑»</strong></p>
+
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">dì bù wǒ qí shòu yòu</div>
+</div>
+
+<p>Это гадательное предложение затрагивает несколько грамматических особенностей Урока 5. Каково его правильное значение и структура?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Небесный Владыка не пошлёт нам помощь» — верно: здесь инверсия местоимения «我» перед глаголом в отрицании, а «受佑» — предикатив с двойным дополнением (кому? что?)", 
+      correct: true 
+    },
+    { 
+      text: "«Небесный Владыка не пошлёт помощь им» — неверно: «我» не может означать «их», это 1-е лицо", 
+      correct: false 
+    },
+    { 
+      text: "«Небесный Владыка не мы получим помощь» — неверно: нарушена синтаксическая структура", 
+      correct: false 
+    },
+    { 
+      text: "«Небесный Владыка не пошлёт помощь» — частично верно, но игнорирует грамматику: «我» не может стоять после «不» без инверсии", 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
+    }
+
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это сложное предложение, объединяющее несколько тем Урока 5:<br>
+        • <strong>Предикатив «受佑»</strong> требует двойного дополнения: «послать помощь кому?» (косвенное) и «что?» (прямое).<br>
+        • <strong>Инверсия «不我受佑»</strong> — обязательна в отрицательных предложениях с местоимением-дополнением.<br>
+        • Использование <strong>「我」</strong> как косвенного дополнения (реципиент) без предлога — норма для таких конструкций.<br><br>
+        Полный перевод: «Небесный Владыка не пошлёт нам помощь».
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Вспомните: в отрицательных предложениях местоимение-дополнение к глаголу «дать/послать» ставится перед глаголом.";
+      sendResult(false);
+    }
+  }
+
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
+
+  window.onload = renderOptions;
+</script>
+</body>
+</html>
+
+<!-- Уведомление, что задание существует -->
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

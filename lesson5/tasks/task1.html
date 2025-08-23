@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+  <meta charset="UTF-8" />
+  <title>Задание 1: Рисование</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+</head>
+<body>
+<!-- Заставка -->
+<div id="splash-screen">
+  <h1>Нарисуй здесь</h1>
+  <p>любой иероглиф из урока 4!</p>
+</div>
+<!-- Контейнер для HanziWriter -->
+<div id="character-target-div"></div>
+<!-- Overlay для мерцания -->
+<div id="feedback-overlay"></div>
+<script>
+  // ✅ Универсальная функция отправки результата
+  function sendResult(success, message) {
+    window.parent.postMessage({
+      type: "TASK_RESULT",
+      success: !!success,
+      message: message || (success ? "Задание выполнено" : "Ошибка")
+    }, "*");
+  }
+  // ✅ Функция мерцания экрана
+  function flashScreen(color) {
+    const overlay = document.getElementById('feedback-overlay');
+    overlay.className = ''; // сброс
+    overlay.classList.add(color === 'success' ? 'success' : 'error');
+    overlay.classList.add('animate');
+    // Сброс класса после анимации
+    setTimeout(() => {
+      overlay.classList.remove('animate');
+    }, 800);
+  }
+  window.onload = function() {
+    const splashScreen = document.getElementById('splash-screen');
+    const characterDiv = document.getElementById('character-target-div');
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+      characterDiv.style.display = 'block';
+      const char = window.location.hash.slice(1);
+      if (!char) {
+        console.warn("⚠️ Не указан иероглиф в хэше");
+        sendResult(false, "Не указан иероглиф");
+        return;
+      }
+      const writer = HanziWriter.create('character-target-div', char, {
+        width: 300,
+        height: 300,
+        showCharacter: false,
+        showOutline: false,
+        showHintAfterMisses: 1,
+        highlightOnComplete: false,
+        padding: 5
+      });
+      // Запуск квиза с визуальной обратной связью
+      writer.quiz({
+        leniency: 2.0,
+        onCorrectStroke: function(strokeData) {
+          // Можно добавить тихое одобрение, если нужно
+          // flashScreen('success'); // только если хочешь мигать на каждый правильный штрих
+        },
+        onMistake: function(strokeData) {
+          console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
+          flashScreen('error'); // 🔴 Красное мерцание при ошибке
+        },
+        onComplete: function(summaryData) {
+          console.log("🎯 Квиз завершён:", summaryData);
+          flashScreen('success'); // 🟢 Зелёное мерцание при успехе
+          sendResult(true, "Иероглиф нарисован верно");
+        }
+      });
+    }, 1000);
+  };
+</script>
+<!-- Сигналы родительскому окну -->
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  window.parent.postMessage({ type: "DO_HANZI", valid: true }, "*");
+</script>
+</body>
+</html>

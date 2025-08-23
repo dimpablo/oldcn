@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Инверсия vs Прямой порядок: Урок 5</title>
+</head>
+<body>
+
+<h2>Инверсия vs Прямой порядок</h2>
+
+<div class="instructions">
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Инверсия дополнения в архаическом китайском</strong></p>
+        <p>В архаическом древнекитайском языке беспредложные дополнения (особенно местоимения) могут стоять перед глаголом — это называется <strong>инверсией</strong>.</p>
+
+        <p>🟢 <strong>Прямой порядок</strong> (зеленый):</p>
+        <ul>
+            <li>Дополнение стоит после глагола: «受我佑» — «послать нам помощь»</li>
+            <li>Используется в утвердительных предложениях</li>
+        </ul>
+
+        <p>🔴 <strong>Инверсия</strong> (красный):</p>
+        <ul>
+            <li>Дополнение (чаще местоимение) стоит <strong>перед</strong> глаголом: «不我受佑» — «не пошлёт нам помощи»</li>
+            <li>Обязательна в <strong>отрицательных предложениях</strong> с местоимением-дополнением</li>
+            <li>Только с отрицанием <strong>不</strong>, а не 弗</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "帝受我佑" → 🟢 (прямой порядок)<br>
+        "帝不我受佑" → 🔴 (инверсия)</p>
+
+        <p><strong>Важно!</strong><br>
+        Инверсия <strong>обязательна</strong>, если:
+        <ol>
+            <li>Предложение отрицательное</li>
+            <li>Дополнение — местоимение</li>
+            <li>Глагол требует двойного дополнения (受, 降, 作 и др.)</li>
+        </ol>
+        Нарушение этого правила — грамматическая ошибка.</p>
+    </div>
+</div>
+
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const sentences = [
+    { text: "帝受我佑", type: "direct", explanation: "Небесный Владыка пошлёт нам помощь — прямой порядок, утверждение" },
+    { text: "帝不我受佑", type: "inversion", explanation: "Небесный Владыка не пошлёт нам помощи — инверсия обязательна в отрицании с местоимением" },
+    { text: "帝降我熯", type: "direct", explanation: "Небесный Владыка пошлёт нам засуху — прямой порядок, утверждение" },
+    { text: "帝不我降熯", type: "inversion", explanation: "Небесный Владыка не пошлёт нам засуху — инверсия обязательна" },
+    { text: "洹作兹邑祸", type: "direct", explanation: "Река Хуань нанесёт несчастье этому городу — прямой порядок" },
+    { text: "洹弗作兹邑祸", type: "direct", explanation: "Река Хуань не нанесёт несчастье этому городу — здесь 弗, но нет местоимения, инверсия не требуется" },
+    { text: "帝不我其受佑", type: "inversion", explanation: "Небесный Владыка не пошлёт ли нам помощи? — инверсия сохраняется даже с частицей 其" },
+    { text: "余其得汝", type: "direct", explanation: "Я получу тебя — прямой порядок, утверждение, нет отрицания" },
+    { text: "余不其得汝", type: "inversion", explanation: "Я не получу ли тебя? — отрицание + местоимение → инверсия обязательна" },
+    { text: "朕使", type: "direct", explanation: "мой посланник — здесь 朕 в функции определения, не дополнение" }
+];
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
+
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">прямой</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">инверсия</span>
+        </div>
+    `;
+
+    return item;
+}
+
+function init() {
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
+
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
+
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
+
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
+}
+
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "inversion") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи инверсии.<br>
+            <small>Вы усвоили: инверсия обязательна в отрицаниях с местоимением, даже с частицей 其, и только с 不.</small>
+        `;
+        resultEl.className = 'success';
+        sendResult(true);
+    } else {
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
+    }
+    resultEl.style.display = 'block';
+}
+
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
+
+function sendResult(success) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: success,
+        message: success ? "Верно" : "Ошибка"
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
+</script>
+</body>
+</html>
