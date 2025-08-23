@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Дистрибутивная таблица - Урок 2</title>
+    <title>Таблица ПДСД - Урок 2</title>
     <style>
         * {
             box-sizing: border-box;
@@ -30,54 +30,47 @@
             border-bottom: 2px solid #e0e0e0;
         }
         
-/* Инструкции — сворачиваемый блок */
-/* Инструкции — компактный сворачиваемый блок */
-.instructions {
-    background: #e6f2ff;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 0.9em;          /* Меньше шрифт */
-    line-height: 1.5;
-    cursor: pointer;
-    border: 1px solid #b3d9ff;
-    transition: background 0.2s ease;
-}
+        /* Инструкции — компактный сворачиваемый блок */
+        .instructions {
+            background: #e6f2ff;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            cursor: pointer;
+            border: 1px solid #b3d9ff;
+            transition: background 0.2s ease;
+        }
 
-/* Подсказка-кнопка */
-.instructions::before {
-    content: "▶ Инструкции";
-    display: block;
-    text-align: center;
-    font-size: 0.9em;
-    color: #1a5fb4;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
+        .instructions::before {
+            content: "▶ Инструкции";
+            display: block;
+            text-align: center;
+            font-size: 0.9em;
+            color: #1a5fb4;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
 
-/* Когда блок НЕ свёрнут — меняем стрелку */
-.instructions:not(.collapsed)::before {
-    content: "▼ Скрыть инструкции";
-}
+        .instructions:not(.collapsed)::before {
+            content: "▼ Скрыть инструкции";
+        }
 
-/* Содержимое инструкций — скрываем, если класс .collapsed */
-.instructions .content {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.1s;
-}
+        .instructions .content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
 
-.instructions:not(.collapsed) .content {
-    display: block;
-    opacity: 1;
-    padding-top: 4px;
-    border-top: 1px dashed #b3d9ff;
-    margin-top: 6px;
-}
+        .instructions:not(.collapsed) .content {
+            display: block;
+            opacity: 1;
+            padding-top: 4px;
+            border-top: 1px dashed #b3d9ff;
+            margin-top: 6px;
+        }
 
-
-
-        
         .distribution-table-container {
             margin: 15px 0;
             background: white;
@@ -220,26 +213,26 @@
     </style>
 </head>
 <body>
-    <h1>Дистрибутивная таблица: Урок 2</h1>
+    <h1>Таблица ПДСД: Урок 2</h1>
     
-<div class="instructions collapsed">
-    <div class="content">
-        <h3 style="margin: 0 0 6px; font-size: 1em; color: #1a5fb4;">Как играть</h3>
-        <p style="margin: 0 0 8px; font-size: 0.95em;">
-            <strong>Цель:</strong> Перенести иероглифы в таблицу, сгруппировав по грамматическим функциям.
-        </p>
-        <ol style="margin: 0 0 8px; padding-left: 18px; font-size: 0.9em;">
-            <li>Нажмите на иероглиф в таблице текста</li>
-            <li>Нажмите на ячейку в дистрибутивной таблице</li>
-            <li>Иероглиф добавится в ячейку</li>
-            <li>Чтобы вернуть — нажмите на него в таблице</li>
-            <li>Нажмите «Проверить»</li>
-        </ol>
-        <p style="margin: 0; font-size: 0.85em; color: #555; font-style: italic;">
-            Подсказка: можно возвращать иероглифы
-        </p>
+    <div class="instructions collapsed">
+        <div class="content">
+            <h3 style="margin: 0 0 6px; font-size: 1em; color: #1a5fb4;">Как играть</h3>
+            <p style="margin: 0 0 8px; font-size: 0.95em;">
+                <strong>Цель:</strong> Перенести иероглифы в таблицу, сгруппировав по грамматическим функциям.
+            </p>
+            <ol style="margin: 0 0 8px; padding-left: 18px; font-size: 0.9em;">
+                <li>Нажмите на иероглиф в таблице текста</li>
+                <li>Нажмите на ячейку в таблице ПДСД</li>
+                <li>Иероглиф добавится в ячейку</li>
+                <li>Чтобы вернуть — нажмите на него в таблице</li>
+                <li>Нажмите «Проверить»</li>
+            </ol>
+            <p style="margin: 0; font-size: 0.85em; color: #555; font-style: italic;">
+                Подсказка: можно возвращать иероглифы
+            </p>
+        </div>
     </div>
-</div>
 
     <div class="status">Выбрано: <span id="selectedChar">-</span></div>
     
@@ -247,12 +240,10 @@
         <table class="distribution-table" id="distributionTable">
             <thead>
                 <tr>
-                    <th>Обстоятельство времени</th>
-                    <th>Существительное</th>
-                    <th>Сказуемое</th>
                     <th>Подлежащее</th>
                     <th>Дополнение</th>
-                    <th>Модальность</th>
+                    <th>Сказуемое</th>
+                    <th>Дополнение</th>
                 </tr>
             </thead>
             <tbody>
@@ -271,7 +262,7 @@
     </div>
     
     <div class="message success" id="successMsg">
-        Отлично! Вы правильно составили дистрибутивную таблицу.
+        Отлично! Вы правильно составили таблицу ПДСД.
     </div>
     
     <div class="message incorrect" id="errorMsg">
@@ -292,17 +283,17 @@
         "卜㱿貞今春方其自來"
     ];
     
-    // Эталонная дистрибутивная таблица для проверки
+    // Эталонная таблица ПДСД для проверки
     const referenceTable = [
-        ["癸卯", "卜爭", "貞", "今歳商", "受年", "貞來歳不其"],
-        ["癸丑", "卜㱿", "貞", "冓", "受年", "貞冓不其受年"],
-        ["癸卯", "卜亘", "貞", "我", "受黍年", ""],
-        ["癸巳", "卜㱿", "貞", "我", "受稻年", "貞今來歳我不其受年"],
-        ["", "", "貞", "戔受貞甫", "", "弗其受黍年"],
-        ["", "", "貞", "肅", "來牛", "貞肅弗其來牛"],
-        ["", "", "貞", "冓", "來犬", "貞今春奚來牛奚不其來牛"],
-        ["甲辰", "卜㱿", "貞", "", "", "奚來白馬"],
-        ["丙辰", "卜㱿", "貞", "今春方", "", "其自來"]
+        ["商", "今歳", "受", "年"],
+        ["", "冓", "受", "年"],
+        ["我", "", "受", "黍年"],
+        ["我", "", "受", "稻年"],
+        ["戔受貞甫", "", "弗其受", "黍年"],
+        ["肅", "", "來", "牛"],
+        ["", "今春", "来", "牛"],
+        ["", "奚", "来", "白馬"],
+        ["今春方", "", "其自來", ""]
     ];
     
     // Переменные состояния
@@ -315,15 +306,13 @@
         createDistributionTable();
         setupEventListeners();
 
-// Обработчик клика по инструкциям
-const instructions = document.querySelector('.instructions');
-if (instructions) {
-    instructions.addEventListener('click', function() {
-        this.classList.toggle('collapsed');
-    });
-}
-
-
+        // Обработчик клика по инструкциям
+        const instructions = document.querySelector('.instructions');
+        if (instructions) {
+            instructions.addEventListener('click', function() {
+                this.classList.toggle('collapsed');
+            });
+        }
     });
     
     function createSourceTable() {
@@ -376,8 +365,8 @@ if (instructions) {
         for (let i = 0; i < lessonText.length; i++) {
             const row = document.createElement('tr');
             
-            // Создаем 6 столбцов для каждой строки
-            for (let j = 0; j < 6; j++) {
+            // Создаем 4 столбца для каждой строки (ПДСД)
+            for (let j = 0; j < 4; j++) {
                 const td = document.createElement('td');
                 td.dataset.row = i;
                 td.dataset.col = j;
@@ -413,7 +402,7 @@ if (instructions) {
             });
         });
         
-        // Обработчик кликов по дистрибутивной таблице
+        // Обработчик кликов по таблице ПДСД
         document.querySelectorAll('#distributionTable td').forEach(cell => {
             cell.addEventListener('click', function() {
                 if (selectedChar) {
@@ -468,47 +457,47 @@ if (instructions) {
         checkBtn.addEventListener('click', checkAnswer);
     }
     
-function checkAnswer() {
-    // Сбрасываем фон только у тех ячеек, которые были подсвечены
-    document.querySelectorAll('#distributionTable td').forEach(cell => {
-        // Сбрасываем только inline-style фон, чтобы не трогать стилизацию из CSS
-        cell.style.backgroundColor = '';
-    });
+    function checkAnswer() {
+        // Сбрасываем фон только у тех ячеек, которые были подсвечены
+        document.querySelectorAll('#distributionTable td').forEach(cell => {
+            // Сбрасываем только inline-style фон, чтобы не трогать стилизацию из CSS
+            cell.style.backgroundColor = '';
+        });
 
-    let allCorrect = true;
+        let allCorrect = true;
 
-    // Проверяем каждую строку и столбец
-    for (let i = 0; i < referenceTable.length; i++) {
-        for (let j = 0; j < referenceTable[i].length; j++) {
-            const cell = document.querySelector(`#distributionTable tr:nth-child(${i+1}) td:nth-child(${j+1})`);
-            const expected = referenceTable[i][j];
-            const actual = cell.textContent.trim();
+        // Проверяем каждую строку и столбец
+        for (let i = 0; i < referenceTable.length; i++) {
+            for (let j = 0; j < referenceTable[i].length; j++) {
+                const cell = document.querySelector(`#distributionTable tr:nth-child(${i+1}) td:nth-child(${j+1})`);
+                const expected = referenceTable[i][j];
+                const actual = cell.textContent.trim();
 
-            // Пропускаем пустые ячейки (пользователь ничего не ввёл)
-            if (actual === '') {
-                continue;
-            }
+                // Пропускаем пустые ячейки (пользователь ничего не ввёл)
+                if (actual === '') {
+                    continue;
+                }
 
-            // Если пользователь что-то ввёл — проверяем
-            if (expected) {
-                if (actual === expected) {
-                    cell.style.backgroundColor = '#d4edda'; // зелёный
+                // Если пользователь что-то ввёл — проверяем
+                if (expected) {
+                    if (actual === expected) {
+                        cell.style.backgroundColor = '#d4edda'; // зелёный
+                    } else {
+                        cell.style.backgroundColor = '#f8d7da'; // красный
+                        allCorrect = false;
+                    }
                 } else {
-                    cell.style.backgroundColor = '#f8d7da'; // красный
+                    // Ячейка пустая по эталону, но пользователь что-то ввёл
+                    cell.style.backgroundColor = '#f8d7da';
                     allCorrect = false;
                 }
-            } else {
-                // Ячейка пустая по эталону, но пользователь что-то ввёл
-                cell.style.backgroundColor = '#f8d7da';
-                allCorrect = false;
             }
         }
-    }
 
-    // Показываем сообщения
-    document.getElementById('successMsg').style.display = allCorrect ? 'block' : 'none';
-    document.getElementById('errorMsg').style.display = allCorrect ? 'none' : 'block';
-}
+        // Показываем сообщения
+        document.getElementById('successMsg').style.display = allCorrect ? 'block' : 'none';
+        document.getElementById('errorMsg').style.display = allCorrect ? 'none' : 'block';
+    }
     
     function resetGame() {
         document.querySelectorAll('#distributionTable td').forEach(cell => {

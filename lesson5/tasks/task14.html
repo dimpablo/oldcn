@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Урок 4 — Предлоги и временные конструкции</title>
+<body>
+
+<h2>Выберите значение</h2>
+
+<div class="grid">
+<div class="cell" onclick="openModal('q1')">
+<strong>自今</strong>
+<span class="status" id="status-q1">?</span>
+</div>
+<div class="cell" onclick="openModal('q2')">
+<strong>自今至于甲辰</strong>
+<span class="status" id="status-q2">?</span>
+</div>
+<div class="cell" onclick="openModal('q3')">
+<strong>自上甲</strong>
+<span class="status" id="status-q3">?</span>
+</div>
+<div class="cell" onclick="openModal('q4')">
+<strong>旬雨</strong>
+<span class="status" id="status-q4">?</span>
+</div>
+</div>
+
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<p id="result"></p>
+
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+<div class="modal-content">
+<div class="modal-header">自今</div>
+<div class="pinyin-container">
+<button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+<div class="pinyin-text">zì jīn</div>
+</div>
+<div class="options">
+<label><input type="radio" name="q1" value="начиная с сегодня">начиная с сегодня</label>
+<label><input type="radio" name="q1" value="до сегодня">до сегодня</label>
+<label><input type="radio" name="q1" value="в течение сегодняшнего дня">в течение сегодняшнего дня</label>
+<label><input type="radio" name="q1" value="после сегодня">после сегодня</label>
+</div>
+<button onclick="closeModal('q1')">OK</button>
+</div>
+</div>
+
+<div id="modal-q2" class="modal">
+<div class="modal-content">
+<div class="modal-header">自今至于甲辰</div>
+<div class="pinyin-container">
+<button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+<div class="pinyin-text">zì jīn zhì yú jiǎ chén</div>
+</div>
+<div class="options">
+<label><input type="radio" name="q2" value="начиная с сегодня и до дня цзя-чен">начиная с сегодня и до дня цзя-чен</label>
+<label><input type="radio" name="q2" value="сегодня и день цзя-чен">сегодня и день цзя-чен</label>
+<label><input type="radio" name="q2" value="после сегодняшнего дня цзя-чен">после сегодняшнего дня цзя-чен</label>
+<label><input type="radio" name="q2" value="только день цзя-чен">только день цзя-чен</label>
+</div>
+<button onclick="closeModal('q2')">OK</button>
+</div>
+</div>
+
+<div id="modal-q3" class="modal">
+<div class="modal-content">
+<div class="modal-header">自上甲</div>
+<div class="pinyin-container">
+<button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+<div class="pinyin-text">zì shàng jiǎ</div>
+</div>
+<div class="options">
+<label><input type="radio" name="q3" value="начиная с Верхнего Цзя">начиная с Верхнего Цзя</label>
+<label><input type="radio" name="q3" value="после Верхнего Цзя">после Верхнего Цзя</label>
+<label><input type="radio" name="q3" value="до Верхнего Цзя">до Верхнего Цзя</label>
+<label><input type="radio" name="q3" value="Верхний Цзя">Верхний Цзя</label>
+</div>
+<button onclick="closeModal('q3')">OK</button>
+</div>
+</div>
+
+<div id="modal-q4" class="modal">
+<div class="modal-content">
+<div class="modal-header">旬雨</div>
+<div class="pinyin-container">
+<button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+<div class="pinyin-text">xún yǔ</div>
+</div>
+<div class="options">
+<label><input type="radio" name="q4" value="дождь будет идти в течение декады">дождь будет идти в течение декады</label>
+<label><input type="radio" name="q4" value="дождь сегодня">дождь сегодня</label>
+<label><input type="radio" name="q4" value="дождь в день цзя-чен">дождь в день цзя-чен</label>
+<label><input type="radio" name="q4" value="дождь после Верхнего Цзя">дождь после Верхнего Цзя</label>
+</div>
+<button onclick="closeModal('q4')">OK</button>
+</div>
+</div>
+
+<script>
+const correctAnswers = {
+q1: "начиная с сегодня",
+q2: "начиная с сегодня и до дня цзя-чен",
+q3: "начиная с Верхнего Цзя",
+q4: "дождь будет идти в течение декады"
+};
+
+let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+function openModal(id) {
+document.getElementById(`modal-${id}`).style.display = "flex";
+}
+
+function closeModal(id) {
+const selected = document.querySelector(`input[name="${id}"]:checked`);
+if (selected) {
+userAnswers[id] = selected.value;
+document.getElementById(`status-${id}`).textContent = "✓";
+document.getElementById(`status-${id}`).style.color = "green";
+}
+document.getElementById(`modal-${id}`).style.display = "none";
+}
+
+function checkAll() {
+const resultEl = document.getElementById("result");
+const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+if (!allAnswered) {
+resultEl.textContent = "Ответьте на все.";
+return;
+}
+
+let correctCount = 0;
+for (const id in correctAnswers) {
+if (userAnswers[id] === correctAnswers[id]) correctCount++;
+}
+
+if (correctCount === 4) {
+resultEl.textContent = "✅ Все верно!";
+sendResult(true);
+} else {
+const wrong = 4 - correctCount;
+resultEl.textContent = `❌ ${wrong} ошибки.`;
+sendResult(false, `Ошибки: ${wrong}/4`);
+}
+}
+
+function sendResult(success, message) {
+window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+}
+
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
+

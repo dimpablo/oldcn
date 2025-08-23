@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Временные рамки vs Длительность действия</title>
+
+</head>
+<body>
+
+<h2>Временные рамки vs Длительность действия</h2>
+
+<div class="instructions">
+<div class="instructions-header" onclick="toggleInstructions()">
+<strong>📌 Инструкция (нажми для развертывания)</strong>
+<span class="arrow">▼</span>
+</div>
+<div class="instructions-content" style="display:none">
+<p><strong>Временные рамки vs Длительность действия</strong></p>
+<p>В древнекитайском языке временные конструкции делятся на два типа:</p>
+
+<p>🟢 <strong>Временные рамки</strong> (зеленый):</p>
+<ul>
+<li>Конструкция 自...至于... (zì... zhì yú) = "начиная с... и до..."</li>
+<li>Отвечает на вопрос <em>"с какого времени по какое время?"</em></li>
+<li>В указанный период действие может произойти в любой момент</li>
+</ul>
+
+<p>🔴 <strong>Длительность действия</strong> (красный):</p>
+<ul>
+<li>Обстоятельство времени перед сказуемым</li>
+<li>Отвечает на вопрос <em>"как долго?"</em></li>
+<li>Действие происходит на протяжении всего указанного периода</li>
+</ul>
+
+<p><em>Примеры:</em><br>
+"自今至于甲辰" → 🟢 (временные рамки)<br>
+"旬雨" → 🔴 (длительность действия)</p>
+
+<p><strong>Важно!</strong><br>
+В конструкции временных рамок говорится, что действие может произойти в указанный период, но не обязательно будет происходить весь этот период. Например, "自今至己酉雨" означает "Дождь может пойти с сегодняшнего дня по день цзи-ю", а не "Дождь будет идти весь этот период".</p>
+
+<p>В конструкции длительности действия говорится, что действие происходит на протяжении всего указанного периода. Например, "旬雨" означает "Дождь будет идти в течение декады".</p> </div>
+</div>
+
+
+<script>
+function toggleInstructions() {
+const header = document.querySelector('.instructions-header');
+const content = document.querySelector('.instructions-content');
+const isHidden = content.style.display === 'none';
+
+content.style.display = isHidden ? 'block' : 'none';
+header.classList.toggle('collapsed', !isHidden);
+
+// Адаптация для iframe (отправляем родителю новый размер)
+setTimeout(() => {
+window.parent.postMessage({
+type: "UPDATE_HEIGHT",
+height: document.body.scrollHeight
+}, "*");
+}, 100);
+}
+</script>
+
+<div class="columns">
+<div id="column1" class="column"></div>
+<div id="column2" class="column"></div>
+</div>
+
+<div class="controls">
+<button id="check-btn">Проверить</button>
+<button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const sentences = [
+{ text: "自今至于甲辰", type: "time-frame", explanation: "начиная с сегодня и до дня цзя-чен (временные рамки)" },
+{ text: "旬雨", type: "duration", explanation: "дождь будет идти в течение декады (длительность действия)" },
+{ text: "自今至于癸亥", type: "time-frame", explanation: "начиная с сегодня и до дня гуй-хай (временные рамки)" },
+{ text: "旬亡禍", type: "duration", explanation: "в течение декады не будет несчастья (длительность действия)" },
+{ text: "自壬寅至于甲辰", type: "time-frame", explanation: "начиная с дня жэнь-инь и до дня цзя-чен (временные рамки)" },
+{ text: "來甲子", type: "duration", explanation: "наступающая декада до дня цзя-цзы (длительность действия)" },
+{ text: "自上甲至于中丁", type: "time-frame", explanation: "начиная с Верхнего Цзя и до Среднего Дин (временные рамки)" },
+{ text: "今六月", type: "duration", explanation: "в течение всего шестого месяца (длительность действия)" },
+{ text: "自今至于丁巳", type: "time-frame", explanation: "начиная с сегодня и до дня дин-сы (временные рамки)" },
+{ text: "生七月", type: "duration", explanation: "в течение наступающего седьмого месяца (длительность действия)" }
+];
+
+function shuffleArray(array) {
+for (let i = array.length - 1; i > 0; i--) {
+const j = Math.floor(Math.random() * (i + 1));
+[array[i], array[j]] = [array[j], array[i]];
+}
+return array;
+}
+
+function createSentenceElement(sentence, index) {
+const item = document.createElement('div');
+item.className = 'sentence-item';
+item.dataset.index = index;
+
+item.innerHTML = `
+<div class="oracle-text">${sentence.text}</div>
+<div class="toggle-container">
+<span class="toggle-text">рамки</span>
+<label class="toggle-switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+<span class="toggle-text">длительность</span>
+</div>
+`;
+
+return item;
+}
+
+function init() {
+const shuffled = shuffleArray([...sentences]);
+const column1 = document.getElementById('column1');
+const column2 = document.getElementById('column2');
+
+column1.innerHTML = '';
+column2.innerHTML = '';
+document.getElementById('result').style.display = 'none';
+
+// Очистка предыдущих стилей
+document.querySelectorAll('.sentence-item').forEach(el => {
+el.classList.remove('correct', 'incorrect');
+});
+
+shuffled.slice(0, 5).forEach((s, i) => {
+const el = createSentenceElement(s, i);
+column1.appendChild(el);
+});
+
+shuffled.slice(5).forEach((s, i) => {
+const el = createSentenceElement(s, i + 5);
+column2.appendChild(el);
+});
+}
+
+function checkAnswers() {
+const items = document.querySelectorAll('.sentence-item');
+let allCorrect = true;
+
+items.forEach(item => {
+const index = item.dataset.index;
+const input = item.querySelector('input');
+const expectedType = sentences[index].type;
+const isCorrect = (input.checked && expectedType === "duration") ||
+(!input.checked && expectedType === "time-frame");
+
+item.classList.remove('correct', 'incorrect');
+if (isCorrect) {
+item.classList.add('correct');
+} else {
+item.classList.add('incorrect');
+allCorrect = false;
+}
+});
+
+const resultEl = document.getElementById('result');
+if (allCorrect) {
+resultEl.innerHTML = `✅ <b>Отлично!</b> Вы правильно определили все временные конструкции.`;
+resultEl.className = 'success';
+sendResult(true);
+} else {
+resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+resultEl.className = 'error';
+sendResult(false);
+}
+resultEl.style.display = 'block';
+}
+
+function reset() {
+document.querySelectorAll('.toggle-switch input').forEach(input => {
+input.checked = false;
+});
+document.querySelectorAll('.sentence-item').forEach(item => {
+item.classList.remove('correct', 'incorrect');
+});
+document.getElementById('result').style.display = 'none';
+}
+
+function sendResult(success) {
+window.parent.postMessage({
+type: "TASK_RESULT",
+success: success,
+message: success ? "Верно" : "Ошибка"
+}, "*");
+}
+
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
+</script>
+</body>
+</html>

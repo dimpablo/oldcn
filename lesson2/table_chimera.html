@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Дистрибутивная таблица: Пор-Ройяльская грамматика</title>
+    <title>Дистрибутивная таблица - Урок 2</title>
     <style>
         * {
             box-sizing: border-box;
@@ -30,45 +30,53 @@
             border-bottom: 2px solid #e0e0e0;
         }
         
-        .instructions {
-            background: #e6f2ff;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 0.9em;
-            line-height: 1.5;
-            cursor: pointer;
-            border: 1px solid #b3d9ff;
-            transition: background 0.2s ease;
-        }
+/* Инструкции — сворачиваемый блок */
+/* Инструкции — компактный сворачиваемый блок */
+.instructions {
+    background: #e6f2ff;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 0.9em;          /* Меньше шрифт */
+    line-height: 1.5;
+    cursor: pointer;
+    border: 1px solid #b3d9ff;
+    transition: background 0.2s ease;
+}
 
-        .instructions::before {
-            content: "▶ Инструкции";
-            display: block;
-            text-align: center;
-            font-size: 0.9em;
-            color: #1a5fb4;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
+/* Подсказка-кнопка */
+.instructions::before {
+    content: "▶ Инструкции";
+    display: block;
+    text-align: center;
+    font-size: 0.9em;
+    color: #1a5fb4;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
 
-        .instructions:not(.collapsed)::before {
-            content: "▼ Скрыть инструкции";
-        }
+/* Когда блок НЕ свёрнут — меняем стрелку */
+.instructions:not(.collapsed)::before {
+    content: "▼ Скрыть инструкции";
+}
 
-        .instructions .content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.1s;
-        }
+/* Содержимое инструкций — скрываем, если класс .collapsed */
+.instructions .content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+}
 
-        .instructions:not(.collapsed) .content {
-            display: block;
-            opacity: 1;
-            padding-top: 4px;
-            border-top: 1px dashed #b3d9ff;
-            margin-top: 6px;
-        }
+.instructions:not(.collapsed) .content {
+    display: block;
+    opacity: 1;
+    padding-top: 4px;
+    border-top: 1px dashed #b3d9ff;
+    margin-top: 6px;
+}
+
+
+
         
         .distribution-table-container {
             margin: 15px 0;
@@ -86,10 +94,8 @@
         .distribution-table th {
             background: #e6f2ff;
             padding: 8px 5px;
-            font-size: 0.75em;
+            font-size: 0.85em;
             border: 1px solid #ddd;
-            font-weight: normal;
-            color: #1a3c5a;
         }
         
         .distribution-table td {
@@ -206,80 +212,34 @@
                 height: 36px;
             }
             
-            .distribution-table th {
-                font-size: 0.65em;
-                padding: 6px 2px;
-            }
-            
             button {
                 padding: 10px 0;
                 font-size: 1em;
             }
         }
-
-.header-container {
-    position: relative;
-    margin: 10px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #e0e0e0;
-    text-align: center;
-}
-
-h1 {
-    color: #1a5fb4;
-    font-size: 1.4em;
-    margin: 0;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.switch-btn {
-    position: relative;
-    top: -8px;
-    left: 8px;
-    background: #e6f2ff;
-    color: #1a5fb4;
-    border: 1px solid #b3d9ff;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 0.7em;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-    line-height: 1;
-    font-weight: normal;
-    transform: scale(0.9);
-    transform-origin: left top;
-}
-
-.switch-btn:hover {
-    background: #d4e8ff;
-}
     </style>
 </head>
 <body>
-<div class="header-container">
-    <h1>Дистрибутивная таблица: Пор-Ройяльская грамматика</h1>
-    <button onclick='document.location.href="predicat_table.html"' id="switchBtn" class="switch-btn">Перейти к Предикативной Грамматике</button>
-</div> 
-    <div class="instructions collapsed">
-        <div class="content">
-            <h3 style="margin: 0 0 6px; font-size: 1em; color: #1a5fb4;">Как работать с таблицей</h3>
-            <p style="margin: 0 0 8px; font-size: 0.95em;">
-                <strong>Цель:</strong> Распределите иероглифы по категориям Пор-Ройяльской грамматики.
-            </p>
-            <ol style="margin: 0 0 8px; padding-left: 18px; font-size: 0.9em;">
-                <li>Нажмите на иероглиф в исходном тексте</li>
-                <li>Нажмите на ячейку в дистрибутивной таблице</li>
-                <li>Иероглиф переместится в выбранную категорию</li>
-                <li>Чтобы вернуть — нажмите на него в таблице</li>
-                <li>Нажмите «Проверить» после заполнения</li>
-            </ol>
-            <p style="margin: 0; font-size: 0.85em; color: #555; font-style: italic;">
-                Подсказка: в Пор-Ройяльской грамматике все слова делятся на 8 категорий
-            </p>
-        </div>
+    <h1>Дистрибутивная таблица: Урок 2</h1>
+    
+<div class="instructions collapsed">
+    <div class="content">
+        <h3 style="margin: 0 0 6px; font-size: 1em; color: #1a5fb4;">Как играть</h3>
+        <p style="margin: 0 0 8px; font-size: 0.95em;">
+            <strong>Цель:</strong> Перенести иероглифы в таблицу, сгруппировав по грамматическим функциям.
+        </p>
+        <ol style="margin: 0 0 8px; padding-left: 18px; font-size: 0.9em;">
+            <li>Нажмите на иероглиф в таблице текста</li>
+            <li>Нажмите на ячейку в дистрибутивной таблице</li>
+            <li>Иероглиф добавится в ячейку</li>
+            <li>Чтобы вернуть — нажмите на него в таблице</li>
+            <li>Нажмите «Проверить»</li>
+        </ol>
+        <p style="margin: 0; font-size: 0.85em; color: #555; font-style: italic;">
+            Подсказка: можно возвращать иероглифы
+        </p>
     </div>
+</div>
 
     <div class="status">Выбрано: <span id="selectedChar">-</span></div>
     
@@ -287,14 +247,12 @@ h1 {
         <table class="distribution-table" id="distributionTable">
             <thead>
                 <tr>
-                    <th>Имя существительное</th>
-                    <th>Имя прилагательное</th>
-                    <th>Глагол</th>
-                    <th>Предлог</th>
-                    <th>Наречие</th>
-                    <th>Союз</th>
-                    <th>Частица</th>
-                    <th>Междометие</th>
+                    <th>Обстоятельство времени</th>
+                    <th>Существительное</th>
+                    <th>Сказуемое</th>
+                    <th>Подлежащее</th>
+                    <th>Дополнение</th>
+                    <th>Модальность</th>
                 </tr>
             </thead>
             <tbody>
@@ -313,11 +271,11 @@ h1 {
     </div>
     
     <div class="message success" id="successMsg">
-        Отлично! Вы правильно распределили иероглифы по категориям Пор-Ройяльской грамматики.
+        Отлично! Вы правильно составили дистрибутивную таблицу.
     </div>
     
     <div class="message incorrect" id="errorMsg">
-        Есть ошибки в распределении. Проверьте категории и попробуйте снова.
+        Есть ошибки. Проверьте ячейки и попробуйте снова.
     </div>
     
 <script>
@@ -334,26 +292,17 @@ h1 {
         "卜㱿貞今春方其自來"
     ];
     
-    // Эталонная дистрибутивная таблица для проверки (Пор-Ройяльская грамматика)
+    // Эталонная дистрибутивная таблица для проверки
     const referenceTable = [
-        // Строка 1: "癸卯卜爭貞今歳商受年貞來歳不其"
-        ["癸卯,歳,商,年,歳", "白", "受,來", "自", "今", "", "卜,爭,貞,其", ""],
-        // Строка 2: "受年癸丑卜㱿貞冓受年貞冓不其受"
-        ["年,癸丑", "", "受", "", "", "", "卜,㱿,貞,冓,其,不", ""],
-        // Строка 3: "年癸卯卜亘貞我受黍年癸巳卜㱿貞"
-        ["年,癸卯,黍,癸巳", "", "受", "", "", "", "卜,亘,貞,我", ""],
-        // Строка 4: "我受稻年貞今來歳我不其受年貞戔"
-        ["我,年,歳", "稻", "受", "", "今,來", "", "貞,不,其,戔", ""],
-        // Строка 5: "受貞甫弗其受黍年"
-        ["黍,年", "", "受", "", "", "", "貞,甫,弗,其", ""],
-        // Строка 6: "貞肅來牛貞肅弗其來牛貞冓不其來"
-        ["牛", "", "來", "", "", "", "貞,肅,弗,其,冓,不", ""],
-        // Строка 7: "犬貞今春奚來牛奚不其來牛甲辰卜"
-        ["犬,牛,甲辰", "", "來", "", "今,春", "", "貞,奚,其,不,卜", ""],
-        // Строка 8: "㱿貞奚來白馬王占曰吉其來馬丙辰"
-        ["㱿,馬,王,曰,吉,馬,丙辰", "白", "來,占", "", "奚", "", "其", ""],
-        // Строка 9: "卜㱿貞今春方其自來"
-        ["方", "", "來", "自", "今,春", "", "卜,㱿,貞,其", ""]
+        ["癸卯", "卜爭", "貞", "今歳商", "受年", "貞來歳不其"],
+        ["癸丑", "卜㱿", "貞", "冓", "受年", "貞冓不其受年"],
+        ["癸卯", "卜亘", "貞", "我", "受黍年", ""],
+        ["癸巳", "卜㱿", "貞", "我", "受稻年", "貞今來歳我不其受年"],
+        ["", "", "貞", "戔受貞甫", "", "弗其受黍年"],
+        ["", "", "貞", "肅", "來牛", "貞肅弗其來牛"],
+        ["", "", "貞", "冓", "來犬", "貞今春奚來牛奚不其來牛"],
+        ["甲辰", "卜㱿", "貞", "", "", "奚來白馬"],
+        ["丙辰", "卜㱿", "貞", "今春方", "", "其自來"]
     ];
     
     // Переменные состояния
@@ -366,13 +315,15 @@ h1 {
         createDistributionTable();
         setupEventListeners();
 
-        // Обработчик клика по инструкциям
-        const instructions = document.querySelector('.instructions');
-        if (instructions) {
-            instructions.addEventListener('click', function() {
-                this.classList.toggle('collapsed');
-            });
-        }
+// Обработчик клика по инструкциям
+const instructions = document.querySelector('.instructions');
+if (instructions) {
+    instructions.addEventListener('click', function() {
+        this.classList.toggle('collapsed');
+    });
+}
+
+
     });
     
     function createSourceTable() {
@@ -425,8 +376,8 @@ h1 {
         for (let i = 0; i < lessonText.length; i++) {
             const row = document.createElement('tr');
             
-            // Создаем 8 столбцов для каждой строки (Пор-Ройяльская грамматика)
-            for (let j = 0; j < 8; j++) {
+            // Создаем 6 столбцов для каждой строки
+            for (let j = 0; j < 6; j++) {
                 const td = document.createElement('td');
                 td.dataset.row = i;
                 td.dataset.col = j;
@@ -517,61 +468,47 @@ h1 {
         checkBtn.addEventListener('click', checkAnswer);
     }
     
-    function checkAnswer() {
-        // Сбрасываем фон только у тех ячеек, которые были подсвечены
-        document.querySelectorAll('#distributionTable td').forEach(cell => {
-            cell.style.backgroundColor = '';
-        });
+function checkAnswer() {
+    // Сбрасываем фон только у тех ячеек, которые были подсвечены
+    document.querySelectorAll('#distributionTable td').forEach(cell => {
+        // Сбрасываем только inline-style фон, чтобы не трогать стилизацию из CSS
+        cell.style.backgroundColor = '';
+    });
 
-        let allCorrect = true;
+    let allCorrect = true;
 
-        // Проверяем каждую строку и столбец
-        for (let i = 0; i < referenceTable.length; i++) {
-            for (let j = 0; j < referenceTable[i].length; j++) {
-                const cell = document.querySelector(`#distributionTable tr:nth-child(${i+1}) td:nth-child(${j+1})`);
-                const expected = referenceTable[i][j];
-                const actual = cell.textContent.trim();
+    // Проверяем каждую строку и столбец
+    for (let i = 0; i < referenceTable.length; i++) {
+        for (let j = 0; j < referenceTable[i].length; j++) {
+            const cell = document.querySelector(`#distributionTable tr:nth-child(${i+1}) td:nth-child(${j+1})`);
+            const expected = referenceTable[i][j];
+            const actual = cell.textContent.trim();
 
-                // Пропускаем пустые ячейки (пользователь ничего не ввёл)
-                if (actual === '') {
-                    continue;
-                }
+            // Пропускаем пустые ячейки (пользователь ничего не ввёл)
+            if (actual === '') {
+                continue;
+            }
 
-                // Если пользователь что-то ввёл — проверяем
-                if (expected) {
-                    // Разделяем эталонные значения на массив для проверки
-                    const expectedParts = expected.split(',').map(s => s.trim()).filter(s => s);
-                    const actualParts = actual.split('').sort().join('');
-                    
-                    // Проверяем, содержит ли ячейка все нужные символы
-                    let isCorrect = true;
-                    for (const part of expectedParts) {
-                        for (const char of part) {
-                            if (!actual.includes(char)) {
-                                isCorrect = false;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (isCorrect) {
-                        cell.style.backgroundColor = '#d4edda'; // зелёный
-                    } else {
-                        cell.style.backgroundColor = '#f8d7da'; // красный
-                        allCorrect = false;
-                    }
+            // Если пользователь что-то ввёл — проверяем
+            if (expected) {
+                if (actual === expected) {
+                    cell.style.backgroundColor = '#d4edda'; // зелёный
                 } else {
-                    // Ячейка пустая по эталону, но пользователь что-то ввёл
-                    cell.style.backgroundColor = '#f8d7da';
+                    cell.style.backgroundColor = '#f8d7da'; // красный
                     allCorrect = false;
                 }
+            } else {
+                // Ячейка пустая по эталону, но пользователь что-то ввёл
+                cell.style.backgroundColor = '#f8d7da';
+                allCorrect = false;
             }
         }
-
-        // Показываем сообщения
-        document.getElementById('successMsg').style.display = allCorrect ? 'block' : 'none';
-        document.getElementById('errorMsg').style.display = allCorrect ? 'none' : 'block';
     }
+
+    // Показываем сообщения
+    document.getElementById('successMsg').style.display = allCorrect ? 'block' : 'none';
+    document.getElementById('errorMsg').style.display = allCorrect ? 'none' : 'block';
+}
     
     function resetGame() {
         document.querySelectorAll('#distributionTable td').forEach(cell => {
@@ -585,24 +522,13 @@ h1 {
         selectedChar = null;
         document.getElementById('selectedChar').textContent = '-';
         
+        // Обновляем подсветку
+        checkAnswer();
+        
         // Скрываем сообщения
         document.getElementById('successMsg').style.display = 'none';
         document.getElementById('errorMsg').style.display = 'none';
     }
-</script>
-
-<script>
-    // После загрузки DOM
-    document.addEventListener('DOMContentLoaded', function() {
-        const headerContainer = document.querySelector('.header-container');
-        const h1 = headerContainer.querySelector('h1');
-        const switchBtn = headerContainer.querySelector('.switch-btn');
-
-        // Вычисляем, на сколько нужно сместить заголовок вправо
-        const offset = switchBtn.offsetWidth / 2;
-        h1.style.marginLeft = `${offset}px`;
-        h1.style.marginRight = `${-offset}px`; // или используем transform
-    });
 </script>
 </body>
 </html>
