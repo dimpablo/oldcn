@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Задание 1: Рисование</title>
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   <style>
     body, html {
       margin: 0;
@@ -115,11 +114,10 @@
   // ✅ Функция мерцания экрана
   function flashScreen(color) {
     const overlay = document.getElementById('feedback-overlay');
-    overlay.className = ''; // сброс
+    overlay.className = '';
     overlay.classList.add(color === 'success' ? 'success' : 'error');
     overlay.classList.add('animate');
 
-    // Сброс класса после анимации
     setTimeout(() => {
       overlay.classList.remove('animate');
     }, 800);
@@ -128,49 +126,77 @@
   window.onload = function() {
     const splashScreen = document.getElementById('splash-screen');
     const characterDiv = document.getElementById('character-target-div');
+    const splashH1 = splashScreen.querySelector('h1');
+    const splashP = splashScreen.querySelector('p');
 
     setTimeout(() => {
-      splashScreen.style.display = 'none';
-      characterDiv.style.display = 'block';
-
-      const char = window.location.hash.slice(1);
-
-      if (!char) {
-        console.warn("⚠️ Не указан иероглиф в хэше");
+      const hash = window.location.hash.slice(1);
+      if (!hash) {
+        splashP.textContent = "⚠️ Не указан иероглиф";
         sendResult(false, "Не указан иероглиф");
         return;
       }
 
-      const writer = HanziWriter.create('character-target-div', char, {
-        width: 300,
-        height: 300,
-        showCharacter: false,
-        showOutline: false,
-        showHintAfterMisses: 1,
-        highlightOnComplete: false,
-        padding: 5
-      });
+      const char = decodeURIComponent(hash);
 
-      // Запуск квиза с визуальной обратной связью
-      writer.quiz({
-        leniency: 2.0,
+      // Показываем иероглиф
+      splashH1.textContent = char;
 
-        onCorrectStroke: function(strokeData) {
-          // Можно добавить тихое одобрение, если нужно
-          // flashScreen('success'); // только если хочешь мигать на каждый правильный штрих
-        },
+      // === Попробуем загрузить данные для иероглифа ===
+      HanziWriter.loadCharacterData(char)
+        .then(charData => {
+          // ✅ Данные есть — запускаем квиз
+          splashScreen.style.display = 'none';
+          characterDiv.style.display = 'block';
 
-        onMistake: function(strokeData) {
-          console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
-          flashScreen('error'); // 🔴 Красное мерцание при ошибке
-        },
+          const writer = HanziWriter.create('character-target-div', char, {
+            width: 300,
+            height: 300,
+            showCharacter: false,
+            showOutline: false,
+            showHintAfterMisses: 1,
+            highlightOnComplete: false,
+            padding: 5
+          });
 
-        onComplete: function(summaryData) {
-          console.log("🎯 Квиз завершён:", summaryData);
-          flashScreen('success'); // 🟢 Зелёное мерцание при успехе
-          sendResult(true, "Иероглиф нарисован верно");
-        }
-      });
+          writer.quiz({
+            leniency: 2.0,
+
+            onCorrectStroke: function(strokeData) {
+              // Можно добавить тихую обратную связь
+            },
+
+            onMistake: function(strokeData) {
+              console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
+              flashScreen('error');
+            },
+
+            onComplete: function(summaryData) {
+              console.log("🎯 Квиз завершён:", summaryData);
+              flashScreen('success');
+              sendResult(true, `Иероглиф "${char}" нарисован верно`);
+            }
+          });
+        })
+        .catch(err => {
+          // ❌ Данных нет — древний иероглиф
+          console.warn(`🚫 Нет данных для иероглифа: ${char}`, err);
+
+          // === ОСТАВЛЯЕМ ЗАСТАВКУ, МЕНЯЕМ ТЕКСТ ===
+          splashP.innerHTML = `
+            Очень древний и редикий иероглиф 😔<br>
+            Софт не поддерживает его отрисовку.<br>
+            <strong>Придётся выписать его от руки ✍️</strong>
+          `;
+
+          // Мерцание — ошибка
+          flashScreen('error');
+
+          // Через 1.2 секунды — засчитываем как "выполненное"
+          setTimeout(() => {
+            sendResult(true, `Древний иероглиф "${char}" — задание пропущено (нет данных)`);
+          }, 1200);
+        });
     }, 1000);
   };
 </script>

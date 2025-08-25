@@ -114,43 +114,51 @@
       padding: 12px 0;
       display: flex;
       justify-content: center;
+      gap: 12px;
       flex-shrink: 0;
     }
 
-    #next-btn {
+    button {
       padding: 14px 24px;
       font-size: 18px;
       font-weight: 600;
-      color: white;
-      background-color: #1976d2;
       border: none;
       border-radius: 12px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
-      width: 90%;
-      max-width: 300px;
+      width: calc(50% - 6px);
+      max-width: 200px;
     }
 
-    #next-btn:active {
+    button:active {
       transform: scale(0.98);
+    }
+
+    #next-btn {
+      color: white;
+      background-color: #1976d2;
     }
 
     #next-btn:disabled {
       background-color: #cccccc;
       cursor: not-allowed;
-      transform: none;
     }
 
-#status {
-  font-size: 16px;
-  text-align: center;
-  color: #555;
-  white-space: nowrap;        /* Запрещаем перенос */
-  overflow: hidden;           /* Обрезаем, если не влезает */
-  text-overflow: ellipsis;    /* Многоточие, если обрезаем */
-  padding: 0 8px;
-}
+    #skip-btn {
+      color: white;
+      background-color: #6c757d;
+    }
+
+    #status {
+      font-size: 16px;
+      text-align: center;
+      color: #555;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 8px;
+    }
 
     @media (max-width: 768px) {
       #task-container {
@@ -161,7 +169,7 @@
         padding: 8px 0;
       }
       
-      #next-btn {
+      button {
         padding: 12px 16px;
         font-size: 16px;
       }
@@ -188,226 +196,164 @@
 
   <div class="controls">
     <button id="next-btn">▶️ Старт!</button>
+    <button id="skip-btn" style="display: none;">⏭️ Пропустить</button>
   </div>
-<script src="./../dictionary.js"></script>
 
-<script>
-  // === НАСТРОЙКА УРОКА ===
-  const LESSON = 6;  // ← Меняй номер урока здесь
+  <script src="./../dictionary.js"></script>
 
-  // Проверка словаря
-  if (typeof charData === 'undefined') {
-    console.error('❌ Не загружен dictionary.js');
-    alert('Ошибка: не удалось загрузить словарь иероглифов.');
-    throw new Error('charData not found');
-  }
+  <script>
+    // === НАСТРОЙКА УРОКА ===
+    const LESSON = 1;
 
-  // === Собираем иероглифы нужного урока ===
-  const lessonwords = Object.keys(charData).filter(key => {
-    const data = charData[key];
-    return data.lesson === LESSON;
-  });
-
-  if (lessonwords.length === 0) {
-    console.error(`❌ Нет иероглифов для урока ${LESSON}`);
-    alert(`Нет иероглифов для урока ${LESSON}. Проверь поле 'lesson' в dictionary.js`);
-  }
-
-  // === Перемешиваем ===
-  function shuffleArray(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    if (typeof charData === 'undefined') {
+      console.error('❌ Не загружен dictionary.js');
+      alert('Ошибка: не удалось загрузить словарь иероглифов.');
+      throw new Error('charData not found');
     }
-    return arr;
-  }
 
-  const shuffledLesson = shuffleArray(lessonwords);
-  const totalTasks = shuffledLesson.length;
-  let currentTaskIndex = 0;
-
-  // === Настройки масштаба ===
-  let currentScale = 1.0;
-  const minScale = 0.25;
-  const maxScale = 2.0;
-  const scaleStep = 0.1;
-
-  const iframe = document.getElementById("task-frame");
-  const statusEl = document.getElementById("status");
-  const nextBtn = document.getElementById("next-btn");
-  const progressBar = document.getElementById("progress-bar");
-  const scaleValueEl = document.getElementById("scale-value");
-  const zoomInBtn = document.getElementById("zoom-in");
-  const zoomOutBtn = document.getElementById("zoom-out");
-
-  // --- Масштабирование ---
-  function setScale(scale) {
-    currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
-    iframe.style.transform = `scale(${currentScale})`;
-    scaleValueEl.textContent = currentScale.toFixed(1);
-  }
-
-  zoomInBtn.addEventListener("click", () => setScale(currentScale + scaleStep));
-  zoomOutBtn.addEventListener("click", () => setScale(currentScale - scaleStep));
-
-  // --- Проигрывание звука ---
-  function playHanziSound(hanzi) {
-    const data = charData[hanzi];
-    if (!data || !data.pinyin) return;
-
-    // Конвертируем пиньинь с диакритикой → с цифровым тоном
-    let cleanPinyin = data.pinyin
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/ü/g, 'u')
-      .replace(/v/g, 'u');
-
-    let tone = '1';
-    if (data.pinyin.includes('ā') || data.pinyin.includes('ē') || data.pinyin.includes('ī') || data.pinyin.includes('ō') || data.pinyin.includes('ū') || data.pinyin.includes('ǖ')) tone = '1';
-    else if (data.pinyin.includes('á') || data.pinyin.includes('é') || data.pinyin.includes('í') || data.pinyin.includes('ó') || data.pinyin.includes('ú') || data.pinyin.includes('ǘ')) tone = '2';
-    else if (data.pinyin.includes('ǎ') || data.pinyin.includes('ě') || data.pinyin.includes('ǐ') || data.pinyin.includes('ǒ') || data.pinyin.includes('ǔ') || data.pinyin.includes('ǚ')) tone = '3';
-    else if (data.pinyin.includes('à') || data.pinyin.includes('è') || data.pinyin.includes('ì') || data.pinyin.includes('ò') || data.pinyin.includes('ù') || data.pinyin.includes('ǜ')) tone = '4';
-
-    const pinyinKey = cleanPinyin + tone;
-    const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
-    const audio = new Audio(url);
-
-    audio.play().catch(e => {
-      console.error(`❌ Не удалось проиграть звук для '${hanzi}':`, e);
+    const lessonwords = Object.keys(charData).filter(key => {
+      const data = charData[key];
+      return data.lesson === LESSON && key.length === 1; // только одиночные иероглифы
     });
-  }
 
-  // --- Загрузка задания ---
-  function loadNextTask() {
-    if (currentTaskIndex >= totalTasks) return;
-
-    const hanzi = shuffledLesson[currentTaskIndex];
-    const data = charData[hanzi] || { pinyin: 'неизвестно', meaning: 'значение не найдено' };
-    const pinyin = data.pinyin;
-
-    const url = `tasks/task1.html?_=${Date.now()}#${hanzi}`;
-
-    // Сокращаем значение, если оно длинное
-    const meaningDisplay = data.meaning.length > 50 
-      ? data.meaning.slice(0, 47) + '...' 
-      : data.meaning;
-
-    statusEl.textContent = `${hanzi} • ${pinyin} • урок ${LESSON}: ${meaningDisplay}`;
-    statusEl.title = `Урок ${LESSON}: ${data.meaning}`;
-
-    document.getElementById("task-container").classList.add("active");
-
-    // Перезагрузка iframe
-    iframe.src = '';
-    setTimeout(() => {
-      iframe.src = url;
-    }, 10);
-
-    // Проигрываем звук
-    setTimeout(() => playHanziSound(hanzi), 500);
-
-    // Прогресс
-    progressBar.style.width = `${(currentTaskIndex / totalTasks) * 100}%`;
-  }
-
-  // --- Кнопка "Старт!" → "Следующее задание" ---
-  nextBtn.addEventListener("click", () => {
-    if (currentTaskIndex === 0) {
-      nextBtn.textContent = "▶️ Следующее задание";
-      loadNextTask();
-      currentTaskIndex++;
-      return;
+    if (lessonwords.length === 0) {
+      console.error(`❌ Нет иероглифов для урока ${LESSON}`);
+      alert(`Нет иероглифов для урока ${LESSON}`);
     }
 
-    if (currentTaskIndex < totalTasks) {
-      loadNextTask();
-      currentTaskIndex++;
-      return;
-    }
-
-    // Конец урока
-    iframe.style.display = "none";
-    nextBtn.disabled = true;
-    statusEl.innerHTML = `<div style="text-align: center;">
-      <h2>🎉 Поздравляем!</h2>
-      <p>Вы завершили урок ${LESSON}<br><strong>Иероглифика</strong>!</p>
-      <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
-    </div>`;
-    createFireworks();
-    setTimeout(() => window.location.href = "../", 5000);
-  });
-
-  // --- Фейерверки ---
-  function createFireworks() {
-    const container = document.getElementById("fireworks");
-    const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
-    const particles = 50;
-
-    function createExplosion(x, y) {
-      for (let i = 0; i < particles; i++) {
-        const particle = document.createElement("div");
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 1 + Math.random() * 3;
-        const size = 2 + Math.random() * 4;
-
-        particle.style.position = "absolute";
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.borderRadius = "50%";
-        particle.style.boxShadow = "0 0 6px currentColor";
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        particle.style.pointerEvents = "none";
-
-        container.appendChild(particle);
-
-        let dx = Math.cos(angle) * speed;
-        let dy = Math.sin(angle) * speed;
-        let opacity = 1;
-        let posX = x;
-        let posY = y;
-
-        const animate = () => {
-          opacity -= 0.02;
-          posX += dx;
-          posY += dy + 0.1;
-          dy += 0.05;
-
-          particle.style.opacity = opacity;
-          particle.style.left = `${posX}px`;
-          particle.style.top = `${posY}px`;
-
-          if (opacity > 0) {
-            requestAnimationFrame(animate);
-          } else {
-            container.removeChild(particle);
-          }
-        };
-
-        requestAnimationFrame(animate);
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
+      return arr;
     }
 
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        const x = 50 + Math.random() * (container.offsetWidth - 100);
-        const y = 100 + Math.random() * (container.offsetHeight - 100);
-        createExplosion(x, y);
-      }, i * 300);
-    }
-  }
+    const shuffledLesson = shuffleArray(lessonwords);
+    const totalTasks = shuffledLesson.length;
+    let currentTaskIndex = 0;
 
-  // --- Запуск ---
-  window.addEventListener("load", () => {
-    console.log(`📚 Урок ${LESSON}: найдено ${lessonwords.length} иероглифов`, lessonwords);
-    console.log("🎲 Перемешанный порядок:", shuffledLesson);
+    let currentScale = 1.0;
+    const minScale = 0.25;
+    const maxScale = 2.0;
+    const scaleStep = 0.1;
 
-    if (window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1)) {
-      setScale(1);
+    const iframe = document.getElementById("task-frame");
+    const statusEl = document.getElementById("status");
+    const nextBtn = document.getElementById("next-btn");
+    const skipBtn = document.getElementById("skip-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const scaleValueEl = document.getElementById("scale-value");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+
+    function setScale(scale) {
+      currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
+      iframe.style.transform = `scale(${currentScale})`;
+      scaleValueEl.textContent = currentScale.toFixed(1);
     }
-  });
-</script>
+
+    zoomInBtn.addEventListener("click", () => setScale(currentScale + scaleStep));
+    zoomOutBtn.addEventListener("click", () => setScale(currentScale - scaleStep));
+
+    function playHanziSound(hanzi) {
+      const data = charData[hanzi];
+      if (!data || !data.pinyin) return;
+
+      let cleanPinyin = data.pinyin
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ü/g, 'u')
+        .replace(/v/g, 'u');
+
+      let tone = '1';
+      if (data.pinyin.includes('ā')) tone = '1';
+      else if (data.pinyin.includes('á')) tone = '2';
+      else if (data.pinyin.includes('ǎ')) tone = '3';
+      else if (data.pinyin.includes('à')) tone = '4';
+
+      const pinyinKey = cleanPinyin + tone;
+      const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+      const audio = new Audio(url);
+
+      audio.play().catch(e => {
+        console.warn(`🔇 Нет звука для ${hanzi}`);
+      });
+    }
+
+    window.addEventListener("message", function(event) {
+      if (event.data.type === "TASK_RESULT" && event.data.success) {
+        statusEl.textContent = "✅ Готово! Можно дальше";
+        nextBtn.disabled = false;
+      }
+    });
+
+    function loadNextTask() {
+      if (currentTaskIndex >= totalTasks) return;
+
+      const hanzi = shuffledLesson[currentTaskIndex];
+      const data = charData[hanzi] || {};
+
+      const url = `tasks/task1.html?_=${Date.now()}#${encodeURIComponent(hanzi)}`;
+
+      const meaningDisplay = (data.meaning?.length > 50)
+        ? data.meaning.slice(0, 47) + '...'
+        : data.meaning || 'значение не найдено';
+
+      statusEl.textContent = `${hanzi} • ${data.pinyin || '—'} • ${meaningDisplay}`;
+      statusEl.title = `${data.meaning || ''}`;
+
+      document.getElementById("task-container").classList.add("active");
+      nextBtn.disabled = true;
+      if (skipBtn) skipBtn.style.display = "block";
+
+      iframe.src = '';
+      setTimeout(() => { iframe.src = url; }, 50);
+
+      setTimeout(() => playHanziSound(hanzi), 600);
+      progressBar.style.width = `${(currentTaskIndex / totalTasks) * 100}%`;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (currentTaskIndex === 0) {
+        nextBtn.textContent = "▶️ Следующее";
+        loadNextTask();
+        currentTaskIndex++;
+        return;
+      }
+
+      if (currentTaskIndex < totalTasks) {
+        loadNextTask();
+        currentTaskIndex++;
+        return;
+      }
+
+      iframe.style.display = "none";
+      nextBtn.disabled = true;
+      skipBtn.style.display = "none";
+      statusEl.innerHTML = `<div style="text-align: center;">
+        <h2>🎉 Поздравляем!</h2>
+        <p>Вы завершили урок ${LESSON}</p>
+      </div>`;
+      setTimeout(() => window.location.href = "../", 3000);
+    });
+
+    if (skipBtn) {
+      skipBtn.addEventListener("click", () => {
+        loadNextTask();
+        currentTaskIndex++;
+        if (currentTaskIndex >= totalTasks) {
+          nextBtn.click();
+        }
+      });
+    }
+
+    window.addEventListener("load", () => {
+      console.log(`📚 Урок ${LESSON}: ${lessonwords.length} иероглифов`);
+      console.log("🎲 Порядок:", shuffledLesson);
+      setScale(1.0);
+    });
+  </script>
 </body>
 </html>
