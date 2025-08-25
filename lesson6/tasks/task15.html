@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери перевод: Урок 5</title>
+</head>
+<body>
+
+<h2>Собери перевод: Урок 5</h2>
+
+<div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Каждое задание фокусируется на ключевых грамматических структурах Урока 5.</p>
+    <p>💡 <em>Обратите внимание на инверсию, двойное дополнение и функции местоимений!</em></p>
+</div>
+
+<div class="task-container">
+    <div class="task-title">1. 帝不我降熯</div>
+    <div class="oracle-text">帝不我降熯</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 Здесь важно: <strong>инверсия «我»</strong> перед глаголом в отрицании</p>
+    </div>
+</div>
+
+<div class="task-container">
+    <div class="task-title">2. 帝受我佑</div>
+    <div class="oracle-text">帝受我佑</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 Обратите внимание: <strong>двойное дополнение</strong> — кому? что?</p>
+    </div>
+</div>
+
+<div class="task-container">
+    <div class="task-title">3. 余其得汝</div>
+    <div class="oracle-text">余其得汝</div>
+    <div id="word-pool3" class="word-pool"></div>
+    <div id="drop-area3" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 Помните: <strong>「余」</strong> — 1-е лицо, может быть подлежащим и дополнением</p>
+    </div>
+</div>
+
+<div class="task-container">
+    <div class="task-title">4. 朕使</div>
+    <div class="oracle-text">朕使</div>
+    <div id="word-pool4" class="word-pool"></div>
+    <div id="drop-area4" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 Важно: <strong>「朕」</strong> употребляется ТОЛЬКО как определение</p>
+    </div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+// Ожидаемые правильные варианты
+const expected1 = [
+    ['Небесный Владыка', 'не', 'послал', 'нам', 'засуху'],
+    ['Небесный Владыка', 'не', 'послал', 'засуху', 'нам'],
+    ['не', 'послал', 'нам', 'засуху', 'Небесный Владыка']
+];
+
+const expected2 = [
+    ['Небесный Владыка', 'пошлёт', 'нам', 'помощь'],
+    ['Небесный Владыка', 'ниспошлёт', 'нам', 'помощь'],
+    ['нам', 'помощь', 'пошлёт', 'Небесный Владыка']
+];
+
+const expected3 = [
+    ['Я', 'получу', 'тебя'],
+    ['ты', 'будешь', 'получен', 'мной'],
+    ['Я', 'получу', 'твою', 'помощь']
+];
+
+const expected4 = [
+    ['мой', 'посланник'],
+    ['мой', 'емиссар'],
+    ['посланник', 'мой']
+];
+
+// Слова для выбора (с лишними)
+const words1 = ['Небесный Владыка', 'не', 'послал', 'нам', 'засуху', 'их', 'ему', 'он', 'послал', 'дождь', 'вчера'];
+const words2 = ['Небесный Владыка', 'пошлёт', 'нам', 'помощь', 'им', 'урожай', 'власть', 'мир', 'помощь', 'послал', 'вчера'];
+const words3 = ['Я', 'получу', 'тебя', 'его', 'вас', 'власть', 'помощь', 'мы', 'ты', 'он', 'получил', 'меня'];
+const words4 = ['мой', 'посланник', 'твой', 'емиссар', 'он', 'ему', 'наш', 'они', 'гость', 'воин', 'слуга'];
+
+// DOM-элементы
+const wordPool1 = document.getElementById('word-pool1');
+const wordPool2 = document.getElementById('word-pool2');
+const wordPool3 = document.getElementById('word-pool3');
+const wordPool4 = document.getElementById('word-pool4');
+const dropArea1 = document.getElementById('drop-area1');
+const dropArea2 = document.getElementById('drop-area2');
+const dropArea3 = document.getElementById('drop-area3');
+const dropArea4 = document.getElementById('drop-area4');
+const checkBtn = document.getElementById('check-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultEl = document.getElementById('result');
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createWordElements(words, pool, dropArea) {
+    const shuffledWords = shuffleArray(words);
+    return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+            box.remove();
+            dropArea.appendChild(box);
+            updatePlaceholder(dropArea);
+        };
+
+        return box;
+    });
+}
+
+function updatePlaceholder(dropArea) {
+    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+    dropArea.classList.toggle('has-words', hasWords);
+}
+
+let wordElements1 = [];
+let wordElements2 = [];
+let wordElements3 = [];
+let wordElements4 = [];
+
+function init() {
+    // Очистка
+    [wordPool1, wordPool2, wordPool3, wordPool4].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2, dropArea3, dropArea4].forEach(d => d.innerHTML = '');
+    resultEl.style.display = 'none';
+
+    // Создание элементов
+    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+    wordElements3 = createWordElements(words3, wordPool3, dropArea3);
+    wordElements4 = createWordElements(words4, wordPool4, dropArea4);
+
+    // Добавление в пулы
+    wordElements1.forEach(el => wordPool1.appendChild(el));
+    wordElements2.forEach(el => wordPool2.appendChild(el));
+    wordElements3.forEach(el => wordPool3.appendChild(el));
+    wordElements4.forEach(el => wordPool4.appendChild(el));
+
+    // Обновление плейсхолдеров
+    [dropArea1, dropArea2, dropArea3, dropArea4].forEach(updatePlaceholder);
+}
+
+// Возврат слов в пул при клике
+[dropArea1, dropArea2, dropArea3, dropArea4].forEach((area, i) => {
+    area.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word-box')) {
+            const box = e.target;
+            box.remove();
+            [wordPool1, wordPool2, wordPool3, wordPool4][i].appendChild(box);
+            updatePlaceholder(area);
+        }
+    });
+});
+
+function getWords(dropArea) {
+    return Array.from(dropArea.children)
+        .filter(el => el.classList.contains('word-box'))
+        .map(el => el.textContent.trim());
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+checkBtn.addEventListener('click', () => {
+    const current1 = getWords(dropArea1);
+    const current2 = getWords(dropArea2);
+    const current3 = getWords(dropArea3);
+    const current4 = getWords(dropArea4);
+
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+    const isCorrect3 = expected3.some(option => arraysEqual(current3, option));
+    const isCorrect4 = expected4.some(option => arraysEqual(current4, option));
+
+    if (isCorrect1 && isCorrect2 && isCorrect3 && isCorrect4) {
+        resultEl.innerHTML = `
+            ✅ <b>Идеально!</b> Вы усвоили ключевые темы Урока 5:<br>
+            • <strong>Инверсия в отрицании</strong> (不我降熯)<br>
+            • <strong>Двойное дополнение</strong> (受我佑)<br>
+            • <strong>Функции местоимений</strong> (余, 朕)<br>
+            • <strong>Божественное вмешательство</strong> (帝)
+        `;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+    } else {
+        let message = '❌ Проверьте порядок слов и грамматические конструкции:';
+        if (!isCorrect1) message += '<br>• Инверсия «我» в отрицании: «не пошлёт нам»';
+        if (!isCorrect2) message += '<br>• Двойное дополнение: «нам помощь»';
+        if (!isCorrect3) message += '<br>• Местоимение «余» — 1-е лицо, подлежащее';
+        if (!isCorrect4) message += '<br>• «朕» — только определение, не подлежащее';
+
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
+    }
+});
+
+resetBtn.addEventListener('click', init);
+
+function sendResult(success, message) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
