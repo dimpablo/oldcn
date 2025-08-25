@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Урок 10 — Сложные и условные предложения</title>
+</head>
+<body>
+
+<h2>Выберите правильное значение или объяснение</h2>
+
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+        <strong>王占曰不嘉，其嘉，不吉</strong>
+        <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+        <strong>若茲乃死</strong>
+        <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+        <strong>有祟其有來艱</strong>
+        <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+        <strong>乃茲亦有祟</strong>
+        <span class="status" id="status-q4">?</span>
+    </div>
+</div>
+
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<p id="result"></p>
+
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">王占曰不嘉，其嘉，不吉</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»">Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»</label>
+            <label><input type="radio" name="q1" value="Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»">Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»</label>
+            <label><input type="radio" name="q1" value="Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»">Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»</label>
+            <label><input type="radio" name="q1" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
+        </div>
+        <button onclick="closeModal('q1')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">若茲乃死</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">ruò zī, nǎi sǐ</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
+            <label><input type="radio" name="q2" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
+            <label><input type="radio" name="q2" value="Не благоприятно, но если благоприятно — к счастью">Не благоприятно, но если благоприятно — к счастью</label>
+            <label><input type="radio" name="q2" value="Правитель прочитал ответ: «К несчастью»">Правитель прочитал ответ: «К несчастью»</label>
+        </div>
+        <button onclick="closeModal('q2')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">有祟其有來艱</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yǒu suì qí yǒu lái jiān</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="Есть вред, и если есть — придут трудности">Есть вред, и если есть — придут трудности</label>
+            <label><input type="radio" name="q3" value="Есть вред, и придут трудности">Есть вред, и придут трудности</label>
+            <label><input type="radio" name="q3" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
+            <label><input type="radio" name="q3" value="Нет вреда, и трудности не придут">Нет вреда, и трудности не придут</label>
+        </div>
+        <button onclick="closeModal('q3')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">乃茲亦有祟</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">nǎi zī yì yǒu suì</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="И в этом месте тоже есть вред">И в этом месте тоже есть вред</label>
+            <label><input type="radio" name="q4" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
+            <label><input type="radio" name="q4" value="Правитель прочитал ответ: «Не благоприятно»">Правитель прочитал ответ: «Не благоприятно»</label>
+            <label><input type="radio" name="q4" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
+        </div>
+        <button onclick="closeModal('q4')">OK</button>
+    </div>
+</div>
+
+<script>
+    const correctAnswers = {
+        q1: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»",
+        q2: "Если будет так, то она умрёт",
+        q3: "Есть вред, и придут трудности",
+        q4: "И в этом месте тоже есть вред"
+    };
+
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+    function openModal(id) {
+        document.getElementById(`modal-${id}`).style.display = "flex";
+    }
+
+    function closeModal(id) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (selected) {
+            userAnswers[id] = selected.value;
+            document.getElementById(`status-${id}`).textContent = "✓";
+            document.getElementById(`status-${id}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
+    }
+
+    function checkAll() {
+        const resultEl = document.getElementById("result");
+        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+        if (!allAnswered) {
+            resultEl.textContent = "Ответьте на все.";
+            return;
+        }
+
+        let correctCount = 0;
+        for (const id in correctAnswers) {
+            if (userAnswers[id] === correctAnswers[id]) correctCount++;
+        }
+
+        if (correctCount === 4) {
+            resultEl.innerHTML = `
+                ✅ <strong>Все верно!</strong><br>
+                Вы отлично усвоили Урок 10:<br>
+                • <strong>占曰</strong> — ввод прямой речи после гадания<br>
+                • <strong>其嘉，不吉</strong> — условное следствие<br>
+                • <strong>若茲乃死</strong> — «если будет так, то умрёт» (условие + следствие)<br>
+                • <strong>乃</strong> — указывает на следствие или продолжение действия<br>
+                • <strong>有祟</strong> — «есть вред» — ключевое выражение гадательного текста
+            `;
+            sendResult(true);
+        } else {
+            const wrong = 4 - correctCount;
+            resultEl.textContent = `❌ ${wrong} ошибки.`;
+            sendResult(false, `Ошибки: ${wrong}/4`);
+        }
+    }
+
+    function sendResult(success, message) {
+        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Уведомление, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

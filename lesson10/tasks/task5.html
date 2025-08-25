@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“.</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>王 — Правитель</li>
+      <li>占曰 — (гадатель) сказал, прочитал ответ</li>
+      <li>不嘉 — не благоприятно</li>
+      <li>其嘉 — если благоприятно</li>
+      <li>不吉 — к несчастью</li>
+      <li>若 — если</li>
+      <li>， — (логическая пауза, запятая)</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: 王占曰不嘉，若其嘉，不吉
+    // Перевод: Правитель прочитал ответ: "Не благоприятно. Если благоприятно — к несчастью"
+    const expected = ['王', '占', '曰', '不', '嘉', '若', '其', '嘉', '不', '吉'];
+
+    // Все иероглифы из Урока 10 и предыдущих уроков (для разнообразия)
+    const allChars = [
+      '王', '占', '曰', '不', '嘉', '若', '其', '吉', '有', '祟', '來', '艱', '迄', '至',
+      '五', '日', '丁', '酉', '允', '自', '西', '洗', '震', '告', '土', '方', '征',
+      '于', '我', '東', '鄙', '烖', '二', '邑', '亦', '侵', '田', '四', '庚', '申',
+      '北', '子', '商', '昔', '甲', '辰', '俘', '人', '十', '又', '六', '戊', '午',
+      '往', '逐', '兕', '小', '臣', '叶', '車', '馬', '硪', '馭', '央', '墜', '婦',
+      '好', '娩', '死', '乃', '兹', '偁'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>王占曰不嘉，若其嘉，不吉';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

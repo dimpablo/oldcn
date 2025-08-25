@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8: Включенные предложения</title>
+</head>
+<body>
+<h2>Как правильно понять предложение «于大甲求王受年»?</h2>
+<p><strong>Пример из текста: «于大甲求王受年»</strong></p>
+
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">yú dà jiǎ qiú wáng shòu nián</div>
+</div>
+
+<p>Это гадательное предложение затрагивает ключевую грамматическую конструкцию Урока 8. Каково его правильное значение и структура?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Правитель просил великого предка о том, чтобы он получил урожай» — верно: это включенное предложение, где «王受年» является прямым дополнением к глаголу «求»", 
+      correct: true 
+    },
+    { 
+      text: "«Правитель просил урожай у великого предка Да Цзя» — неверно: если бы прямым дополнением было «年», оно стояло бы сразу после «求» без сказуемого; здесь же дополнение — целое предложение", 
+      correct: false 
+    },
+    { 
+      text: "«Урожай был дан великому предку Да Цзя» — неверно: порядок слов и глагол «求» (просить) указывают на другую структуру", 
+      correct: false 
+    },
+    { 
+      text: "«Правитель приказал великому предку принести урожай» — неверно: «求» означает «просить», а не «приказывать» (для этого используется «令»)", 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
+    }
+
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это типичное предложение Урока 8, демонстрирующее <strong>включенное предложение</strong>:<br>
+        • <strong>求 qiú</strong> — «просить»<br>
+        • <strong>王受年 wáng shòu nián</strong> — «чтобы правитель получил урожай»<br><br>
+        Весь блок <strong>王受年</strong> выступает в роли прямого дополнения к глаголу <strong>求</strong>.<br>
+        Полный перевод: «Правитель просил великого предка о том, чтобы он получил урожай».
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Обратите внимание: «求» требует дополнения, и здесь им является целое предложение «王受年», а не просто «年».";
+      sendResult(false);
+    }
+  }
+
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
+
+  window.onload = renderOptions;
+</script>
+</body>
+</html>
+
+<!-- Уведомление, что задание существует -->
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

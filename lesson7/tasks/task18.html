@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте: Урок 7</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+// Словарь Урока 7 — значения из dict_human.txt
+
+// Первая пятерка
+const pairs1 = [
+  { char: "下", meaning: "нижний; снизу, под; опускаться" },
+  { char: "衆", meaning: "многочисленный, толпа; собств. Чжун" },
+  { char: "震", meaning: "собств. Чжэнь" },
+  { char: "危", meaning: "опасность; собств. Вэй" },
+  { char: "羽", meaning: "перья; собств. Юй" }
+];
+
+// Вторая пятерка
+const pairs2 = [
+  { char: "周", meaning: "собств. Чжоу" },
+  { char: "令", meaning: "приказывать; допускать; начальник; прекрасный; собств. Лин" },
+  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
+  { char: "望", meaning: "смотреть издалека" },
+  { char: "婦", meaning: "невестка" }
+];
+
+// Третья пятерка
+const pairs3 = [
+  { char: "人", meaning: "человек" },
+  { char: "乘", meaning: "ехать на повозке; связка из четырех стрел; собств. Чэн" },
+  { char: "千", meaning: "тысяча" },
+  { char: "征", meaning: "карательный поход" },
+  { char: "高", meaning: "высокий" }
+];
+
+// Четвёртая пятерка
+const pairs4 = [
+  { char: "雞", meaning: "курица; собств. Цзи" },
+  { char: "三", meaning: "три" },
+  { char: "夷", meaning: "чужеземец" },
+  { char: "從", meaning: "следовать; служ. предлог из" },
+  { char: "呼", meaning: "приказывать, повелевать; кричать; рычать" }
+];
+
+// Пятая пятерка
+const pairs5 = [
+  { char: "畢", meaning: "конец, завершение" },
+  { char: "洗", meaning: "мыться; собств. Си" },
+  { char: "妌", meaning: "собств. Цзин" },
+  { char: "一", meaning: "один" },
+  { char: "尹", meaning: "название должности; собств. Инь" }
+];
+
+// Шестая пятерка
+const pairs6 = [
+  { char: "寇", meaning: "грабить, нападать" },
+  { char: "萬", meaning: "десять тысяч" },
+  { char: "倉", meaning: "собств. Цан (название племени)" },
+  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
+  { char: "夷", meaning: "чужеземец" }
+
+];
+pairs = pairs3;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>

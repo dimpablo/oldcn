@@ -2,43 +2,55 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
 </head>
 <body>
   <h2>Собери фразу</h2>
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Хоу Ху, я получу тебя (в жёны).</em></p>
+    <p><em>К наступлению этого второго месяца будет сильный дождь.</em></p>
   </div>
+
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>侯虎 — Хоу Ху</li>
-      <li>余 — я</li>
-      <li>其 — будет</li>
-      <li>得 — получить (в жёны)</li>
-      <li>汝 — тебя</li>
+      <li>及 — к моменту, к наступлению</li>
+      <li>茲 — этого, настоящего</li>
+      <li>二月 — второго месяца</li>
+      <li>有 — будет (иметься)</li>
+      <li>大雨 — сильный дождь</li>
     </ul>
   </div>
+
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
+
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
+
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
+
   <p id="result" class="message"></p>
+
   <script>
-    const expected = ['侯', '虎', '余', '其', '得', '汝'];
+    // Ожидаемая фраза: "К наступлению этого второго месяца будет сильный дождь" → 及茲二月有大雨
+    const expected = ['及', '茲', '二', '月', '有', '大', '雨'];
+
+    // Дополнительные символы из Урока 6
     const allChars = [
-      '侯', '虎', '余', '其', '得', '汝',
-      '帝', '我', '不', '受', '佑', '以', '乃', '使', '伐'
+      '及', '茲', '二', '月', '有', '大', '雨',
+      '亡', '身', '疾', '旬', '禍', '祟', '振',
+      '艱', '西', '土', '足', '来', '未', '酉'
     ].sort(() => Math.random() - 0.5);
+
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -46,12 +58,15 @@
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
+    // Переместить символ в зону сборки
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
@@ -60,6 +75,8 @@
       box.remove();
       dropArea.appendChild(clone);
     }
+
+    // Инициализация панели с символами
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
@@ -72,10 +89,12 @@
         charPool.appendChild(box);
       });
     }
+
+    // Проверка правильности сборки
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>侯虎余其得汝';
+        resultEl.innerHTML = '✅ Правильно!<br>及茲二月有大雨';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -84,10 +103,16 @@
         sendResult(false, 'Неверный порядок');
       }
     });
+
+    // Сбросить сборку
     resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -95,8 +120,10 @@
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
-    // Инициализация
+
+    // Инициализация при загрузке
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>

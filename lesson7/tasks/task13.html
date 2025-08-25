@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Урок 7 — Военные походы и приказы</title>
+</head>
+<body>
+
+<h2>Выберите правильное значение или объяснение</h2>
+
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+        <strong>王令婦好從侯高伐夷</strong>
+        <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+        <strong>王勿從洗震</strong>
+        <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+        <strong>登人五千征土方</strong>
+        <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+        <strong>令羽眔雞以尹從洗震</strong>
+        <span class="status" id="status-q4">?</span>
+    </div>
+</div>
+
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<p id="result"></p>
+
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">王令婦好從侯高伐夷</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">wáng lìng fù hǎo cóng hóu gāo fá yí</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="Правитель приказал невестке Хао возглавить поход против племени Ту">Правитель приказал невестке Хао возглавить поход против племени Ту</label>
+            <label><input type="radio" name="q1" value="Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И">Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И</label>
+            <label><input type="radio" name="q1" value="Хоу Гао повелел невестке Хао идти в поход">Хоу Гао повелел невестке Хао идти в поход</label>
+            <label><input type="radio" name="q1" value="Невестка Хао приказала правителю идти на войну">Невестка Хао приказала правителю идти на войну</label>
+        </div>
+        <button onclick="closeModal('q1')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">王勿從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">wáng wù cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="Правителю не следует следовать за Чжэнем из племени Си">Правителю не следует следовать за Чжэнем из племени Си</label>
+            <label><input type="radio" name="q2" value="Правитель следует за Чжэнем из племени Си">Правитель следует за Чжэнем из племени Си</label>
+            <label><input type="radio" name="q2" value="Правитель запрещает Чжэню идти в поход">Правитель запрещает Чжэню идти в поход</label>
+            <label><input type="radio" name="q2" value="Чжэнь из племени Си следует за правителем">Чжэнь из племени Си следует за правителем</label>
+        </div>
+        <button onclick="closeModal('q2')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">登人五千征土方</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">dēng rén wǔ qiān zhēng tǔ fāng</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="Собрать пять тысяч человек, чтобы идти походом на племя Ту">Собрать пять тысяч человек, чтобы идти походом на племя Ту</label>
+            <label><input type="radio" name="q3" value="Собрать пять тысяч человек для посева">Собрать пять тысяч человек для посева</label>
+            <label><input type="radio" name="q3" value="Племя Ту собирает пять тысяч человек">Племя Ту собирает пять тысяч человек</label>
+            <label><input type="radio" name="q3" value="Пять тысяч человек идут к племени Ту">Пять тысяч человек идут к племени Ту</label>
+        </div>
+        <button onclick="closeModal('q3')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">令羽眔雞以尹從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">lìng yǔ dà jī yǐ yǐn cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си">Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си</label>
+            <label><input type="radio" name="q4" value="Юй и Цзи приказали尹у идти в поход">Юй и Цзи приказали尹у идти в поход</label>
+            <label><input type="radio" name="q4" value="Приказать Юй и Цзи идти в поход без尹а">Приказать Юй и Цзи идти в поход без尹а</label>
+            <label><input type="radio" name="q4" value="尹 повелел Юй и Цзи следовать за Чжэнем">尹 повелел Юй и Цзи следовать за Чжэнем</label>
+        </div>
+        <button onclick="closeModal('q4')">OK</button>
+    </div>
+</div>
+
+<script>
+    const correctAnswers = {
+        q1: "Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И",
+        q2: "Правителю не следует следовать за Чжэнем из племени Си",
+        q3: "Собрать пять тысяч человек, чтобы идти походом на племя Ту",
+        q4: "Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си"
+    };
+
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+    function openModal(id) {
+        document.getElementById(`modal-${id}`).style.display = "flex";
+    }
+
+    function closeModal(id) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (selected) {
+            userAnswers[id] = selected.value;
+            document.getElementById(`status-${id}`).textContent = "✓";
+            document.getElementById(`status-${id}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
+    }
+
+    function checkAll() {
+        const resultEl = document.getElementById("result");
+        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+        if (!allAnswered) {
+            resultEl.textContent = "Ответьте на все.";
+            return;
+        }
+
+        let correctCount = 0;
+        for (const id in correctAnswers) {
+            if (userAnswers[id] === correctAnswers[id]) correctCount++;
+        }
+
+        if (correctCount === 4) {
+            resultEl.innerHTML = `
+                ✅ <strong>Все верно!</strong><br>
+                Вы отлично усвоили Урок 7:<br>
+                • Цепочка сказуемых: 令 → 從 → 伐<br>
+                • 令 — «приказать»<br>
+                • 從 — «следовать за» (подчинённое участие)<br>
+                • 登人 — «собрать людей»<br>
+                • 眔 — «и» (между именами)<br>
+                • 以 — «с» (вводит сопровождающего)
+            `;
+            sendResult(true);
+        } else {
+            const wrong = 4 - correctCount;
+            resultEl.textContent = `❌ ${wrong} ошибки.`;
+            sendResult(false, `Ошибки: ${wrong}/4`);
+        }
+    }
+
+    function sendResult(success, message) {
+        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Уведомление, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

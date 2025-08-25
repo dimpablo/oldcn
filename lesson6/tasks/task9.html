@@ -2,26 +2,27 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 羌弗朕使烖</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: 黍年有足雨</title>
 </head>
 <body>
-  <h2>Какой из вариантов точно передаёт смысл фразы «羌弗朕使烖»?</h2>
-  <p><strong>Обратите внимание на местоимение и отрицание.</strong></p>
+  <h2>Какой из вариантов точно передаёт смысл фразы «黍年有足雨»?</h2>
+  <p><strong>Обратите внимание на предикатив 有 и определение урожая.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Qiāng fú zhèn shǐ zāi</div>
+    <div class="pinyin-text">shǔ nián yǒu zú yǔ</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Цяны не нанесут поражение моему послу", correct: true },
-      { text: "Цяны нанесут поражение послу врага", correct: false },
-      { text: "Мой посол не победит цянов", correct: false },
-      { text: "Цяны не нападут на город", correct: false }
+      { text: "Урожай проса будет иметь достаточно дождя", correct: true },
+      { text: "Урожай риса не будет иметь дождя", correct: false },
+      { text: "На поле проса будет засуха", correct: false },
+      { text: "Урожай проса не будет хорошим", correct: false }
     ];
 
     function shuffle(array) {
@@ -58,10 +59,17 @@
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример использования:<br>
+          • <strong>有 yǒu</strong> — «иметь, будет» (предикатив состояния)<br>
+          • <strong>黍年</strong> — «урожай проса»<br>
+          • <strong>足雨</strong> — «достаточно дождя»<br>
+          Важно: здесь урожай — не субъект действия, а объект состояния.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Подумайте о значении 有 и 黍.";
         sendResult(false);
       }
     }

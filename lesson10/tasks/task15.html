@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Контрастные альтернативы: Урок 10</title>
+</head>
+<body>
+
+<h2>Контрастные альтернативы: Сложные прогнозы</h2>
+
+<div class="instructions">
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Простое предсказание vs Контрастная альтернатива</strong></p>
+        <p>В архаическом древнекитайском языке для выражения сложных, условных или противопоставленных прогнозов используется специальная конструкция с частицей <strong>其 (qí)</strong>. Это ключевая тема Урока 10.</p>
+
+        <p>🟢 <strong>Простое предсказание</strong> — выражает прямое утверждение или прогноз:</p>
+        <ul>
+            <li>有祟 yǒu suì — «есть знамение»</li>
+            <li>亡禍 wáng huò — «нет беды»</li>
+            <li>Не содержит условий, альтернатив или сомнений.</li>
+        </ul>
+
+        <p>🔴 <strong>Контрастная альтернатива</strong> — выражает альтернативные, условные или противопоставленные прогнозы с помощью частицы <strong>其 (qí)</strong>:</p>
+        <ul>
+            <li>其有來艱，其亡來艱 qí yǒu lái jiān, qí wáng lái jiān — «[Если] придут беды, [если] не придут беды»</li>
+            <li>不嘉，其嘉，不吉 bù jiā, qí jiā, bù jí — «Не осуществится. [А если и] осуществится, то к несчастью»</li>
+            <li>Частица <strong>其</strong> вводит гипотетическую или условную ситуацию.</li>
+            <li>Часто используется для противопоставления неблагоприятного и благоприятного исхода.</li>
+            <li>На русский язык переводится как «если», «а если», «то... то».</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "旬亡禍" → 🟢 (простое утверждение)<br>
+        "其有來艱，其亡來艱" → 🔴 (альтернативные прогнозы)</p>
+
+        <p><strong>Важно!</strong><br>
+        Конструкция с <strong>其</strong> используется:
+        <ol>
+            <li>Для выражения <strong>условности</strong> и <strong>альтернативы</strong> в предсказаниях.</li>
+            <li>С частицей <strong>其 (qí)</strong>, которая вводит гипотетическую ситуацию.</li>
+            <li>Чтобы показать <strong>зависимость</strong> одного исхода от другого («если... то»).</li>
+            <li>В ответах правителя (<strong>王占曰</strong>) для описания возможных сценариев.</li>
+        </ol>
+        Это ключевая грамматическая структура Урока 10.</p>
+    </div>
+</div>
+
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const sentences = [
+    { text: "旬亡禍", type: "direct", explanation: "Простое предсказание: «За десятидневку не будет беды» — прямое утверждение" },
+    { text: "其有來艱，其亡來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды, [если] не придут беды» — частица 其 вводит гипотетические ситуации" },
+    { text: "有祟", type: "direct", explanation: "Простое предсказание: «Есть знамение» — прямое утверждение без условий" },
+    { text: "其有來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды» — введение гипотетического сценария с помощью 其" },
+    { text: "王占曰有祟", type: "direct", explanation: "Простое предсказание: «Правитель прочел ответ: есть знамение» — прямое утверждение" },
+    { text: "王占曰不嘉，其嘉，不吉", type: "chain", explanation: "Контрастная альтернатива: «Правитель прочел ответ: не осуществится. [А если и] осуществится, то к несчастью» — противопоставление исходов" },
+    { text: "允有來艱", type: "direct", explanation: "Простое предсказание: «Действительно были беды» — констатация факта" },
+    { text: "其有設，不吉，其唯甲有設，吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] будет знамение, к несчастью; [если] знамение будет в день цзя, к счастью» — условные прогнозы с противопоставлением" },
+    { text: "土方征于我東鄙", type: "direct", explanation: "Простое предсказание: «Племя Ту нападает на нашу восточную окраину» — прямое сообщение" },
+    { text: "其唯辛有設，亦不吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] знамение будет в день синь, [то] также к несчастью» — гипотетический сценарий" }
+];
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
+
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">Простое</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">Альтернатива</span>
+        </div>
+    `;
+
+    return item;
+}
+
+function init() {
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
+
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
+
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
+
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
+}
+
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "chain") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи контрастных альтернатив.<br>
+            <small>Вы усвоили: частица 其 — ключевой маркер условных и противопоставленных прогнозов.</small>
+        `;
+        resultEl.className = 'success';
+        sendResult(true);
+    } else {
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
+    }
+    resultEl.style.display = 'block';
+}
+
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
+
+function sendResult(success) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: success,
+        message: success ? "Верно" : "Ошибка"
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
+</script>
+</body>
+</html>

@@ -73,14 +73,6 @@
             line-height: 1.4;
         }
 
-        .example {
-            display: block;
-            margin: 8px 0 8px 15px;
-            font-family: "Courier New", monospace;
-            font-size: 0.95em;
-            color: #1a4f72;
-        }
-
         ol {
             line-height: 1.8;
         }
@@ -169,75 +161,98 @@
             font-size: 0.85em;
         }
 
-        /* Таблица сравнения */
-        .comparison-table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 80%;
-            font-size: 1.1em;
-            text-align: center;
+        .highlight {
+            background-color: #fffacd;
+            padding: 1px 3px;
+            border-radius: 3px;
         }
 
-        .comparison-table th, .comparison-table td {
-            border: 1px solid #ccc;
+        .grammar-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .grammar-list li {
+            margin: 8px 0;
+            list-style-type: decimal;
+        }
+
+        .example-chinese {
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            color: #1a4f72;
+            margin: 5px 0;
+        }
+
+        .example-pinyin {
+            font-style: italic;
+            color: #555;
+            margin-left: 8px;
+        }
+
+        .example-translation {
+            color: #333;
+            margin: 5px 0 10px 20px;
+            font-style: italic;
+        }
+
+        .comparison {
+            display: flex;
+            margin: 15px 0;
             padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #1a4f72;
+        }
+
+        .comparison-item {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .comparison-title {
+            font-weight: bold;
+            color: #1a4f72;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .phrase-item {
+            margin: 12px 0;
             font-family: 'Noto Serif CJK SC', serif;
-        }
-
-        .comparison-table th {
-            background-color: #e6f2ff;
-            color: #1a4f72;
-        }
-
-        /* Таблица местоимений */
-        .pronoun-table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 70%;
-            font-size: 1.05em;
-        }
-
-        .pronoun-table th, .pronoun-table td {
-            border: 1px solid #ccc;
-            padding: 8px 10px;
-            text-align: center;
-        }
-
-        .pronoun-table th {
-            background-color: #f0f4f8;
-            color: #1a4f72;
-        }
-
-        .pronoun-table td:nth-child(3), .pronoun-table td:nth-child(4) {
-            width: 30%;
-        }
-
-        .math-example {
             font-size: 1.1em;
-            margin: 20px auto;
-            text-align: center;
-            line-height: 1.4;
         }
 
-        /* Уточнённые стили для таблицы оракула */
-        .oracle-table td {
-            min-width: 0;
-            width: calc(95% / 16);
-        }
-
-        .lesson-badge {
-            display: inline-block;
-            background: #e6f2ff;
+        .phrase-char {
+            font-weight: bold;
             color: #1a4f72;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 5px;
+        }
+
+        .phrase-pinyin {
+            font-style: italic;
+            color: #555;
+            margin: 0 8px;
+        }
+
+        .phrase-meaning {
+            color: #333;
+        }
+
+        .grammar-point {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f7f0;
+            border-left: 3px solid #e6b800;
+        }
+
+        .grammar-point-title {
+            font-weight: bold;
+            color: #8a6d3b;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
-<script src="./../dictionary.js"></script>
+     <script src="./../dictionary.js"></script>
 
     <h1>УРОК 9</h1>
 
@@ -310,73 +325,75 @@ td:hover .char-tooltip {
 </style>
 <script>
 
-        const lessonText = [
+// Данные текста урока 10
+const lessonText = [
             "乙卯卜王貞余勿從洗震丁丑卜㱿貞",
             "今春王從洗震辛巳卜㱿貞王叀洗震",
             "從貞王勿唯洗震從貞叀王從洗震",
-            "貞唯茲商有作禍不唯茲商有作禍",
+            "貞唯茲商有作禍不唯茲商有作禥",
             "貞茲雨唯我禍貞茲雨不唯我禥茲雨",
-            "唯禍貞茲雨不唯禍我貞我使其烖方",
+            "唯禥貞茲雨不唯禥我貞我使其烖方",
             "王占曰唯戊烖",
             "今日王逐兕畢自東西北逐肅鹿王叀",
             "今日壬射貝鹿畢弜壬射弗畢"
-        ];
+];
 
-        // Функция для создания таблицы
-        function createOracleTable() {
-            const table = document.getElementById('oracleTable');
-
-            // Строка с номерами колонок
-            const headerRow = document.createElement('tr');
-            const emptyCell = document.createElement('td');
-            emptyCell.className = 'line-num';
-            headerRow.appendChild(emptyCell);
-
-            for (let i = 1; i <= 15; i++) {
-                const th = document.createElement('td');
-                th.className = 'col-num';
-                th.textContent = i;
-                headerRow.appendChild(th);
-            }
-            table.appendChild(headerRow);
-
-            // Строки с текстом
-            for (let i = 0; i < lessonText.length; i++) {
-                const row = document.createElement('tr');
-
-                // Номер строки
-                const lineNumCell = document.createElement('td');
-                lineNumCell.className = 'line-num';
-                lineNumCell.textContent = i + 1;
-                row.appendChild(lineNumCell);
-
-                // Символы строки
-                const chars = Array.from(lessonText[i]);
-                for (let j = 0; j < 15; j++) {
-                    const td = document.createElement('td');
-                    if (j < chars.length && chars[j].trim() !== '') {
-                        const char = chars[j];
-                        td.textContent = char;
-                        if (charData[char]) {
-                            const tooltip = document.createElement('div');
-                            tooltip.className = 'char-tooltip';
-                            tooltip.innerHTML = `
-                                <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
-                                ${charData[char].meaning}<br>
-                                <span class="lesson-badge">Урок ${charData[char].lesson}</span>
-                            `;
-                            td.appendChild(tooltip);
-                        }
-                    }
-                    row.appendChild(td);
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    // Создаём строку с номерами колонок
+    const headerRow = document.createElement('tr');
+    // Пустая ячейка для выравнивания с номерами строк
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    // Номера колонок: от 1 до 15
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    // Создаём строки с текстом
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        // Номер строки
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        // Разбиваем строку на символы
+        const chars = Array.from(lessonText[i]);
+        // Заполняем ячейки для позиций 1–15
+        for (let j = 0; j < 15; j++) {  // Ровно 15 ячеек
+            const td = document.createElement('td');
+            // Если есть символ на этой позиции — ставим его
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
                 }
-                table.appendChild(row);
             }
+            // Если символа нет — ячейка остаётся пустой (ничего не делаем)
+            row.appendChild(td);
         }
+        table.appendChild(row);
+    }
+}
+// Инициализация таблицы при загрузке страницы
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+    <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
 
-        // Инициализация таблицы
-        document.addEventListener('DOMContentLoaded', createOracleTable);
-    </script>
 
     <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
     <div class="grammar">
@@ -384,46 +401,230 @@ td:hover .char-tooltip {
 
         <h3>9.1. Эмфатическая конструкция</h3>
         <p class="original">
-            Для того чтобы логически подчеркнуть какой-либо член предложения, в архаическом древнекитайском языке употребляется специальная эмфатическая конструкция. Выделенный член предложения, во-первых, маркируется эмфатической частицей; во-вторых, если это подлежащее или дополнение, то этот член предложения меняет свою обычную позицию. <br>
-            Для архаического языка характерны две эмфатические частицы — 唯 <em>wéi</em> и 叀 <em>huì</em>. Наиболее часто встречается 唯 <em>wéi</em>. <br>
-            Косвенное дополнение в эмфатической конструкции инвертируется в беспредложной форме: <br>
-            王唯宮田 <em>wáng wéi gōng tián</em> «Именно ли в местности Гун будет охотиться правитель?» (соответствующее предложение в нейтральной форме — «Будет ли ван охотиться в местности Гун?» — может быть выражено трояко: 王田宮 <em>wáng tián gōng</em>; 王田于宮 <em>wáng tián yú gōng</em>; 王于宮田 <em>wáng yú gōng tián</em>). <br>
-            我叀乙巳出 <em>wǒ huì yǐ sì chū</em> «Именно ли в день и-сы мы выступим?» (нейтральный вопрос — «Выступим ли мы в день и-сы?» — возможен в двух вариантах: 乙巳我出 <em>yǐ sì wǒ chū</em>; 我于乙巳出 <em>wǒ yú yǐ sì chū</em>). <br>
-            Эмфатическая конструкция — единственный случай, когда прямое дополнение, выраженное знаменательным словом, может занимать позицию перед сказуемым (об инверсии прямого дополнения, в качестве которого выступает местоимение, см. 5.2): <br>
-            余唯鹿獲 <em>yú wéi lù huò</em> «Оленя ли я поймаю?» (нейтральный вопрос: 余獲鹿 <em>yú huò lù</em> «Поймаю ли я оленя?»). <br>
-            На первый взгляд может показаться, что логически выделенное и оформленное эмфатической частицей подлежащее не инвертируется: <br>
-            唯王自伐羌方 <em>wéi wáng zì fá qiāng fāng</em> «Сам ли правитель пойдет походом на племя Цян?» <br>
-            Но в действительности подлежащее, как и дополнение, меняет в эмфатической конструкции свое обычное место, перемещаясь на позицию после отрицания: <br>
-            不唯王自伐羌方 <em>bù wéi wáng zì fá qiāng fāng</em> «В поход против племени Цян пойдет не сам правитель?» (нейтральный вопрос — «Правитель не пойдет сам на племя Цян?»: 王不自伐羌方 <em>wáng bù zì fá qiāng fāng</em>). <br>
-            Единственным членом предложения, не подверженным инверсии в эмфатической конструкции, является сказуемое — грамматический центр предложения. <br>
-            Следует отметить следующие особенности предложений с эмфатической конструкцией: <br>
-            а) если сказуемое выражено предикативом 有 <em>yǒu</em>, то в отрицательной форме оно не замещается обычным 亡 <em>wú</em>: <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;不唯我有禍 <em>bù wéi wǒ yǒu huò</em> «Не мы ли будем иметь несчастье?» (нейтральный вопрос: 我亡禍 <em>wǒ wú huò</em> «Не будем ли мы иметь несчастье?»); <br>
-            б) в отрицательных предложениях с эмфатической конструкцией дополнение, выраженное местоимением, вопреки общему правилу не инвертируется: <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;不唯方伐我 <em>bù wéi fāng fá wǒ</em> «Не племя ли пойдет на нас походом?» (нейтральный вопрос: 方不我伐 <em>fāng bù wǒ fá</em> «Племя не пойдет на нас походом?»); <br>
-            в) если в предложении, не содержащем эмфатической конструкции, может быть опущен любой член предложения, кроме сказуемого, то в предложении с эмфазой может быть опущено и сказуемое, если не оно логически выделено. <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;Поэтому эмфатическая конструкция может быть сведена до одного слова, оформленного частицей 唯 <em>wéi</em> (или 叀 <em>huì</em>): <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;唯狼 <em>wéi láng</em> «Волков» (ответ на вопрос: 唯鹿獲, 唯狼 <em>wéi lù huò, wéi láng</em> «Оленей поймаем или волков?»).
+            Для того чтобы логически подчеркнуть какой-либо член предложения, в архаическом древнекитайском языке употребляется специальная <strong>эмфатическая конструкция</strong>. Выделенный член предложения, во-первых, маркируется эмфатической частицей; во-вторых, если это подлежащее или дополнение, то этот член предложения меняет свою обычную позицию.
         </p>
+
+        <p class="original">
+            Для архаического языка характерны две эмфатические частицы — <span class="highlight">唯 <em>wéi</em></span> и <span class="highlight">叀 <em>huì</em></span>. Наиболее часто встречается <span class="highlight">唯 <em>wéi</em></span>.
+        </p>
+
+        <div class="grammar-point">
+            <div class="grammar-point-title">Косвенное дополнение в эмфатической конструкции</div>
+            <p>инвертируется в беспредложной форме:</p>
+            <div class="example-chinese">王唯宮田 <em>wáng wéi gōng tián</em></div>
+            <div class="example-translation">«Именно ли в местности Гун будет охотиться правитель?»</div>
+            <p>Соответствующее предложение в нейтральной форме — «Будет ли ван охотиться в местности Гун?» — может быть выражено трояко:</p>
+            <ul class="grammar-list">
+                <li><span class="example-chinese">王田宮 <em>wáng tián gōng</em></span></li>
+                <li><span class="example-chinese">王田于宮 <em>wáng tián yú gōng</em></span></li>
+                <li><span class="example-chinese">王于宮田 <em>wáng yú gōng tián</em></span></li>
+            </ul>
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-item">
+                <div class="comparison-title">Эмфатическая форма</div>
+                <div class="example-chinese">我叀乙巳出 <em>wǒ huì yǐ sì chū</em></div>
+                <div class="example-translation">«Именно ли в день и-сы мы выступим?»</div>
+            </div>
+            <div class="comparison-item">
+                <div class="comparison-title">Нейтральный вопрос</div>
+                <div class="example-chinese">乙巳我出 <em>yǐ sì wǒ chū</em></div>
+                <div class="example-chinese">我于乙巳出 <em>wǒ yú yǐ sì chū</em></div>
+                <div class="example-translation">«Выступим ли мы в день и-сы?»</div>
+            </div>
+        </div>
+
+        <div class="grammar-point">
+            <div class="grammar-point-title">Прямое дополнение</div>
+            <p>Эмфатическая конструкция — единственный случай, когда прямое дополнение, выраженное знаменательным словом, может занимать позицию перед сказуемым:</p>
+            <div class="example-chinese">余唯鹿獲 <em>yú wéi lù huò</em></div>
+            <div class="example-translation">«Оленя ли я поймаю?»</div>
+            <div class="example-chinese">余獲鹿 <em>yú huò lù</em></div>
+            <div class="example-translation">«Поймаю ли я оленя?»</div>
+        </div>
+
+        <p class="original">
+            На первый взгляд может показаться, что логически выделенное и оформленное эмфатической частицей подлежащее не инвертируется:
+        </p>
+
+        <div class="example-chinese">唯王自伐羌方 <em>wéi wáng zì fá qiāng fāng</em></div>
+        <div class="example-translation">«Сам ли правитель пойдет походом на племя Цян?»</div>
+
+        <p class="original">
+            Но в действительности подлежащее, как и дополнение, меняет в эмфатической конструкции свое обычное место, перемещаясь на позицию после отрицания:
+        </p>
+
+        <div class="example-chinese">不唯王自伐羌方 <em>bù wéi wáng zì fá qiāng fāng</em></div>
+        <div class="example-translation">«В поход против племени Цян пойдет не сам правитель?»</div>
+        <div class="example-chinese">王不自伐羌方 <em>wáng bù zì fá qiāng fāng</em></div>
+        <div class="example-translation">«Правитель не пойдет сам на племя Цян?»</div>
+
+        <p class="original">
+            Единственным членом предложения, не подверженным инверсии в эмфатической конструкции, является <strong>сказуемое</strong> — грамматический центр предложения.
+        </p>
+
+        <div class="grammar-point">
+            <div class="grammar-point-title">Особенности предложений с эмфатической конструкцией:</div>
+            <ol class="grammar-list">
+                <li>
+                    <p>Если сказуемое выражено предикативом <span class="highlight">有 <em>yǒu</em></span>, то в отрицательной форме оно не замещается обычным <span class="highlight">亡 <em>wú</em></span>:</p>
+                    <div class="example-chinese">不唯我有禍 <em>bù wéi wǒ yǒu huò</em></div>
+                    <div class="example-translation">«Не мы ли будем иметь несчастье?»</div>
+                    <div class="example-chinese">我亡禍 <em>wǒ wú huò</em></div>
+                    <div class="example-translation">«Не будем ли мы иметь несчастье?»</div>
+                </li>
+                <li>
+                    <p>В отрицательных предложениях с эмфатической конструкцией дополнение, выраженное местоимением, вопреки общему правилу не инвертируется:</p>
+                    <div class="example-chinese">不唯方伐我 <em>bù wéi fāng fá wǒ</em></div>
+                    <div class="example-translation">«Не племя ли пойдет на нас походом?»</div>
+                    <div class="example-chinese">方不我伐 <em>fāng bù wǒ fá</em></div>
+                    <div class="example-translation">«Племя не пойдет на нас походом?»</div>
+                </li>
+                <li>
+                    <p>Если в предложении, не содержащем эмфатической конструкции, может быть опущен любой член предложения, кроме сказуемого, то в предложении с эмфазой может быть опущено и сказуемое, если не оно логически выделено.</p>
+                    <p>Поэтому эмфатическая конструкция может быть сведена до одного слова, оформленного частицей <span class="highlight">唯 <em>wéi</em></span> (или <span class="highlight">叀 <em>huì</em></span>):</p>
+                    <div class="example-chinese">唯狼 <em>wéi láng</em></div>
+                    <div class="example-translation">«Волков»</div>
+                    <div class="example-translation">(ответ на вопрос: <span class="example-chinese">唯鹿獲, 唯狼 <em>wéi lù huò, wéi láng</em></span> «Оленей поймаем или волков?»)</div>
+                </li>
+            </ol>
+        </div>
 
         <h3>9.2. Служебное слово 弜 jiàng</h3>
         <p class="original">
-            Во всех случаях, когда эмфатическая конструкция употреблена в отрицательном предложении, частица 唯 <em>wéi</em> занимает в нем позицию непосредственно после отрицания 不 <em>bù</em>. В архаическом языке в предложениях с эмфазой употребляется также специальное служебное слово 弜 <em>jiàng</em>. <br>
-            弜 <em>jiàng</em> может подчеркивать следующие члены предложения: <br>
-            а) прямое дополнение: <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;王弜羌方伐 <em>wáng jiàng qiāng fāng fá</em> «Не на племя Цян пойдет походом правитель?» (ср.: 王伐羌方 <em>wáng fá qiāng fāng</em> «Ван пойдет походом на племя Цян?»; 王唯羌方伐 <em>wáng wéi qiāng fāng fá</em> «Ван пойдет походом именно на племя Цян?»); <br>
-            弜馬令 <em>jiàng mă lìng</em> «Приказ будет отдан не [племени] Ма?» (ср.: 令馬 <em>lìng mă</em> «Приказ будет отдан Ма?»; 唯馬令 <em>wéi mă lìng</em> «Приказ будет отдан именно Ма?»); <br>
-            б) косвенное дополнение со значением места: <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;弜盂田 <em>jiàng yú tián</em> «Будем охотиться не в Юй?» (ср.: 田盂 <em>tián yú</em> «Будем охотиться в Юй?»; 唯盂田 <em>wéi yú tián</em> «Будем охотиться именно в Юй?»); <br>
-            в) косвенное дополнение со значением времени действия: <br>
-            弜辛亥射 <em>jiàng xīn hài shè</em> «Будем стрелять не в день синь-хай?» (ср.: 辛亥射 <em>xīn hài shè</em> «В день синь-хай будем стрелять?»; 唯辛亥射 <em>wéi xīn hài shè</em> «Будем стрелять именно в день синь-хай?»); <br>
-            弜今日雨 <em>jiàng jīn rì yǔ</em> «Дождь будет не сегодня?» (ср.: 今日雨 <em>jīn rì yǔ</em> «Сегодня дождь?»; 唯今日雨 <em>wéi jīn rí yǔ</em> «Дождь будет сегодня?»); <br>
-            г) сказуемое: <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;壬卯弜漁 <em>rèn mǎo jiàng yú</em> «В день жэнь-мао ловить рыбу не будем?» (ср.: 壬卯漁 <em>rèn mǎo yú</em> «В день жэнь-мао будем ловить рыбу?»; 壬卯唯漁 <em>rèn mǎo wéi yú</em> «В день жэнь-мао будем рыбу ловить, [а не охотиться]»?); <br>
-            辛巳王弜往于田 <em>xīn sì wáng jiàng wǎng yú tián</em> «В день синь-сы ван на охоту не поедет?» (ср.: 辛巳王往于田 <em>xīn sì wáng wǎng yú tián</em> «В день синь-сы ван поедет на охоту?»; 辛巳王唯往于田 <em>xīn sì wáng wéi wǎng yú tián</em> «В день синь-сы ван поедет на охоту, [а не останется в столице]?»). <br>
-            По общему правилу в предложении с эмфатической конструкцией, оформленной служебным словом 弜 <em>jiàng</em>, может быть опущен любой член предложения, кроме логически выделенного: <br>
-            用望乘以羌自上甲, 弜羌, 唯牛 <em>yòng wàng chéng yǐ qiāng zì shàng jiă, jiàng qiāng, wéi niú</em> «Цянов, приведенных Ван Чэном, принести в жертву [предкам], начиная с Верхнего Цзя? Не цянов. Быков».
+            Во всех случаях, когда эмфатическая конструкция употреблена в отрицательном предложении, частица <span class="highlight">唯 <em>wéi</em></span> занимает в нем позицию непосредственно после отрицания <span class="highlight">不 <em>bù</em></span>. В архаическом языке в предложениях с эмфазой употребляется также специальное служебное слово <span class="highlight">弜 <em>jiàng</em></span>.
         </p>
+
+        <p class="original">
+            <span class="highlight">弜 <em>jiàng</em></span> может подчеркивать следующие члены предложения:
+        </p>
+
+        <ol class="grammar-list">
+            <li>
+                <p><strong>Прямое дополнение:</strong></p>
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">王伐羌方 <em>wáng fá qiāng fāng</em></div>
+                        <div class="example-translation">«Ван пойдет походом на племя Цян?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">王唯羌方伐 <em>wáng wéi qiāng fāng fá</em></div>
+                        <div class="example-translation">«Ван пойдет походом именно на племя Цян?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">王弜羌方伐 <em>wáng jiàng qiāng fāng fá</em></div>
+                <div class="example-translation">«Не на племя Цян пойдет походом правитель?»</div>
+                
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">令馬 <em>lìng mă</em></div>
+                        <div class="example-translation">«Приказ будет отдан Ма?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">唯馬令 <em>wéi mă lìng</em></div>
+                        <div class="example-translation">«Приказ будет отдан именно Ма?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">弜馬令 <em>jiàng mă lìng</em></div>
+                <div class="example-translation">«Приказ будет отдан не [племени] Ма?»</div>
+            </li>
+            
+            <li>
+                <p><strong>Косвенное дополнение со значением места:</strong></p>
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">田盂 <em>tián yú</em></div>
+                        <div class="example-translation">«Будем охотиться в Юй?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">唯盂田 <em>wéi yú tián</em></div>
+                        <div class="example-translation">«Будем охотиться именно в Юй?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">弜盂田 <em>jiàng yú tián</em></div>
+                <div class="example-translation">«Будем охотиться не в Юй?»</div>
+            </li>
+            
+            <li>
+                <p><strong>Косвенное дополнение со значением времени действия:</strong></p>
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">辛亥射 <em>xīn hài shè</em></div>
+                        <div class="example-translation">«В день синь-хай будем стрелять?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">唯辛亥射 <em>wéi xīn hài shè</em></div>
+                        <div class="example-translation">«Будем стрелять именно в день синь-хай?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">弜辛亥射 <em>jiàng xīn hài shè</em></div>
+                <div class="example-translation">«Будем стрелять не в день синь-хай?»</div>
+                
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">今日雨 <em>jīn rì yǔ</em></div>
+                        <div class="example-translation">«Сегодня дождь?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">唯今日雨 <em>wéi jīn rí yǔ</em></div>
+                        <div class="example-translation">«Дождь будет сегодня?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">弜今日雨 <em>jiàng jīn rì yǔ</em></div>
+                <div class="example-translation">«Дождь будет не сегодня?»</div>
+            </li>
+            
+            <li>
+                <p><strong>Сказуемое:</strong></p>
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">壬卯漁 <em>rèn mǎo yú</em></div>
+                        <div class="example-translation">«В день жэнь-мао будем ловить рыбу?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">壬卯唯漁 <em>rèn mǎo wéi yú</em></div>
+                        <div class="example-translation">«В день жэнь-мао будем рыбу ловить, [а не охотиться]?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">壬卯弜漁 <em>rèn mǎo jiàng yú</em></div>
+                <div class="example-translation">«В день жэнь-мао ловить рыбу не будем?»</div>
+                
+                <div class="comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-title">Нейтральная форма</div>
+                        <div class="example-chinese">辛巳王往于田 <em>xīn sì wáng wǎng yú tián</em></div>
+                        <div class="example-translation">«В день синь-сы ван поедет на охоту?»</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-title">Эмфатическая форма</div>
+                        <div class="example-chinese">辛巳王唯往于田 <em>xīn sì wáng wéi wǎng yú tián</em></div>
+                        <div class="example-translation">«В день синь-сы ван поедет на охоту, [а не останется в столице]?»</div>
+                    </div>
+                </div>
+                <div class="example-chinese">辛巳王弜往于田 <em>xīn sì wáng jiàng wǎng yú tián</em></div>
+                <div class="example-translation">«В день синь-сы ван на охоту не поедет?»</div>
+            </li>
+        </ol>
+
+        <p class="original">
+            По общему правилу в предложении с эмфатической конструкцией, оформленной служебным словом <span class="highlight">弜 <em>jiàng</em></span>, может быть опущен любой член предложения, кроме логически выделенного:
+        </p>
+
+        <div class="example-chinese">用望乘以羌自上甲, 弜羌, 唯牛 <em>yòng wàng chéng yǐ qiāng zì shàng jiă, jiàng qiāng, wéi niú</em></div>
+        <div class="example-translation">«Цянов, приведенных Ван Чэном, принести в жертву [предкам], начиная с Верхнего Цзя? Не цянов. Быков»</div>
     </div>
 
     <!-- СПИСОК СЛОВ УРОКА -->
@@ -485,14 +686,23 @@ td:hover .char-tooltip {
 
         <h3>9.А. Поле или охотничье угодье?</h3>
         <p class="original">
-            Может показаться странным тот факт, что слово 田 <em>tián</em> имело в архаическом древнекитайском языке два, казалось бы, совершенно различных значения — «поле» и «охота». В действительности эти два значения были органически связаны между собой. <br>
+            Может показаться странным тот факт, что слово <span class="highlight">田 <em>tián</em></span> имело в архаическом древнекитайском языке два, казалось бы, совершенно различных значения — «поле» и «охота». В действительности эти два значения были органически связаны между собой.
+        </p>
+
+        <p class="original">
             В иньское время предки китайцев практиковали переложное земледелие: траву и кустарник на участке леса выжигали и вскапывали под пашню, а через год-два забрасывали, поле вновь зарастало, на нем опять кормились дикие животные, и оно, как и прежде, становилось охотничьим угодьем.
         </p>
 
         <h3>9.Б. Охота на слонов и носорогов</h3>
         <p class="original">
-            Климат на Среднекитайской равнине в иньское время был намного более теплым, чем сейчас. Этим объясняется тот странный на первый взгляд факт, что иньцы охотились на диких животных, обитающих в настоящее время в гораздо более южных районах. <br>
-            Добычей охотников становились тогда слоны и носороги. <br>
+            Климат на Среднекитайской равнине в иньское время был намного более теплым, чем сейчас. Этим объясняется тот странный на первый взгляд факт, что иньцы охотились на диких животных, обитающих в настоящее время в гораздо более южных районах.
+        </p>
+
+        <p class="original">
+            Добычей охотников становились тогда слоны и носороги.
+        </p>
+
+        <p class="original">
             Достоверность этих сведений, сообщаемых гадательными надписями, подтверждается изучением костных остатков животных, обнаруженных при раскопках иньской столицы.
         </p>
     </div>
@@ -500,12 +710,12 @@ td:hover .char-tooltip {
     <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
     <div class="assignment">
         <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
+        <ol class="grammar-list">
             <li>Перепишите текст в виде дистрибутивной таблицы.</li>
             <li>Проделайте грамматический анализ текста.</li>
             <li>Переведите текст на русский язык.</li>
             <li>Видоизмените следующие предложения так, чтобы логически выделить в них сначала косвенное дополнение со значением времени действия, затем прямое дополнение и, наконец, подлежащее:
-                <ol type="a">
+                <ol type="a" class="grammar-list">
                     <li>翌日辛我不伐羌.</li>
                     <li>王于今日射鹿.</li>
                 </ol>
@@ -518,6 +728,5 @@ td:hover .char-tooltip {
         Восстановлено по OCR с сохранением авторского стиля.<br>
         Все иероглифы — из текстов Уроков 1–9 или из циклических знаков.
     </div>
-
 </body>
 </html>

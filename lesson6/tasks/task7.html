@@ -2,26 +2,27 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 帝受我佑</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 6 — Погода, болезни и миссии</title>
 </head>
 <body>
-  <h2>Какой из вариантов является правильным переводом фразы «帝受我佑»?</h2>
-  <p><strong>Пример: «帝受我佑»</strong></p>
+  <h2>Какой из вариантов является правильным переводом фразы?</h2>
+  <p><strong>Пример: «及茲二月有大雨»</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Dì shòu wǒ yòu</div>
+    <div class="pinyin-text">jí zī èr yuè yǒu dà yǔ</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Небесный Владыка получит мою помощь", correct: false },
-      { text: "Небесный Владыка пошлёт мне помощь", correct: true },
-      { text: "Я получу помощь от Небесного Владыки", correct: false },
-      { text: "Небесный Владыка не пошлёт помощи", correct: false }
+      { text: "Ко второму месяцу будут сильные дожди", correct: true },
+      { text: "Во втором месяце не будет дождя", correct: false },
+      { text: "Со второго месяца идут дожди", correct: false },
+      { text: "До второго месяца будет засуха", correct: false }
     ];
 
     function shuffle(array) {
@@ -58,10 +59,14 @@
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример использования предлога <strong>及 jí</strong> — «к моменту...»<br>
+          и предикатива <strong>有 yǒu</strong> — «иметь, будет».
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Подумайте о значении 及 и 有.";
         sendResult(false);
       }
     }

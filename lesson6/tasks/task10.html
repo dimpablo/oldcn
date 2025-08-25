@@ -2,26 +2,27 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 侯虎余其得汝</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: 黍年有足雨</title>
 </head>
 <body>
-  <h2>Что означает фраза «侯虎余其得汝»?</h2>
-  <p><strong>Обратите внимание на личные местоимения.</strong></p>
+  <h2>Что означает фраза «黍年有足雨»?</h2>
+  <p><strong>Обратите внимание на предикатив 有 и определение урожая.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Hóu Hǔ yú qí dé rǔ</div>
+    <div class="pinyin-text">shǔ nián yǒu zú yǔ</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Хоу Ху, я получу тебя (в жёны)", correct: true },
-      { text: "Хоу Ху, ты получишь меня", correct: false },
-      { text: "Я отдам тебя Хоу Ху", correct: false },
-      { text: "Хоу Ху, я не получу тебя", correct: false }
+      { text: "Урожай проса будет иметь достаточно дождя", correct: true },
+      { text: "Урожай риса не будет иметь дождя", correct: false },
+      { text: "На поле проса будет засуха", correct: false },
+      { text: "Урожай проса не будет хорошим", correct: false }
     ];
 
     function shuffle(array) {
@@ -58,10 +59,17 @@
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример использования:<br>
+          • <strong>有 yǒu</strong> — «иметь, будет (состояние)»<br>
+          • <strong>黍年</strong> — «урожай проса»<br>
+          • <strong>足雨</strong> — «достаточно дождя»<br>
+          Важно: здесь <strong>有</strong> выражает не действие, а состояние.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Подумайте о значении 有 и 黍.";
         sendResult(false);
       }
     }

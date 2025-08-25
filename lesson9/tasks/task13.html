@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+
+<h2>Выберите правильное значение или объяснение</h2>
+
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+        <strong>貞王唯從洗震</strong>
+        <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+        <strong>貞王勿從洗震</strong>
+        <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+        <strong>我叀乙巳出</strong>
+        <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+        <strong>余唯鹿獲</strong>
+        <span class="status" id="status-q4">?</span>
+    </div>
+</div>
+
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<p id="result"></p>
+
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">貞王唯從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Правитель повелел племени Си-Чжэнь выступить">Правитель повелел племени Си-Чжэнь выступить</label>
+        </div>
+        <button onclick="closeModal('q1')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">貞王勿從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">zhēn wáng wù cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Правитель не пойдёт походом на племя Си-Чжэнь">Правитель не пойдёт походом на племя Си-Чжэнь</label>
+        </div>
+        <button onclick="closeModal('q2')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">我叀乙巳出</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">wǒ huì yǐ sì chū</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="Я выйду в день И-сы">Я выйду в день И-сы</label>
+            <label><input type="radio" name="q3" value="Не выйду ли я в день И-сы">Не выйду ли я в день И-сы</label>
+            <label><input type="radio" name="q3" value="Именно ли я выйду в день И-сы">Именно ли я выйду в день И-сы</label>
+            <label><input type="radio" name="q3" value="Я не выйду в день И-сы">Я не выйду в день И-сы</label>
+        </div>
+        <button onclick="closeModal('q3')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">余唯鹿獲</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú wéi lù huò</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="Я поймаю оленя">Я поймаю оленя</label>
+            <label><input type="radio" name="q4" value="Не поймаю ли я оленя">Не поймаю ли я оленя</label>
+            <label><input type="radio" name="q4" value="Оленя ли я поймаю">Оленя ли я поймаю</label>
+            <label><input type="radio" name="q4" value="Я не поймаю оленя">Я не поймаю оленя</label>
+        </div>
+        <button onclick="closeModal('q4')">OK</button>
+    </div>
+</div>
+
+<script>
+    const correctAnswers = {
+        q1: "Именно ли правитель пойдёт походом на племя Си-Чжэнь",
+        q2: "Не пойдёт ли правитель походом на племя Си-Чжэнь",
+        q3: "Именно ли я выйду в день И-сы",
+        q4: "Оленя ли я поймаю"
+    };
+
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+    function openModal(id) {
+        document.getElementById(`modal-${id}`).style.display = "flex";
+    }
+
+    function closeModal(id) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (selected) {
+            userAnswers[id] = selected.value;
+            document.getElementById(`status-${id}`).textContent = "✓";
+            document.getElementById(`status-${id}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
+    }
+
+    function checkAll() {
+        const resultEl = document.getElementById("result");
+        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+        if (!allAnswered) {
+            resultEl.textContent = "Ответьте на все.";
+            return;
+        }
+
+        let correctCount = 0;
+        for (const id in correctAnswers) {
+            if (userAnswers[id] === correctAnswers[id]) correctCount++;
+        }
+
+        if (correctCount === 4) {
+            resultEl.innerHTML = `
+                ✅ <strong>Все верно!</strong><br>
+                Вы отлично усвоили Урок 9:<br>
+                • <strong>Эмфатическая конструкция</strong>:<br>
+                &nbsp;&nbsp;Частица <em>唯 (wéi)</em> придаёт вопросу выразительность,<br>
+                &nbsp;&nbsp;выделяя субъект или объект.<br>
+                • <em>王唯從...</em> — «Именно ли правитель пойдёт?»<br>
+                • <em>我叀...</em> — «Именно ли я выйду?»<br>
+                • <em>余唯鹿獲</em> — «Оленя ли я поймаю?» (инверсия дополнения)<br>
+                • <em>勿</em> — отрицательный вопрос, <em>唯</em> — эмфатический.
+            `;
+            sendResult(true);
+        } else {
+            const wrong = 4 - correctCount;
+            resultEl.textContent = `❌ ${wrong} ошибки.`;
+            sendResult(false, `Ошибки: ${wrong}/4`);
+        }
+    }
+
+    function sendResult(success, message) {
+        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Уведомление, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

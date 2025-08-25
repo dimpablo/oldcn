@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 7 — Военные походы и приказы</title>
+</head>
+<body>
+  <h2>Что означает конструкция «王令婦好從侯高伐夷»?</h2>
+  <p><strong>Обратите внимание на цепочку сказуемых: 令 → 從 → 伐.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">wáng lìng fù hǎo cóng hóu gāo fá yí</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель приказал невестке Хао возглавить поход против племени Ту.", correct: false },
+      { text: "Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И.", correct: true },
+      { text: "Правитель не приказал невестке Хао участвовать в походе.", correct: false },
+      { text: "Хоу Гао повелел невестке Хао собрать войско.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>цепочки сказуемых</strong>:<br>
+          • <strong>令 lìng</strong> — «приказать»<br>
+          • <strong>從 cóng</strong> — «следовать»<br>
+          • <strong>伐 fá</strong> — «поход против»<br>
+          Такие конструкции характерны для военных приказов.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на значение 令, 從 и 伐.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

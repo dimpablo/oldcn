@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 9: Эмфатические конструкции</title>
+</head>
+<body>
+<h2>Как правильно понять предложение «貞王唯從洗震»?</h2>
+<p><strong>Пример из текста: «貞王唯從洗震»</strong></p>
+
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+</div>
+
+<p>Это гадательное предложение затрагивает ключевую грамматическую конструкцию Урока 9. Каково его правильное значение и структура?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Именно ли правитель пойдёт походом на племя Си-Чжэнь?» — верно: частица «唯» придаёт вопросу эмфазу, выделяя подлежащее «王»", 
+      correct: true 
+    },
+    { 
+      text: "«Правитель пойдёт походом на племя Си-Чжэнь» — неверно: отсутствие частицы «唯» и наличие глагола «貞» указывают на вопрос, а не утверждение", 
+      correct: false 
+    },
+    { 
+      text: "«Не пойдёт ли правитель походом на племя Си-Чжэнь?» — неверно: это значение передаёт частица «勿», а не «唯»", 
+      correct: false 
+    },
+    { 
+      text: "«Правитель повелел племени Си-Чжэнь выступить» — неверно: глагол «從» означает «пойти походом на», а не «повелел», и нет побудительной конструкции", 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
+    }
+
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это типичное предложение Урока 9, демонстрирующее <strong>эмфатическую конструкцию</strong>:<br>
+        • <strong>貞 zhēn</strong> — «спрашивают»<br>
+        • <strong>王 wáng</strong> — «правитель»<br>
+        • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность и выделяющая субъект<br>
+        • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br><br>
+        Частица <strong>唯</strong> превращает нейтральный вопрос в эмфатический: акцент делается на подлежащем.<br>
+        Полный перевод: «<em>Именно ли</em> правитель пойдёт походом?»
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Обратите внимание: «唯» — это не отрицание, а частица эмфазы. Она выделяет «王» как центральный элемент вопроса.";
+      sendResult(false);
+    }
+  }
+
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
+
+  window.onload = renderOptions;
+</script>
+</body>
+</html>
+
+<!-- Уведомление, что задание существует -->
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

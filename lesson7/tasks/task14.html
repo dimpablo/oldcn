@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери перевод: Урок 7</title>
+</head>
+<body>
+
+<h2>Собери перевод: Урок 7</h2>
+
+<div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Задания построены на ключевых темах Урока 7: <strong>цепочка сказуемых</strong> и союз <strong>以 yǐ</strong>.</p>
+    <p>💡 <em>Обратите внимание на порядок действий и соединение сопровождающих!</em></p>
+</div>
+
+<div class="task-container">
+    <div class="task-title">1. 王令婦好從侯高伐夷</div>
+    <div class="oracle-text">王令婦好從侯高伐夷</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>令 → 從 → 伐</strong> — цепочка действий: приказать → следовать → поход</p>
+    </div>
+</div>
+
+<div class="task-container">
+    <div class="task-title">2. 令羽眔雞以尹從洗震</div>
+    <div class="oracle-text">令羽眔雞以尹從洗震</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>以</strong> = «с» (вводит сопровождающего). <strong>眔</strong> = «и» между именами.</p>
+    </div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+// Ожидаемые правильные варианты
+const expected1 = [
+    ['Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И'],
+    ['Правитель повелел невестке Хао идти следом за хоу Гао, чтобы напасть на племя И'],
+    ['Правитель приказал невестке Хао, следуя за хоу Гао, возглавить поход против племени И']
+];
+
+const expected2 = [
+    ['Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си'],
+    ['Повелеть Юй и Цзи, с尹ом, идти следом за Чжэнем из племени Си'],
+    ['Приказать Юй и Цзи с尹ом следовать за Си Чжэнем']
+];
+
+// Слова для выбора (с лишними)
+const words1 = ['Правитель', 'приказал', 'невестке Хао', 'следовать за', 'хоу Гао', 'в походе против', 'племени И', 'возглавить', 'урожай', 'дождь', 'и', 'солнце', 'они', 'охотились', 'молитва'];
+const words2 = ['Приказать', 'Юй', 'и', 'Цзи', 'с', '尹ом', 'следовать за', 'Чжэнем', 'из племени Си', 'мы', 'пошли', 'на праздник', 'царь', 'отправил', 'вестника', 'вчера'];
+
+// DOM-элементы
+const wordPool1 = document.getElementById('word-pool1');
+const wordPool2 = document.getElementById('word-pool2');
+const dropArea1 = document.getElementById('drop-area1');
+const dropArea2 = document.getElementById('drop-area2');
+const checkBtn = document.getElementById('check-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultEl = document.getElementById('result');
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createWordElements(words, pool, dropArea) {
+    const shuffledWords = shuffleArray(words);
+    return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+            box.remove();
+            dropArea.appendChild(box);
+            updatePlaceholder(dropArea);
+        };
+
+        return box;
+    });
+}
+
+function updatePlaceholder(dropArea) {
+    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+    dropArea.classList.toggle('has-words', hasWords);
+}
+
+let wordElements1 = [];
+let wordElements2 = [];
+
+function init() {
+    // Очистка
+    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
+    resultEl.style.display = 'none';
+
+    // Создание элементов
+    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+
+    // Добавление в пулы
+    wordElements1.forEach(el => wordPool1.appendChild(el));
+    wordElements2.forEach(el => wordPool2.appendChild(el));
+
+    // Обновление плейсхолдеров
+    [dropArea1, dropArea2].forEach(updatePlaceholder);
+}
+
+// Возврат слов в пул при клике
+[dropArea1, dropArea2].forEach((area, i) => {
+    area.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word-box')) {
+            const box = e.target;
+            box.remove();
+            [wordPool1, wordPool2][i].appendChild(box);
+            updatePlaceholder(area);
+        }
+    });
+});
+
+function getWords(dropArea) {
+    return Array.from(dropArea.children)
+        .filter(el => el.classList.contains('word-box'))
+        .map(el => el.textContent.trim());
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+checkBtn.addEventListener('click', () => {
+    const current1 = getWords(dropArea1);
+    const current2 = getWords(dropArea2);
+
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+
+    if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы усвоили ключевые темы Урока 7:<br>
+            • <strong>Цепочка сказуемых</strong>: 令 → 從 → 伐 — последовательные действия<br>
+            • <strong>以 yǐ</strong> — «с», вводит сопровождающего<br>
+            • <strong>眔 dà</strong> — соединяет только имена, не глаголы
+        `;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+    } else {
+        let message = '❌ Проверьте порядок слов:';
+        if (!isCorrect1) message += '<br>• Действия идут по цепочке: приказал → следовать → поход';
+        if (!isCorrect2) message += '<br>• 以 = "с", указывает на того, кто сопровождает';
+
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
+    }
+});
+
+resetBtn.addEventListener('click', init);
+
+function sendResult(success, message) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>

@@ -22,38 +22,45 @@
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
   <script>
-    // Словарь Урока 4 — только ключевые лексемы
+// Словарь Урока 6 — иероглифы с пиньинем
+// Первая пятерка
 const pairs1 = [
-  { char: "帝", meaning: "dì" },
-  { char: "熯", meaning: "hàn" },
-  { char: "申", meaning: "shēn" },
-  { char: "降", meaning: "jiàng" },
-  { char: "伐", meaning: "fá" }
+  { char: "身", pinyin: "shēn" },
+  { char: "有", pinyin: "yǒu" },
+  { char: "疾", pinyin: "jí" },
+  { char: "亡", pinyin: "wú" },
+  { char: "酉", pinyin: "yǒu" }
 ];
 
+// Вторая пятерка
 const pairs2 = [
-  { char: "佑", meaning: "yòu" },
-  { char: "洹", meaning: "huán" },
-  { char: "作", meaning: "zuò" },
-  { char: "茲", meaning: "zī" },
-  { char: "禍", meaning: "huò" }
+  { char: "及", pinyin: "jí" },
+  { char: "二", pinyin: "èr" },
+  { char: "未", pinyin: "wèi" },
+  { char: "足", pinyin: "zú" },
+  { char: "旬", pinyin: "xún" }
 ];
 
+// Третья пятерка
 const pairs3 = [
-  { char: "余", meaning: "yú" },
-  { char: "得", meaning: "dé" },
-  { char: "汝", meaning: "rǔ" },
-  { char: "使", meaning: "shǐ" },
-  { char: "合", meaning: "hé" }
+  { char: "出", pinyin: "chū" },
+  { char: "祟", pinyin: "suì" },
+  { char: "振", pinyin: "zhèn" },
+  { char: "旅", pinyin: "lǚ" },
+  { char: "艱", pinyin: "jiān" }
 ];
 
+// Четвёртая пятерка (неполная)
 const pairs4 = [
-  { char: "乃", meaning: "nǎi" },
-  { char: "以", meaning: "yǐ" },
-  { char: "羌", meaning: "qiāng" },
-  { char: "朕", meaning: "zhèn" }
+  { char: "永", pinyin: "yǒng" },
+  { char: "土", pinyin: "tǔ" },
+  { char: "眔", pinyin: "dà" },
+  { char: "叶", pinyin: "yè" },
+  { char: "祐", pinyin: "yòu" }
 ];
+
 pairs = pairs3
+
     let selectedWord = null;
     let matchedPairs = 0;
 

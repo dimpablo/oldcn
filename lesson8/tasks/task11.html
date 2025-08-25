@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 8 — Включенные предложения</title>
+</head>
+<body>
+  <h2>Что означает конструкция «于大甲求王受年»?</h2>
+  <p><strong>Обратите внимание: «王受年» — это включенное предложение, выступающее как дополнение к глаголу «求».</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">yú dà jiǎ qiú wáng shòu nián</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель просил урожай у великого предка Да Цзя.", correct: false },
+      { text: "Правитель просил великого предка о том, чтобы он получил урожай.", correct: true },
+      { text: "Урожай был дан великому предку Да Цзя.", correct: false },
+      { text: "Правитель приказал великому предку принести урожай.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>включенного предложения</strong>:<br>
+          • <strong>求 qiú</strong> — «просить»<br>
+          • <strong>王受年 wáng shòu nián</strong> — «чтобы правитель получил урожай»<br>
+          Весь блок <strong>王受年</strong> является прямым дополнением к глаголу <strong>求</strong>.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на структуру «求 + [предложение]».";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Эмфаза: Урок 9</title>
+</head>
+<body>
+
+<h2>Эмфаза: Выделение членов предложения</h2>
+
+<div class="instructions">
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Нейтральное предложение vs Эмфатическая конструкция</strong></p>
+        <p>В архаическом древнекитайском языке для логического выделения (акцентирования) определенного члена предложения используется специальная <strong>эмфатическая конструкция</strong>. Это ключевая тема Урока 9.</p>
+
+        <p>🟢 <strong>Нейтральное предложение</strong> — члены предложения стоят в своей обычной позиции:</p>
+        <ul>
+            <li>王勿從洗震 wáng wù cóng xǐ zhèn — «Правителю не следует следовать за Чжэнем»</li>
+            <li>顺序: Подлежащее (王) → Отрицание (勿) → Сказуемое (從) → Дополнение (洗震)</li>
+            <li>Нет специальных маркеров, никакого особого акцента.</li>
+        </ul>
+
+        <p>🔴 <strong>Эмфатическая конструкция</strong> — выделяемый член предложения маркируется частицей <strong>唯 (wéi)</strong> и часто меняет позицию:</p>
+        <ul>
+            <li>王勿唯洗震從 wáng wù wéi xǐ zhèn cóng — «Не за <strong>Чжэнем</strong> ли правителю не следует следовать?»</li>
+            <li>Частица <strong>唯</strong> ставится после выделяемого члена (в данном случае — дополнения <strong>洗震</strong>).</li>
+            <li>Выделяемый член часто перемещается перед сказуемое.</li>
+            <li>Создает вопрос-догадку: «именно это?», «именно он?»</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "王勿從洗震" → 🟢 (нейтральное отрицание)<br>
+        "王勿唯洗震從" → 🔴 (эмфаза на дополнении «Чжэнь»)</p>
+
+        <p><strong>Важно!</strong><br>
+        Эмфатическая конструкция используется:
+        <ol>
+            <li>Для <strong>логического выделения</strong> подлежащего, дополнения или обстоятельства.</li>
+            <li>С частицей <strong>唯 (wéi)</strong>, которая следует <strong>после</strong> выделяемого члена.</li>
+            <li>Чтобы превратить утверждение в <strong>вопрос-догадку</strong> или придание особого веса определенной части высказывания.</li>
+            <li>В вопросах, начинающихся с <strong>贞 (zhēn)</strong>, как в текстах гаданий.</li>
+        </ol>
+        Это ключевая грамматическая структура Урока 9.</p>
+    </div>
+</div>
+
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const sentences = [
+    { text: "王勿從洗震", type: "direct", explanation: "Нейтральное предложение: «Правителю не следует следовать за Чжэнем» — стандартная структура без акцента" },
+    { text: "王勿唯洗震從", type: "chain", explanation: "Эмфатическая конструкция: частица 唯 выделяет дополнение «洗震» — «Не за Чжэнем ли правителю не следует следовать?»" },
+    { text: "今春王從洗震", type: "direct", explanation: "Нейтральное предложение: «Весной этого года правитель следует за Чжэнем» — обстоятельство времени в обычной позиции" },
+    { text: "王唯洗震從", type: "chain", explanation: "Эмфатическая конструкция: «Именно за Чжэнем следует правитель?» — акцент на дополнении с помощью 唯" },
+    { text: "今春王逐兕", type: "direct", explanation: "Нейтральное предложение: «Весной этого года правитель охотится на носорога» — стандартная структура" },
+    { text: "貞唯茲商有作禍", type: "chain", explanation: "Эмфатическая конструкция: «Не в этом ли городе произойдет бедствие?» — частица 唯 выделяет обстоятельство места «兹商»" },
+    { text: "我使其烖", type: "direct", explanation: "Нейтральное предложение: «Я пошлю на него бедствие» — подлежащее «我» в обычной позиции" },
+    { text: "貞唯我禍", type: "chain", explanation: "Эмфатическая конструкция: «Не нам ли грозит бедствие?» — акцент на подлежащем «我» с помощью 唯" },
+    { text: "壬射貝鹿", type: "direct", explanation: "Нейтральное предложение: «Рэнь выстрелил в оленя Бэй» — дополнение в обычной позиции" },
+    { text: "貞唯禍我", type: "chain", explanation: "Эмфатическая конструкция: «Не бедствие ли грозит нам?» — выделение подлежащего «禍» (бедствие) с помощью 唯" }
+];
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
+
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">Нейтральное</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">Эмфатическое</span>
+        </div>
+    `;
+
+    return item;
+}
+
+function init() {
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
+
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
+
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
+
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
+}
+
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "chain") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи эмфатических конструкций.<br>
+            <small>Вы усвоили: частица 唯 — ключевой маркер логического выделения в древнекитайском языке.</small>
+        `;
+        resultEl.className = 'success';
+        sendResult(true);
+    } else {
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
+    }
+    resultEl.style.display = 'block';
+}
+
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
+
+function sendResult(success) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: success,
+        message: success ? "Верно" : "Ошибка"
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
+</script>
+</body>
+</html>

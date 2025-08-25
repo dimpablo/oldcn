@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Правитель просил великих предков о том, чтобы в следующем году у нас был урожай чумизы.</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>王 — Правитель</li>
+      <li>求 — просил</li>
+      <li>于 — у, перед</li>
+      <li>大甲 — Великий Цзя (великий предок)</li>
+      <li>來年 — в следующем году</li>
+      <li>我 — мы, нас</li>
+      <li>受 — получить (в каузативном значении — «дать»)</li>
+      <li>黍年 — урожай чумизы</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: "Правитель просил великих предков о том, чтобы в следующем году у нас был урожай чумизы." → 王求於大甲來年我受黍年
+    const expected = ['王', '求', '於', '大甲', '來年', '我', '受', '黍年'];
+
+    // Дополнительные символы для усложнения (из Урока 8)
+    const allChars = [
+      '王', '求', '於', '大甲', '來年', '我', '受', '黍年',
+      '戌', '逆', '宗', '門', '執', '墠', '用', '在', '獲',
+      '射', '臿', '祖', '小', '步', '父', '示', '御', '鼠'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>王求於大甲來年我受黍年';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 10: Сложные и условные предложения</title>
+</head>
+<body>
+<h2>Как правильно понять предложение «王占曰不嘉，其嘉，不吉»?</h2>
+<p><strong>Пример из текста: «王占曰不嘉，其嘉，不吉»</strong></p>
+
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
+</div>
+
+<p>Это гадательное высказывание из текста Урока 10 содержит сложную структуру. Каково его правильное значение и грамматическое построение?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“» — верно: это сложное предложение, где «其嘉，不吉» уточняет условное следствие к основному утверждению «不嘉»", 
+      correct: true 
+    },
+    { 
+      text: "«Правитель сказал: „Не будет урожая, но если будет — всё будет хорошо“» — неверно: «不吉» означает «к несчастью», а не «хорошо»", 
+      correct: false 
+    },
+    { 
+      text: "«Правитель спросил: „Будет ли урожай? Если будет — это хорошо?“» — неверно: «占曰» вводит прямую речь (ответ), а не вопрос", 
+      correct: false 
+    },
+    { 
+      text: "«Если всё хорошо сейчас, то она не умрёт» — неверно: в предложении речь идёт о благоприятности гадания, а не о состоянии здоровья», 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
+    }
+
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это типичное предложение Урока 10, демонстрирующее <strong>сложную условную структуру</strong>:<br>
+        • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+        • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br><br>
+        Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Вся фраза — пример сложного высказывания без союзов, где связь между частями устанавливается по смыслу.<br>
+        Полный перевод: «Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“».
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Обратите внимание: «占曰» вводит прямую речь, а «其» заменяет предыдущее утверждение, создавая условную связь.";
+      sendResult(false);
+    }
+  }
+
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
+
+  window.onload = renderOptions;
+</script>
+</body>
+</html>
+
+<!-- Уведомление, что задание существует -->
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

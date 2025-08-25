@@ -2,26 +2,27 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 帝其作王祸</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: 及茲二月有大雨</title>
 </head>
 <body>
-  <h2>Какой глагол требует двойного дополнения в древнекитайском?</h2>
-  <p><strong>Пример: «帝其作王祸»</strong></p>
+  <h2>Какой предлог означает «к моменту...» или «когда наступит…»?</h2>
+  <p><strong>Пример: «及茲二月有大雨»</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Dì qí zuò wáng huò</div>
+    <div class="pinyin-text">jí zī èr yuè yǒu dà yǔ</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "作 (zuò) — причинять, создавать", correct: true },
-      { text: "求 (qiú) — просить", correct: false },
-      { text: "至 (zhì) — достигать", correct: false },
-      { text: "卜 (bǔ) — гадать", correct: false }
+      { text: "及 (jí) — к моменту, когда наступит", correct: true },
+      { text: "于 (yú) — в (месте или времени)", correct: false },
+      { text: "自 (zì) — от, начиная с", correct: false },
+      { text: "至 (zhì) — достигать", correct: false }
     ];
 
     function shuffle(array) {
@@ -58,10 +59,15 @@
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          <strong>及 jí</strong> — это предлог, означающий «к моменту...»<br>
+          В сочетании с <strong>有</strong> он указывает на ожидаемое состояние:<br>
+          <em>Ко второму месяцу будет сильный дождь</em>.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Подумайте о значении 及 в контексте времени.";
         sendResult(false);
       }
     }

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Правитель приказал невестке Хао возглавить поход против племени Ту.</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>王 — Правитель</li>
+      <li>令 — приказал</li>
+      <li>婦好 — невестка Хао</li>
+      <li>從 — возглавить, следовать в походе</li>
+      <li>伐 — поход против</li>
+      <li>土方 — племя Ту</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: "Правитель приказал невестке Хао возглавить поход против племени Ту." → 王令婦好從伐土方
+    const expected = ['王', '令', '婦好', '從', '伐', '土方'];
+
+    // Дополнительные символы для усложнения (из Урока 7)
+    const allChars = [
+      '王', '令', '婦好', '從', '伐', '土方',
+      '下', '衆', '震', '危', '羽', '周', '登', '千',
+      '征', '高', '雞', '三', '夷', '呼', '畢', '洗',
+      '妌', '一', '尹', '寇', '萬', '倉', '望', '乘'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>王令婦好從伐土方';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

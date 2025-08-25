@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Урок 5 — Божественная помощь и человеческие судьбы</title>
+    <title>Урок 6 — Погода, болезни и миссии</title>
 </head>
 <body>
 
@@ -12,19 +12,19 @@
 
 <div class="grid">
     <div class="cell" onclick="openModal('q1')">
-        <strong>帝不我降熯</strong>
+        <strong>黍年有足雨</strong>
         <span class="status" id="status-q1">?</span>
     </div>
     <div class="cell" onclick="openModal('q2')">
-        <strong>余其得汝</strong>
+        <strong>茲邑亡振</strong>
         <span class="status" id="status-q2">?</span>
     </div>
     <div class="cell" onclick="openModal('q3')">
-        <strong>朕使</strong>
+        <strong>及茲二月有大雨</strong>
         <span class="status" id="status-q3">?</span>
     </div>
     <div class="cell" onclick="openModal('q4')">
-        <strong>帝受我佑</strong>
+        <strong>王使眔羌</strong>
         <span class="status" id="status-q4">?</span>
     </div>
 </div>
@@ -35,18 +35,18 @@
 <!-- Модальные окна -->
 <div id="modal-q1" class="modal">
     <div class="modal-content">
-        <div class="modal-header">帝不我降熯</div>
+        <div class="modal-header">黍年有足雨</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">dì bù wǒ jiàng hàn</div>
+            <div class="pinyin-text">shǔ nián yǒu zú yǔ</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт нам засуху">Небесный Владыка не пошлёт нам засуху</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не мы пошлём засуху">Небесный Владыка не мы пошлём засуху</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт засуху им">Небесный Владыка не пошлёт засуху им</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт засуху">Небесный Владыка не пошлёт засуху</label>
+            <label><input type="radio" name="q1" value="Урожай проса будет иметь достаточно дождя">Урожай проса будет иметь достаточно дождя</label>
+            <label><input type="radio" name="q1" value="Урожай проса не будет иметь дождя">Урожай проса не будет иметь дождя</label>
+            <label><input type="radio" name="q1" value="Урожай риса будет иметь дождь">Урожай риса будет иметь дождь</label>
+            <label><input type="radio" name="q1" value="Урожай проса будет малым">Урожай проса будет малым</label>
         </div>
         <button onclick="closeModal('q1')">OK</button>
     </div>
@@ -54,18 +54,18 @@
 
 <div id="modal-q2" class="modal">
     <div class="modal-content">
-        <div class="modal-header">余其得汝</div>
+        <div class="modal-header">茲邑亡振</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">yú qí dé rǔ</div>
+            <div class="pinyin-text">zī yì wú zhèn</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q2" value="Я получу тебя (твою помощь)">Я получу тебя (твою помощь)</label>
-            <label><input type="radio" name="q2" value="Я получу его">Я получу его</label>
-            <label><input type="radio" name="q2" value="Мы получим вас">Мы получим вас</label>
-            <label><input type="radio" name="q2" value="Я дам тебе">Я дам тебе</label>
+            <label><input type="radio" name="q2" value="В этом городе не будет тревоги">В этом городе не будет тревоги</label>
+            <label><input type="radio" name="q2" value="В этом городе будет тревога">В этом городе будет тревога</label>
+            <label><input type="radio" name="q2" value="Этот город погибнет">Этот город погибнет</label>
+            <label><input type="radio" name="q2" value="Этот город будет укреплён">Этот город будет укреплён</label>
         </div>
         <button onclick="closeModal('q2')">OK</button>
     </div>
@@ -73,18 +73,18 @@
 
 <div id="modal-q3" class="modal">
     <div class="modal-content">
-        <div class="modal-header">朕使</div>
+        <div class="modal-header">及茲二月有大雨</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">zhèn shǐ</div>
+            <div class="pinyin-text">jí zī èr yuè yǒu dà yǔ</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q3" value="мой посланник">мой посланник</label>
-            <label><input type="radio" name="q3" value="я пошлю">я пошлю</label>
-            <label><input type="radio" name="q3" value="твой посланник">твой посланник</label>
-            <label><input type="radio" name="q3" value="мы пошлём">мы пошлём</label>
+            <label><input type="radio" name="q3" value="Ко второму месяцу будут сильные дожди">Ко второму месяцу будут сильные дожди</label>
+            <label><input type="radio" name="q3" value="Со второго месяца идут дожди">Со второго месяца идут дожди</label>
+            <label><input type="radio" name="q3" value="До второго месяца не будет дождя">До второго месяца не будет дождя</label>
+            <label><input type="radio" name="q3" value="Во втором месяце будет засуха">Во втором месяце будет засуха</label>
         </div>
         <button onclick="closeModal('q3')">OK</button>
     </div>
@@ -92,18 +92,18 @@
 
 <div id="modal-q4" class="modal">
     <div class="modal-content">
-        <div class="modal-header">帝受我佑</div>
+        <div class="modal-header">王使眔羌</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">dì shòu wǒ yòu</div>
+            <div class="pinyin-text">wáng shǐ dà qiāng</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q4" value="Небесный Владыка пошлёт нам помощь">Небесный Владыка пошлёт нам помощь</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка получит нашу помощь">Небесный Владыка получит нашу помощь</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка не пошлёт помощи">Небесный Владыка не пошлёт помощи</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка поможет мне">Небесный Владыка поможет мне</label>
+            <label><input type="radio" name="q4" value="послы вана и племя Цянь">послы вана и племя Цянь</label>
+            <label><input type="radio" name="q4" value="война вана с Цянь">война вана с Цянь</label>
+            <label><input type="radio" name="q4" value="миссия вана против Цянь">миссия вана против Цянь</label>
+            <label><input type="radio" name="q4" value="послы Цянь идут к вану">послы Цянь идут к вану</label>
         </div>
         <button onclick="closeModal('q4')">OK</button>
     </div>
@@ -111,10 +111,10 @@
 
 <script>
     const correctAnswers = {
-        q1: "Небесный Владыка не пошлёт нам засуху",
-        q2: "Я получу тебя (твою помощь)",
-        q3: "мой посланник",
-        q4: "Небесный Владыка пошлёт нам помощь"
+        q1: "Урожай проса будет иметь достаточно дождя",
+        q2: "В этом городе не будет тревоги",
+        q3: "Ко второму месяцу будут сильные дожди",
+        q4: "послы вана и племя Цянь"
     };
 
     let userAnswers = { q1: null, q2: null, q3: null, q4: null };
@@ -150,11 +150,12 @@
         if (correctCount === 4) {
             resultEl.innerHTML = `
                 ✅ <strong>Все верно!</strong><br>
-                Вы отлично усвоили Урок 5:<br>
-                • Инверсия местоимения в отрицании (不我降熯)<br>
-                • Двойное дополнение (受佑)<br>
-                • Функции местоимений (余 — подлежащее, 朕 — определение)<br>
-                • Божественное вмешательство (帝)
+                Вы отлично усвоили Урок 6:<br>
+                • Предикатив 有 — «иметь» (условие, состояние)<br>
+                • Отрицание 亡 — «не иметь»<br>
+                • Предлог 及 — «к моменту...»<br>
+                • Союз 眔 — «и» (между именами)<br>
+                • Указательное местоимение 茲 — «этот»
             `;
             sendResult(true);
         } else {
