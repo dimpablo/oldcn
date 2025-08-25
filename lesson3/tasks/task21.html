@@ -96,7 +96,7 @@ const pairs = [
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        if (matchedPairs === pairs.length) {
           const resultEl = document.getElementById("result");
           resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
