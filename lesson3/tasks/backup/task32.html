@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Что означает 自今至于甲辰？</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 6px;
+      line-height: 1.4;
+      color: #333;
+      font-size: 13px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 6px 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .instruction {
+      text-align: center;
+      margin: 4px 0 10px;
+      color: #555;
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    #options-container {
+      margin: 8px 0;
+    }
+
+    .option {
+      display: block;
+      margin: 4px 0;
+      padding: 7px 8px;
+      background: #f8f8f8;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .option input {
+      margin-right: 6px;
+      vertical-align: middle;
+      accent-color: #007cba;
+    }
+
+    .option.selected {
+      background: #e1f3ff;
+      border-color: #007cba;
+    }
+
+    button {
+      display: block;
+      margin: 10px auto 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      background: #007cba;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 8px;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6c3;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f1b1b7;
+    }
+
+    /* Адаптация под узкие экраны */
+    @media (max-width: 480px) {
+      body {
+        padding: 4px;
+        font-size: 12px;
+      }
+      h2 {
+        font-size: 15px;
+      }
+      .instruction {
+        font-size: 11px;
+        margin: 4px 0 8px;
+      }
+      .option {
+        font-size: 13px;
+        padding: 6px 6px;
+      }
+      button {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      #result {
+        font-size: 12px;
+        padding: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Что означает 自今至于甲辰？</h2>
+  <p class="instruction">Урок 4 посвящен предлогу 自 и конструкции 自...至于... Что означает этот временной период?</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены здесь -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { 
+        value: "from-now-to-jia-chen", 
+        text: "начиная с сегодняшнего дня и кончая днем цзя-чэнь", 
+        correct: true,
+        explanation: "Это прямое значение конструкции 自...至于... для обозначения временного периода. См. Урок 4, 4.2."
+      },
+      { 
+        value: "from-jia-chen-to-now", 
+        text: "начиная с дня цзя-чэнь и кончая сегодняшним днем", 
+        correct: false,
+        explanation: "Порядок в конструкции 自...至于... всегда от начальной точки (自) к конечной (至于). Это не может означать движение назад во времени."
+      },
+      { 
+        value: "on-jia-chen", 
+        text: "в день цзя-чэнь", 
+        correct: false,
+        explanation: "Одного циклического знака (甲辰) было бы достаточно. Конструкция 自...至于... всегда указывает на промежуток времени."
+      },
+      { 
+        value: "from-shang", 
+        text: "из города Шан", 
+        correct: false,
+        explanation: "于 может указывать на место, но 自 в этой конструкции указывает на время. 入于商 — это место, 自今... — это время."
+      }
+    ];
+
+    let selectedValue = null;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+      selectedValue = null;
+
+      const shuffled = shuffleArray(options);
+
+      shuffled.forEach(option => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.value = option.value;
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "answer";
+        input.value = option.value;
+
+        input.onchange = () => {
+          selectedValue = option.value;
+          document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+          label.classList.add('selected');
+        };
+
+        const textNode = document.createTextNode(option.text);
+
+        label.appendChild(input);
+        label.appendChild(textNode);
+        container.appendChild(label);
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      if (!selectedValue) {
+        resultEl.textContent = "Выберите вариант.";
+        resultEl.className = "error";
+        return;
+      }
+
+      const selectedOption = options.find(opt => opt.value === selectedValue);
+
+      if (selectedOption.correct) {
+        resultEl.innerHTML = '✅ Верно!<br>自今至于甲辰 — «начиная с сегодняшнего дня и кончая днем цзя-чэнь». Это ключевая конструкция Урока 4 для обозначения временного периода. Предлог 自 указывает на исходную точку времени.';
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = `❌ Нет. ${selectedOption.explanation} Правильно: 自今至于甲辰 = начиная с сегодня и до цзя-чэнь.`;
+        resultEl.className = "error";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно: 自今至于甲辰 = временной период" : "Ошибка в интерпретации конструкции 自...至于...")
+      }, "*");
+    }
+
+    renderOptions();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>

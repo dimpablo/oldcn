@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: #fff;
+    color: #333;
+  }
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  p.intro {
+    text-align: center;
+    font-size: 14px;
+    margin: 4px 0 12px 0;
+    color: #555;
+  }
+
+  /* Горизонтальный макет: две колонки рядом */
+  .match-container {
+    display: flex;
+    gap: 10px;
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .column {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .column h3 {
+    font-size: 14px;
+    text-align: center;
+    margin: 6px 0;
+    color: #333;
+    background: #eee;
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .word-item, .def-item {
+    padding: 6px 8px;
+    margin: 4px 0;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .word-item.selected {
+    background: #e0f0ff;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px #0066cc;
+  }
+
+  .def-item.selected {
+    background: #e0f0ff;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px #0066cc;
+  }
+
+  .matched {
+    background: #e8f5e9 !important;
+    border-color: #28a745 !important;
+    color: #27ae60;
+    font-weight: bold;
+    opacity: 0.9;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:active {
+    background: #0055aa;
+  }
+
+  #result {
+    margin: 10px 0 0 0;
+    padding: 8px;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  .success {
+    background: #e8f5e9;
+    color: #27ae60;
+  }
+</style>
+</head>
+<body>
+
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
+
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+<script>
+    // Словарь Урока 2 — только ключевые лексемы
+const pairs = [
+  { char: "黍", meaning: "shǔ" },
+  { char: "巳", meaning: "sì" },
+  { char: "稲", meaning: "dào" },
+  { char: "戔", meaning: "jiān" },
+  { char: "甫", meaning: "fǔ" }
+];
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      const char = selectedWord.dataset.char;
+      const meaning = el.dataset.meaning;
+      const isCorrect = pairs.some(p => p.char === char && p.meaning === meaning);
+
+      if (isCorrect) {
+        el.classList.add("matched");
+        selectedWord.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        // ИСПРАВЛЕНИЕ: проверяем на количество пар (5 вместо 10)
+        if (matchedPairs === pairs.length) {
+          const resultEl = document.getElementById("result");
+          resultEl.textContent = "✅ Все пары верны!";
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
+

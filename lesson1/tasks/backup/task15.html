@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Какие предложения — безличные?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 6px;
+      line-height: 1.4;
+      background: #fff;
+      color: #333;
+      font-size: 13px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #222;
+      margin: 6px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .instruction {
+      text-align: center;
+      margin: 4px 0 10px;
+      color: #555;
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    #options-container {
+      margin: 8px auto;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 7px 8px;
+      background: #f8f8f8;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .option input {
+      margin-right: 8px;
+      accent-color: #007cba;
+      transform: scale(1.05);
+    }
+
+    button {
+      display: block;
+      margin: 10px auto 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      background: #007cba;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 8px;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6c3;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f1b1b7;
+    }
+
+    /* Адаптация под узкие экраны */
+    @media (max-width: 480px) {
+      body {
+        padding: 4px;
+        font-size: 12px;
+      }
+      h2 {
+        font-size: 15px;
+      }
+      .instruction {
+        font-size: 11px;
+        margin: 4px 0 8px;
+      }
+      .option {
+        font-size: 13px;
+        padding: 6px 6px;
+      }
+      .option input {
+        margin-right: 6px;
+      }
+      button {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      #result {
+        font-size: 12px;
+        padding: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Какие предложения — безличные?</h2>
+  <p class="instruction">Выберите предложения без подлежащего — действия происходят сами (погода, судьба и т.п.)</p>
+
+  <div id="options-container">
+    <!-- Варианты будут добавлены динамически -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const items = [
+      { id: "yu", text: "雨", isImpersonal: true },
+      { id: "qi-yu", text: "其雨", isImpersonal: true },
+      { id: "wang-zhan-yue", text: "王占曰", isImpersonal: false },
+      { id: "bu-yu", text: "不雨", isImpersonal: true },
+      { id: "yun-yu", text: "允雨", isImpersonal: true }
+    ];
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const userSelections = {};
+
+    function renderOptions() {
+      const container = document.getElementById("options-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(items);
+
+      shuffled.forEach(item => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.dataset.id = item.id;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `chk-${item.id}`;
+        checkbox.checked = false;
+
+        checkbox.onchange = () => {
+          userSelections[item.id] = checkbox.checked;
+          label.classList.toggle("checked", checkbox.checked);
+        };
+
+        const textNode = document.createTextNode(item.text);
+
+        label.appendChild(checkbox);
+        label.appendChild(textNode);
+        container.appendChild(label);
+
+        userSelections[item.id] = false;
+      });
+    }
+
+    function check() {
+      const resultEl = document.getElementById("result");
+      resultEl.className = "";
+
+      const allCorrect = items.every(item => {
+        const expected = item.isImpersonal;
+        const actual = !!userSelections[item.id];
+        return expected === actual;
+      });
+
+      if (allCorrect) {
+        resultEl.textContent = "✅ Верно!";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Меньше дождя — не значит не безличное.";
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в определении безличных предложений");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Верно определены безличные формы" : "Ошибка в определении безличности")
+      }, "*");
+    }
+
+    renderOptions();
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+

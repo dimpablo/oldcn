@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Перевод</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff;
+      color: #333;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .question {
+      margin-bottom: 10px;
+    }
+
+    .pinyin-container {
+      margin: 6px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .pinyin-toggle {
+      background: #f8f8f8;
+      border: none;
+      padding: 5px 10px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      color: #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pinyin-toggle:hover {
+      background: #f0f0f0;
+    }
+
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
+    .pinyin-text {
+      padding: 0 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .pinyin-text.expanded {
+      padding: 5px 10px;
+      max-height: 60px;
+    }
+
+    .options label {
+      display: block;
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .options input {
+      margin-right: 6px;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 14px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:active {
+      background: #0055aa;
+    }
+
+    #result {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      min-height: 1.4em;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Переведи словосочетание</h2>
+
+  <div id="questions-container">
+    <!-- Вопросы будут добавлены скриптом -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const questions = [
+      {
+        id: "t1",
+        text: "丙寅卜",
+        pinyin: "bǐng yín bo",
+        options: [
+          "гадали в день бин-инь",
+          "правитель гадал",
+          "в день бинь-мао",
+          "жертвоприношение в храме"
+        ],
+        correct: "гадали в день бин-инь"
+      },
+      {
+        id: "t2",
+        text: "王占曰",
+        pinyin: "wáng zhàn yuē",
+        options: [
+          "правитель сказал",
+          "правитель истолковал",
+          "царь приказал",
+          "он записал"
+        ],
+        correct: "правитель истолковал"
+      }
+    ];
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function loadQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(questions);
+
+      shuffled.forEach(q => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        questionDiv.innerHTML = `
+          <p><strong>${q.text}</strong></p>
+          <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+              Показать пиньинь
+            </button>
+            <div class="pinyin-text">${q.pinyin}</div>
+          </div>
+          <div class="options">
+            ${q.options.map(option => `
+              <label>
+                <input type="radio" name="${q.id}" value="${option}">
+                ${option}
+              </label>
+            `).join("")}
+          </div>
+        `;
+        container.appendChild(questionDiv);
+      });
+    }
+
+    function check() {
+      const selectedT1 = document.querySelector('input[name="t1"]:checked');
+      const selectedT2 = document.querySelector('input[name="t2"]:checked');
+      const resultEl = document.getElementById("result");
+
+      if (!selectedT1 || !selectedT2) {
+        resultEl.textContent = "Выберите оба варианта.";
+        sendResult(false, "Не все поля заполнены");
+        return;
+      }
+
+      const correctT1 = questions.find(q => q.id === "t1").correct;
+      const correctT2 = questions.find(q => q.id === "t2").correct;
+
+      const match1 = selectedT1.value === correctT1;
+      const match2 = selectedT2.value === correctT2;
+
+      if (match1 && match2) {
+        resultEl.textContent = "✅ Верно!";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Ошибка. 曰 — прямая речь, 占 — истолковать.";
+        sendResult(false, "Неверный выбор");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    window.onload = loadQuestions;
+
+    // Сигнал о существовании задания
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+

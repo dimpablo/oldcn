@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сказуемое</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      background: #fff;
+      color: #333;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    p strong {
+      font-size: 16px;
+    }
+
+    .pinyin-container {
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .pinyin-toggle {
+      background: #f8f8f8;
+      border: none;
+      padding: 6px 10px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      color: #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pinyin-toggle::after {
+      content: '▼';
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
+    .pinyin-text {
+      padding: 0 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .pinyin-text.expanded {
+      padding: 6px 10px;
+      max-height: 60px;
+    }
+
+    p.question {
+      margin: 10px 0 8px 0;
+      font-size: 14px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 6px 0;
+      font-size: 14px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:active {
+      background: #e0e0e0;
+    }
+
+    #result {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      min-height: 1.4em;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Найди предикат</h2>
+  <p><strong>己卯卜貞雨？</strong></p>
+
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+      Показать пиньинь
+    </button>
+    <div class="pinyin-text">jǐ mǎo bu zhēn yǔ?</div>
+  </div>
+
+  <p class="question">Какое слово — предикат?</p>
+
+  <div class="buttons">
+    <button onclick="answer('雨')">雨</button>
+    <button onclick="answer('貞')">貞</button>
+    <button onclick="answer('卜')">卜</button>
+    <button onclick="answer('己卯')">己卯</button>
+  </div>
+
+  <p id="result"></p>
+
+  <script>
+    function answer(sel) {
+      const resultEl = document.getElementById("result");
+      if (sel === "雨") {
+        resultEl.textContent = "✅ Верно! 雨 — предикат: «будет дождь?»";
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Что отвечает на вопрос «что будет?»";
+        sendResult(false, "Ошибка в определении сказуемого");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Сигнал о существовании задания
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+
+</body>
+</html>
+

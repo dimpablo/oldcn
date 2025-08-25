@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставь</title>
+  <style>
+    /* Минимализм */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+      font-size: 13px;
+      color: #2c3e50;
+      background: #fff;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .instruction {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .pair {
+      margin: 4px 0;
+      padding: 6px;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 2px;
+      font-size: 13px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      font-size: 13px;
+      background: white;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 13px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      display: block;
+      margin: 8px auto;
+    }
+
+    #result {
+      margin-top: 8px;
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    .error {
+      background: #ffebee;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Сопоставь иероглиф и значение</h2>
+  <p class="instruction">Выберите значение каждого иероглифа из контекста Урока 2</p>
+
+  <div id="pairs-container">
+    <!-- Пары добавятся динамически -->
+  </div>
+
+  <button onclick="check()">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    // Все ключевые иероглифы Урока 2 с краткими, точными значениями
+    const wordBank = [
+      { char: "受", correct: "получить / дать (каузатив)" },
+      { char: "來", correct: "приходить / присылать" },
+      { char: "弗", correct: "не (отрицание перед глаголом)" },
+      { char: "今", correct: "нынешний, сейчас" },
+      { char: "歲", correct: "год (единица времени)" },
+      { char: "年", correct: "урожай, год" },
+      { char: "春", correct: "весна / первая половина года" },
+      { char: "方", correct: "племя, народ" },
+      { char: "自", correct: "сам, самостоятельно" },
+      { char: "吉", correct: "благоприятно, хорошо" }
+    ];
+
+    const allValues = wordBank.map(item => item.correct);
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderPairs() {
+      const container = document.getElementById("pairs-container");
+      container.innerHTML = "";
+
+      const shuffled = shuffleArray(wordBank);
+
+      shuffled.forEach(item => {
+        const pair = document.createElement("div");
+        pair.className = "pair";
+
+        const options = shuffleArray([...allValues]);
+
+        let selectHTML = `<select id="char_${item.char}">
+          <option value="">— выберите —</option>`;
+        
+        options.forEach(value => {
+          selectHTML += `<option value="${value}">${value}</option>`;
+        });
+        
+        selectHTML += `</select>`;
+
+        pair.innerHTML = `<label>${item.char} →</label> ${selectHTML}`;
+        container.appendChild(pair);
+      });
+    }
+
+    function check() {
+      let allFilled = true;
+      let correctCount = 0;
+
+      wordBank.forEach(item => {
+        const select = document.getElementById(`char_${item.char}`);
+        if (!select || !select.value) allFilled = false;
+        if (select?.value === item.correct) correctCount++;
+      });
+
+      const resultEl = document.getElementById("result");
+
+      if (!allFilled) {
+        resultEl.textContent = "Заполните все.";
+        resultEl.className = "error";
+        sendResult(false, "Не все поля заполнены");
+        return;
+      }
+
+      if (correctCount === wordBank.length) {
+        resultEl.textContent = "✅ Все верно! Вы усвоили ключевую лексику Урока 2.";
+        resultEl.className = "success";
+        sendResult(true);
+      } else {
+        const hint = "Подсказка: 受 — получить/дать, 來 — приходить/присылать, 年 — урожай.";
+        resultEl.textContent = "❌ " + hint;
+        resultEl.className = "error";
+        sendResult(false, "Ошибка в сопоставлении");
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = renderPairs;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+

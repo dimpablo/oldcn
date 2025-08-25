@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Урок 2 — Частицы</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 6px;
+      font-size: 14px;
+      background: #fff;
+      color: #333;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .cell {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px 6px;
+      text-align: center;
+      background: #f9f9f9;
+      font-size: 14px;
+      cursor: pointer;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cell strong {
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .cell .status {
+      font-size: 12px;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      width: 90%;
+      max-width: 350px;
+      font-size: 14px;
+    }
+
+    .modal-header {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .pinyin-container {
+      margin: 6px 0;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .pinyin-toggle {
+      background: #f5f5f5;
+      border: none;
+      padding: 4px 8px;
+      width: 100%;
+      text-align: left;
+      font-size: 13px;
+      color: #444;
+      cursor: pointer;
+    }
+
+    .pinyin-toggle::after {
+      content: '▼';
+      float: right;
+      font-size: 10px;
+    }
+
+    .pinyin-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+
+    .pinyin-text {
+      padding: 0 8px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: #fafafa;
+      font-style: italic;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .pinyin-text.expanded {
+      padding: 4px 8px;
+      max-height: 60px;
+    }
+
+    .options label {
+      display: block;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 6px 10px;
+      font-size: 14px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:active {
+      background: #0055aa;
+    }
+
+    #result {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      min-height: 1.4em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Выберите значение</h2>
+
+  <div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+      <strong>今歲</strong>
+      <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+      <strong>來歲</strong>
+      <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+      <strong>不其受年</strong>
+      <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+      <strong>自來</strong>
+      <span class="status" id="status-q4">?</span>
+    </div>
+  </div>
+
+  <button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+  <p id="result"></p>
+
+  <!-- Модальные окна -->
+  <div id="modal-q1" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">今歲</div>
+      <div class="pinyin-container">
+        <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+        <div class="pinyin-text">jīn suì</div>
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q1" value="нынешний год"> нынешний год</label>
+        <label><input type="radio" name="q1" value="будущий год"> будущий год</label>
+        <label><input type="radio" name="q1" value="прошлый год"> прошлый год</label>
+        <label><input type="radio" name="q1" value="ежегодно"> ежегодно</label>
+      </div>
+      <button onclick="closeModal('q1')">OK</button>
+    </div>
+  </div>
+
+  <div id="modal-q2" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">來歲</div>
+      <div class="pinyin-container">
+        <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+        <div class="pinyin-text">lái suì</div>
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q2" value="нынешний год"> нынешний год</label>
+        <label><input type="radio" name="q2" value="будущий год"> будущий год</label>
+        <label><input type="radio" name="q2" value="прошлый год"> прошлый год</label>
+        <label><input type="radio" name="q2" value="в день лай"> в день лай</label>
+      </div>
+      <button onclick="closeModal('q2')">OK</button>
+    </div>
+  </div>
+
+  <div id="modal-q3" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">不其受年</div>
+      <div class="pinyin-container">
+        <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+        <div class="pinyin-text">bù qí shòu nián</div>
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q3" value="уже получил урожай"> уже получил урожай</label>
+        <label><input type="radio" name="q3" value="не получим урожай"> не получим урожай</label>
+        <label><input type="radio" name="q3" value="будет ли урожай?"> будет ли урожай?</label>
+        <label><input type="radio" name="q3" value="не будет ли урожая?"> не будет ли урожая?</label>
+      </div>
+      <button onclick="closeModal('q3')">OK</button>
+    </div>
+  </div>
+
+  <div id="modal-q4" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">自來</div>
+      <div class="pinyin-container">
+        <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+        <div class="pinyin-text">zì lái</div>
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q4" value="придут оттуда"> придут оттуда</label>
+        <label><input type="radio" name="q4" value="придут сами"> придут сами</label>
+        <label><input type="radio" name="q4" value="не придут"> не придут</label>
+        <label><input type="radio" name="q4" value="послать назад"> послать назад</label>
+      </div>
+      <button onclick="closeModal('q4')">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const correctAnswers = {
+      q1: "нынешний год",
+      q2: "будущий год",
+      q3: "не будет ли урожая?",
+      q4: "придут сами"
+    };
+
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+    function openModal(id) {
+      document.getElementById(`modal-${id}`).style.display = "flex";
+    }
+
+    function closeModal(id) {
+      const selected = document.querySelector(`input[name="${id}"]:checked`);
+      if (selected) {
+        userAnswers[id] = selected.value;
+        document.getElementById(`status-${id}`).textContent = "✓";
+        document.getElementById(`status-${id}`).style.color = "green";
+      }
+      document.getElementById(`modal-${id}`).style.display = "none";
+    }
+
+    function checkAll() {
+      const resultEl = document.getElementById("result");
+      const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+      if (!allAnswered) {
+        resultEl.textContent = "Ответьте на все.";
+        return;
+      }
+
+      let correctCount = 0;
+      for (const id in correctAnswers) {
+        if (userAnswers[id] === correctAnswers[id]) correctCount++;
+      }
+
+      if (correctCount === 4) {
+        resultEl.textContent = "✅ Все верно!";
+        sendResult(true);
+      } else {
+        const wrong = 4 - correctCount;
+        resultEl.textContent = `❌ ${wrong} ошибки.`;
+        sendResult(false, `Ошибки: ${wrong}/4`);
+      }
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+

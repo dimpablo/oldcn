@@ -1,146 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <link rel="stylesheet" href="../../tasks.css">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Пространство vs Модальность</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 8px;
-      font-size: 14px;
-      line-height: 1.4;
-      background: #fff;
-      color: #333;
-    }
-
-    h2 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .instructions {
-      padding: 8px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      background: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .instructions p {
-      margin: 4px 0;
-    }
-
-    .columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sentence-item {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: background-color 0.2s;
-    }
-
-    .sentence-item.correct {
-      background-color: #e8f5e9; /* салатово-зелёный */
-      border-color: #a5d6a7;
-    }
-
-    .sentence-item.incorrect {
-      background-color: #ffebee; /* розово-красный */
-      border-color: #ef9a9a;
-    }
-
-    .oracle-text {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 4px 0;
-      color: #111;
-    }
-
-    .toggle-container {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 4px;
-      font-size: 12px;
-    }
-
-    .toggle-text {
-      color: #555;
-    }
-
-    /* Переключатель */
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 20px;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #3498db; /* синий — пространство/время */
-      transition: .2s;
-      border-radius: 10px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 2px;
-      bottom: 2px;
-      background: white;
-      border-radius: 50%;
-      transition: .2s;
-    }
-
-    input:checked + .slider {
-      background-color: #9b59b6; /* фиолетовый — модальность */
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(38px);
-    }
-
-    button {
-      padding: 6px 12px;
-      margin: 4px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background: #f5f5f5;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
 
@@ -175,28 +39,6 @@
   </div>
 </div>
 
-<style>
-.instructions-header {
-  padding: 8px;
-  background: #f0f0f0;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.instructions-content {
-  padding: 8px 0;
-  border-top: 1px dashed #ccc;
-}
-.arrow {
-  font-size: 12px;
-  transition: transform 0.2s;
-}
-.instructions-header.collapsed .arrow {
-  transform: rotate(-90deg);
-}
-</style>
 
 <script>
 function toggleInstructions() {
