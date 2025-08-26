@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 1: Древнекитайский язык — Гадания о дожде</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+      line-height: 1.8;
+      color: #333;
+      background: #f9f7f4;
+      margin: 40px auto;
+      max-width: 900px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: white;
+    }
+
+    h1, h2, h3 {
+      color: #1a5fb4;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px double #1a5fb4;
+      padding-bottom: 10px;
+    }
+
+    h2 {
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+
+    .original {
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.8em;
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      letter-spacing: 3px;
+    }
+
+    .comment {
+      background: #f8f9fa;
+      padding: 15px;
+      border-left: 4px solid #1a5fb4;
+      margin: 15px 0;
+      font-size: 0.96em;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95em;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #e6f2ff;
+    }
+
+    .footnote {
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+    }
+
+    .exercise {
+      background: #eef7ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px dashed #1a5fb4;
+    }
+
+    .char-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .char-item {
+      display: flex;
+      justify-content: space-between;
+      background: #f0f8ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'Noto Serif CJK SC', serif;
+      position: relative;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    .cycle-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 0.95em;
+    }
+
+    .cycle-table th, .cycle-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .cycle-table th {
+      background: #e6f2ff;
+    }
+
+    .pinyin {
+      font-size: 0.9em;
+      color: #555;
+      font-style: italic;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .inline-char {
+      font-family: 'Noto Serif CJK SC', serif;
+      font-size: 1.1em;
+    }
+
+    .inline-pinyin {
+      font-size: 0.85em;
+      color: #555;
+      margin-left: 4px;
+    }
+
+    /* === Стили для аудиоплеера === */
+    .audio-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .audio-container audio {
+      width: 80%;
+      max-width: 600px;
+      height: 50px;
+      border: 1px solid #d0d8e8;
+      border-radius: 10px;
+      padding: 8px;
+      background: #f5f9ff;
+      box-shadow: 0 2px 8px rgba(26, 95, 180, 0.15);
+    }
+
+    .audio-container audio::-webkit-media-controls-play-button {
+      background-color: #1a5fb4;
+      border-radius: 50%;
+      transform: scale(1.1);
+    }
+
+    .audio-container audio::-webkit-media-controls-progress-bar {
+      background-color: #e6f2ff;
+      border-radius: 4px;
+    }
+
+    .audio-container audio::-webkit-media-controls-progress-bar::before {
+      content: '';
+      display: block;
+      height: 100%;
+      background: #1a5fb4;
+      border-radius: 4px;
+    }
+
+    .audio-caption {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* === Подсказки для иероглифов === */
+    .char-tooltip {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 260px;
+      background: #1a5fb4;
+      color: white;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      text-align: left;
+      white-space: normal;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+      line-height: 1.5;
+    }
+
+    td:hover .char-tooltip,
+    .char-item:hover .char-tooltip {
+      display: block;
+    }
+
+    .char-item {
+      position: relative;
+    }
+
+    .char-item > span:first-child {
+      cursor: help;
+    }
+
+    /* === Стили таблицы урока === */
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+
+    .lesson-badge {
+      display: inline-block;
+      background: #e6f2ff;
+      color: #1a4f72;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Урок 1: Гадания о дожде</h1>
+
+  <div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+  </div>
+
+  <!-- Тумблер для переключения вида таблицы -->
+  <div style="text-align: center; margin: 20px 0;">
+    <button id="toggleOracleView" style="
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #1a5fb4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    ">
+      Привести к оракульному виду
+    </button>
+  </div>
+
+  <!-- Аудиоозвучка текста -->
+  <div style="text-align: center; margin: 10px 0;">
+    <audio controls style="vertical-align: middle;">
+      <source src="./mp3/1.mp3" type="audio/mpeg">
+      Ваш браузер не поддерживает элемент <code>audio</code>.
+    </audio>
+    <div class="footnote" style="margin-top: 5px;">
+      Прослушать текст: Урок 1 — Гадания о дожде
+    </div>
+  </div>
+
+  <script>
+    const charData = {
+      '丙': {pinyin: 'bǐng', meaning: 'Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»', lesson: 1},
+      '寅': {pinyin: 'yín', meaning: 'Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»', lesson: 1},
+      '卜': {pinyin: 'bǔ', meaning: 'Гадать; в составе 名 + 卜 — «гадатель по имени...»', lesson: 1},
+      '爭': {pinyin: 'zhēng', meaning: 'Имя гадателя; 卜爭 — «гадатель Чжэн»', lesson: 1},
+      '貞': {pinyin: 'zhēn', meaning: 'Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»', lesson: 1},
+      '雨': {pinyin: 'yǔ', meaning: 'Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»', lesson: 1},
+      '曰': {pinyin: 'yuē', meaning: 'Говорить; вводит прямую речь: «сказал: „...“»', lesson: 1},
+      '其': {pinyin: 'qí', meaning: 'Служебное наречие; указывает на будущее/возможность: «будет ли?»', lesson: 1},
+      '癸': {pinyin: 'guǐ', meaning: 'Небесный ствол (10-й); часть дат: 癸亥, 癸丑', lesson: 1},
+      '亥': {pinyin: 'hài', meaning: 'Земная ветвь (12-я); в паре с 癸 — «гуй-хай»', lesson: 1},
+      '不': {pinyin: 'bù', meaning: 'Не; отрицание перед сказуемым: «не будет дождя»', lesson: 1},
+      '允': {pinyin: 'yǔn', meaning: 'Действительно; подтверждает: «и в самом деле пошёл дождь»', lesson: 1},
+      '王': {pinyin: 'wáng', meaning: 'Правитель; подлежащее: «царь сказал», «царь истолковал»', lesson: 1},
+      '占': {pinyin: 'zhān', meaning: 'Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»', lesson: 1},
+      '丑': {pinyin: 'chǒu', meaning: 'Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»', lesson: 1},
+      '己': {pinyin: 'jǐ', meaning: 'Небесный ствол (6-й); в паре с 卯 — «цзи-мао»', lesson: 1},
+      '卯': {pinyin: 'mǎo', meaning: 'Земная ветвь (4-я); день «цзи-мао»', lesson: 1},
+      '㱿': {pinyin: 'jué', meaning: 'Имя гадателя; 卜㱿 — «гадатель Цзюэ»', lesson: 1},
+      '壬': {pinyin: 'rén', meaning: 'Небесный ствол (9-й); в паре с 午 — «жэнь-у»', lesson: 1},
+      '午': {pinyin: 'wǔ', meaning: 'Земная ветвь (7-я); день «жэнь-у»', lesson: 1}
+    };
+
+    const lessonText = [
+      "丙寅卜爭貞雨貞曰其雨貞癸亥不其",
+      "雨允不雨貞不雨王占曰癸其雨癸丑",
+      "允其雨己卯卜㱿貞雨王占曰雨壬午",
+      "允雨"
+    ];
+
+    function createOracleTable() {
+      const table = document.getElementById('oracleTable');
+      table.innerHTML = '';
+
+      const headerRow = document.createElement('tr');
+      const emptyCell = document.createElement('td');
+      emptyCell.className = 'line-num';
+      headerRow.appendChild(emptyCell);
+      for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+      }
+      table.appendChild(headerRow);
+
+      for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+
+        const chars = Array.from(lessonText[i]);
+        for (let j = 0; j < 15; j++) {
+          const td = document.createElement('td');
+          if (j < chars.length && chars[j].trim() !== '') {
+            const char = chars[j];
+            td.textContent = char;
+            if (charData[char]) {
+              const tooltip = document.createElement('div');
+              tooltip.className = 'char-tooltip';
+              tooltip.innerHTML = `
+                <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                ${charData[char].meaning}<br>
+                <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+              `;
+              td.appendChild(tooltip);
+            }
+          }
+          row.appendChild(td);
+        }
+        table.appendChild(row);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', createOracleTable);
+  </script>
+
+  <!-- Остальное содержимое -->
+  <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+  <div class="comment">
+    <h3>1.1. Повествовательные и вопросительные предложения</h3>
+    <p>В текстах иньских надписей, как уже отмечалось, встречаются как повествовательные, так и вопросительные предложения. Последние выражают общий вопрос, т. е. требуют положительного или отрицательного ответа: «да» — «нет» (предложения, содержащие специальный вопрос, в иньских текстах не зафиксированы).</p>
+    <p>По своей форме повествовательные и вопросительные предложения не отличаются друг от друга:</p>
+    <ul>
+      <li>王田 wáng tián — «Правитель охотится»</li>
+      <li>貞：王田？ zhēn: wáng tián? — «Спрашивают: „Правитель охотится?“»</li>
+    </ul>
+    <p>По-видимому, в архаическом древнекитайском языке общий вопрос и утверждение различались только интонацией, о которой мы судить, естественно, не можем. Поэтому единственным указанием на то, что предложение является вопросительным, может служить для нас наличие перед этим предложением слова 貞 zhēn — «спрашивать».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.2. Прямая речь</h3>
+    <p>Показателем прямой речи в древнекитайском языке является слово 曰 yuē — «говорить».</p>
+    <p>Оно может употребляться самостоятельно: 貞曰 zhēn yuē — «Спрашивают: „…“».</p>
+    <p>Кроме того, это слово может стоять после другого знаменательного слова со значением «говорить», «спрашивать», «отвечать» и т. д.: 王占曰 wáng zhān yuē — «Правитель истолковал: „…“».</p>
+    <p>Прямая речь начинается непосредственно после слова 曰: 王占曰：「雨」 wáng zhān yuē: “yǔ” — «Правитель истолковал: „Будет дождь“».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.3. Сказуемое</h3>
+    <p>Анализируя строй древнекитайского предложения, мы исходим из того, что его центром, т. е. тем членом, без которого предложение как таковое перестает существовать, является сказуемое. Сказуемое — единственный член предложения, который ни при каких условиях не может быть опущен.</p>
+    <p>Серийность иньских надписей позволяет без труда найти по этому признаку сказуемое в каждом из предложений серии. Если мы запишем надписи урока 1 не сплошным текстом, а в виде дистрибутивной таблицы (т. е. разобьем предложения таким образом, чтобы слова, имеющие в разных предложениях одну и ту же грамматическую функцию, оказались в одном вертикальном столбце), то получим следующее:</p>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <tbody>
+        <tr><th>Подлежащее / обстоятельство</th><th>Сказуемое</th><th>Частицы / время</th><th>Сказуемое (дождь)</th></tr>
+        <tr><td>丙寅卜爭 bǐng yín bǔ zhēng</td><td>貞 zhēn</td><td>—</td><td>雨 yǔ</td></tr>
+        <tr><td>—</td><td>貞曰 zhēn yuē</td><td>其 qí</td><td>雨 yǔ</td></tr>
+        <tr><td>—</td><td>貞 zhēn</td><td>癸亥 guǐ hài 不 bù 其 qí</td><td>雨 yǔ</td></tr>
+        <tr><td>—</td><td>貞 zhēn</td><td>不 bù</td><td>雨 yǔ</td></tr>
+        <tr><td>王 wáng</td><td>占曰 zhān yuē</td><td>癸 guǐ 其 qí</td><td>雨 yǔ</td></tr>
+        <tr><td>—</td><td>—</td><td>癸丑 guǐ chǒu 允 yǔn 其 qí</td><td>雨 yǔ</td></tr>
+        <tr><td>己卯卜㱿 jǐ mǎo bǔ jué</td><td>貞 zhēn</td><td>—</td><td>雨 yǔ</td></tr>
+        <tr><td>王 wáng</td><td>占曰 zhān yuē</td><td>—</td><td>雨 yǔ</td></tr>
+        <tr><td>—</td><td>—</td><td>壬午 rén wǔ 允 yǔn</td><td>雨 yǔ</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="comment">
+    <p>В архаическом древнекитайском языке сказуемое всегда выражено предикативом, обозначающим действие или состояние. При этом грамматическая категория времени не выражается; одно и то же знаменательное слово в предикативной функции может обозначать действие, происходившее в прошлом, имеющее место в настоящем или ожидаемое в будущем. Время действия может быть определено только по контексту. Так, во второй части надписи сказуемое указывает на действие, которое произойдет в будущем: 其雨 qí yǔ — «Будет дождь?». В четвертой части надписи тот же предикатив передает действие, имевшее место в прошлом: 允雨 yǔn yǔ — «Действительно прошел дождь».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.4. Подлежащее</h3>
+    <p>Подлежащее в архаическом древнекитайском всегда предшествует сказуемому. В двух случаях подлежащее в предложении может отсутствовать: а) если оно известно из предшествующего контекста и опущено по стилистическим соображениям; б) если сказуемое выражено знаменательным словом со значением безличного предикатива (чаще всего для обозначения природных явлений) — 雨 yǔ «дождить», 風 fēng «дуть» (о ветре), 雷 léi «греметь» (о громе) и т. д.</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.5. Обстоятельство времени</h3>
+    <p>Обычная позиция обстоятельства времени — перед подлежащим. В этом случае оно, как правило, не сочетается с предлогом: 丙寅卜 bǐng yín bǔ — «В день бин-инь гадали» (подлежащее опущено); 癸亥 guǐ hài 其雨 qí yǔ — «В день гуй-хай будет дождь» (предложение с безличным сказуемым).</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.6. Наречие</h3>
+    <p>Одним из признаков сказуемого является его способность сочетаться с наречиями. Наречие всегда стоит перед сказуемым. По своему значению наречия архаического древнекитайского языка подразделяются на две группы: служебные и знаменательные.</p>
+    <p>Служебные наречия не имеют никакого знаменательного значения (или, по крайней мере, это значение нам неизвестно). Они указывают лишь на то, что после них следует сказуемое. В архаическом языке таким наречием является слово 其 qí: 其雨 qí yǔ — «Идет дождь».</p>
+    <p>Смысловые наречия в отличие от служебных имеют определенное знаменательное значение, уточняющее сказуемое. В данном уроке встречается одно наречие, относящееся к этой группе, — 允 yǔn «действительно», «и в самом деле», например: 允雨 yǔn yǔ — «Действительно прошел дождь».</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.7. Отрицания</h3>
+    <p>Отрицание всегда ставится перед сказуемым. Если же перед сказуемым стоит уже служебное наречие, то отрицание ставится перед последним: 不其雨 bù qí yǔ — «Не идет дождь».</p>
+    <p>Отметим, что смысловое наречие может стоять перед отрицанием: 允不其雨 yǔn bù qí yǔ — «И в самом деле не идет дождь».</p>
+    <p>Наиболее употребительное из числа встречающихся в архаическом древнекитайском языке отрицаний — 不 bù отличается от других служебных слов той же группы тем, что является нейтральным, т. е. не несет никакой дополнительной смысловой нагрузки.</p>
+  </div>
+
+  <div class="comment">
+    <h3>1.8. Приложение</h3>
+    <p>В тех случаях, когда то или иное лицо (предмет) обозначается одновременно и нарицательным, и собственным именем, мы имеем дело с приложением. В архаическом языке при этом имя нарицательное всегда предшествует собственному. В частности, личное имя следует за обозначением статуса (должности): 卜爭 bǔ zhēng — «гадатель Чжэн».</p>
+  </div>
+
+  <h2>СПИСОК СЛОВ УРОКА 1</h2>
+  <div class="char-list">
+    <!-- (все элементы остаются без изменений) -->
+    <div class="char-item">
+      <span>丙<span class="inline-pinyin">bǐng</span></span>
+      <div class="char-tooltip">Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»</div>
+    </div>
+    <div class="char-item">
+      <span>寅<span class="inline-pinyin">yín</span></span>
+      <div class="char-tooltip">Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»</div>
+    </div>
+    <div class="char-item">
+      <span>卜<span class="inline-pinyin">bǔ</span></span>
+      <div class="char-tooltip">Гадать; в составе 名 + 卜 — «гадатель по имени...»</div>
+    </div>
+    <div class="char-item">
+      <span>爭<span class="inline-pinyin">zhēng</span></span>
+      <div class="char-tooltip">Имя гадателя; 卜爭 — «гадатель Чжэн»</div>
+    </div>
+    <div class="char-item">
+      <span>貞<span class="inline-pinyin">zhēn</span></span>
+      <div class="char-tooltip">Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»</div>
+    </div>
+    <div class="char-item">
+      <span>雨<span class="inline-pinyin">yǔ</span></span>
+      <div class="char-tooltip">Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»</div>
+    </div>
+    <div class="char-item">
+      <span>曰<span class="inline-pinyin">yuē</span></span>
+      <div class="char-tooltip">Говорить; вводит прямую речь: «сказал: „...“»</div>
+    </div>
+    <div class="char-item">
+      <span>其<span class="inline-pinyin">qí</span></span>
+      <div class="char-tooltip">Служебное наречие; указывает на будущее/возможность: «будет ли?»</div>
+    </div>
+    <div class="char-item">
+      <span>癸<span class="inline-pinyin">guǐ</span></span>
+      <div class="char-tooltip">Небесный ствол (10-й); часть дат: 癸亥, 癸丑</div>
+    </div>
+    <div class="char-item">
+      <span>亥<span class="inline-pinyin">hài</span></span>
+      <div class="char-tooltip">Земная ветвь (12-я); в паре с 癸 — «гуй-хай»</div>
+    </div>
+    <div class="char-item">
+      <span>不<span class="inline-pinyin">bù</span></span>
+      <div class="char-tooltip">Не; отрицание перед сказуемым: «не будет дождя»</div>
+    </div>
+    <div class="char-item">
+      <span>允<span class="inline-pinyin">yǔn</span></span>
+      <div class="char-tooltip">Действительно; подтверждает: «и в самом деле пошёл дождь»</div>
+    </div>
+    <div class="char-item">
+      <span>王<span class="inline-pinyin">wáng</span></span>
+      <div class="char-tooltip">Правитель; подлежащее: «царь сказал», «царь истолковал»</div>
+    </div>
+    <div class="char-item">
+      <span>占<span class="inline-pinyin">zhān</span></span>
+      <div class="char-tooltip">Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»</div>
+    </div>
+    <div class="char-item">
+      <span>丑<span class="inline-pinyin">chǒu</span></span>
+      <div class="char-tooltip">Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»</div>
+    </div>
+    <div class="char-item">
+      <span>己<span class="inline-pinyin">jǐ</span></span>
+      <div class="char-tooltip">Небесный ствол (6-й); в паре с 卯 — «цзи-мао»</div>
+    </div>
+    <div class="char-item">
+      <span>卯<span class="inline-pinyin">mǎo</span></span>
+      <div class="char-tooltip">Земная ветвь (4-я); день «цзи-мао»</div>
+    </div>
+    <div class="char-item">
+      <span>㱿<span class="inline-pinyin">jué</span></span>
+      <div class="char-tooltip">Имя гадателя; 卜㱿 — «гадатель Цзюэ»</div>
+    </div>
+    <div class="char-item">
+      <span>壬<span class="inline-pinyin">rén</span></span>
+      <div class="char-tooltip">Небесный ствол (9-й); в паре с 午 — «жэнь-у»</div>
+    </div>
+    <div class="char-item">
+      <span>午<span class="inline-pinyin">wǔ</span></span>
+      <div class="char-tooltip">Земная ветвь (7-я); день «жэнь-у»</div>
+    </div>
+  </div>
+
+  <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+  <div class="comment">
+    <h3>1—1. Циклические знаки</h3>
+    <p>В древнекитайском языке существует два набора, или цикла, знаков, расположенных в определенной последовательности и использовавшихся для обозначения дней. В первом цикле — десять знаков: 甲 jiǎ, 乙 yǐ, 丙 bǐng, 丁 dīng, 戊 wù, 己 jǐ, 庚 gēng, 辛 xīn, 壬 rén, 癸 guǐ; во втором — двенадцать: 子 zǐ, 丑 chǒu, 寅 yín, 卯 mǎo, 辰 chén, 巳 sì, 午 wǔ, 未 wèi, 申 shēn, 酉 yǒu, 戌 xū, 亥 hài.</p>
+    <p>Первый знак первого цикла сочетается с первым знаком второго цикла, второй знак — со вторым и т. д. В совокупности получается 60 сочетаний:</p>
+  </div>
+
+  <div class="table-container">
+    <table class="cycle-table">
+      <tbody>
+        <tr><td>1. 甲子<br>jiǎ zǐ</td><td>2. 乙丑<br>yǐ chǒu</td><td>3. 丙寅<br>bǐng yín</td><td>4. 丁卯<br>dīng mǎo</td></tr>
+        <tr><td>5. 戊辰<br>wù chén</td><td>6. 己巳<br>jǐ sì</td><td>7. 庚午<br>gēng wǔ</td><td>8. 辛未<br>xīn wèi</td></tr>
+        <tr><td>9. 壬申<br>rén shēn</td><td>10. 癸酉<br>guǐ yǒu</td><td>11. 甲戌<br>jiǎ xū</td><td>12. 乙亥<br>yǐ hài</td></tr>
+        <tr><td>13. 丙子<br>bǐng zǐ</td><td>14. 丁丑<br>dīng chǒu</td><td>15. 戊寅<br>wù yín</td><td>16. 己卯<br>jǐ mǎo</td></tr>
+        <tr><td>17. 庚辰<br>gēng chén</td><td>18. 辛巳<br>xīn sì</td><td>19. 壬午<br>rén wǔ</td><td>20. 癸未<br>guǐ wèi</td></tr>
+        <tr><td>21. 甲申<br>jiǎ shēn</td><td>22. 乙酉<br>yǐ yǒu</td><td>23. 丙戌<br>bǐng xū</td><td>24. 丁亥<br>dīng hài</td></tr>
+        <tr><td>25. 戊子<br>wù zǐ</td><td>26. 己丑<br>jǐ chǒu</td><td>27. 庚寅<br>gēng yín</td><td>28. 辛卯<br>xīn mǎo</td></tr>
+        <tr><td>29. 壬辰<br>rén chén</td><td>30. 癸巳<br>guǐ sì</td><td>31. 甲午<br>jiǎ wǔ</td><td>32. 乙未<br>yǐ wèi</td></tr>
+        <tr><td>33. 丙申<br>bǐng shēn</td><td>34. 丁酉<br>dīng yǒu</td><td>35. 戊戌<br>wù xū</td><td>36. 己亥<br>jǐ hài</td></tr>
+        <tr><td>37. 庚子<br>gēng zǐ</td><td>38. 辛丑<br>xīn chǒu</td><td>39. 壬寅<br>rén yín</td><td>40. 癸卯<br>guǐ mǎo</td></tr>
+        <tr><td>41. 甲辰<br>jiǎ chén</td><td>42. 乙巳<br>yǐ sì</td><td>43. 丙午<br>bǐng wǔ</td><td>44. 丁未<br>dīng wèi</td></tr>
+        <tr><td>45. 戊申<br>wù shēn</td><td>46. 己酉<br>jǐ yǒu</td><td>47. 庚戌<br>gēng xū</td><td>48. 辛亥<br>xīn hài</td></tr>
+        <tr><td>49. 壬子<br>rén zǐ</td><td>50. 癸丑<br>guǐ chǒu</td><td>51. 甲寅<br>jiǎ yín</td><td>52. 乙卯<br>yǐ mǎo</td></tr>
+        <tr><td>53. 丙辰<br>bǐng chén</td><td>54. 丁巳<br>dīng sì</td><td>55. 戊午<br>wù wǔ</td><td>56. 己未<br>jǐ wèi</td></tr>
+        <tr><td>57. 庚申<br>gēng shēn</td><td>58. 辛酉<br>xīn yǒu</td><td>59. 壬戌<br>rén xū</td><td>60. 癸亥<br>guǐ hài</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="comment">
+    <p>Таким образом, первый день 60-ричного цикла обозначается сочетанием 甲子 jiǎ zǐ, последний — 癸亥 guǐ hài; затем снова следует 甲子 jiǎ zǐ и т. д. Если из контекста ясно, о какой десятидневке идет речь, второй знак в сочетании мог опускаться.</p>
+    <p>Сочетания циклических знаков употребляются в древнекитайском языке только в функции имени, конкретнее — в функции обстоятельства времени. Поэтому такое сочетание знаков, употребленное без предлога, может служить указанием на начало предложения: 甲子 jiǎ zǐ 允其雨 yǔn qí yǔ — «В день цзя-цзы действительно прошел дождь».</p>
+  </div>
+
+  <h2>ЗАДАНИЯ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+  <ol class="exercise">
+    <li>Проанализируйте текст грамматически и найдите в нём известные вам члены предложения.</li>
+    <li>Пользуясь словарём, дайте литературный перевод текста на русский язык.</li>
+    <li>Переведите на древнекитайский следующие предложения:
+      <ol type="a">
+        <li>На шестой день правитель не задавал вопросов.</li>
+        <li>Вопрос гласит: «Был ли дождь?»</li>
+        <li>Гадатель Чжэн сказал: «Правитель действительно не задаёт вопросов».</li>
+        <li>На десятый день правитель прочитал ответ на гадательной кости.</li>
+      </ol>
+    </li>
+  </ol>
+
+  <div class="footer">
+    Учебник: М.В. Крюков, Хуан Шуин — Архаический древнекитайский язык<br>
+    Восстановлено и оформлено в duolingo-подобном формате, 2025
+  </div>
+
+  <!-- ✅ КНОПКА С РЕГУЛЯРНЫМИ ВЫРАЖЕНИЯМИ (ваша инструкция) -->
+<script>
+  document.getElementById('toggleOracleView').addEventListener('click', function () {
+    const table = document.getElementById('oracleTable');
+    let html = table.innerHTML;
+
+    if (this.textContent.includes('оракульному')) {
+      // Режим: текст → изображения
+      // Находим иероглиф + начало подсказки и заменяем на <img>, сохраняя tooltip
+      html = html.replace(
+        /([\u4e00-\u9fff])(?=<div class="char-tooltip">)/g,
+        '<img src="oracle_chars/$1.svg" alt="$1" style="height:2.4em;vertical-align:middle;cursor:help;">'
+      );
+      this.textContent = 'Перейти к стандартному виду';
+    } else {
+      // Режим: изображения → текст
+      // Находим <img src=".../X.svg" alt="X"> и удаляем, оставляя только alt
+      html = html.replace(
+        /<img[^>]+src="[^"]+\/([^"]+)\.svg"[^>]+alt="([^"]+)"[^>]*>/g,
+        '$2'
+      );
+      this.textContent = 'Привести к оракульному виду';
+    }
+
+    table.innerHTML = html;
+  });
+</script>
+</body>
+</html>
