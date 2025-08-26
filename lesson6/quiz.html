@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Квиз по сегментации текста</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .instruction {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        
+        .instruction h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instruction p {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .color-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .color-picker label {
+            font-size: 14px;
+            color: #555;
+            white-space: nowrap;
+        }
+        
+        input[type="color"] {
+            width: 40px;
+            height: 30px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .color-info {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #555;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        tr {
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
+        
+        td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px 5px;
+            font-size: 18px;
+            min-width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        td:hover {
+            transform: scale(1.1);
+            z-index: 1;
+            position: relative;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        #resetBtn {
+            background-color: #e74c3c;
+        }
+        
+        #resetBtn:hover {
+            background-color: #c0392b;
+        }
+        
+        #checkBtn {
+            background-color: #2ecc71;
+        }
+        
+        #checkBtn:hover {
+            background-color: #27ae60;
+        }
+        
+        #result {
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            td {
+                padding: 5px 3px;
+                font-size: 16px;
+                min-width: 20px;
+                height: 20px;
+            }
+            
+            .color-tools, .controls, .legend {
+                flex-direction: column;
+            }
+            
+            button {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instruction">
+            <h2>Задание по сегментации текста</h2>
+            <p>Вам нужно сегментировать древнекитайский текст на отдельные предложения. Для этого закрашивайте соответствующие символы текста любыми цветами. Каждое предложение должно быть закрашено своим цветом.</p>
+            <p><strong>Правила:</strong></p>
+            <ul>
+                <li>Всего в тексте <span id="sentenceCount" style="font-weight: bold;"></span> предложений</li>
+                <li>Каждое предложение должно быть закрашено одним цветом</li>
+                <li>Разные предложения должны иметь разные цвета</li>
+                <li>Все символы текста должны быть закрашены</li>
+            </ul>
+        </div>
+        
+        <div class="color-tools">
+            <div class="color-picker">
+                <label for="colorSelect">Выберите цвет:</label>
+                <input type="color" id="colorSelect" value="#3498db">
+            </div>
+            <div class="color-info">
+                Текущий цвет: <span id="currentColor">#3498db</span>. 
+                Нажмите на символы текста, чтобы закрасить их выбранным цветом.
+            </div>
+        </div>
+        
+        <table id="textTable"></table>
+        
+        <div class="controls">
+            <button id="checkBtn">Проверить задание</button>
+            <button id="resetBtn">Сбросить все</button>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="legend" id="colorLegend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3498db;"></div>
+                <span>Цвет 1 (выбран)</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="segmentation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Отображение количества предложений
+            document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
+            
+            // Построение таблицы из текста
+            const table = document.getElementById('textTable');
+            const lines = SentenceData.text.split('\n').filter(line => line.trim() !== '');
+            
+            lines.forEach(line => {
+                const tr = document.createElement('tr');
+                for (let char of line) {
+                    const td = document.createElement('td');
+                    td.textContent = char;
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            });
+            
+            // Управление цветом
+            let currentColor = '#3498db';
+            const colorInput = document.getElementById('colorSelect');
+            const currentColorDisplay = document.getElementById('currentColor');
+            
+            // Обновление отображения текущего цвета
+            function updateColorDisplay() {
+                currentColorDisplay.textContent = currentColor;
+                currentColorDisplay.style.color = currentColor;
+                // Make text white if background is dark, black if light
+                const r = parseInt(currentColor.substr(1, 2), 16);
+                const g = parseInt(currentColor.substr(3, 2), 16);
+                const b = parseInt(currentColor.substr(5, 2), 16);
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                currentColorDisplay.style.color = brightness > 128 ? '#000' : '#fff';
+            }
+            
+            // Обработчик изменения цвета
+            colorInput.addEventListener('input', function(e) {
+                currentColor = e.target.value;
+                updateColorDisplay();
+            });
+            
+            // Инициализация отображения цвета
+            updateColorDisplay();
+            
+            // Клик по ячейкам таблицы
+            table.addEventListener('click', function(e) {
+                if (e.target.tagName === 'TD') {
+                    e.target.style.backgroundColor = currentColor;
+                    e.target.setAttribute('data-color', currentColor);
+                    
+                    // Обновляем легенду
+                    updateColorLegend();
+                }
+            });
+            
+            // Легенда использованных цветов
+            const colorLegend = document.getElementById('colorLegend');
+            const maxColors = 15; // Максимальное количество цветов для отображения в легенде
+            
+            function updateColorLegend() {
+                // Собираем все использованные цвета
+                const cells = document.querySelectorAll('#textTable td');
+                const usedColors = new Set();
+                
+                cells.forEach(cell => {
+                    const color = cell.getAttribute('data-color');
+                    if (color) {
+                        usedColors.add(color);
+                    }
+                });
+                
+                // Очищаем легенду
+                colorLegend.innerHTML = '';
+                
+                // Добавляем элементы в легенду
+                let colorIndex = 1;
+                usedColors.forEach(color => {
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'legend-color';
+                    colorBox.style.backgroundColor = color;
+                    
+                    const colorName = document.createElement('span');
+                    colorName.textContent = `Цвет ${colorIndex}${color === currentColor ? ' (выбран)' : ''}`;
+                    
+                    legendItem.appendChild(colorBox);
+                    legendItem.appendChild(colorName);
+                    colorLegend.appendChild(legendItem);
+                    
+                    colorIndex++;
+                });
+                
+                // Если нет использованных цветов, показываем текущий цвет
+                if (usedColors.size === 0) {
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'legend-color';
+                    colorBox.style.backgroundColor = currentColor;
+                    
+                    const colorName = document.createElement('span');
+                    colorName.textContent = 'Цвет 1 (выбран)';
+                    
+                    legendItem.appendChild(colorBox);
+                    legendItem.appendChild(colorName);
+                    colorLegend.appendChild(legendItem);
+                }
+            }
+            
+            // Сброс всех закрашенных ячеек
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                const cells = document.querySelectorAll('#textTable td');
+                cells.forEach(cell => {
+                    cell.style.backgroundColor = '';
+                    cell.removeAttribute('data-color');
+                });
+                updateColorLegend();
+                document.getElementById('result').className = '';
+                document.getElementById('result').textContent = '';
+            });
+            
+            // Проверка задания
+            document.getElementById('checkBtn').addEventListener('click', function() {
+                const cells = Array.from(document.querySelectorAll('#textTable td'));
+                const resultDiv = document.getElementById('result');
+                
+                // Проверка, все ли ячейки покрашены
+                const unpaintedCells = cells.filter(cell => !cell.hasAttribute('data-color'));
+                if (unpaintedCells.length > 0) {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `Ошибка: ${unpaintedCells.length} символов не покрашены.`;
+                    return;
+                }
+                
+                // Сбор цветовых групп
+                const colorGroups = {};
+                cells.forEach(cell => {
+                    const color = cell.getAttribute('data-color');
+                    if (!colorGroups[color]) {
+                        colorGroups[color] = [];
+                    }
+                    colorGroups[color].push(cell.textContent);
+                });
+                
+                const colors = Object.keys(colorGroups);
+                const expectedCount = SentenceData.sentences.length;
+                
+                // Проверка количества цветов
+                if (colors.length !== expectedCount) {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `Неверное количество цветов. Должно быть ${expectedCount}, вы использовали ${colors.length}.`;
+                    return;
+                }
+                
+                // Формируем строки для каждого цвета
+                const colorStrings = colors.map(color => colorGroups[color].join(''));
+                const sentenceOriginals = SentenceData.sentences.map(s => s.original);
+                
+                // Сортируем для сравнения
+                const sortedColorStrings = [...colorStrings].sort();
+                const sortedOriginals = [...sentenceOriginals].sort();
+                
+                // Проверяем соответствие
+                if (JSON.stringify(sortedColorStrings) === JSON.stringify(sortedOriginals)) {
+                    resultDiv.className = 'success';
+                    resultDiv.innerHTML = '✅ Задание выполнено верно!<br>Вы успешно сегментировали текст на все предложения.';
+                } else {
+                    // Проверяем, какие предложения не совпали
+                    const matchedSentences = [];
+                    const unmatchedSentences = [];
+                    
+                    colorStrings.forEach(str => {
+                        if (sentenceOriginals.includes(str)) {
+                            matchedSentences.push(str);
+                        } else {
+                            unmatchedSentences.push(str);
+                        }
+                    });
+                    
+                    const missingCount = expectedCount - matchedSentences.length;
+                    
+                    if (missingCount > 0) {
+                        resultDiv.className = 'error';
+                        resultDiv.innerHTML = `❌ Не все предложения найдены.<br>Найдено: ${matchedSentences.length} из ${expectedCount}.`;
+                    } else {
+                        resultDiv.className = 'error';
+                        resultDiv.innerHTML = `❌ Цветовые области не соответствуют предложениям.<br>Возможно, вы неправильно разделили текст.`;
+                    }
+                }
+            });
+            
+            // Инициализация легенды
+            updateColorLegend();
+        });
+    </script>
+</body>
+</html>
