@@ -3,6 +3,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Урок 1: Древнекитайский язык — Гадания о дожде</title>
+
+
+  <style>
+  @font-face {
+    font-family: 'Jiaguwen';
+    src: url('../jiaguwen.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+    font-display: swap;
+  }
+</style>
+
+
+<style>
+
+</style>
+
+
 <style>
   body {
     font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
@@ -258,9 +276,69 @@
     <h2>Текст урока</h2>
     <table class="oracle-table" id="oracleTable"></table>
 </div>
+<!-- Тумблер переключения вида -->
+<div style="text-align: center; margin: 20px 0;">
+  <label class="toggle-switch">
+    <input type="checkbox" id="fontToggle">
+    <span class="slider"></span>
+  </label>
+  <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
 
+<!-- Стиль тумблера -->
 <style>
-    .oracle-table {
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style id="2change"> 
+
+
+     .oracle-table {
         border-collapse: collapse;
         margin: 20px auto;
         font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
@@ -288,6 +366,9 @@
         white-space: nowrap;
     }
 
+</style>
+
+<style>
     .char-tooltip {
         display: none;
         position: absolute;
@@ -759,4 +840,86 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
   </div>
 
 
-</body></html>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('fontToggle');
+    const label = document.getElementById('toggleLabel');
+    const styleSheet = document.getElementById('2change');
+
+    const normalCSS = `
+      .oracle-table {
+        border-collapse: collapse;
+        margin: 20px auto;
+        font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+        font-size: 1.3em;
+        table-layout: fixed;
+        width: 95%;
+        max-width: 1200px;
+      }
+
+      .oracle-table td {
+        padding: 6px 8px;
+        border: 1px solid #d4d4d4;
+        text-align: center;
+        position: relative;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+
+      .line-num, .col-num {
+        background-color: #f0f4f8;
+        color: #1a4f72;
+        font-weight: bold;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        font-size: 0.85em;
+        white-space: nowrap;
+      }
+    `;
+
+    const oracleCSS = `
+      .oracle-table {
+        border-collapse: collapse;
+        margin: 20px auto;
+        font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+        font-size: 1.3em;
+        table-layout: fixed;
+        width: 95%;
+        max-width: 1200px;
+      }
+
+      .oracle-table td {
+        padding: 6px 8px;
+        border: 1px solid #d4d4d4;
+        text-align: center;
+        position: relative;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+
+      .line-num, .col-num {
+        background-color: #f0f4f8;
+        color: #1a4f72;
+        font-weight: bold;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        font-size: 0.85em;
+        white-space: nowrap;
+      }
+    `;
+
+    // Установить начальный стиль
+    styleSheet.textContent = normalCSS;
+
+    // Обработчик переключения
+    toggle.addEventListener('change', function () {
+      if (toggle.checked) {
+        styleSheet.textContent = oracleCSS;
+        label.textContent = 'Оракульный вид';
+      } else {
+        styleSheet.textContent = normalCSS;
+        label.textContent = 'Обычный вид';
+      }
+    });
+  });
+</script>
+</html>

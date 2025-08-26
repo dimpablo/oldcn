@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Урок 5 — Древнекитайский язык по Крюкову</title>
-    <style>
-        body {
+<meta charset="utf-8"/>
+<title>Урок 5 — Древнекитайский язык по Крюкову</title>
+<style>body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
             margin: 50px auto;
@@ -126,32 +126,8 @@
         }
 
         /* Таблица текста */
-        .oracle-table {
-            border-collapse: collapse;
-            margin: 20px auto;
-            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-            font-size: 1.3em;
-            table-layout: fixed;
-            width: 95%;
-            max-width: 1200px;
-        }
 
-        .oracle-table td {
-            padding: 6px 8px;
-            border: 1px solid #d4d4d4;
-            text-align: center;
-            word-break: keep-all;
-            white-space: nowrap;
-            position: relative;
-        }
 
-        .line-num, .col-num {
-            background-color: #f0f4f8;
-            color: #1a4f72;
-            font-weight: bold;
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-            font-size: 0.85em;
-        }
 
         .phrase-item {
             display: inline-block;
@@ -210,52 +186,102 @@
         }
         .pronoun-table td:nth-child(3), .pronoun-table td:nth-child(4) {
             width: 30%;
-        }
-    </style>
-</head>
-<body>
-<script src="./../dictionary.js"></script>
-
-    <h1>УРОК 5</h1>
-
-    <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
-
-    <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
-</div>
-
+        }</style>
 <style>
-   .oracle-table {
+@font-face {
+  font-family: 'Jiaguwen';
+  src: url('../jiaguwen.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+</style></head>
+<body><style id="2change">
+.oracle-table {
     border-collapse: collapse;
-    margin: 20px auto; /* Центрируем таблицу, auto по бокам */
+    margin: 20px auto;
     font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
     font-size: 1.3em;
-    table-layout: fixed; /* Фиксируем ширину колонок */
-    width: 95%; /* Занимаем 95% ширины, но не больше */
-    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    table-layout: fixed;
+    width: 95%;
+    max-width: 1200px;
 }
-
 .oracle-table td {
-    padding: 6px 8px; /* Уменьшаем отступы, чтобы сэкономить место */
+    padding: 6px 8px;
     border: 1px solid #d4d4d4;
     text-align: center;
-    min-width: 0; /* Отключаем min-width, если был */
-    width: calc(95% / 16); /* Примерно равномерное распределение (15 колонок + 1 для номера строки) */
     position: relative;
-    word-break: keep-all; /* Не разрывать иероглифы */
-    white-space: nowrap; /* Не переносим символы */
+    word-break: keep-all;
+    white-space: nowrap;
 }
-
-/* Уменьшаем размер для номеров */
 .line-num, .col-num {
     background-color: #f0f4f8;
     color: #1a4f72;
     font-weight: bold;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    font-size: 0.85em; /* Чуть меньше, чтобы не жрало место */
+    font-size: 0.85em;
     white-space: nowrap;
 }
+</style>
+<script src="./../dictionary.js"></script>
+<h1>УРОК 5</h1>
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
 
 /* Tooltip — без изменений */
 .char-tooltip {
@@ -290,9 +316,7 @@ td:hover .char-tooltip {
     border-radius: 4px;
     font-size: 0.8em;
     margin-left: 5px;
-}
-</style>
-
+}</style>
 <script>
 
 
@@ -373,14 +397,12 @@ function createOracleTable() {
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
-    <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
-    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="grammar">
-        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>5.1. Предикативы, требующие двойного дополнения</h3>
-        <p class="original">
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>5.1. Предикативы, требующие двойного дополнения</h3>
+<p class="original">
             Знаменательные слова, выступающие в архаическом языке
             в качестве предикативов, могут быть подразделены на несколько
             групп.
@@ -396,9 +418,8 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             причинит несчастья этому городу?»
             Обычная позиция прямого дополнения сразу же после сказуемого в этом случае невозможна.
         </p>
-
-        <h3>5.2. Инверсия дополнения без предлога</h3>
-        <p class="original">
+<h3>5.2. Инверсия дополнения без предлога</h3>
+<p class="original">
             Согласно существующему в архаическом древнекитайском
             языке порядку слов, любое дополнение, если оно оформлено предлогом, может быть инвертировано и стоять непосредственно перед
             сказуемым. Что же касается инверсии беспредложных дополнений, то она возможна лишь при строго определенных условиях,
@@ -414,9 +435,8 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             <span class="example">帝不我降熯 dì bù wǒ jiàng hàn</span> «Небесный Владыка не
             пошлет нам засуху?»
         </p>
-
-        <h3>5.3. Два типа инверсии</h3>
-        <p class="original">
+<h3>5.3. Два типа инверсии</h3>
+<p class="original">
             Следует обратить внимание на то, что инверсия беспредложного дополнения, выраженного местоимением, в отрицательном
             предложении имеет существенное отличие от инверсии дополнения с предлогом.
             Во втором случае инверсия носит свободный, произвольный
@@ -430,9 +450,8 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             <span class="example">帝不我受佑 dì bù wǒ shòu yòu</span> «Небесный Владыка не
             ниспошлет нам помощи?»
         </p>
-
-        <h3>5.4. Личные местоимения (продолжение)</h3>
-        <p class="original">
+<h3>5.4. Личные местоимения (продолжение)</h3>
+<p class="original">
             Личные местоимения архаического древнекитайского языка
             можно разделить на две категории.
             К первой из них относится уже известное нам местоимение 1-го
@@ -461,146 +480,141 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             Следует обратить внимание на то, что в архаическом древнекитайском языке совершенно отсутствуют личные местоимения 3-го
             лица.
         </p>
-
-        <!-- Таблица 2 -->
-        <div style="text-align: center; margin: 20px 0;">
-            <strong>Таблица 2</strong>
-            <em>Функции личных местоимений</em>
-            <em>в архаическом древнекитайском языке</em>
-        </div>
-        <table class="pronoun-table">
-            <tr>
-                <th>Лицо</th>
-                <th>Местоимение</th>
-                <th>Подлежащее, дополнение</th>
-                <th>Определение</th>
-            </tr>
-            <tr>
-                <td rowspan="2">1</td>
-                <td>余 yú</td>
-                <td>+</td>
-                <td>–</td>
-            </tr>
-            <tr>
-                <td>朕 zhèn</td>
-                <td>–</td>
-                <td>+</td>
-            </tr>
-            <tr>
-                <td rowspan="2">2</td>
-                <td>汝 rǔ</td>
-                <td>+</td>
-                <td>–</td>
-            </tr>
-            <tr>
-                <td>乃 nǎi</td>
-                <td>–</td>
-                <td>+</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- СПИСОК СЛОВ УРОКА -->
-    <h2>СПИСОК СЛОВ УРОКА</h2>
-    <div class="char-list">
-        <div class="char-item">
-            <span>帝<span class="inline-pinyin">dì</span></span>
-            <div class="char-tooltip">Небесный Владыка</div>
-        </div>
-        <div class="char-item">
-            <span>熯<span class="inline-pinyin">hàn</span></span>
-            <div class="char-tooltip">Иссушать, засуха</div>
-        </div>
-        <div class="char-item">
-            <span>申<span class="inline-pinyin">shēn</span></span>
-            <div class="char-tooltip">Земная ветвь (9-я)</div>
-        </div>
-        <div class="char-item">
-            <span>降<span class="inline-pinyin">jiàng</span></span>
-            <div class="char-tooltip">Посылать (вниз)</div>
-        </div>
-        <div class="char-item">
-            <span>伐<span class="inline-pinyin">fá</span></span>
-            <div class="char-tooltip">Нападать, воевать</div>
-        </div>
-        <div class="char-item">
-            <span>佑<span class="inline-pinyin">yòu</span></span>
-            <div class="char-tooltip">Помощь, защита</div>
-        </div>
-        <div class="char-item">
-            <span>洹<span class="inline-pinyin">huán</span></span>
-            <div class="char-tooltip">Река Хуань</div>
-        </div>
-        <div class="char-item">
-            <span>作<span class="inline-pinyin">zuò</span></span>
-            <div class="char-tooltip">Совершать, причинять</div>
-        </div>
-        <div class="char-item">
-            <span>茲<span class="inline-pinyin">zī</span></span>
-            <div class="char-tooltip">Этот, здесь</div>
-        </div>
-        <div class="char-item">
-            <span>禍<span class="inline-pinyin">huò</span></span>
-            <div class="char-tooltip">Несчастье, бедствие</div>
-        </div>
-        <div class="char-item">
-            <span>余<span class="inline-pinyin">yú</span></span>
-            <div class="char-tooltip">Я (местоимение)</div>
-        </div>
-        <div class="char-item">
-            <span>得<span class="inline-pinyin">dé</span></span>
-            <div class="char-tooltip">Получить</div>
-        </div>
-        <div class="char-item">
-            <span>汝<span class="inline-pinyin">rǔ</span></span>
-            <div class="char-tooltip">Ты</div>
-        </div>
-        <div class="char-item">
-            <span>使<span class="inline-pinyin">shǐ</span></span>
-            <div class="char-tooltip">Посол</div>
-        </div>
-        <div class="char-item">
-            <span>合<span class="inline-pinyin">hé</span></span>
-            <div class="char-tooltip">Соединить</div>
-        </div>
-        <div class="char-item">
-            <span>乃<span class="inline-pinyin">nǎi</span></span>
-            <div class="char-tooltip">Твой (в определении)</div>
-        </div>
-        <div class="char-item">
-            <span>以<span class="inline-pinyin">yǐ</span></span>
-            <div class="char-tooltip">С помощью, привести</div>
-        </div>
-        <div class="char-item">
-            <span>羌<span class="inline-pinyin">qiāng</span></span>
-            <div class="char-tooltip">Племя Цянь</div>
-        </div>
-        <div class="char-item">
-            <span>朕<span class="inline-pinyin">zhèn</span></span>
-            <div class="char-tooltip">Мой (местоимение)</div>
-        </div>
-    </div>
-
-    <div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
-        <strong>Словосочетания</strong>
-        <span class="phrase-item">
-            <span class="phrase-char">馬方</span>
-            <span class="phrase-pinyin">mă fāng</span>
-            <span class="phrase-meaning">«племя Ма»</span>
-        </span>
-        <span class="phrase-item">
-            <span class="phrase-char">侯虎</span>
-            <span class="phrase-pinyin">hóu hǔ</span>
-            <span class="phrase-meaning">«хоу Ху»</span>
-        </span>
-    </div>
-
-    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="lexicon">
-        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>5.А. Засуха и «вред реки»</h3>
-        <p class="original">
+<!-- Таблица 2 -->
+<div style="text-align: center; margin: 20px 0;">
+<strong>Таблица 2</strong>
+<em>Функции личных местоимений</em>
+<em>в архаическом древнекитайском языке</em>
+</div>
+<table class="pronoun-table">
+<tr>
+<th>Лицо</th>
+<th>Местоимение</th>
+<th>Подлежащее, дополнение</th>
+<th>Определение</th>
+</tr>
+<tr>
+<td rowspan="2">1</td>
+<td>余 yú</td>
+<td>+</td>
+<td>–</td>
+</tr>
+<tr>
+<td>朕 zhèn</td>
+<td>–</td>
+<td>+</td>
+</tr>
+<tr>
+<td rowspan="2">2</td>
+<td>汝 rǔ</td>
+<td>+</td>
+<td>–</td>
+</tr>
+<tr>
+<td>乃 nǎi</td>
+<td>–</td>
+<td>+</td>
+</tr>
+</table>
+</div>
+<!-- СПИСОК СЛОВ УРОКА -->
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list">
+<div class="char-item">
+<span>帝<span class="inline-pinyin">dì</span></span>
+<div class="char-tooltip">Небесный Владыка</div>
+</div>
+<div class="char-item">
+<span>熯<span class="inline-pinyin">hàn</span></span>
+<div class="char-tooltip">Иссушать, засуха</div>
+</div>
+<div class="char-item">
+<span>申<span class="inline-pinyin">shēn</span></span>
+<div class="char-tooltip">Земная ветвь (9-я)</div>
+</div>
+<div class="char-item">
+<span>降<span class="inline-pinyin">jiàng</span></span>
+<div class="char-tooltip">Посылать (вниз)</div>
+</div>
+<div class="char-item">
+<span>伐<span class="inline-pinyin">fá</span></span>
+<div class="char-tooltip">Нападать, воевать</div>
+</div>
+<div class="char-item">
+<span>佑<span class="inline-pinyin">yòu</span></span>
+<div class="char-tooltip">Помощь, защита</div>
+</div>
+<div class="char-item">
+<span>洹<span class="inline-pinyin">huán</span></span>
+<div class="char-tooltip">Река Хуань</div>
+</div>
+<div class="char-item">
+<span>作<span class="inline-pinyin">zuò</span></span>
+<div class="char-tooltip">Совершать, причинять</div>
+</div>
+<div class="char-item">
+<span>茲<span class="inline-pinyin">zī</span></span>
+<div class="char-tooltip">Этот, здесь</div>
+</div>
+<div class="char-item">
+<span>禍<span class="inline-pinyin">huò</span></span>
+<div class="char-tooltip">Несчастье, бедствие</div>
+</div>
+<div class="char-item">
+<span>余<span class="inline-pinyin">yú</span></span>
+<div class="char-tooltip">Я (местоимение)</div>
+</div>
+<div class="char-item">
+<span>得<span class="inline-pinyin">dé</span></span>
+<div class="char-tooltip">Получить</div>
+</div>
+<div class="char-item">
+<span>汝<span class="inline-pinyin">rǔ</span></span>
+<div class="char-tooltip">Ты</div>
+</div>
+<div class="char-item">
+<span>使<span class="inline-pinyin">shǐ</span></span>
+<div class="char-tooltip">Посол</div>
+</div>
+<div class="char-item">
+<span>合<span class="inline-pinyin">hé</span></span>
+<div class="char-tooltip">Соединить</div>
+</div>
+<div class="char-item">
+<span>乃<span class="inline-pinyin">nǎi</span></span>
+<div class="char-tooltip">Твой (в определении)</div>
+</div>
+<div class="char-item">
+<span>以<span class="inline-pinyin">yǐ</span></span>
+<div class="char-tooltip">С помощью, привести</div>
+</div>
+<div class="char-item">
+<span>羌<span class="inline-pinyin">qiāng</span></span>
+<div class="char-tooltip">Племя Цянь</div>
+</div>
+<div class="char-item">
+<span>朕<span class="inline-pinyin">zhèn</span></span>
+<div class="char-tooltip">Мой (местоимение)</div>
+</div>
+</div>
+<div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
+<strong>Словосочетания</strong>
+<span class="phrase-item">
+<span class="phrase-char">馬方</span>
+<span class="phrase-pinyin">mă fāng</span>
+<span class="phrase-meaning">«племя Ма»</span>
+</span>
+<span class="phrase-item">
+<span class="phrase-char">侯虎</span>
+<span class="phrase-pinyin">hóu hǔ</span>
+<span class="phrase-meaning">«хоу Ху»</span>
+</span>
+</div>
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>5.А. Засуха и «вред реки»</h3>
+<p class="original">
             В иньское время искусственное орошение еще не применялось.
             Судьба урожая зависела поэтому исключительно от количества
             и своевременности естественных осадков. Этим и объясняется
@@ -610,14 +624,12 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             подстерегала другая опасность. Река Хуанхэ и ее притоки разливались, нанося непоправимый ущерб полям и поселениям иньцев. «Великий город Шан» (или «этот город», как он часто именуется в надписях) был расположен в излучине реки Хуань, одного из
             притоков нижнего течения Хуанхэ. Река Хуань постоянно угрожала иньцам губительными наводнениями.
         </p>
-
-        <div style="text-align: center; margin: 20px 0;">
-            <img src="img/6.jpg" alt="Река Хуань и город Шан" style="max-width: 100%; border: 1px solid #ccc;">
-            <p>«Великий город Шан» был расположен в излучине реки Хуань</p>
-        </div>
-
-        <h3>5.Б. Указательное местоимение 茲 zī</h3>
-        <p class="original">
+<div style="text-align: center; margin: 20px 0;">
+<img alt="Река Хуань и город Шан" src="img/6.jpg" style="max-width: 100%; border: 1px solid #ccc;"/>
+<p>«Великий город Шан» был расположен в излучине реки Хуань</p>
+</div>
+<h3>5.Б. Указательное местоимение 茲 zī</h3>
+<p class="original">
             Указательное местоимение 茲 zī употребляется как самостоятельно, так и в качестве определения к имени:
             <span class="example">茲有大雨 zī yǒu dà yǔ</span> «Здесь будет сильный дождь?»
             (茲 zī — подлежащее).
@@ -626,55 +638,126 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             Будучи употреблено в качестве определения к имени, обозначающему тот или иной период времени, 茲 zī по своему значению
             оказывается синонимом наречному имени 今 jīn:
             <table class="comparison-table">
-                <tr>
-                    <td>兹日</td>
-                    <td>zī rì</td>
-                    <td rowspan="2">«этот день»</td>
-                </tr>
-                <tr>
-                    <td>今日</td>
-                    <td>jīn rì</td>
-                </tr>
-                <tr>
-                    <td>兹旬</td>
-                    <td>zī xún</td>
-                    <td rowspan="2">«эта декада»</td>
-                </tr>
-                <tr>
-                    <td>今旬</td>
-                    <td>jīn xún</td>
-                </tr>
-                <tr>
-                    <td>兹月</td>
-                    <td>zī yuè</td>
-                    <td rowspan="2">«этот месяц»</td>
-                </tr>
-                <tr>
-                    <td>今月</td>
-                    <td>jīn yuè</td>
-                </tr>
-            </table>
+<tr>
+<td>兹日</td>
+<td>zī rì</td>
+<td rowspan="2">«этот день»</td>
+</tr>
+<tr>
+<td>今日</td>
+<td>jīn rì</td>
+</tr>
+<tr>
+<td>兹旬</td>
+<td>zī xún</td>
+<td rowspan="2">«эта декада»</td>
+</tr>
+<tr>
+<td>今旬</td>
+<td>jīn xún</td>
+</tr>
+<tr>
+<td>兹月</td>
+<td>zī yuè</td>
+<td rowspan="2">«этот месяц»</td>
+</tr>
+<tr>
+<td>今月</td>
+<td>jīn yuè</td>
+</tr>
+</table>
             Но 茲 zī может указывать на определенную точку не только во
             времени, но и в пространстве, например, 兹邑 zī yì «этот город»
             и т. д.
         </p>
-    </div>
-
-    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
-    <div class="assignment">
-        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
-            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
-            <li>Проанализируйте текст с грамматической точки зрения.</li>
-            <li>Переведите текст на русский язык.</li>
-        </ol>
-    </div>
-
-    <div class="footer">
+</div>
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст в виде дистрибутивной таблицы.</li>
+<li>Проанализируйте текст с грамматической точки зрения.</li>
+<li>Переведите текст на русский язык.</li>
+</ol>
+</div>
+<div class="footer">
         Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.
         Восстановлено по OCR с сохранением авторского стиля.
         Все иероглифы — из текстов Уроков 1–5 или из циклических знаков.
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('fontToggle');
+  const label = document.getElementById('toggleLabel');
+  const styleSheet = document.getElementById('2change');
 
-</body>
+  const normalCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  const oracleCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  styleSheet.textContent = normalCSS;
+
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      styleSheet.textContent = oracleCSS;
+      label.textContent = 'Оракульный вид';
+    } else {
+      styleSheet.textContent = normalCSS;
+      label.textContent = 'Обычный вид';
+    }
+  });
+});
+</script></body>
 </html>

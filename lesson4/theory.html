@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Урок 4 — Древнекитайский язык по Крюкову</title>
-    <style>
-        body {
+<meta charset="utf-8"/>
+<title>Урок 4 — Древнекитайский язык по Крюкову</title>
+<style>body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
             margin: 50px auto;
@@ -126,32 +126,8 @@
         }
 
         /* Таблица текста */
-        .oracle-table {
-            border-collapse: collapse;
-            margin: 20px auto;
-            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-            font-size: 1.3em;
-            table-layout: fixed;
-            width: 95%;
-            max-width: 1200px;
-        }
 
-        .oracle-table td {
-            padding: 6px 8px;
-            border: 1px solid #d4d4d4;
-            text-align: center;
-            word-break: keep-all;
-            white-space: nowrap;
-            position: relative;
-        }
 
-        .line-num, .col-num {
-            background-color: #f0f4f8;
-            color: #1a4f72;
-            font-weight: bold;
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-            font-size: 0.85em;
-        }
 
 
         .phrase-item {
@@ -173,52 +149,102 @@
 
 .phrase-meaning {
     color: #333;
-}
-    </style>
-</head>
-<body>
-<script src="./../dictionary.js"></script>
-
-    <h1>УРОК 4</h1>
-
-    <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
-
-    <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
-</div>
-
+}</style>
 <style>
-   .oracle-table {
+@font-face {
+  font-family: 'Jiaguwen';
+  src: url('../jiaguwen.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+</style></head>
+<body><style id="2change">
+.oracle-table {
     border-collapse: collapse;
-    margin: 20px auto; /* Центрируем таблицу, auto по бокам */
+    margin: 20px auto;
     font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
     font-size: 1.3em;
-    table-layout: fixed; /* Фиксируем ширину колонок */
-    width: 95%; /* Занимаем 95% ширины, но не больше */
-    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    table-layout: fixed;
+    width: 95%;
+    max-width: 1200px;
 }
-
 .oracle-table td {
-    padding: 6px 8px; /* Уменьшаем отступы, чтобы сэкономить место */
+    padding: 6px 8px;
     border: 1px solid #d4d4d4;
     text-align: center;
-    min-width: 0; /* Отключаем min-width, если был */
-    width: calc(95% / 16); /* Примерно равномерное распределение (15 колонок + 1 для номера строки) */
     position: relative;
-    word-break: keep-all; /* Не разрывать иероглифы */
-    white-space: nowrap; /* Не переносим символы */
+    word-break: keep-all;
+    white-space: nowrap;
 }
-
-/* Уменьшаем размер для номеров */
 .line-num, .col-num {
     background-color: #f0f4f8;
     color: #1a4f72;
     font-weight: bold;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    font-size: 0.85em; /* Чуть меньше, чтобы не жрало место */
+    font-size: 0.85em;
     white-space: nowrap;
 }
+</style>
+<script src="./../dictionary.js"></script>
+<h1>УРОК 4</h1>
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
 
 /* Tooltip — без изменений */
 .char-tooltip {
@@ -253,9 +279,7 @@ td:hover .char-tooltip {
     border-radius: 4px;
     font-size: 0.8em;
     margin-left: 5px;
-}
-</style>
-
+}</style>
 <script>
 
 
@@ -337,152 +361,216 @@ function createOracleTable() {
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
-    <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
-    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="grammar">
-        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>4.1. Предлог 自 zì</h3>
-        <p class="original">
-            Вторым из числа наиболее употребительных предлогов архаического языка является 自 zì (это слово уже встречалось нам в ином значении — «сам», «лично»).<br><br>
-            В известном смысле 自 zì составляет семантическую пару предлогу 于 yú: если одним из значений последнего является конечный пункт движения или иного действия, связанного с перемещением, то 自 zì указывает на исходную точку этого движения (в пространстве или во времени):<br><br>
-            <span class="example">步于商 bù yú shāng</span> «охотиться в Шан»;<br>
-            <span class="example">步自商 bù zì shāng</span> «отправиться из Шан».<br><br>
-            Вместе с тем в употреблении предлогов 于 yú и 自 zì наблюдается существенное различие.<br><br>
-            Предлог 于 yú при определенных условиях (когда перед косвенным дополнением, стоящим в постпозиции к сказуемому, нет прямого дополнения) может быть опущен без ущерба для смысла.<br><br>
-            Предлог 自 zì при тех же условиях опущен быть не может. Поэтому косвенное дополнение, отвечающее на вопрос «когда?», стоит на своем обычном месте (перед подлежащим) без предлога; аналогичное дополнение, отвечающее на вопрос «начиная с какого времени?», употребляется в той же позиции непременно с предлогом 自 zì:<br><br>
-            <span class="example">今歲我受年 jīn suì wǒ shòu nián</span> «В этом году мы получим урожай?»<br>
-            <span class="example">自今歲我受年 zì jīn suì wǒ shòu nián</span> «Мы будем получать урожай, начиная с этого года?»
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>4.1. Предлог 自 zì</h3>
+<p class="original">
+            Вторым из числа наиболее употребительных предлогов архаического языка является 自 zì (это слово уже встречалось нам в ином значении — «сам», «лично»).<br/><br/>
+            В известном смысле 自 zì составляет семантическую пару предлогу 于 yú: если одним из значений последнего является конечный пункт движения или иного действия, связанного с перемещением, то 自 zì указывает на исходную точку этого движения (в пространстве или во времени):<br/><br/>
+<span class="example">步于商 bù yú shāng</span> «охотиться в Шан»;<br/>
+<span class="example">步自商 bù zì shāng</span> «отправиться из Шан».<br/><br/>
+            Вместе с тем в употреблении предлогов 于 yú и 自 zì наблюдается существенное различие.<br/><br/>
+            Предлог 于 yú при определенных условиях (когда перед косвенным дополнением, стоящим в постпозиции к сказуемому, нет прямого дополнения) может быть опущен без ущерба для смысла.<br/><br/>
+            Предлог 自 zì при тех же условиях опущен быть не может. Поэтому косвенное дополнение, отвечающее на вопрос «когда?», стоит на своем обычном месте (перед подлежащим) без предлога; аналогичное дополнение, отвечающее на вопрос «начиная с какого времени?», употребляется в той же позиции непременно с предлогом 自 zì:<br/><br/>
+<span class="example">今歲我受年 jīn suì wǒ shòu nián</span> «В этом году мы получим урожай?»<br/>
+<span class="example">自今歲我受年 zì jīn suì wǒ shòu nián</span> «Мы будем получать урожай, начиная с этого года?»
         </p>
-
-        <h3>4.2. Предложная конструкция 自...至于 zì... zhì yú</h3>
-        <p class="original">
-            В тех случаях, когда необходимо очертить хронологические или пространственные рамки того или иного действия, в архаическом древнекитайском языке употребляется конструкция, включающая оба предлога 自 zì и 于 yú.<br><br>
-            Первая особенность этой конструкции — в употреблении перед 于 yú знаменательного слова 至 zhì «достигать», «прибывать».<br><br>
-            Вторая ее особенность заключается в том, что член предложения, оформленный данной конструкцией, обычно занимает свое привычное место — перед подлежащим (косвенное дополнение, обозначающее время действия) или после сказуемого (косвенное дополнение со значением места).<br><br>
-            На русский язык эта конструкция переводится оборотами «от... до», «начиная с... и кончая» и т. д.<br><br>
-            <span class="example">自今至于癸亥王求 zì jīn zhì yú guǐ hài wáng qiú</span> «Ван будет молить [о дожде], начиная с сегодняшнего дня и кончая днем гуй-хай?»<br><br>
-            <span class="example">求自上甲至于中丁 qiú zì shāng jiă zhì yú zhōng dīng</span> «Молить [предков], начиная с Верхнего Цзя и кончая Средним Дином?»<br><br>
-            Предлог 于 yú в данной конструкции иногда может опускаться:<br>
-            <span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> «Будет ли дождь, начиная с сегодняшнего дня и до дня цзи-ю?»
+<h3>4.2. Предложная конструкция 自...至于 zì... zhì yú</h3>
+<p class="original">
+            В тех случаях, когда необходимо очертить хронологические или пространственные рамки того или иного действия, в архаическом древнекитайском языке употребляется конструкция, включающая оба предлога 自 zì и 于 yú.<br/><br/>
+            Первая особенность этой конструкции — в употреблении перед 于 yú знаменательного слова 至 zhì «достигать», «прибывать».<br/><br/>
+            Вторая ее особенность заключается в том, что член предложения, оформленный данной конструкцией, обычно занимает свое привычное место — перед подлежащим (косвенное дополнение, обозначающее время действия) или после сказуемого (косвенное дополнение со значением места).<br/><br/>
+            На русский язык эта конструкция переводится оборотами «от... до», «начиная с... и кончая» и т. д.<br/><br/>
+<span class="example">自今至于癸亥王求 zì jīn zhì yú guǐ hài wáng qiú</span> «Ван будет молить [о дожде], начиная с сегодняшнего дня и кончая днем гуй-хай?»<br/><br/>
+<span class="example">求自上甲至于中丁 qiú zì shāng jiă zhì yú zhōng dīng</span> «Молить [предков], начиная с Верхнего Цзя и кончая Средним Дином?»<br/><br/>
+            Предлог 于 yú в данной конструкции иногда может опускаться:<br/>
+<span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> «Будет ли дождь, начиная с сегодняшнего дня и до дня цзи-ю?»
         </p>
-
-        <h3>4.3. Обстоятельство длительности действия</h3>
-        <p class="original">
-            От косвенного дополнения со значением времени действия, выраженного конструкцией 自... 至于 zì... zhì yú, следует отличать обстоятельство длительности действия.<br><br>
-            Разобранная выше конструкция указывает на временные рамки, в пределах которых может иметь место то или иное действие, т. е. отвечает на вопрос «с какого времени по какое время?». Поэтому в предложении <span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> говорится не о том, что дождь будет идти все время в указанном промежутке времени, а о том, что дождь может пойти в какой-то момент в указанных хронологических пределах.<br><br>
-            Для обозначения же длительности действия в архаическом языке используется обстоятельство, занимающее позицию перед сказуемым:<br>
-            <span class="example">旬雨 xún yǔ</span> «Дождь будет идти в течение декады».
+<h3>4.3. Обстоятельство длительности действия</h3>
+<p class="original">
+            От косвенного дополнения со значением времени действия, выраженного конструкцией 自... 至于 zì... zhì yú, следует отличать обстоятельство длительности действия.<br/><br/>
+            Разобранная выше конструкция указывает на временные рамки, в пределах которых может иметь место то или иное действие, т. е. отвечает на вопрос «с какого времени по какое время?». Поэтому в предложении <span class="example">自今至己酉雨 zì jīn zhì jǐ yǒu yǔ</span> говорится не о том, что дождь будет идти все время в указанном промежутке времени, а о том, что дождь может пойти в какой-то момент в указанных хронологических пределах.<br/><br/>
+            Для обозначения же длительности действия в архаическом языке используется обстоятельство, занимающее позицию перед сказуемым:<br/>
+<span class="example">旬雨 xún yǔ</span> «Дождь будет идти в течение декады».
         </p>
-    </div>
-
-    <!-- СПИСОК СЛОВ УРОКА -->
-    <h2>СПИСОК СЛОВ УРОКА</h2>
-    <div class="char-list">
-        <div class="char-item">
-            <span>至<span class="inline-pinyin">zhì</span></span>
-            <div class="char-tooltip">Достигать; до</div>
-        </div>
-        <div class="char-item">
-            <span>后<span class="inline-pinyin">hòu</span></span>
-            <div class="char-tooltip">Князь (титул)</div>
-        </div>
-        <div class="char-item">
-            <span>子<span class="inline-pinyin">zǐ</span></span>
-            <div class="char-tooltip">Вождь племени (титул)</div>
-        </div>
-        <div class="char-item">
-            <span>示<span class="inline-pinyin">shì</span></span>
-            <div class="char-tooltip">Жертвенный алтарь; предок</div>
-        </div>
-        <div class="char-item">
-            <span>烖<span class="inline-pinyin">zāi</span></span>
-            <div class="char-tooltip">Опасность, бедствие</div>
-        </div>
-        <div class="char-item">
-            <span>基<span class="inline-pinyin">jī</span></span>
-            <div class="char-tooltip">Племя Цзи</div>
-        </div>
-        <div class="char-item">
-            <span>賽<span class="inline-pinyin">sài</span></span>
-            <div class="char-tooltip">Приносить жертву</div>
-        </div>
-        <div class="char-item">
-            <span>毋<span class="inline-pinyin">wú</span></span>
-            <div class="char-tooltip">Не (запрет)</div>
-        </div>
-        <div class="char-item">
-            <span>多<span class="inline-pinyin">duō</span></span>
-            <div class="char-tooltip">Много</div>
-        </div>
-        <div class="char-item">
-            <span>五<span class="inline-pinyin">wǔ</span></span>
-            <div class="char-tooltip">Пять</div>
-        </div>
-        <div class="char-item">
-            <span>西<span class="inline-pinyin">xī</span></span>
-            <div class="char-tooltip">Запад</div>
-        </div>
-        <div class="char-item">
-            <span>東<span class="inline-pinyin">dōng</span></span>
-            <div class="char-tooltip">Восток</div>
-        </div>
-        <div class="char-item">
-            <span>南<span class="inline-pinyin">nán</span></span>
-            <div class="char-tooltip">Юг</div>
-        </div>
-        <div class="char-item">
-            <span>北<span class="inline-pinyin">běi</span></span>
-            <div class="char-tooltip">Север</div>
-        </div>
-    </div>
-    <div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
-    <strong>Словосочетания</strong><br><br>
-    <span class="phrase-item">
-        <span class="phrase-char">子商</span>
-        <span class="phrase-pinyin">zǐ shāng</span>
-        <span class="phrase-meaning">«цзы Шан» (см. 4.А)</span>
-    </span><br>
-    <span class="phrase-item">
-        <span class="phrase-char">基方</span>
-        <span class="phrase-pinyin">jī fāng</span>
-        <span class="phrase-meaning">«племя Цзи»</span>
-    </span><br>
-    <span class="phrase-item">
-        <span class="phrase-char">上甲</span>
-        <span class="phrase-pinyin">shàng jiă</span>
-        <span class="phrase-meaning">«Верхний Цзя»</span>
-    </span>
 </div>
-
-    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="lexicon">
-        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>4.А. Титулы вождей подчиненных племен</h3>
-        <p class="original">
-            Вожди племенных объединений, относившихся к категории «земель» и подчинявшихся верховной власти иньского вана, получали от него специальные титулы — своеобразный символ их статуса в системе иньской коалиции.<br><br>
-            В надписях встречаются три таких титула: хоу 侯 hóu, бо 伯 bó, цзы 子 zǐ.<br><br>
+<!-- СПИСОК СЛОВ УРОКА -->
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list">
+<div class="char-item">
+<span>至<span class="inline-pinyin">zhì</span></span>
+<div class="char-tooltip">Достигать; до</div>
+</div>
+<div class="char-item">
+<span>后<span class="inline-pinyin">hòu</span></span>
+<div class="char-tooltip">Князь (титул)</div>
+</div>
+<div class="char-item">
+<span>子<span class="inline-pinyin">zǐ</span></span>
+<div class="char-tooltip">Вождь племени (титул)</div>
+</div>
+<div class="char-item">
+<span>示<span class="inline-pinyin">shì</span></span>
+<div class="char-tooltip">Жертвенный алтарь; предок</div>
+</div>
+<div class="char-item">
+<span>烖<span class="inline-pinyin">zāi</span></span>
+<div class="char-tooltip">Опасность, бедствие</div>
+</div>
+<div class="char-item">
+<span>基<span class="inline-pinyin">jī</span></span>
+<div class="char-tooltip">Племя Цзи</div>
+</div>
+<div class="char-item">
+<span>賽<span class="inline-pinyin">sài</span></span>
+<div class="char-tooltip">Приносить жертву</div>
+</div>
+<div class="char-item">
+<span>毋<span class="inline-pinyin">wú</span></span>
+<div class="char-tooltip">Не (запрет)</div>
+</div>
+<div class="char-item">
+<span>多<span class="inline-pinyin">duō</span></span>
+<div class="char-tooltip">Много</div>
+</div>
+<div class="char-item">
+<span>五<span class="inline-pinyin">wǔ</span></span>
+<div class="char-tooltip">Пять</div>
+</div>
+<div class="char-item">
+<span>西<span class="inline-pinyin">xī</span></span>
+<div class="char-tooltip">Запад</div>
+</div>
+<div class="char-item">
+<span>東<span class="inline-pinyin">dōng</span></span>
+<div class="char-tooltip">Восток</div>
+</div>
+<div class="char-item">
+<span>南<span class="inline-pinyin">nán</span></span>
+<div class="char-tooltip">Юг</div>
+</div>
+<div class="char-item">
+<span>北<span class="inline-pinyin">běi</span></span>
+<div class="char-tooltip">Север</div>
+</div>
+</div>
+<div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
+<strong>Словосочетания</strong><br/><br/>
+<span class="phrase-item">
+<span class="phrase-char">子商</span>
+<span class="phrase-pinyin">zǐ shāng</span>
+<span class="phrase-meaning">«цзы Шан» (см. 4.А)</span>
+</span><br/>
+<span class="phrase-item">
+<span class="phrase-char">基方</span>
+<span class="phrase-pinyin">jī fāng</span>
+<span class="phrase-meaning">«племя Цзи»</span>
+</span><br/>
+<span class="phrase-item">
+<span class="phrase-char">上甲</span>
+<span class="phrase-pinyin">shàng jiă</span>
+<span class="phrase-meaning">«Верхний Цзя»</span>
+</span>
+</div>
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>4.А. Титулы вождей подчиненных племен</h3>
+<p class="original">
+            Вожди племенных объединений, относившихся к категории «земель» и подчинявшихся верховной власти иньского вана, получали от него специальные титулы — своеобразный символ их статуса в системе иньской коалиции.<br/><br/>
+            В надписях встречаются три таких титула: хоу 侯 hóu, бо 伯 bó, цзы 子 zǐ.<br/><br/>
             По общему правилу, личное имя вождя стоит после его титула (см. 1.8): 侯虎 hóu hǔ и т. д. Иногда, впрочем, встречаются и более полные наименования, включающие два собственных имени (например, 而伯龜 ér bó guī). В этих случаях мы имеем указание на то, какое племя возглавляет тот или иной вождь такого-то ранга (в данном случае — Гуй, вождь племени Эр в ранге бо). Наконец, титул зачастую может быть опущен: 洗震 xǐ zhèn «Чжэнь [вождь племени] Си» и т. д.
         </p>
-    </div>
-
-    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
-    <div class="assignment">
-        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
-            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
-            <li>Проанализируйте текст грамматически.</li>
-            <li>Переведите текст на русский язык.</li>
-        </ol>
-    </div>
-
-    <div class="footer">
-        Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.<br>
-        Восстановлено по OCR с сохранением авторского стиля.<br>
+</div>
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст в виде дистрибутивной таблицы.</li>
+<li>Проанализируйте текст грамматически.</li>
+<li>Переведите текст на русский язык.</li>
+</ol>
+</div>
+<div class="footer">
+        Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.<br/>
+        Восстановлено по OCR с сохранением авторского стиля.<br/>
         Все иероглифы — из текстов Уроков 1–4 или из циклических знаков.
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('fontToggle');
+  const label = document.getElementById('toggleLabel');
+  const styleSheet = document.getElementById('2change');
 
-</body>
+  const normalCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  const oracleCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  styleSheet.textContent = normalCSS;
+
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      styleSheet.textContent = oracleCSS;
+      label.textContent = 'Оракульный вид';
+    } else {
+      styleSheet.textContent = normalCSS;
+      label.textContent = 'Обычный вид';
+    }
+  });
+});
+</script></body>
 </html>

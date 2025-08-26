@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Урок 2 — Древнекитайский язык по Крюкову</title>
-    <style>
+<meta charset="utf-8"/>
+<title>Урок 2 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -129,46 +130,100 @@
             display: block;
         }
     </style>
-</head>
-<body>
-<script src="./../dictionary.js"></script>
-    <h1>УРОК 2</h1>
-
-<div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
-</div>
-
 <style>
-    .oracle-table {
-        border-collapse: collapse;
-        margin: 20px auto;
-        font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-        font-size: 1.3em;
-        table-layout: fixed;
-        width: 95%;
-        max-width: 1200px;
-    }
+@font-face {
+  font-family: 'Jiaguwen';
+  src: url('../jiaguwen.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+</style></head>
+<body><style id="2change">
+.oracle-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+    font-size: 1.3em;
+    table-layout: fixed;
+    width: 95%;
+    max-width: 1200px;
+}
+.oracle-table td {
+    padding: 6px 8px;
+    border: 1px solid #d4d4d4;
+    text-align: center;
+    position: relative;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+.line-num, .col-num {
+    background-color: #f0f4f8;
+    color: #1a4f72;
+    font-weight: bold;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+</style>
+<script src="./../dictionary.js"></script>
+<h1>УРОК 2</h1>
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
 
-    .oracle-table td {
-        padding: 6px 8px;
-        border: 1px solid #d4d4d4;
-        text-align: center;
-        position: relative;
-        word-break: keep-all;
-        white-space: nowrap;
-    }
-
-    .line-num, .col-num {
-        background-color: #f0f4f8;
-        color: #1a4f72;
-        font-weight: bold;
-        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-        font-size: 0.85em;
-        white-space: nowrap;
-    }
-
-    .char-tooltip {
+<style>.char-tooltip {
         display: none;
         position: absolute;
         top: 100%;
@@ -200,9 +255,7 @@
         border-radius: 4px;
         font-size: 0.8em;
         margin-left: 5px;
-    }
-</style>
-
+    }</style>
 <script>
 
 
@@ -277,319 +330,349 @@ function createOracleTable() {
 // Инициализация
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
-
-
-    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="grammar">
-        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>2.1. Прямое дополнение</h3>
-        <p class="original">
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>2.1. Прямое дополнение</h3>
+<p class="original">
             Прямое дополнение стоит обычно после сказуемого.
             В приводимых текстах наличие прямого дополнения определяется по признаку а) опущения и б) замены члена предложения в постсказуемостной позиции:
-            <br><br>
-            a) <span class="example">受年 (shòu nián)</span> ‘получить урожай’;<br>
-            <span class="example">弗受年 (fú shòu nián)</span> ‘не получить [урожая]’;<br>
-            б) <span class="example">來牛 (lái niú)</span> ‘прислать быков’;<br>
-            <span class="example">來犬 (lái quǎn)</span> ‘прислать собак’.
+            <br/><br/>
+            a) <span class="example">受年 (shòu nián)</span> ‘получить урожай’;<br/>
+<span class="example">弗受年 (fú shòu nián)</span> ‘не получить [урожая]’;<br/>
+            б) <span class="example">來牛 (lái niú)</span> ‘прислать быков’;<br/>
+<span class="example">來犬 (lái quǎn)</span> ‘прислать собак’.
         </p>
-
-        <h3>2.2. Определение</h3>
-        <p class="original">
+<h3>2.2. Определение</h3>
+<p class="original">
             Определение в архаическом, как и вообще в древнекитайском языке, всегда предшествует определяемому:
-            <br><br>
-            <span class="example">白馬 (bái mǎ)</span> ‘белая лошадь’;<br>
-            <span class="example">稻年 (dào nián)</span> ‘урожай риса’;<br>
-            <span class="example">今春 (jīn chūn)</span> ‘нынешняя весна’.
+            <br/><br/>
+<span class="example">白馬 (bái mǎ)</span> ‘белая лошадь’;<br/>
+<span class="example">稻年 (dào nián)</span> ‘урожай риса’;<br/>
+<span class="example">今春 (jīn chūn)</span> ‘нынешняя весна’.
         </p>
-
-        <h3>2.3. Личные местоимения</h3>
-        <p class="original">
+<h3>2.3. Личные местоимения</h3>
+<p class="original">
             Личные местоимения — полуслужебная часть речи, выступающая всегда в строго определенной грамматической функции, замещая имена. В качестве предикатива личное местоимение употребляться не может.
-            <br><br>
+            <br/><br/>
             Личные местоимения обладают всеми синтаксическими свойствами имен, кроме одного — они не могут принимать определений.
-            <br><br>
+            <br/><br/>
             Личные местоимения в древнекитайском языке различаются по лицам. Число выражено в них непоследовательно. В частности, местоимение 1-го лица <strong>我 (wǒ)</strong> может употребляться как в единственном числе (‘я’), так и во множественном (‘мы’).
         </p>
-
-        <h3>2.4. Наречные имена</h3>
-        <p class="original">
+<h3>2.4. Наречные имена</h3>
+<p class="original">
             В древнекитайском языке существует группа наречных имен, обозначающих ту или иную точку в пространстве и времени. К ним относится, в частности, слово <strong>今 (jīn)</strong> с исходным значением ‘сейчас’, ‘в настоящий момент’. Оно может употребляться как самостоятельно, в функции обстоятельства времени, так и в качестве определения к другому имени:
-            <br><br>
-            <span class="example">今雨 (jīn yǔ)</span> ‘Сейчас идет дождь’;<br>
-            <span class="example">今歲我受年 (jīn suì wǒ shòu nián)</span> ‘В нынешнем году мы получим урожай’ (<strong>今歲 (jīn suì)</strong> ‘нынешний год’).
-            <br><br>
+            <br/><br/>
+<span class="example">今雨 (jīn yǔ)</span> ‘Сейчас идет дождь’;<br/>
+<span class="example">今歲我受年 (jīn suì wǒ shòu nián)</span> ‘В нынешнем году мы получим урожай’ (<strong>今歲 (jīn suì)</strong> ‘нынешний год’).
+            <br/><br/>
             В архаическом языке в такой функции могут употребляться и некоторые другие знаменательные слова. Так, <strong>來 (lái)</strong> ‘приходить’, будучи употреблено как определение к имени, приобретает значение ‘будущий’, ‘следующий’:
-            <br><br>
-            <span class="example">來歲我弗受年 (lái suì wǒ fú shòu nián)</span> ‘В будущем году мы не получим урожай’ (<strong>來歲 (lái suì)</strong> ‘будущий год’).
-            <br><br>
+            <br/><br/>
+<span class="example">來歲我弗受年 (lái suì wǒ fú shòu nián)</span> ‘В будущем году мы не получим урожай’ (<strong>來歲 (lái suì)</strong> ‘будущий год’).
+            <br/><br/>
             Однако самостоятельно, подобно <strong>今 (jīn)</strong>, слово <strong>來 (lái)</strong> в таком значении употребляться не может.
         </p>
-
-        <h3>2.5. Основное и каузативное значение предикатива</h3>
-        <p class="original">
+<h3>2.5. Основное и каузативное значение предикатива</h3>
+<p class="original">
             Знаменательное слово, выступающее в предикативной функции, может иметь в архаическом древнекитайском языке несколько значений. Одно из них — основное — имеет предикатив, обозначающий действие, выполняемое субъектом, но наряду с ним данное слово может иметь и другое, каузативное значение, т. е. обозначать действие, выполнять которое побуждает субъект. Например, если знаменательное слово <strong>來 (lái)</strong> означает ‘приходить’, ‘прибывать’, то в другом контексте оно может означать ‘сделать так, чтобы кто-то прибыл (что-то прибыло)’, т. е. ‘прислать’, ‘доставить’. То же самое можно сказать и о предикативе <strong>受 (shòu)</strong> ‘получать’, каузативное значение которого — ‘сделать так, чтобы кто-то получил’, т. е. ‘дать’, ‘даровать’ и т. д.
-            <br><br>
+            <br/><br/>
             Отметим, что в более поздних памятниках древнекитайского языка различие между основным и каузативным значениями предикативов выражается и графически. Так, слово со значением ‘получать’ записывается знаком <strong>受 (shòu)</strong>, а ‘давать’ — <strong>授 (shòu)</strong>:
-            <br><br>
-            <span class="example">男女授受不亲 (nán nǚ shòu shòu bù qīn)</span> ‘Когда мужчина и женщина дают или берут что-нибудь, они не должны касаться друг друга’.
+            <br/><br/>
+<span class="example">男女授受不亲 (nán nǚ shòu shòu bù qīn)</span> ‘Когда мужчина и женщина дают или берут что-нибудь, они не должны касаться друг друга’.
         </p>
-
-        <h3>2.6. Отрицание фу</h3>
-        <p class="original">
+<h3>2.6. Отрицание фу</h3>
+<p class="original">
             В данном уроке мы встречаем еще одно служебное слово, относящееся к группе отрицаний, — <strong>弗 (fú)</strong>. Оно, так же как и <strong>不 (bù)</strong>, является нейтральным, т. е. означает лишь отрицание того действия, которое выражено последующим предикативом:
-            <br><br>
-            <span class="example">方出 (fāng chū)</span> ‘Племя выступит’;<br>
-            <span class="example">方弗出 (fāng fú chū)</span> ‘Племя не выступит’.
-            <br><br>
+            <br/><br/>
+<span class="example">方出 (fāng chū)</span> ‘Племя выступит’;<br/>
+<span class="example">方弗出 (fāng fú chū)</span> ‘Племя не выступит’.
+            <br/><br/>
             В большинстве случаев <strong>弗 (fú)</strong> и <strong>不 (bù)</strong> взаимозаменяемы:
-            <br><br>
-            <span class="example">不受年 (bù shòu nián)</span><br>
-            <span class="example">弗受年 (fú shòu nián)</span>
-            <br><br>
+            <br/><br/>
+<span class="example">不受年 (bù shòu nián)</span><br/>
+<span class="example">弗受年 (fú shòu nián)</span>
+<br/><br/>
             Но <strong>弗 (fú)</strong> не употребляется перед безличными предикативами, а также в тех случаях, когда дополнение к сказуемому выражено местоимением (см. 5.3).
         </p>
-    </div>
-
-    <h2>СПИСОК СЛОВ УРОКА 2</h2>
-
-    <div class="char-list">
-        <div class="char-item">
-            <span>弗<span class="inline-pinyin">fú</span></span>
-            <div class="char-tooltip">
+</div>
+<h2>СПИСОК СЛОВ УРОКА 2</h2>
+<div class="char-list">
+<div class="char-item">
+<span>弗<span class="inline-pinyin">fú</span></span>
+<div class="char-tooltip">
                 Служебное слово: отрицание; аналог «не»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>肅<span class="inline-pinyin">sù</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>肅<span class="inline-pinyin">sù</span></span>
+<div class="char-tooltip">
                 Строгий; собственное имя: Су
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>牛<span class="inline-pinyin">niú</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>牛<span class="inline-pinyin">niú</span></span>
+<div class="char-tooltip">
                 Корова
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>冓<span class="inline-pinyin">zhōng</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>冓<span class="inline-pinyin">zhōng</span></span>
+<div class="char-tooltip">
                 Собственное имя: Чжун
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>犬<span class="inline-pinyin">quǎn</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>犬<span class="inline-pinyin">quǎn</span></span>
+<div class="char-tooltip">
                 Собака; собственное имя: Цюань (название племени)
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>春<span class="inline-pinyin">chūn</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>春<span class="inline-pinyin">chūn</span></span>
+<div class="char-tooltip">
                 Весна
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>奚<span class="inline-pinyin">xī</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>奚<span class="inline-pinyin">xī</span></span>
+<div class="char-tooltip">
                 Служебное слово: вопросительное местоимение «что»; собственное имя: Си
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>甲<span class="inline-pinyin">jiǎ</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>甲<span class="inline-pinyin">jiǎ</span></span>
+<div class="char-tooltip">
                 Небесный ствол (1-й); название первого знака 10-ричного цикла; доспехи
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>辰<span class="inline-pinyin">chén</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>辰<span class="inline-pinyin">chén</span></span>
+<div class="char-tooltip">
                 Созвездие; Земная ветвь (5-я); день «jiǎ chén»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>白<span class="inline-pinyin">bái</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>白<span class="inline-pinyin">bái</span></span>
+<div class="char-tooltip">
                 Белый; говорить; собственное имя: Бай (фамилия)
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>馬<span class="inline-pinyin">mǎ</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>馬<span class="inline-pinyin">mǎ</span></span>
+<div class="char-tooltip">
                 Лошадь
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>吉<span class="inline-pinyin">jí</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>吉<span class="inline-pinyin">jí</span></span>
+<div class="char-tooltip">
                 Благополучный
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>方<span class="inline-pinyin">fāng</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>方<span class="inline-pinyin">fāng</span></span>
+<div class="char-tooltip">
                 Племя; сторона света; плот; квадрат; служебное наречие: «и лишь после этого»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>自<span class="inline-pinyin">zì</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>自<span class="inline-pinyin">zì</span></span>
+<div class="char-tooltip">
                 Служебное слово: предлог «из, от»; «сам, лично»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>今<span class="inline-pinyin">jīn</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>今<span class="inline-pinyin">jīn</span></span>
+<div class="char-tooltip">
                 Ныне
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>歲<span class="inline-pinyin">suì</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>歲<span class="inline-pinyin">suì</span></span>
+<div class="char-tooltip">
                 Год (в значении «год урожая», «год правления»)
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>商<span class="inline-pinyin">shāng</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>商<span class="inline-pinyin">shāng</span></span>
+<div class="char-tooltip">
                 Собственное имя: Шан (династия или личное имя)
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>受<span class="inline-pinyin">shòu</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>受<span class="inline-pinyin">shòu</span></span>
+<div class="char-tooltip">
                 Давать; получать
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>年<span class="inline-pinyin">nián</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>年<span class="inline-pinyin">nián</span></span>
+<div class="char-tooltip">
                 Урожай; год; возраст
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>來<span class="inline-pinyin">lái</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>來<span class="inline-pinyin">lái</span></span>
+<div class="char-tooltip">
                 Приходить; присылать; будущий
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>冓<span class="inline-pinyin">gōu</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>冓<span class="inline-pinyin">gōu</span></span>
+<div class="char-tooltip">
                 Постройка; собственное имя: Гоу
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>亘<span class="inline-pinyin">gèn</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>亘<span class="inline-pinyin">gèn</span></span>
+<div class="char-tooltip">
                 Собственное имя: Гэнь
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>我<span class="inline-pinyin">wǒ</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>我<span class="inline-pinyin">wǒ</span></span>
+<div class="char-tooltip">
                 Служебное слово: личное местоимение первого лица — «я»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>黍<span class="inline-pinyin">shǔ</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>黍<span class="inline-pinyin">shǔ</span></span>
+<div class="char-tooltip">
                 Чумиза (древнее зерно)
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>巳<span class="inline-pinyin">sì</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>巳<span class="inline-pinyin">sì</span></span>
+<div class="char-tooltip">
                 Земная ветвь (6-я); часть даты, например, «jiǎ sì»
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>稲<span class="inline-pinyin">dào</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>稲<span class="inline-pinyin">dào</span></span>
+<div class="char-tooltip">
                 Рис
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>戔<span class="inline-pinyin">jiān</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>戔<span class="inline-pinyin">jiān</span></span>
+<div class="char-tooltip">
                 Собственное имя: Цзянь
             </div>
-        </div>
-
-        <div class="char-item">
-            <span>甫<span class="inline-pinyin">fǔ</span></span>
-            <div class="char-tooltip">
+</div>
+<div class="char-item">
+<span>甫<span class="inline-pinyin">fǔ</span></span>
+<div class="char-tooltip">
                 Собственное имя: Фу
             </div>
-        </div>
-    </div>
-
-    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="lexicon">
-        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-        <h3>2-1. Личные имена</h3>
-        <p class="original">
+</div>
+</div>
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>2-1. Личные имена</h3>
+<p class="original">
             Личные имена в иньских надписях отличаются от других знаменательных слов тем, что они не могут употребляться в иной функции, кроме именной (в классическом древнекитайском собственное имя могло употребляться и в предикативном значении). Интерпретируя иньский текст, следует иметь в виду, что встречающиеся в нем личные имена обнаруживают ряд особенностей:
-            <br><br>
-            а) лица, носящие одно и то же имя, фигурируют в надписях различных периодов;<br>
-            б) личные имена совпадают с географическими названиями;<br>
+            <br/><br/>
+            а) лица, носящие одно и то же имя, фигурируют в надписях различных периодов;<br/>
+            б) личные имена совпадают с географическими названиями;<br/>
             в) они служат подчас для обозначения не одного лица, а целых групп людей.
-            <br><br>
+            <br/><br/>
             Все это позволяет прийти к выводу о том, что собственные имена в иньских надписях являются наименованиями родовых коллективов, обозначая весь род в целом, каждого его члена в отдельности, а также родовую территорию.
         </p>
-
-        <h3>2-2. Год и сезоны года</h3>
-        <p class="original">
+<h3>2-2. Год и сезоны года</h3>
+<p class="original">
             Основной единицей для исчисления длительных периодов времени у иньцев был <strong>歲 (suì)</strong> ‘год’, делившийся на 12 (иногда 13) месяцев (<strong>月 (yuè)</strong>). Иньский год включал не четыре, а два сезона: <strong>春 (chūn)</strong> и <strong>秋 (qiū)</strong> (отсюда происходит, между прочим, словосочетание <strong>春秋 (chūnqiū)</strong> в значении ‘смена времен года’, ‘естественное течение времени’, позднее — ‘хроника’, ‘летопись’).
-            <br><br>
+            <br/><br/>
             Поэтому мы можем лишь условно перевести <strong>春 (chūn)</strong> как ‘весна’, а <strong>秋 (qiū)</strong> как ‘осень’. Первый из этих терминов обозначает фактически всю первую половину года, а другой — вторую.
         </p>
-    </div>
-
-    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
-    <div class="assignment">
-        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
-            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
-            <li>Проделайте грамматический анализ текста.</li>
-            <li>Переведите текст на русский язык.</li>
-        </ol>
-    </div>
-
-    <div class="footer">
-        Учебник: В. А. Крюков — Архаический древнекитайский язык.<br>
-        Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
+</div>
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст в виде дистрибутивной таблицы.</li>
+<li>Проделайте грамматический анализ текста.</li>
+<li>Переведите текст на русский язык.</li>
+</ol>
+</div>
+<div class="footer">
+        Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+        Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
         Все иероглифы — из текстов Урока 1 и Урока 2, либо из циклических знаков (甲子 – 癸亥).
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('fontToggle');
+  const label = document.getElementById('toggleLabel');
+  const styleSheet = document.getElementById('2change');
 
-</body>
+  const normalCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  const oracleCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  styleSheet.textContent = normalCSS;
+
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      styleSheet.textContent = oracleCSS;
+      label.textContent = 'Оракульный вид';
+    } else {
+      styleSheet.textContent = normalCSS;
+      label.textContent = 'Обычный вид';
+    }
+  });
+});
+</script></body>
 </html>
-

@@ -1,13 +1,12 @@
 <html lang="ru"><head>
-    <meta charset="UTF-8">
-    <title>Урок 7 — Древнекитайский язык по Крюкову</title>
-    <!-- Для старых браузеров: полифилл -->
+<meta charset="utf-8"/>
+<title>Урок 7 — Древнекитайский язык по Крюкову</title>
+<!-- Для старых браузеров: полифилл -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <!-- Сам MathJax (версия 3) -->
-<script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+<script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 </script>
-    <style>
-        body {
+<style>body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
             margin: 50px auto;
@@ -122,30 +121,6 @@
             display: block;
         }
         /* Таблица текста */
-        .oracle-table {
-            border-collapse: collapse;
-            margin: 20px auto;
-            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-            font-size: 1.3em;
-            table-layout: fixed;
-            width: 95%;
-            max-width: 1200px;
-        }
-        .oracle-table td {
-            padding: 6px 8px;
-            border: 1px solid #d4d4d4;
-            text-align: center;
-            word-break: keep-all;
-            white-space: nowrap;
-            position: relative;
-        }
-        .line-num, .col-num {
-            background-color: #f0f4f8;
-            color: #1a4f72;
-            font-weight: bold;
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-            font-size: 0.85em;
-        }
         .phrase-item {
             display: inline-block;
             margin: 5px;
@@ -204,54 +179,102 @@
     margin: 20px auto;
     text-align: center;
     line-height: 1.4;
-}
-    </style>
-
-</head>
-<body>
-<script src="./../dictionary.js"></script>
-    <h1>УРОК 7</h1>
-
-
-    <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
-
-    <div class="text">
-    <h2>Текст урока</h2>
-
-    <table class="oracle-table" id="oracleTable"></table>
-</div>
-
+}</style>
 <style>
-   .oracle-table {
+@font-face {
+  font-family: 'Jiaguwen';
+  src: url('../jiaguwen.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+</style></head>
+<body><style id="2change">
+.oracle-table {
     border-collapse: collapse;
-    margin: 20px auto; /* Центрируем таблицу, auto по бокам */
+    margin: 20px auto;
     font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
     font-size: 1.3em;
-    table-layout: fixed; /* Фиксируем ширину колонок */
-    width: 95%; /* Занимаем 95% ширины, но не больше */
-    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    table-layout: fixed;
+    width: 95%;
+    max-width: 1200px;
 }
-
 .oracle-table td {
-    padding: 6px 8px; /* Уменьшаем отступы, чтобы сэкономить место */
+    padding: 6px 8px;
     border: 1px solid #d4d4d4;
     text-align: center;
-    min-width: 0; /* Отключаем min-width, если был */
-    width: calc(95% / 16); /* Примерно равномерное распределение (15 колонок + 1 для номера строки) */
     position: relative;
-    word-break: keep-all; /* Не разрывать иероглифы */
-    white-space: nowrap; /* Не переносим символы */
+    word-break: keep-all;
+    white-space: nowrap;
 }
-
-/* Уменьшаем размер для номеров */
 .line-num, .col-num {
     background-color: #f0f4f8;
     color: #1a4f72;
     font-weight: bold;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    font-size: 0.85em; /* Чуть меньше, чтобы не жрало место */
+    font-size: 0.85em;
     white-space: nowrap;
 }
+</style>
+<script src="./../dictionary.js"></script>
+<h1>УРОК 7</h1>
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
 
 /* Tooltip — без изменений */
 .char-tooltip {
@@ -286,9 +309,7 @@ td:hover .char-tooltip {
     border-radius: 4px;
     font-size: 0.8em;
     margin-left: 5px;
-}
-</style>
-
+}</style>
 <script>
 
 
@@ -370,15 +391,12 @@ function createOracleTable() {
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
-    <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
-
-
-    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="grammar">
-        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-        <h3>7.1. Цепочка сказуемых</h3>
-        <p class="original">
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>7.1. Цепочка сказуемых</h3>
+<p class="original">
             В наиболее простом варианте сказуемое архаического языка выражено предикативом, который может принимать дополнения.
             Но в предложении может быть не одно, а несколько сказуемых — или однородных, или последовательно связанных.
             Такого рода цепочку мы наблюдаем, в частности, в предложениях, где сказуемым является побудительный предикатив 令 lìng «приказывать», «повелевать» или 呼 hū «отдавать распоряжение», «приказывать».
@@ -393,8 +411,8 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             Цепочки сказуемых возможны и после некоторых предикативов со значением движения.
             Отметим, что модальные предикативы (типа русских «мочь», «хотеть» и т. д.), требующие после себя еще одного, главного предикатива, в архаическом языке не зафиксированы.
         </p>
-        <h3>7.2. Числительные (продолжение)</h3>
-        <p class="original">
+<h3>7.2. Числительные (продолжение)</h3>
+<p class="original">
             За последние три с лишним тысячелетия система китайских числительных почти не претерпела изменений. Как и в современном языке, в архаическом древнекитайском существовали те же разряды числительных: единицы, десятки, сотни, тысячи, десятки тысяч.
             При обозначении количества предметов числительное могло стоять как перед соответствующим именем, так и после него:
             <span class="example">二人 èr rén</span> «два человека»;
@@ -405,187 +423,255 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             б) числительное (без единиц) — имя — наречие — единицы:
             <span class="example">十示又三 shí shì yòu sān</span> «13 предков».
         </p>
-    </div>
-
-    <!-- СПИСОК СЛОВ УРОКА -->
-    <h2>СПИСОК СЛОВ УРОКА</h2>
-    <div class="char-list">
-        <div class="char-item">
-            <span>下<span class="inline-pinyin">xià</span></span>
-            <div class="char-tooltip">Вниз, низ</div>
-        </div>
-        <div class="char-item">
-            <span>衆<span class="inline-pinyin">zhòng</span></span>
-            <div class="char-tooltip">Множество, народ</div>
-        </div>
-        <div class="char-item">
-            <span>震<span class="inline-pinyin">zhèn</span></span>
-            <div class="char-tooltip">Гром, бедствие</div>
-        </div>
-        <div class="char-item">
-            <span>危<span class="inline-pinyin">wēi</span></span>
-            <div class="char-tooltip">Опасность, угроза</div>
-        </div>
-        <div class="char-item">
-            <span>羽<span class="inline-pinyin">yǔ</span></span>
-            <div class="char-tooltip">Перо, крыло</div>
-        </div>
-        <div class="char-item">
-            <span>周<span class="inline-pinyin">zhōu</span></span>
-            <div class="char-tooltip">Чжоу (племя)</div>
-        </div>
-        <div class="char-item">
-            <span>令<span class="inline-pinyin">lìng</span></span>
-            <div class="char-tooltip">Приказывать</div>
-        </div>
-        <div class="char-item">
-            <span>登<span class="inline-pinyin">dēng</span></span>
-            <div class="char-tooltip">Поднимать, собирать</div>
-        </div>
-        <div class="char-item">
-            <span>望<span class="inline-pinyin">wàng</span></span>
-            <div class="char-tooltip">Надеяться, смотреть</div>
-        </div>
-        <div class="char-item">
-            <span>婦<span class="inline-pinyin">fù</span></span>
-            <div class="char-tooltip">Жена, невестка</div>
-        </div>
-        <div class="char-item">
-            <span>人<span class="inline-pinyin">rén</span></span>
-            <div class="char-tooltip">Человек</div>
-        </div>
-        <div class="char-item">
-            <span>乘<span class="inline-pinyin">chéng</span></span>
-            <div class="char-tooltip">Кочевой народ, ван Чэн</div>
-        </div>
-        <div class="char-item">
-            <span>千<span class="inline-pinyin">qiān</span></span>
-            <div class="char-tooltip">Тысяча</div>
-        </div>
-        <div class="char-item">
-            <span>征<span class="inline-pinyin">zhēng</span></span>
-            <div class="char-tooltip">Поход, карательная экспедиция</div>
-        </div>
-        <div class="char-item">
-            <span>高<span class="inline-pinyin">gāo</span></span>
-            <div class="char-tooltip">Высокий, Гао</div>
-        </div>
-        <div class="char-item">
-            <span>雞<span class="inline-pinyin">jī</span></span>
-            <div class="char-tooltip">Петух, племя Цзи</div>
-        </div>
-        <div class="char-item">
-            <span>三<span class="inline-pinyin">sān</span></span>
-            <div class="char-tooltip">Три</div>
-        </div>
-        <div class="char-item">
-            <span>夷<span class="inline-pinyin">yí</span></span>
-            <div class="char-tooltip">Варвары, племя И</div>
-        </div>
-        <div class="char-item">
-            <span>從<span class="inline-pinyin">cóng</span></span>
-            <div class="char-tooltip">Следовать, сопровождать</div>
-        </div>
-        <div class="char-item">
-            <span>呼<span class="inline-pinyin">hū</span></span>
-            <div class="char-tooltip">Приказывать, повелевать</div>
-        </div>
-        <div class="char-item">
-            <span>畢<span class="inline-pinyin">bì</span></span>
-            <div class="char-tooltip">Би (имя)</div>
-        </div>
-        <div class="char-item">
-            <span>洗<span class="inline-pinyin">xǐ</span></span>
-            <div class="char-tooltip">Си (имя)</div>
-        </div>
-        <div class="char-item">
-            <span>妌<span class="inline-pinyin">jǐng</span></span>
-            <div class="char-tooltip">Цзин (имя)</div>
-        </div>
-        <div class="char-item">
-            <span>一<span class="inline-pinyin">yī</span></span>
-            <div class="char-tooltip">Один</div>
-        </div>
-        <div class="char-item">
-            <span>尹<span class="inline-pinyin">yǐn</span></span>
-            <div class="char-tooltip">Инь (имя)</div>
-        </div>
-        <div class="char-item">
-            <span>寇<span class="inline-pinyin">kòu</span></span>
-            <div class="char-tooltip">Грабить, нападать</div>
-        </div>
-        <div class="char-item">
-            <span>萬<span class="inline-pinyin">wàn</span></span>
-            <div class="char-tooltip">Десять тысяч</div>
-        </div>
-        <div class="char-item">
-            <span>倉<span class="inline-pinyin">cāng</span></span>
-            <div class="char-tooltip">Цан (имя)</div>
-        </div>
-    </div>
-
-    <!-- СЛОВОСОЧЕТАНИЯ -->
-    <h2>СЛОВОСОЧЕТАНИЯ</h2>
-    <div class="original">
-        <p class="phrase-item"><span class="phrase-char">望乘</span> <span class="phrase-pinyin">wàng chéng</span> <span class="phrase-meaning">«Ван Чэн»</span></p>
-        <p class="phrase-item"><span class="phrase-char">下危</span> <span class="phrase-pinyin">xià wēi</span> <span class="phrase-meaning">«Ся Вэй»</span></p>
-        <p class="phrase-item"><span class="phrase-char">婦好</span> <span class="phrase-pinyin">fù hǎo</span> <span class="phrase-meaning">«невестка Хао»</span></p>
-        <p class="phrase-item"><span class="phrase-char">婦妌</span> <span class="phrase-pinyin">fù jǐng</span> <span class="phrase-meaning">«невестка Цзин»</span></p>
-        <p class="phrase-item"><span class="phrase-char">侯高</span> <span class="phrase-pinyin">hóu gāo</span> <span class="phrase-meaning">«хоу Гао»</span></p>
-        <p class="phrase-item"><span class="phrase-char">倉侯</span> <span class="phrase-pinyin">cāng hóu</span> <span class="phrase-meaning">«Цан-хоу»</span></p>
-        <p class="phrase-item"><span class="phrase-char">土方</span> <span class="phrase-pinyin">tǔ fāng</span> <span class="phrase-meaning">«племя Ту»</span></p>
-    </div>
-
-    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="lexicon">
-        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-        <h3>7.А. Слово 旅 lǚ</h3>
-        <p class="original">
+</div>
+<!-- СПИСОК СЛОВ УРОКА -->
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list">
+<div class="char-item">
+<span>下<span class="inline-pinyin">xià</span></span>
+<div class="char-tooltip">Вниз, низ</div>
+</div>
+<div class="char-item">
+<span>衆<span class="inline-pinyin">zhòng</span></span>
+<div class="char-tooltip">Множество, народ</div>
+</div>
+<div class="char-item">
+<span>震<span class="inline-pinyin">zhèn</span></span>
+<div class="char-tooltip">Гром, бедствие</div>
+</div>
+<div class="char-item">
+<span>危<span class="inline-pinyin">wēi</span></span>
+<div class="char-tooltip">Опасность, угроза</div>
+</div>
+<div class="char-item">
+<span>羽<span class="inline-pinyin">yǔ</span></span>
+<div class="char-tooltip">Перо, крыло</div>
+</div>
+<div class="char-item">
+<span>周<span class="inline-pinyin">zhōu</span></span>
+<div class="char-tooltip">Чжоу (племя)</div>
+</div>
+<div class="char-item">
+<span>令<span class="inline-pinyin">lìng</span></span>
+<div class="char-tooltip">Приказывать</div>
+</div>
+<div class="char-item">
+<span>登<span class="inline-pinyin">dēng</span></span>
+<div class="char-tooltip">Поднимать, собирать</div>
+</div>
+<div class="char-item">
+<span>望<span class="inline-pinyin">wàng</span></span>
+<div class="char-tooltip">Надеяться, смотреть</div>
+</div>
+<div class="char-item">
+<span>婦<span class="inline-pinyin">fù</span></span>
+<div class="char-tooltip">Жена, невестка</div>
+</div>
+<div class="char-item">
+<span>人<span class="inline-pinyin">rén</span></span>
+<div class="char-tooltip">Человек</div>
+</div>
+<div class="char-item">
+<span>乘<span class="inline-pinyin">chéng</span></span>
+<div class="char-tooltip">Кочевой народ, ван Чэн</div>
+</div>
+<div class="char-item">
+<span>千<span class="inline-pinyin">qiān</span></span>
+<div class="char-tooltip">Тысяча</div>
+</div>
+<div class="char-item">
+<span>征<span class="inline-pinyin">zhēng</span></span>
+<div class="char-tooltip">Поход, карательная экспедиция</div>
+</div>
+<div class="char-item">
+<span>高<span class="inline-pinyin">gāo</span></span>
+<div class="char-tooltip">Высокий, Гао</div>
+</div>
+<div class="char-item">
+<span>雞<span class="inline-pinyin">jī</span></span>
+<div class="char-tooltip">Петух, племя Цзи</div>
+</div>
+<div class="char-item">
+<span>三<span class="inline-pinyin">sān</span></span>
+<div class="char-tooltip">Три</div>
+</div>
+<div class="char-item">
+<span>夷<span class="inline-pinyin">yí</span></span>
+<div class="char-tooltip">Варвары, племя И</div>
+</div>
+<div class="char-item">
+<span>從<span class="inline-pinyin">cóng</span></span>
+<div class="char-tooltip">Следовать, сопровождать</div>
+</div>
+<div class="char-item">
+<span>呼<span class="inline-pinyin">hū</span></span>
+<div class="char-tooltip">Приказывать, повелевать</div>
+</div>
+<div class="char-item">
+<span>畢<span class="inline-pinyin">bì</span></span>
+<div class="char-tooltip">Би (имя)</div>
+</div>
+<div class="char-item">
+<span>洗<span class="inline-pinyin">xǐ</span></span>
+<div class="char-tooltip">Си (имя)</div>
+</div>
+<div class="char-item">
+<span>妌<span class="inline-pinyin">jǐng</span></span>
+<div class="char-tooltip">Цзин (имя)</div>
+</div>
+<div class="char-item">
+<span>一<span class="inline-pinyin">yī</span></span>
+<div class="char-tooltip">Один</div>
+</div>
+<div class="char-item">
+<span>尹<span class="inline-pinyin">yǐn</span></span>
+<div class="char-tooltip">Инь (имя)</div>
+</div>
+<div class="char-item">
+<span>寇<span class="inline-pinyin">kòu</span></span>
+<div class="char-tooltip">Грабить, нападать</div>
+</div>
+<div class="char-item">
+<span>萬<span class="inline-pinyin">wàn</span></span>
+<div class="char-tooltip">Десять тысяч</div>
+</div>
+<div class="char-item">
+<span>倉<span class="inline-pinyin">cāng</span></span>
+<div class="char-tooltip">Цан (имя)</div>
+</div>
+</div>
+<!-- СЛОВОСОЧЕТАНИЯ -->
+<h2>СЛОВОСОЧЕТАНИЯ</h2>
+<div class="original">
+<p class="phrase-item"><span class="phrase-char">望乘</span> <span class="phrase-pinyin">wàng chéng</span> <span class="phrase-meaning">«Ван Чэн»</span></p>
+<p class="phrase-item"><span class="phrase-char">下危</span> <span class="phrase-pinyin">xià wēi</span> <span class="phrase-meaning">«Ся Вэй»</span></p>
+<p class="phrase-item"><span class="phrase-char">婦好</span> <span class="phrase-pinyin">fù hǎo</span> <span class="phrase-meaning">«невестка Хао»</span></p>
+<p class="phrase-item"><span class="phrase-char">婦妌</span> <span class="phrase-pinyin">fù jǐng</span> <span class="phrase-meaning">«невестка Цзин»</span></p>
+<p class="phrase-item"><span class="phrase-char">侯高</span> <span class="phrase-pinyin">hóu gāo</span> <span class="phrase-meaning">«хоу Гао»</span></p>
+<p class="phrase-item"><span class="phrase-char">倉侯</span> <span class="phrase-pinyin">cāng hóu</span> <span class="phrase-meaning">«Цан-хоу»</span></p>
+<p class="phrase-item"><span class="phrase-char">土方</span> <span class="phrase-pinyin">tǔ fāng</span> <span class="phrase-meaning">«племя Ту»</span></p>
+</div>
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>7.А. Слово 旅 lǚ</h3>
+<p class="original">
             Встретившееся в тексте этого урока слово 旅 lǚ имеет два значения. Первое — имя собственное; некто Люй был в свое время гадателем при дворе иньского вана. Второе — армия, войско правителя.
             Мы не располагаем аргументами в пользу того, в каком из этих двух значений слово 旅 lǚ употреблено в приведенной надписи. Все же предпочтительнее второе: ополчения наследственных владетелей, судя по надписям, исчислялись в лучшем случае одной-двумя тысячами человек, тогда как в данном случае речь идет о десятке тысяч.
         </p>
-        <h3>7.Б. «Многие невестки»</h3>
-        <p class="original">
+<h3>7.Б. «Многие невестки»</h3>
+<p class="original">
             Для брачных обычаев иньского времени (по крайней мере в среде господствующего класса) была характерна полигамия. У вана было по нескольку жен, которых он брал из подчиненных племен, ибо, как уже упоминалось, непреложным правилом семейно-брачных отношений в эпоху Инь по-прежнему была экзогамия (запрещение брать жену в пределах своего рода).
             Когда сыновья вана достигали брачного возраста, они следовали примеру отца. Их жены приходились вану невестками (婦 fù), и их различали обычно по названию их рода, к которому добавлялся графический детерминатив «женщина».
             Поэтому в надписях периода У Дина, занимавшего престол вана в течение 59 лет, упоминаются как «многие сыновья», так и еще более многочисленные «невестки» 多婦 duō fù.
             Среди последних наиболее активную роль в политической жизни иньского государства играли две невестки У Дина — Хао и Цзин. Выполняя «миссию вана», они нередко принимали участие в военных походах, им поручалось собирать ополчение и т. д. Это свидетельствует о весьма высоком социальном положении иньских представительниц прекрасного пола. Не случайно чжоусцы обвиняли иньского вана Ди Синя в том, что он «прислушивался к голосу женщин».
             Погребение Фу Хао было обнаружено и раскопано в Великом городе Шан. Оно отличается исключительной роскошью предметов, которыми воительница должна была пользоваться в потустороннем мире. Эта находка вдохновила современного скульптора, изваявшего статую Фу Хао; теперь этот плод его творческого воображения украшает созданный под открытым небом музей иньской столицы.
         </p>
-        <h3>7.В. «Ограбить Чжоу»</h3>
-        <p class="original">
+<h3>7.В. «Ограбить Чжоу»</h3>
+<p class="original">
             В период правления вана У Дина в сфере иньской коалиции оказалось племя Чжоу, жившее далеко на западе, на территории современной провинции Шэньси. Как и другие племена, оно то признавало верховную власть вана, то предпринимало против него враждебные действия. Поэтому У Дин одно время заботился о том, чтобы с вождем этого племени не случилось несчастья, и в знак своего расположения взял в жены девушку из этого племени. Но по прошествии нескольких лет ситуация изменилась, и ван послал войска в карательный поход против своего недавнего подданного.
             Приказывая своим полководцам разгромить и разграбить Чжоу, У Дин, наверное, не подозревал, что через несколько столетий они поменяются ролями и иньская династия падет под ударами чжоусцев.
         </p>
-        <h3>7.Г. Кто такие 衆 zhòng?</h3>
-        <p class="original">
+<h3>7.Г. Кто такие 衆 zhòng?</h3>
+<p class="original">
             На этот вопрос до сих пор нет однозначного ответа.
             Первая точка зрения заключалась в том, что 衆 zhòng — это термин для обозначения рабов: в своем первоначальном начертании этот знак изображал трех (множество) «людей» под «солнцем», т. е. живописал сцену изнурительного труда рабов под палящими лучами солнца.
             В противовес этому суждению высказывалось совершенно иное толкование знака 衆 zhòng: он обозначал свободных членов общества, которые обрели свое место под солнцем.
             Наконец, была сформулирована третья точка зрения, представляющаяся наиболее обоснованной: 衆 zhòng — это имя собственное, обозначавшее одно из подчиненных вану родо-племенных объединений.
         </p>
-    </div>
-
-    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
-    <div class="assignment">
-        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
-            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
-            <li>Проделайте грамматический анализ текста.</li>
-            <li>Переведите текст на русский язык.</li>
-            <li>Переведите на древнекитайский следующие предложения:
+</div>
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст в виде дистрибутивной таблицы.</li>
+<li>Проделайте грамматический анализ текста.</li>
+<li>Переведите текст на русский язык.</li>
+<li>Переведите на древнекитайский следующие предложения:
                 <ol type="1">
-                    <li>Я приказал этому человеку не причинять тебе зла.</li>
-                    <li>В этом году мы соберем 20 тыс. человек, чтобы пойти походом на Чжоу.</li>
-                </ol>
-            </li>
-        </ol>
-    </div>
-
-    <div class="footer">
+<li>Я приказал этому человеку не причинять тебе зла.</li>
+<li>В этом году мы соберем 20 тыс. человек, чтобы пойти походом на Чжоу.</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="footer">
         Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.
         Восстановлено по OCR с сохранением авторского стиля.
         Все иероглифы — из текстов Уроков 1–7 или из циклических знаков.
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('fontToggle');
+  const label = document.getElementById('toggleLabel');
+  const styleSheet = document.getElementById('2change');
 
-</body></html>
+  const normalCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  const oracleCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  styleSheet.textContent = normalCSS;
+
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      styleSheet.textContent = oracleCSS;
+      label.textContent = 'Оракульный вид';
+    } else {
+      styleSheet.textContent = normalCSS;
+      label.textContent = 'Обычный вид';
+    }
+  });
+});
+</script></body></html>

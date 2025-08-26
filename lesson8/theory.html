@@ -1,13 +1,12 @@
 <html lang="ru"><head>
-    <meta charset="UTF-8">
-    <title>Урок 8 — Древнекитайский язык по Крюкову</title>
-    <!-- Для старых браузеров: полифилл -->
+<meta charset="utf-8"/>
+<title>Урок 8 — Древнекитайский язык по Крюкову</title>
+<!-- Для старых браузеров: полифилл -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <!-- Сам MathJax (версия 3) -->
-<script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+<script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 </script>
-    <style>
-        body {
+<style>body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
             margin: 50px auto;
@@ -122,30 +121,6 @@
             display: block;
         }
         /* Таблица текста */
-        .oracle-table {
-            border-collapse: collapse;
-            margin: 20px auto;
-            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
-            font-size: 1.3em;
-            table-layout: fixed;
-            width: 95%;
-            max-width: 1200px;
-        }
-        .oracle-table td {
-            padding: 6px 8px;
-            border: 1px solid #d4d4d4;
-            text-align: center;
-            word-break: keep-all;
-            white-space: nowrap;
-            position: relative;
-        }
-        .line-num, .col-num {
-            background-color: #f0f4f8;
-            color: #1a4f72;
-            font-weight: bold;
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-            font-size: 0.85em;
-        }
         .phrase-item {
             display: inline-block;
             margin: 5px;
@@ -204,46 +179,102 @@
     margin: 20px auto;
     text-align: center;
     line-height: 1.4;
-}
-    </style>
-</head>
-<body>
-<script src="./../dictionary.js"></script>
-    <h1>УРОК 8</h1>
-    <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
-    <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
-</div>
+}</style>
 <style>
-   .oracle-table {
+@font-face {
+  font-family: 'Jiaguwen';
+  src: url('../jiaguwen.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+</style></head>
+<body><style id="2change">
+.oracle-table {
     border-collapse: collapse;
-    margin: 20px auto; /* Центрируем таблицу, auto по бокам */
+    margin: 20px auto;
     font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
     font-size: 1.3em;
-    table-layout: fixed; /* Фиксируем ширину колонок */
-    width: 95%; /* Занимаем 95% ширины, но не больше */
-    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    table-layout: fixed;
+    width: 95%;
+    max-width: 1200px;
 }
 .oracle-table td {
-    padding: 6px 8px; /* Уменьшаем отступы, чтобы сэкономить место */
+    padding: 6px 8px;
     border: 1px solid #d4d4d4;
     text-align: center;
-    min-width: 0; /* Отключаем min-width, если был */
-    width: calc(95% / 16); /* Примерно равномерное распределение (15 колонок + 1 для номера строки) */
     position: relative;
-    word-break: keep-all; /* Не разрывать иероглифы */
-    white-space: nowrap; /* Не переносим символы */
+    word-break: keep-all;
+    white-space: nowrap;
 }
-/* Уменьшаем размер для номеров */
 .line-num, .col-num {
     background-color: #f0f4f8;
     color: #1a4f72;
     font-weight: bold;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    font-size: 0.85em; /* Чуть меньше, чтобы не жрало место */
+    font-size: 0.85em;
     white-space: nowrap;
 }
+</style>
+<script src="./../dictionary.js"></script>
+<h1>УРОК 8</h1>
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
 /* Tooltip — без изменений */
 .char-tooltip {
     display: none;
@@ -275,8 +306,7 @@ td:hover .char-tooltip {
     border-radius: 4px;
     font-size: 0.8em;
     margin-left: 5px;
-}
-</style>
+}</style>
 <script>
         const lessonText = [
             "壬戌貞王逆畢以羌于商王逆以羌王",
@@ -344,12 +374,12 @@ function createOracleTable() {
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
-    <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-    <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="grammar">
-        <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-        <h3>8.1. Определение, выраженное словосочетанием</h3>
-        <p class="original">
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>8.1. Определение, выраженное словосочетанием</h3>
+<p class="original">
             До сих пор мы имели дело с определениями, представляющими
             собой отдельное слово. Помимо этого определением может быть
             и словосочетание, которое в свою очередь бывает простым или
@@ -368,8 +398,8 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             甫藉 fǔ jí «Фу обрабатывает» (П — С), 在萬 zài wàn «находиться в Вань» (С — Д) → 甫藉在萬田 fǔ jí zài wàn
             tián «поля, обрабатываемые Фу в местности Вань».
         </p>
-        <h3>8.2. Включенное предложение</h3>
-        <p class="original">
+<h3>8.2. Включенное предложение</h3>
+<p class="original">
             Прямое дополнение в архаическом языке может быть выражено не только словом или словосочетанием, но и целым предложением. Такое предложение, выступающее в функции члена другого
             предложения, называют «включенным». На русский язык оно может переводиться придаточным дополнительным.
             Сравните следующие предложения:
@@ -388,100 +418,100 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             во втором — включенным предложением 馬方于甲子出 mă fāng
             yú jiă zǐ chū «В день цзя-цзы племя Ма выступило» и т. д.
         </p>
-    </div>
-    <!-- СПИСОК СЛОВ УРОКА -->
-    <h2>СПИСОК СЛОВ УРОКА</h2>
-    <div class="char-list">
-        <div class="char-item">
-            <span>戌<span class="inline-pinyin">xū</span></span>
-            <div class="char-tooltip">Земная ветвь (11-я); день «rén xū»</div>
-        </div>
-        <div class="char-item">
-            <span>逆<span class="inline-pinyin">nì</span></span>
-            <div class="char-tooltip">Встречать</div>
-        </div>
-        <div class="char-item">
-            <span>宗<span class="inline-pinyin">zōng</span></span>
-            <div class="char-tooltip">Род, клан</div>
-        </div>
-        <div class="char-item">
-            <span>門<span class="inline-pinyin">mén</span></span>
-            <div class="char-tooltip">Ворота</div>
-        </div>
-        <div class="char-item">
-            <span>執<span class="inline-pinyin">zhí</span></span>
-            <div class="char-tooltip">Брать, захватывать</div>
-        </div>
-        <div class="char-item">
-            <span>墠<span class="inline-pinyin">shàn</span></span>
-            <div class="char-tooltip">Открытое пространство, площадь</div>
-        </div>
-        <div class="char-item">
-            <span>用<span class="inline-pinyin">yòng</span></span>
-            <div class="char-tooltip">Использовать, приносить в жертву</div>
-        </div>
-        <div class="char-item">
-            <span>在<span class="inline-pinyin">zài</span></span>
-            <div class="char-tooltip">Находиться, быть в</div>
-        </div>
-        <div class="char-item">
-            <span>獲<span class="inline-pinyin">huò</span></span>
-            <div class="char-tooltip">Получать, добывать</div>
-        </div>
-        <div class="char-item">
-            <span>射<span class="inline-pinyin">shè</span></span>
-            <div class="char-tooltip">Стрелять</div>
-        </div>
-        <div class="char-item">
-            <span>臿<span class="inline-pinyin">chā</span></span>
-            <div class="char-tooltip">Совок</div>
-        </div>
-        <div class="char-item">
-            <span>祖<span class="inline-pinyin">zǔ</span></span>
-            <div class="char-tooltip">Предок</div>
-        </div>
-        <div class="char-item">
-            <span>小<span class="inline-pinyin">xiǎo</span></span>
-            <div class="char-tooltip">Малый</div>
-        </div>
-        <div class="char-item">
-            <span>步<span class="inline-pinyin">bù</span></span>
-            <div class="char-tooltip">Шаг, маршировать</div>
-        </div>
-        <div class="char-item">
-            <span>父<span class="inline-pinyin">fù</span></span>
-            <div class="char-tooltip">Отец</div>
-        </div>
-        <div class="char-item">
-            <span>大<span class="inline-pinyin">dà</span></span>
-            <div class="char-tooltip">Большой, великий</div>
-        </div>
-        <div class="char-item">
-            <span>示<span class="inline-pinyin">shì</span></span>
-            <div class="char-tooltip">Жертвенный алтарь; предок</div>
-        </div>
-        <div class="char-item">
-            <span>御<span class="inline-pinyin">yù</span></span>
-            <div class="char-tooltip">Сдерживать, защищать (от болезни)</div>
-        </div>
-        <div class="char-item">
-            <span>鼠<span class="inline-pinyin">shǔ</span></span>
-            <div class="char-tooltip">Мышь</div>
-        </div>
-    </div>
-    <!-- СЛОВОСОЧЕТАНИЯ -->
-    <h2>СЛОВОСОЧЕТАНИЯ</h2>
-    <div class="original">
-        <p class="phrase-item"><span class="phrase-char">祖乙</span> <span class="phrase-pinyin">zǔ yǐ</span> <span class="phrase-meaning">«предок И»</span></p>
-        <p class="phrase-item"><span class="phrase-char">小乙</span> <span class="phrase-pinyin">xiǎo yǐ</span> <span class="phrase-meaning">«Малый И»</span></p>
-        <p class="phrase-item"><span class="phrase-char">父丁</span> <span class="phrase-pinyin">fù dīng</span> <span class="phrase-meaning">«отец Дин»</span></p>
-        <p class="phrase-item"><span class="phrase-char">婦鼠</span> <span class="phrase-pinyin">fù shǔ</span> <span class="phrase-meaning">«невестка Шу»</span></p>
-    </div>
-    <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
-    <div class="lexicon">
-        <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-        <h3>8.А. Небесный Владыка и души усопших предков</h3>
-        <p class="original">
+</div>
+<!-- СПИСОК СЛОВ УРОКА -->
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list">
+<div class="char-item">
+<span>戌<span class="inline-pinyin">xū</span></span>
+<div class="char-tooltip">Земная ветвь (11-я); день «rén xū»</div>
+</div>
+<div class="char-item">
+<span>逆<span class="inline-pinyin">nì</span></span>
+<div class="char-tooltip">Встречать</div>
+</div>
+<div class="char-item">
+<span>宗<span class="inline-pinyin">zōng</span></span>
+<div class="char-tooltip">Род, клан</div>
+</div>
+<div class="char-item">
+<span>門<span class="inline-pinyin">mén</span></span>
+<div class="char-tooltip">Ворота</div>
+</div>
+<div class="char-item">
+<span>執<span class="inline-pinyin">zhí</span></span>
+<div class="char-tooltip">Брать, захватывать</div>
+</div>
+<div class="char-item">
+<span>墠<span class="inline-pinyin">shàn</span></span>
+<div class="char-tooltip">Открытое пространство, площадь</div>
+</div>
+<div class="char-item">
+<span>用<span class="inline-pinyin">yòng</span></span>
+<div class="char-tooltip">Использовать, приносить в жертву</div>
+</div>
+<div class="char-item">
+<span>在<span class="inline-pinyin">zài</span></span>
+<div class="char-tooltip">Находиться, быть в</div>
+</div>
+<div class="char-item">
+<span>獲<span class="inline-pinyin">huò</span></span>
+<div class="char-tooltip">Получать, добывать</div>
+</div>
+<div class="char-item">
+<span>射<span class="inline-pinyin">shè</span></span>
+<div class="char-tooltip">Стрелять</div>
+</div>
+<div class="char-item">
+<span>臿<span class="inline-pinyin">chā</span></span>
+<div class="char-tooltip">Совок</div>
+</div>
+<div class="char-item">
+<span>祖<span class="inline-pinyin">zǔ</span></span>
+<div class="char-tooltip">Предок</div>
+</div>
+<div class="char-item">
+<span>小<span class="inline-pinyin">xiǎo</span></span>
+<div class="char-tooltip">Малый</div>
+</div>
+<div class="char-item">
+<span>步<span class="inline-pinyin">bù</span></span>
+<div class="char-tooltip">Шаг, маршировать</div>
+</div>
+<div class="char-item">
+<span>父<span class="inline-pinyin">fù</span></span>
+<div class="char-tooltip">Отец</div>
+</div>
+<div class="char-item">
+<span>大<span class="inline-pinyin">dà</span></span>
+<div class="char-tooltip">Большой, великий</div>
+</div>
+<div class="char-item">
+<span>示<span class="inline-pinyin">shì</span></span>
+<div class="char-tooltip">Жертвенный алтарь; предок</div>
+</div>
+<div class="char-item">
+<span>御<span class="inline-pinyin">yù</span></span>
+<div class="char-tooltip">Сдерживать, защищать (от болезни)</div>
+</div>
+<div class="char-item">
+<span>鼠<span class="inline-pinyin">shǔ</span></span>
+<div class="char-tooltip">Мышь</div>
+</div>
+</div>
+<!-- СЛОВОСОЧЕТАНИЯ -->
+<h2>СЛОВОСОЧЕТАНИЯ</h2>
+<div class="original">
+<p class="phrase-item"><span class="phrase-char">祖乙</span> <span class="phrase-pinyin">zǔ yǐ</span> <span class="phrase-meaning">«предок И»</span></p>
+<p class="phrase-item"><span class="phrase-char">小乙</span> <span class="phrase-pinyin">xiǎo yǐ</span> <span class="phrase-meaning">«Малый И»</span></p>
+<p class="phrase-item"><span class="phrase-char">父丁</span> <span class="phrase-pinyin">fù dīng</span> <span class="phrase-meaning">«отец Дин»</span></p>
+<p class="phrase-item"><span class="phrase-char">婦鼠</span> <span class="phrase-pinyin">fù shǔ</span> <span class="phrase-meaning">«невестка Шу»</span></p>
+</div>
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>8.А. Небесный Владыка и души усопших предков</h3>
+<p class="original">
             Представления иньцев о неземных силах — это отражение тех
             отношений в обществе, которые были характерны для иньской
             эпохи. Подобно тому как на земле царствует верховный правитель — ван, так в потустороннем мире существует высшее божество — Небесный Владыка (帝 dì), вершащий судьбы людей.
@@ -501,27 +531,101 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
             Победоносного полководца, возвращающегося из похода с трофеями и пленными, ван по обычаю встречал у ворот храма, где
             затем и совершалось жертвоприношение.
         </p>
-    </div>
-    <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
-    <div class="assignment">
-        <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-        <ol>
-            <li>Перепишите текст в виде дистрибутивной таблицы.</li>
-            <li>Проделайте грамматический анализ текста.</li>
-            <li>Переведите текст на русский язык.</li>
-            <li>Переведите на древнекитайский следующие предложения:
+</div>
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст в виде дистрибутивной таблицы.</li>
+<li>Проделайте грамматический анализ текста.</li>
+<li>Переведите текст на русский язык.</li>
+<li>Переведите на древнекитайский следующие предложения:
                 <ol type="1">
-                    <li>Используй лошадь, которую прислал старший брат.</li>
-                    <li>Мы принесли в жертву цянов, которых я привел в этом месяце.</li>
-                    <li>Правитель просил великих предков о том, чтобы в следующем году у нас был урожай чумизы.</li>
-                    <li>Сообщил ли ты своему отцу о том, что я нахожусь на юге?</li>
-                </ol>
-            </li>
-        </ol>
-    </div>
-    <div class="footer">
+<li>Используй лошадь, которую прислал старший брат.</li>
+<li>Мы принесли в жертву цянов, которых я привел в этом месяце.</li>
+<li>Правитель просил великих предков о том, чтобы в следующем году у нас был урожай чумизы.</li>
+<li>Сообщил ли ты своему отцу о том, что я нахожусь на юге?</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="footer">
         Учебник: В. А. Крюков, Шуин — Архаический древнекитайский язык.
         Восстановлено по OCR с сохранением авторского стиля.
         Все иероглифы — из текстов Уроков 1–8 или из циклических знаков.
     </div>
-</body></html>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggle = document.getElementById('fontToggle');
+  const label = document.getElementById('toggleLabel');
+  const styleSheet = document.getElementById('2change');
+
+  const normalCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  const oracleCSS = `
+    .oracle-table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+      font-size: 1.3em;
+      table-layout: fixed;
+      width: 95%;
+      max-width: 1200px;
+    }
+    .oracle-table td {
+      padding: 6px 8px;
+      border: 1px solid #d4d4d4;
+      text-align: center;
+      position: relative;
+      word-break: keep-all;
+      white-space: nowrap;
+    }
+    .line-num, .col-num {
+      background-color: #f0f4f8;
+      color: #1a4f72;
+      font-weight: bold;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  `;
+
+  styleSheet.textContent = normalCSS;
+
+  toggle.addEventListener('change', function () {
+    if (toggle.checked) {
+      styleSheet.textContent = oracleCSS;
+      label.textContent = 'Оракульный вид';
+    } else {
+      styleSheet.textContent = normalCSS;
+      label.textContent = 'Обычный вид';
+    }
+  });
+});
+</script></body></html>
