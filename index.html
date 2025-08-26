@@ -589,6 +589,7 @@ text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js ';
+        import { getDoc, setDoc, doc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js ';
 
         // Your web app's Firebase configuration
@@ -649,17 +650,28 @@ text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         // Автоматическая проверка авторизации
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Пользователь уже вошёл
-                updateUserInfo(user);
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
 
+    if (!userSnap.exists()) {
+      // Создаём профиль при первом входе
+      await setDoc(userRef, {
+        uid: user.uid,
+        displayName: user.displayName || 'Аноним',
+        email: user.email,
+        photoURL: user.photoURL,
+        points: 0,
+        joinedAt: new Date()
+      });
+    }
 
-            } else {
-                // Нет авторизации
-                loginBtn.textContent = 'Войти через Google';
-            }
-        });
+    updateUserInfo(user);
+  } else {
+    loginBtn.textContent = 'Войти через Google';
+  }
+});
     </script>
 </body>
 </html>
