@@ -2,47 +2,43 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 6</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-  
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
   <div class="match-container">
     <div class="column">
       <h3>Иероглифы</h3>
       <div id="words"></div>
     </div>
     <div class="column">
-      <h3>Значения</h3>
+      <h3>Транскрипция</h3>
       <div id="defs"></div>
     </div>
   </div>
-
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
-
   <script>
 const pairs1 = [
-  { char: "唯", meaning: "служ. эмфатическая частица; только" },
-  { char: "叀", meaning: "служ. эмфатическая частица" },
-  { char: "弜", meaning: "служ. отрицание" },
-  { char: "逐", meaning: "преследовать" },
-  { char: "兕", meaning: "носорог" }
+  { char: "唯", pinyin: "wéi" },
+  { char: "叀", pinyin: "huì" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "逐", pinyin: "zhú" },
+  { char: "兕", pinyin: "sì" }
 ];
 
 const pairs2 = [
-  { char: "鹿", meaning: "олень" },
-  { char: "叀", meaning: "служ. эмфатическая частица" },
-  { char: "逐", meaning: "преследовать" },
-  { char: "貝", meaning: "раковина" },
-  { char: "兕", meaning: "носорог" }
-
+  { char: "鹿", pinyin: "lù" },
+  { char: "唯", pinyin: "wéi" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "兕", pinyin: "sì" },
+  { char: "貝", pinyin: "bèi" }
 ];
 
-pairs = pairs2;
+pairs = pairs1
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -107,15 +103,9 @@ pairs = pairs2;
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        if (matchedPairs === 5) {
           const resultEl = document.getElementById("result");
-          resultEl.innerHTML = `
-            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
-            • Божественное вмешательство (<strong>帝</strong>)<br>
-            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
-            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
-            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
-          `;
+          resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
           sendResult(true);
         }
@@ -150,3 +140,5 @@ pairs = pairs2;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
+</html>
+

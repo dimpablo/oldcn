@@ -115,7 +115,7 @@
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
 
-    // Отправка результата в родительское окно (например, для LMS)
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",

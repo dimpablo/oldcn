@@ -3,131 +3,80 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Собери фразу</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 7 — Военные походы и приказы</title>
 </head>
 <body>
-  <h2>Собери фразу</h2>
-  <div class="instructions">
-    <p><strong>Соберите фразу:</strong></p>
-    <p><em>Правитель приказал невестке Хао возглавить поход против племени Ту.</em></p>
+  <h2>Какой из вариантов является правильным переводом фразы?</h2>
+  <p><strong>Пример: «王令婦好從侯高伐夷»</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">wáng lìng fù hǎo cóng hóu gāo fá yí</div>
   </div>
-
-  <!-- Кнопка для раскрытия подсказок -->
-  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
-
-  <!-- Контейнер подсказок (скрыт по умолчанию) -->
-  <div class="hint-container" id="hint-container">
-    <ul class="hint-list">
-      <li>王 — Правитель</li>
-      <li>令 — приказал</li>
-      <li>婦好 — невестка Хао</li>
-      <li>從 — возглавить, следовать в походе</li>
-      <li>伐 — поход против</li>
-      <li>土方 — племя Ту</li>
-    </ul>
-  </div>
-
-  <p><strong>Иероглифы:</strong></p>
-  <div id="char-pool"></div>
-
-  <p><strong>Соберите здесь:</strong></p>
-  <div id="drop-area"></div>
-
-  <div class="controls">
-    <button id="check-btn">Проверить</button>
-    <button id="reset-btn">Сбросить</button>
-  </div>
-
-  <p id="result" class="message"></p>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
 
   <script>
-    // Ожидаемая фраза: "Правитель приказал невестке Хао возглавить поход против племени Ту." → 王令婦好從伐土方
-    const expected = ['王', '令', '婦好', '從', '伐', '土方'];
+    const options = [
+      { text: "Правитель приказал невестке Хао возглавить поход против племени Ту.", correct: false },
+      { text: "Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И.", correct: true },
+      { text: "Правитель не приказал невестке Хао участвовать в походе.", correct: false },
+      { text: "Хоу Гао повелел невестке Хао собрать войско.", correct: false }
+    ];
 
-    // Дополнительные символы для усложнения (из Урока 7)
-    const allChars = [
-      '王', '令', '婦好', '從', '伐', '土方',
-      '下', '衆', '震', '危', '羽', '周', '登', '千',
-      '征', '高', '雞', '三', '夷', '呼', '畢', '洗',
-      '妌', '一', '尹', '寇', '萬', '倉', '望', '乘'
-    ].sort(() => Math.random() - 0.5);
-
-    const toggleBtn = document.getElementById('toggle-hint-btn');
-    const hintContainer = document.getElementById('hint-container');
-    const charPool = document.getElementById('char-pool');
-    const dropArea = document.getElementById('drop-area');
-    const checkBtn = document.getElementById('check-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const resultEl = document.getElementById('result');
-
-    // Переключение подсказок
-    toggleBtn.addEventListener('click', () => {
-      const isOpen = hintContainer.classList.contains('open');
-      hintContainer.classList.toggle('open');
-      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
-    });
-
-    // Переместить символ в зону сборки
-    function moveToDropArea(box) {
-      const clone = box.cloneNode(true);
-      clone.draggable = false;
-      clone.style.cursor = 'default';
-      clone.onclick = null;
-      box.remove();
-      dropArea.appendChild(clone);
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
-    // Инициализация панели с символами
-    function initCharPool() {
-      charPool.innerHTML = '';
-      dropArea.innerHTML = '';
-      resultEl.textContent = '';
-      allChars.forEach(char => {
-        const box = document.createElement('div');
-        box.className = 'char-box';
-        box.textContent = char;
-        box.addEventListener('click', () => moveToDropArea(box));
-        charPool.appendChild(box);
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
       });
     }
 
-    // Проверка правильности сборки
-    checkBtn.addEventListener('click', () => {
-      const current = Array.from(dropArea.children).map(el => el.textContent);
-      if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>王令婦好從伐土方';
-        resultEl.className = 'message success';
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>цепочки сказуемых</strong>:<br>
+          <em>令</em> (приказать) → <em>從</em> (следовать) → <em>伐</em> (поход против).
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = '❌ Попробуйте снова.';
-        resultEl.className = 'message';
-        sendResult(false, 'Неверный порядок');
+        resultEl.textContent = "❌ Неверно. Обратите внимание на значение 令, 從 и 伐.";
+        sendResult(false);
       }
-    });
-
-    // Сбросить сборку
-    resetBtn.addEventListener('click', initCharPool);
-
-    // Сравнение массивов
-    function arraysEqual(a, b) {
-      return a.length === b.length && a.every((v, i) => v === b[i]);
     }
 
-    // Отправка результата в родительское окно
-    function sendResult(success, message) {
-      window.parent.postMessage({
-        type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
-      }, "*");
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
     }
 
-    // Инициализация при загрузке
-    initCharPool();
-
-    // Сигнал, что задание загружено
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+    window.onload = renderOptions;
   </script>
 </body>
 </html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

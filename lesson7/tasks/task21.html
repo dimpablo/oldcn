@@ -2,86 +2,83 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 7</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-  
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
   <div class="match-container">
     <div class="column">
       <h3>Иероглифы</h3>
       <div id="words"></div>
     </div>
     <div class="column">
-      <h3>Значения</h3>
+      <h3>Транскрипция</h3>
       <div id="defs"></div>
     </div>
   </div>
-
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
-
   <script>
-// Словарь Урока 7 — значения из dict_human.txt
+// Транскрипции Урока 7 — pinyin из dict_human.txt
 
 // Первая пятерка
 const pairs1 = [
-  { char: "下", meaning: "нижний; снизу, под; опускаться" },
-  { char: "衆", meaning: "многочисленный, толпа; собств. Чжун" },
-  { char: "震", meaning: "собств. Чжэнь" },
-  { char: "危", meaning: "опасность; собств. Вэй" },
-  { char: "羽", meaning: "перья; собств. Юй" }
+  { char: "下", pinyin: "xià" },
+  { char: "衆", pinyin: "zhòng" },
+  { char: "震", pinyin: "zhèn" },
+  { char: "危", pinyin: "wēi" },
+  { char: "羽", pinyin: "yǔ" }
 ];
 
 // Вторая пятерка
 const pairs2 = [
-  { char: "周", meaning: "собств. Чжоу" },
-  { char: "令", meaning: "приказывать; допускать; начальник; прекрасный; собств. Лин" },
-  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
-  { char: "望", meaning: "смотреть издалека" },
-  { char: "婦", meaning: "невестка" }
+  { char: "周", pinyin: "zhōu" },
+  { char: "令", pinyin: "lìng" },
+  { char: "登", pinyin: "dēng" },
+  { char: "望", pinyin: "wàng" },
+  { char: "婦", pinyin: "fù" }
 ];
 
 // Третья пятерка
 const pairs3 = [
-  { char: "人", meaning: "человек" },
-  { char: "乘", meaning: "ехать на повозке; связка из четырех стрел; собств. Чэн" },
-  { char: "千", meaning: "тысяча" },
-  { char: "征", meaning: "карательный поход" },
-  { char: "高", meaning: "высокий" }
+  { char: "人", pinyin: "rén" },
+  { char: "乘", pinyin: "chéng" },
+  { char: "千", pinyin: "qiān" },
+  { char: "征", pinyin: "zhēng" },
+  { char: "高", pinyin: "gāo" }
 ];
 
 // Четвёртая пятерка
 const pairs4 = [
-  { char: "雞", meaning: "курица; собств. Цзи" },
-  { char: "三", meaning: "три" },
-  { char: "夷", meaning: "чужеземец" },
-  { char: "從", meaning: "следовать; служ. предлог из" },
-  { char: "呼", meaning: "приказывать, повелевать; кричать; рычать" }
+  { char: "雞", pinyin: "jī" },
+  { char: "三", pinyin: "sān" },
+  { char: "夷", pinyin: "yí" },
+  { char: "從", pinyin: "cóng" },
+  { char: "呼", pinyin: "hū" }
 ];
 
 // Пятая пятерка
 const pairs5 = [
-  { char: "畢", meaning: "конец, завершение" },
-  { char: "洗", meaning: "мыться; собств. Си" },
-  { char: "妌", meaning: "собств. Цзин" },
-  { char: "一", meaning: "один" },
-  { char: "尹", meaning: "название должности; собств. Инь" }
+  { char: "畢", pinyin: "bì" },
+  { char: "洗", pinyin: "xǐ" },
+  { char: "妌", pinyin: "jǐng" },
+  { char: "一", pinyin: "yī" },
+  { char: "尹", pinyin: "yǐn" }
 ];
 
 // Шестая пятерка
 const pairs6 = [
-  { char: "寇", meaning: "грабить, нападать" },
-  { char: "萬", meaning: "десять тысяч" },
-  { char: "倉", meaning: "собств. Цан (название племени)" },
-  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
-  { char: "夷", meaning: "чужеземец" }
+  { char: "寇", pinyin: "kòu" },
+  { char: "望", pinyin: "wàng" },
+  { char: "乘", pinyin: "chéng" },
+  { char: "萬", pinyin: "wàn" },
+  { char: "倉", pinyin: "cāng" }
 
 ];
-pairs = pairs6;
+pairs = pairs1
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -146,15 +143,9 @@ pairs = pairs6;
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        if (matchedPairs === 5) {
           const resultEl = document.getElementById("result");
-          resultEl.innerHTML = `
-            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
-            • Божественное вмешательство (<strong>帝</strong>)<br>
-            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
-            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
-            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
-          `;
+          resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
           sendResult(true);
         }
@@ -189,3 +180,5 @@ pairs = pairs6;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
+</html>
+

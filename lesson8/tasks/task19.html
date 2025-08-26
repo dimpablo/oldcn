@@ -2,61 +2,58 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 6</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-  
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
   <div class="match-container">
     <div class="column">
       <h3>Иероглифы</h3>
       <div id="words"></div>
     </div>
     <div class="column">
-      <h3>Значения</h3>
+      <h3>Транскрипция</h3>
       <div id="defs"></div>
     </div>
   </div>
-
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
-
   <script>
 const pairs1 = [
-  { char: "戌", meaning: "название 11-го знака 12-ричного цикла" },
-  { char: "逆", meaning: "встречать; идти против, наперекор" },
-  { char: "宗", meaning: "храм предков; глава; сородичи" },
-  { char: "門", meaning: "дверь, ворота" },
-  { char: "執", meaning: "держать, схватывать, брать в плен, пленный" }
+  { char: "戌", pinyin: "xū" },
+  { char: "逆", pinyin: "nì" },
+  { char: "宗", pinyin: "zōng" },
+  { char: "門", pinyin: "mén" },
+  { char: "執", pinyin: "zhí" }
 ];
 
 const pairs2 = [
-  { char: "墠", meaning: "ровная площадка, вытоптанное место" },
-  { char: "用", meaning: "применять, использовать; приносить в жертву" },
-  { char: "在", meaning: "находиться, присутствовать" },
-  { char: "獲", meaning: "захватывать, брать в плен" },
-  { char: "射", meaning: "стрелять из лука" }
+  { char: "墠", pinyin: "shàn" },
+  { char: "用", pinyin: "yòng" },
+  { char: "在", pinyin: "zài" },
+  { char: "獲", pinyin: "huò" },
+  { char: "射", pinyin: "shè" }
 ];
 
 const pairs3 = [
-  { char: "臿", meaning: "собств. Ча" },
-  { char: "祖", meaning: "дед, предок, пращур" },
-  { char: "小", meaning: "маленький" },
-  { char: "步", meaning: "шагать, шаг" },
-  { char: "父", meaning: "отец" }
+  { char: "臿", pinyin: "chā" },
+  { char: "祖", pinyin: "zǔ" },
+  { char: "小", pinyin: "xiǎo" },
+  { char: "步", pinyin: "bù" },
+  { char: "父", pinyin: "fù" }
 ];
 
 const pairs4 = [
-  { char: "大", meaning: "большой" },
-  { char: "示", meaning: "предок; показывать" },
-  { char: "御", meaning: "управлять, править; защищать" },
-  { char: "鼠", meaning: "мышь" },
-  { char: "獲", meaning: "захватывать, брать в плен" }
+  { char: "大", pinyin: "dà" },
+  { char: "示", pinyin: "shì" },
+  { char: "御", pinyin: "yù" },
+  { char: "鼠", pinyin: "shǔ" },
+  { char: "獲", pinyin: "huò" }
 ];
-pairs = pairs4;
+pairs = pairs1
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -121,15 +118,9 @@ pairs = pairs4;
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        if (matchedPairs === 5) {
           const resultEl = document.getElementById("result");
-          resultEl.innerHTML = `
-            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
-            • Божественное вмешательство (<strong>帝</strong>)<br>
-            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
-            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
-            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
-          `;
+          resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
           sendResult(true);
         }
@@ -164,3 +155,5 @@ pairs = pairs4;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
+</html>
+

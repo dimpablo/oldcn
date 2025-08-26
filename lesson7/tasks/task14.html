@@ -4,36 +4,72 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Собери перевод: Урок 7</title>
+    <title>Одиночное vs Цепочка: Урок 7</title>
 </head>
 <body>
 
-<h2>Собери перевод: Урок 7</h2>
+<h2>Одиночное vs Цепочка: Сказуемые в действии</h2>
 
 <div class="instructions">
-    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
-    <p>Задания построены на ключевых темах Урока 7: <strong>цепочка сказуемых</strong> и союз <strong>以 yǐ</strong>.</p>
-    <p>💡 <em>Обратите внимание на порядок действий и соединение сопровождающих!</em></p>
-</div>
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Одиночное сказуемое vs Цепочка сказуемых</strong></p>
+        <p>В архаическом древнекитайском языке сказуемое может быть не только одиночным, но и образовывать <strong>цепочку</strong>, что особенно характерно для военных приказов и миссий.</p>
 
-<div class="task-container">
-    <div class="task-title">1. 王令婦好從侯高伐夷</div>
-    <div class="oracle-text">王令婦好從侯高伐夷</div>
-    <div id="word-pool1" class="word-pool"></div>
-    <div id="drop-area1" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 <strong>令 → 從 → 伐</strong> — цепочка действий: приказать → следовать → поход</p>
+        <p>🟢 <strong>Одиночное сказуемое</strong> — одно действие:</p>
+        <ul>
+            <li>王令婦好 wáng lìng fù hǎo — «Правитель приказал невестке Хао»</li>
+            <li>Завершает смысл, не требует продолжения</li>
+        </ul>
+
+        <p>🔴 <strong>Цепочка сказуемых</strong> — последовательность действий:</p>
+        <ul>
+            <li>王令婦好從侯高伐夷 wáng lìng fù hǎo cóng hóu gāo fá yí — «Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И»</li>
+            <li>Цепочка: 令 → 從 → 伐 (приказать → следовать → поход)</li>
+            <li>Второе и последующие сказуемые не требуют нового подлежащего — оно подразумевается</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "登人五千" → 🟢 (одиночное: собрать пять тысяч человек)<br>
+        "令羽眔雞以尹從洗震" → 🔴 (цепочка: приказать Юй и Цзи с尹ом следовать за Чжэнем)</p>
+
+        <p><strong>Важно!</strong><br>
+        Эта дихотомия используется, когда:
+        <ol>
+            <li>Речь о <strong>приказах</strong>, <strong>походах</strong> или <strong>миссиях</strong></li>
+            <li>Первое действие (часто 令 или 呼) <strong>порождает</strong> второе</li>
+            <li>Нет модальных глаголов — вместо «хочу сделать» используется цепочка действий</li>
+        </ol>
+        Это ключевая грамматическая структура Урока 7.</p>
     </div>
 </div>
 
-<div class="task-container">
-    <div class="task-title">2. 令羽眔雞以尹從洗震</div>
-    <div class="oracle-text">令羽眔雞以尹從洗震</div>
-    <div id="word-pool2" class="word-pool"></div>
-    <div id="drop-area2" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 <strong>以</strong> = «с» (вводит сопровождающего). <strong>眔</strong> = «и» между именами.</p>
-    </div>
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
 </div>
 
 <div class="controls">
@@ -44,31 +80,18 @@
 <p id="result"></p>
 
 <script>
-// Ожидаемые правильные варианты
-const expected1 = [
-    ['Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И'],
-    ['Правитель повелел невестке Хао идти следом за хоу Гао, чтобы напасть на племя И'],
-    ['Правитель приказал невестке Хао, следуя за хоу Гао, возглавить поход против племени И']
+const sentences = [
+    { text: "王令婦好", type: "direct", explanation: "Одиночное сказуемое: «Правитель приказал невестке Хао» — действие завершено" },
+    { text: "王令婦好從侯高伐夷", type: "chain", explanation: "Цепочка сказуемых: 令 → 從 → 伐 — приказать, следовать, поход" },
+    { text: "登人五千", type: "direct", explanation: "Одиночное: «Собрать пять тысяч человек» — нет продолжения действия" },
+    { text: "令羽眔雞以尹從洗震", type: "chain", explanation: "Цепочка: «Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си»" },
+    { text: "王勿從洗震", type: "direct", explanation: "Одиночное сказуемое: «Правителю не следует следовать за Чжэнем» — отрицание одного действия" },
+    { text: "呼伐工方", type: "chain", explanation: "Цепочка: «Отдать приказ — поход против племени Гун» — два сказуемых подряд" },
+    { text: "征土方", type: "direct", explanation: "Одиночное: «Поход против племени Ту» — одно действие" },
+    { text: "令畢以衆伐工方", type: "chain", explanation: "Цепочка: «Приказать Би с ополчением идти походом против племени Гун»" },
+    { text: "登婦妌三千", type: "direct", explanation: "Одиночное: «Собрать трёх тысяч под руководством невестки Цзин»" },
+    { text: "令婦好從侯高", type: "chain", explanation: "Цепочка: «Приказать невестке Хао следовать за хоу Гао» — два действия" }
 ];
-
-const expected2 = [
-    ['Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си'],
-    ['Повелеть Юй и Цзи, с尹ом, идти следом за Чжэнем из племени Си'],
-    ['Приказать Юй и Цзи с尹ом следовать за Си Чжэнем']
-];
-
-// Слова для выбора (с лишними)
-const words1 = ['Правитель', 'приказал', 'невестке Хао', 'следовать за', 'хоу Гао', 'в походе против', 'племени И', 'возглавить', 'урожай', 'дождь', 'и', 'солнце', 'они', 'охотились', 'молитва'];
-const words2 = ['Приказать', 'Юй', 'и', 'Цзи', 'с', '尹ом', 'следовать за', 'Чжэнем', 'из племени Си', 'мы', 'пошли', 'на праздник', 'царь', 'отправил', 'вестника', 'вчера'];
-
-// DOM-элементы
-const wordPool1 = document.getElementById('word-pool1');
-const wordPool2 = document.getElementById('word-pool2');
-const dropArea1 = document.getElementById('drop-area1');
-const dropArea2 = document.getElementById('drop-area2');
-const checkBtn = document.getElementById('check-btn');
-const resetBtn = document.getElementById('reset-btn');
-const resultEl = document.getElementById('result');
 
 function shuffleArray(array) {
     const arr = [...array];
@@ -79,114 +102,108 @@ function shuffleArray(array) {
     return arr;
 }
 
-function createWordElements(words, pool, dropArea) {
-    const shuffledWords = shuffleArray(words);
-    return shuffledWords.map(word => {
-        const box = document.createElement('div');
-        box.className = 'word-box';
-        box.textContent = word;
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
 
-        box.onclick = () => {
-            box.remove();
-            dropArea.appendChild(box);
-            updatePlaceholder(dropArea);
-        };
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">Одиночное</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">Цепочка</span>
+        </div>
+    `;
 
-        return box;
-    });
+    return item;
 }
-
-function updatePlaceholder(dropArea) {
-    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
-    dropArea.classList.toggle('has-words', hasWords);
-}
-
-let wordElements1 = [];
-let wordElements2 = [];
 
 function init() {
-    // Очистка
-    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
-    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
-    resultEl.style.display = 'none';
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
 
-    // Создание элементов
-    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
-    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
 
-    // Добавление в пулы
-    wordElements1.forEach(el => wordPool1.appendChild(el));
-    wordElements2.forEach(el => wordPool2.appendChild(el));
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
 
-    // Обновление плейсхолдеров
-    [dropArea1, dropArea2].forEach(updatePlaceholder);
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
 }
 
-// Возврат слов в пул при клике
-[dropArea1, dropArea2].forEach((area, i) => {
-    area.addEventListener('click', (e) => {
-        if (e.target.classList.contains('word-box')) {
-            const box = e.target;
-            box.remove();
-            [wordPool1, wordPool2][i].appendChild(box);
-            updatePlaceholder(area);
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "chain") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
         }
     });
-});
 
-function getWords(dropArea) {
-    return Array.from(dropArea.children)
-        .filter(el => el.classList.contains('word-box'))
-        .map(el => el.textContent.trim());
-}
-
-function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    return a.every((val, i) => val === b[i]);
-}
-
-checkBtn.addEventListener('click', () => {
-    const current1 = getWords(dropArea1);
-    const current2 = getWords(dropArea2);
-
-    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
-    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
-
-    if (isCorrect1 && isCorrect2) {
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
         resultEl.innerHTML = `
-            ✅ <b>Отлично!</b> Вы усвоили ключевые темы Урока 7:<br>
-            • <strong>Цепочка сказуемых</strong>: 令 → 從 → 伐 — последовательные действия<br>
-            • <strong>以 yǐ</strong> — «с», вводит сопровождающего<br>
-            • <strong>眔 dà</strong> — соединяет только имена, не глаголы
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи одиночных и цепочечных сказуемых.<br>
+            <small>Вы усвоили: цепочка сказуемых — ключевая структура военных приказов.</small>
         `;
-        resultEl.className = 'message success';
-        resultEl.style.display = 'block';
+        resultEl.className = 'success';
         sendResult(true);
     } else {
-        let message = '❌ Проверьте порядок слов:';
-        if (!isCorrect1) message += '<br>• Действия идут по цепочке: приказал → следовать → поход';
-        if (!isCorrect2) message += '<br>• 以 = "с", указывает на того, кто сопровождает';
-
-        resultEl.innerHTML = message;
-        resultEl.className = 'message error';
-        resultEl.style.display = 'block';
-        sendResult(false, message);
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
     }
-});
+    resultEl.style.display = 'block';
+}
 
-resetBtn.addEventListener('click', init);
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
 
-function sendResult(success, message) {
+function sendResult(success) {
     window.parent.postMessage({
         type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Верно" : "Ошибка")
+        success: success,
+        message: success ? "Верно" : "Ошибка"
     }, "*");
 }
 
 // Инициализация
 window.onload = init;
 window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
 </script>
 </body>
 </html>

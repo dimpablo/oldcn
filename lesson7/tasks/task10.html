@@ -7,11 +7,11 @@
     <title>Задание: Урок 7 — Военные походы и приказы</title>
 </head>
 <body>
-  <h2>Что означает фраза «王令婦好從侯高伐夷»?</h2>
-  <p><strong>Обратите внимание на цепочку сказуемых: 令 → 從 → 伐.</strong></p>
+  <h2>Какой предлог означает «к моменту...» или «когда наступит…»?</h2>
+  <p><strong>Пример: «及茲二月有大雨»</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">wáng lìng fù hǎo cóng hóu gāo fá yí</div>
+    <div class="pinyin-text">jí zī èr yuè yǒu dà yǔ</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
@@ -19,10 +19,10 @@
 
   <script>
     const options = [
-      { text: "Правитель приказал невестке Хао возглавить поход против племени Ту.", correct: false },
-      { text: "Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И.", correct: true },
-      { text: "Правитель не приказал невестке Хао участвовать в походе.", correct: false },
-      { text: "Хоу Гао повелел невестке Хао собрать войско.", correct: false }
+      { text: "及 (jí) — к моменту, когда наступит", correct: true },
+      { text: "于 (yú) — в (месте или времени)", correct: false },
+      { text: "自 (zì) — от, начиная с", correct: false },
+      { text: "至 (zhì) — достигать", correct: false }
     ];
 
     function shuffle(array) {
@@ -61,15 +61,13 @@
       if (selected.dataset.correct === "true") {
         resultEl.innerHTML = `
           ✅ <strong>Правильно!</strong><br>
-          Это пример <strong>цепочки сказуемых</strong>:<br>
-          • <strong>令 lìng</strong> — «приказать»<br>
-          • <strong>從 cóng</strong> — «следовать»<br>
-          • <strong>伐 fá</strong> — «поход против»<br>
-          Такие конструкции характерны для военных приказов.
+          <strong>及 jí</strong> — это предлог, означающий «к моменту...»<br>
+          В сочетании с <strong>有</strong> он указывает на ожидаемое состояние:<br>
+          <em>Ко второму месяцу будет сильный дождь</em>.
         `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. Обратите внимание на значение 令, 從 и 伐.";
+        resultEl.textContent = "❌ Неверно. Подумайте о значении 及 в контексте времени.";
         sendResult(false);
       }
     }

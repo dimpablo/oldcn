@@ -3,111 +3,175 @@
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Урок 8: Включенные предложения</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Урок 8 — Включенные предложения</title>
 </head>
 <body>
-<h2>Как правильно понять предложение «于大甲求王受年»?</h2>
-<p><strong>Пример из текста: «于大甲求王受年»</strong></p>
 
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">yú dà jiǎ qiú wáng shòu nián</div>
+<h2>Выберите правильное значение или объяснение</h2>
+
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+        <strong>于大甲求王受年</strong>
+        <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+        <strong>于祖乙求王受年</strong>
+        <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+        <strong>于小乙告肅其步</strong>
+        <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+        <strong>于父丁告肅其步</strong>
+        <span class="status" id="status-q4">?</span>
+    </div>
 </div>
 
-<p>Это гадательное предложение затрагивает ключевую грамматическую конструкцию Урока 8. Каково его правильное значение и структура?</p>
-
-<div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
 <p id="result"></p>
 
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">于大甲求王受年</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú dà jiǎ qiú wáng shòu nián</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="Правитель просил урожай у великого предка Да Цзя">Правитель просил урожай у великого предка Да Цзя</label>
+            <label><input type="radio" name="q1" value="Правитель просил великого предка о том, чтобы он получил урожай">Правитель просил великого предка о том, чтобы он получил урожай</label>
+            <label><input type="radio" name="q1" value="Великий предок Да Цзя дал урожай правителю">Великий предок Да Цзя дал урожай правителю</label>
+            <label><input type="radio" name="q1" value="Правитель приказал великому предку принести урожай">Правитель приказал великому предку принести урожай</label>
+        </div>
+        <button onclick="closeModal('q1')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">于祖乙求王受年</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú zǔ yǐ qiú wáng shòu nián</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="Просить урожай у предка И">Просить урожай у предка И</label>
+            <label><input type="radio" name="q2" value="Просить у предка И, чтобы правитель получил урожай">Просить у предка И, чтобы правитель получил урожай</label>
+            <label><input type="radio" name="q2" value="Предок И получил урожай">Предок И получил урожай</label>
+            <label><input type="radio" name="q2" value="Правитель приказал предку И дать урожай">Правитель приказал предку И дать урожай</label>
+        </div>
+        <button onclick="closeModal('q2')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">于小乙告肅其步</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú xiǎo yǐ gào sù qí bù</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="Сообщить Малому И, что Су идет">Сообщить Малому И, что Су идет</label>
+            <label><input type="radio" name="q3" value="Су сообщил Малому И, что он идет">Су сообщил Малому И, что он идет</label>
+            <label><input type="radio" name="q3" value="Малый И сообщил Су, что он идет">Малый И сообщил Су, что он идет</label>
+            <label><input type="radio" name="q3" value="Сообщить Су, что Малый И идет">Сообщить Су, что Малый И идет</label>
+        </div>
+        <button onclick="closeModal('q3')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">于父丁告肅其步</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú fù dīng gào sù qí bù</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="Сообщить отцу Дину, что Су идет">Сообщить отцу Дину, что Су идет</label>
+            <label><input type="radio" name="q4" value="Су сообщил отцу Дину, что он идет">Су сообщил отцу Дину, что он идет</label>
+            <label><input type="radio" name="q4" value="Отец Дин сообщил Су, что он идет">Отец Дин сообщил Су, что он идет</label>
+            <label><input type="radio" name="q4" value="Сообщить Су, что отец Дин идет">Сообщить Су, что отец Дин идет</label>
+        </div>
+        <button onclick="closeModal('q4')">OK</button>
+    </div>
+</div>
+
 <script>
-  const options = [
-    { 
-      text: "«Правитель просил великого предка о том, чтобы он получил урожай» — верно: это включенное предложение, где «王受年» является прямым дополнением к глаголу «求»", 
-      correct: true 
-    },
-    { 
-      text: "«Правитель просил урожай у великого предка Да Цзя» — неверно: если бы прямым дополнением было «年», оно стояло бы сразу после «求» без сказуемого; здесь же дополнение — целое предложение", 
-      correct: false 
-    },
-    { 
-      text: "«Урожай был дан великому предку Да Цзя» — неверно: порядок слов и глагол «求» (просить) указывают на другую структуру", 
-      correct: false 
-    },
-    { 
-      text: "«Правитель приказал великому предку принести урожай» — неверно: «求» означает «просить», а не «приказывать» (для этого используется «令»)", 
-      correct: false 
-    }
-  ];
+    const correctAnswers = {
+        q1: "Правитель просил великого предка о том, чтобы он получил урожай",
+        q2: "Просить у предка И, чтобы правитель получил урожай",
+        q3: "Сообщить Малому И, что Су идет",
+        q4: "Сообщить отцу Дину, что Су идет"
+    };
 
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
 
-  function renderOptions() {
-    const shuffled = shuffle(options);
-    const container = document.getElementById("answers");
-    if (!container) {
-      console.error("Контейнер #answers не найден");
-      return;
-    }
-    container.innerHTML = "";
-
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct.toString();
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
+    function openModal(id) {
+        document.getElementById(`modal-${id}`).style.display = "flex";
     }
 
-    if (selected.dataset.correct === "true") {
-      resultEl.innerHTML = `
-        ✅ <strong>Правильно!</strong><br>
-        Это типичное предложение Урока 8, демонстрирующее <strong>включенное предложение</strong>:<br>
-        • <strong>求 qiú</strong> — «просить»<br>
-        • <strong>王受年 wáng shòu nián</strong> — «чтобы правитель получил урожай»<br><br>
-        Весь блок <strong>王受年</strong> выступает в роли прямого дополнения к глаголу <strong>求</strong>.<br>
-        Полный перевод: «Правитель просил великого предка о том, чтобы он получил урожай».
-      `;
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно. Обратите внимание: «求» требует дополнения, и здесь им является целое предложение «王受年», а не просто «年».";
-      sendResult(false);
+    function closeModal(id) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (selected) {
+            userAnswers[id] = selected.value;
+            document.getElementById(`status-${id}`).textContent = "✓";
+            document.getElementById(`status-${id}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
     }
-  }
 
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
+    function checkAll() {
+        const resultEl = document.getElementById("result");
+        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
 
-  window.onload = renderOptions;
+        if (!allAnswered) {
+            resultEl.textContent = "Ответьте на все.";
+            return;
+        }
+
+        let correctCount = 0;
+        for (const id in correctAnswers) {
+            if (userAnswers[id] === correctAnswers[id]) correctCount++;
+        }
+
+        if (correctCount === 4) {
+            resultEl.innerHTML = `
+                ✅ <strong>Все верно!</strong><br>
+                Вы отлично усвоили Урок 8:<br>
+                • <strong>Включенное предложение</strong>:<br>
+                &nbsp;&nbsp;Когда после глагола <em>求</em> или <em>告</em><br>
+                &nbsp;&nbsp;идет целое предложение — оно является дополнением.<br>
+                • <em>王受年</em> — «чтобы правитель получил урожай»<br>
+                • <em>肅其步</em> — «что Су идет»<br>
+                • <em>于</em> — «у, перед» (вводит адресата просьбы/сообщения)
+            `;
+            sendResult(true);
+        } else {
+            const wrong = 4 - correctCount;
+            resultEl.textContent = `❌ ${wrong} ошибки.`;
+            sendResult(false, `Ошибки: ${wrong}/4`);
+        }
+    }
+
+    function sendResult(success, message) {
+        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Уведомление, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 </body>
 </html>
-
-<!-- Уведомление, что задание существует -->
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

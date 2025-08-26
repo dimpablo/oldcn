@@ -7,8 +7,8 @@
     <title>Задание: Урок 9 — Эмфатические конструкции</title>
 </head>
 <body>
-  <h2>Какой из вариантов является правильным переводом фразы?</h2>
-  <p><strong>Пример: «貞王唯從洗震»</strong></p>
+  <h2>Что означает конструкция «貞王唯從洗震»?</h2>
+  <p><strong>Обратите внимание на частицу «唯» — она придаёт вопросу эмфазу, выделяя подлежащее.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
     <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
@@ -61,13 +61,16 @@
       if (selected.dataset.correct === "true") {
         resultEl.innerHTML = `
           ✅ <strong>Правильно!</strong><br>
-          Частица <strong>唯 (wéi)</strong> придаёт вопросу <strong>эмфазу</strong>:<br>
-          Это не просто вопрос «Пойдёт ли правитель?», а <em>«Именно ли правитель пойдёт?»</em>,<br>
-          что подчёркивает важность субъекта действия.
+          Это пример <strong>эмфатической конструкции</strong> с частицей <strong>唯 (wéi)</strong>:<br>
+          • <strong>貞 zhēn</strong> — «спрашивают»<br>
+          • <strong>王 wáng</strong> — «правитель»<br>
+          • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность<br>
+          • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br>
+          Вся конструкция означает: <em>«Именно ли правитель пойдёт походом?»</em> — с акцентом на субъекте.
         `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу в вопросе.";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу, а не простое отрицание.";
         sendResult(false);
       }
     }

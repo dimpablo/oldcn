@@ -4,173 +4,191 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Урок 10 — Сложные и условные предложения</title>
+    <title>Собери перевод: Урок 10</title>
 </head>
 <body>
 
-<h2>Выберите правильное значение или объяснение</h2>
+<h2>Собери перевод: Урок 10</h2>
 
-<div class="grid">
-    <div class="cell" onclick="openModal('q1')">
-        <strong>王占曰不嘉，其嘉，不吉</strong>
-        <span class="status" id="status-q1">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q2')">
-        <strong>若茲乃死</strong>
-        <span class="status" id="status-q2">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q3')">
-        <strong>有祟其有來艱</strong>
-        <span class="status" id="status-q3">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q4')">
-        <strong>乃茲亦有祟</strong>
-        <span class="status" id="status-q4">?</span>
+<div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Задания построены на ключевой теме Урока 10: <strong>сложные и условные предложения</strong>.</p>
+    <p>💡 <em>Обратите внимание: вторая часть предложения часто уточняет следствие или условие!</em></p>
+</div>
+
+<div class="task-container">
+    <div class="task-title">1. 王占曰不嘉，其嘉，不吉</div>
+    <div class="oracle-text">王占曰不嘉，其嘉，不吉</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>占曰</strong> вводит прямую речь. <strong>其嘉</strong> — условное следствие: «если благоприятно»</p>
     </div>
 </div>
 
-<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<div class="task-container">
+    <div class="task-title">2. 若茲乃死</div>
+    <div class="oracle-text">若茲乃死</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>若</strong> = «если», <strong>乃</strong> = «тогда, и тогда» — указывает на следствие</p>
+    </div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
 <p id="result"></p>
 
-<!-- Модальные окна -->
-<div id="modal-q1" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">王占曰不嘉，其嘉，不吉</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q1" value="Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»">Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»</label>
-            <label><input type="radio" name="q1" value="Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»">Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»</label>
-            <label><input type="radio" name="q1" value="Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»">Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»</label>
-            <label><input type="radio" name="q1" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
-        </div>
-        <button onclick="closeModal('q1')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q2" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">若茲乃死</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">ruò zī, nǎi sǐ</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q2" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
-            <label><input type="radio" name="q2" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
-            <label><input type="radio" name="q2" value="Не благоприятно, но если благоприятно — к счастью">Не благоприятно, но если благоприятно — к счастью</label>
-            <label><input type="radio" name="q2" value="Правитель прочитал ответ: «К несчастью»">Правитель прочитал ответ: «К несчастью»</label>
-        </div>
-        <button onclick="closeModal('q2')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q3" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">有祟其有來艱</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">yǒu suì qí yǒu lái jiān</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q3" value="Есть вред, и если есть — придут трудности">Есть вред, и если есть — придут трудности</label>
-            <label><input type="radio" name="q3" value="Есть вред, и придут трудности">Есть вред, и придут трудности</label>
-            <label><input type="radio" name="q3" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
-            <label><input type="radio" name="q3" value="Нет вреда, и трудности не придут">Нет вреда, и трудности не придут</label>
-        </div>
-        <button onclick="closeModal('q3')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q4" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">乃茲亦有祟</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">nǎi zī yì yǒu suì</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q4" value="И в этом месте тоже есть вред">И в этом месте тоже есть вред</label>
-            <label><input type="radio" name="q4" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
-            <label><input type="radio" name="q4" value="Правитель прочитал ответ: «Не благоприятно»">Правитель прочитал ответ: «Не благоприятно»</label>
-            <label><input type="radio" name="q4" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
-        </div>
-        <button onclick="closeModal('q4')">OK</button>
-    </div>
-</div>
-
 <script>
-    const correctAnswers = {
-        q1: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»",
-        q2: "Если будет так, то она умрёт",
-        q3: "Есть вред, и придут трудности",
-        q4: "И в этом месте тоже есть вред"
-    };
+// Ожидаемые правильные варианты
+const expected1 = [
+    ['Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»'],
+    ['Правитель сказал: «Не благоприятно. Если благоприятно — к несчастью»'],
+    ['Правитель прочел: «Не благоприятно. А если и благоприятно, то к несчастью»']
+];
 
-    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+const expected2 = [
+    ['Если будет так, то она умрёт'],
+    ['Если будет так, тогда она умрёт'],
+    ['Если так, то она умрёт']
+];
 
-    function openModal(id) {
-        document.getElementById(`modal-${id}`).style.display = "flex";
+// Слова для выбора (с лишними)
+const words1 = ['Правитель', 'прочитал', 'ответ', 'Не', 'благоприятно', 'А', 'если', 'и', 'благоприятно', 'то', 'к', 'несчастью', 'урожай', 'дождь', 'и', 'солнце', 'они', 'молились', 'в', 'храм'];
+const words2 = ['Если', 'будет', 'так', 'то', 'она', 'умрёт', 'мы', 'пришли', 'на праздник', 'царь', 'отправил', 'вестника', 'вчера', 'приказал', 'охотиться', 'в', 'горах'];
+
+// DOM-элементы
+const wordPool1 = document.getElementById('word-pool1');
+const wordPool2 = document.getElementById('word-pool2');
+const dropArea1 = document.getElementById('drop-area1');
+const dropArea2 = document.getElementById('drop-area2');
+const checkBtn = document.getElementById('check-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultEl = document.getElementById('result');
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
+}
 
-    function closeModal(id) {
-        const selected = document.querySelector(`input[name="${id}"]:checked`);
-        if (selected) {
-            userAnswers[id] = selected.value;
-            document.getElementById(`status-${id}`).textContent = "✓";
-            document.getElementById(`status-${id}`).style.color = "green";
+function createWordElements(words, pool, dropArea) {
+    const shuffledWords = shuffleArray(words);
+    return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+            box.remove();
+            dropArea.appendChild(box);
+            updatePlaceholder(dropArea);
+        };
+
+        return box;
+    });
+}
+
+function updatePlaceholder(dropArea) {
+    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+    dropArea.classList.toggle('has-words', hasWords);
+}
+
+let wordElements1 = [];
+let wordElements2 = [];
+
+function init() {
+    // Очистка
+    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
+    resultEl.style.display = 'none';
+
+    // Создание элементов
+    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+
+    // Добавление в пулы
+    wordElements1.forEach(el => wordPool1.appendChild(el));
+    wordElements2.forEach(el => wordPool2.appendChild(el));
+
+    // Обновление плейсхолдеров
+    [dropArea1, dropArea2].forEach(updatePlaceholder);
+}
+
+// Возврат слов в пул при клике
+[dropArea1, dropArea2].forEach((area, i) => {
+    area.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word-box')) {
+            const box = e.target;
+            box.remove();
+            [wordPool1, wordPool2][i].appendChild(box);
+            updatePlaceholder(area);
         }
-        document.getElementById(`modal-${id}`).style.display = "none";
+    });
+});
+
+function getWords(dropArea) {
+    return Array.from(dropArea.children)
+        .filter(el => el.classList.contains('word-box'))
+        .map(el => el.textContent.trim());
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+checkBtn.addEventListener('click', () => {
+    const current1 = getWords(dropArea1);
+    const current2 = getWords(dropArea2);
+
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option.split(' ')));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option.split(' ')));
+
+    if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы усвоили ключевую тему Урока 10:<br>
+            • <strong>Сложные и условные предложения</strong>:<br>
+            &nbsp;&nbsp;Части связываются по смыслу, без союзов.<br>
+            • <em>其嘉，不吉</em> — условное следствие<br>
+            • <em>若茲乃死</em> — «если будет так, то умрёт»<br>
+            • <em>占曰</em> — ввод прямой речи после гадания
+        `;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+    } else {
+        let message = '❌ Проверьте структуру:';
+        if (!isCorrect1) message += '<br>• «其嘉，不吉» — это не отдельное утверждение, а условное следствие к «不嘉»';
+        if (!isCorrect2) message += '<br>• «乃» указывает на следствие: «тогда», «и тогда»';
+
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
     }
+});
 
-    function checkAll() {
-        const resultEl = document.getElementById("result");
-        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+resetBtn.addEventListener('click', init);
 
-        if (!allAnswered) {
-            resultEl.textContent = "Ответьте на все.";
-            return;
-        }
+function sendResult(success, message) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
+    }, "*");
+}
 
-        let correctCount = 0;
-        for (const id in correctAnswers) {
-            if (userAnswers[id] === correctAnswers[id]) correctCount++;
-        }
-
-        if (correctCount === 4) {
-            resultEl.innerHTML = `
-                ✅ <strong>Все верно!</strong><br>
-                Вы отлично усвоили Урок 10:<br>
-                • <strong>占曰</strong> — ввод прямой речи после гадания<br>
-                • <strong>其嘉，不吉</strong> — условное следствие<br>
-                • <strong>若茲乃死</strong> — «если будет так, то умрёт» (условие + следствие)<br>
-                • <strong>乃</strong> — указывает на следствие или продолжение действия<br>
-                • <strong>有祟</strong> — «есть вред» — ключевое выражение гадательного текста
-            `;
-            sendResult(true);
-        } else {
-            const wrong = 4 - correctCount;
-            resultEl.textContent = `❌ ${wrong} ошибки.`;
-            sendResult(false, `Ошибки: ${wrong}/4`);
-        }
-    }
-
-    function sendResult(success, message) {
-        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
-    }
-
-    // Уведомление, что задание существует
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 </body>
 </html>

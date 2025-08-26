@@ -7,11 +7,11 @@
     <title>Задание: Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
-  <h2>Что означает фраза «王占曰不嘉，若其嘉，不吉»?</h2>
+  <h2>Какой из вариантов точно передаёт смысл фразы «王占曰不嘉，其嘉，不吉»?</h2>
   <p><strong>Обратите внимание на структуру: это сложное высказывание с условным подчинением.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">wáng zhān yuē bù jiā, ruò qí jiā, bù jí</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
@@ -19,10 +19,10 @@
 
   <script>
     const options = [
-      { text: "Правитель сказал: «Урожай будет плохим, но если будет хорошим, то всё равно хорошо».", correct: false },
+      { text: "Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо».", correct: false },
       { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
       { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
-      { text: "Если сейчас всё хорошо, то она не умрёт.", correct: false }
+      { text: "Если всё хорошо сейчас, то она не умрёт.", correct: false }
     ];
 
     function shuffle(array) {
@@ -63,12 +63,12 @@
           ✅ <strong>Правильно!</strong><br>
           Это пример <strong>сложного условного предложения</strong>:<br>
           • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
-          • <strong>若其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
-          Конструкция <strong>若...，不吉</strong> выражает условие с негативным следствием — типична для гадательных текстов Урока 10.
+          • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Такие конструкции характерны для гадательных текстов Урока 10. Здесь <strong>其</strong> выступает как местопредикатив, заменяя предыдущее утверждение.
         `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление «不嘉» и «若其嘉，不吉».";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление благоприятного и неблагоприятного исхода.";
         sendResult(false);
       }
     }

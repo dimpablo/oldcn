@@ -4,36 +4,76 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Собери перевод: Урок 10</title>
+    <title>Контрастные альтернативы: Урок 10</title>
 </head>
 <body>
 
-<h2>Собери перевод: Урок 10</h2>
+<h2>Контрастные альтернативы: Сложные прогнозы</h2>
 
 <div class="instructions">
-    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
-    <p>Задания построены на ключевой теме Урока 10: <strong>сложные и условные предложения</strong>.</p>
-    <p>💡 <em>Обратите внимание: вторая часть предложения часто уточняет следствие или условие!</em></p>
-</div>
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Простое предсказание vs Контрастная альтернатива</strong></p>
+        <p>В архаическом древнекитайском языке для выражения сложных, условных или противопоставленных прогнозов используется специальная конструкция с частицей <strong>其 (qí)</strong>. Это ключевая тема Урока 10.</p>
 
-<div class="task-container">
-    <div class="task-title">1. 王占曰不嘉，其嘉，不吉</div>
-    <div class="oracle-text">王占曰不嘉，其嘉，不吉</div>
-    <div id="word-pool1" class="word-pool"></div>
-    <div id="drop-area1" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 <strong>占曰</strong> вводит прямую речь. <strong>其嘉</strong> — условное следствие: «если благоприятно»</p>
+        <p>🟢 <strong>Простое предсказание</strong> — выражает прямое утверждение или прогноз:</p>
+        <ul>
+            <li>有祟 yǒu suì — «есть знамение»</li>
+            <li>亡禍 wáng huò — «нет беды»</li>
+            <li>Не содержит условий, альтернатив или сомнений.</li>
+        </ul>
+
+        <p>🔴 <strong>Контрастная альтернатива</strong> — выражает альтернативные, условные или противопоставленные прогнозы с помощью частицы <strong>其 (qí)</strong>:</p>
+        <ul>
+            <li>其有來艱，其亡來艱 qí yǒu lái jiān, qí wáng lái jiān — «[Если] придут беды, [если] не придут беды»</li>
+            <li>不嘉，其嘉，不吉 bù jiā, qí jiā, bù jí — «Не осуществится. [А если и] осуществится, то к несчастью»</li>
+            <li>Частица <strong>其</strong> вводит гипотетическую или условную ситуацию.</li>
+            <li>Часто используется для противопоставления неблагоприятного и благоприятного исхода.</li>
+            <li>На русский язык переводится как «если», «а если», «то... то».</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "旬亡禍" → 🟢 (простое утверждение)<br>
+        "其有來艱，其亡來艱" → 🔴 (альтернативные прогнозы)</p>
+
+        <p><strong>Важно!</strong><br>
+        Конструкция с <strong>其</strong> используется:
+        <ol>
+            <li>Для выражения <strong>условности</strong> и <strong>альтернативы</strong> в предсказаниях.</li>
+            <li>С частицей <strong>其 (qí)</strong>, которая вводит гипотетическую ситуацию.</li>
+            <li>Чтобы показать <strong>зависимость</strong> одного исхода от другого («если... то»).</li>
+            <li>В ответах правителя (<strong>王占曰</strong>) для описания возможных сценариев.</li>
+        </ol>
+        Это ключевая грамматическая структура Урока 10.</p>
     </div>
 </div>
 
-<div class="task-container">
-    <div class="task-title">2. 若茲乃死</div>
-    <div class="oracle-text">若茲乃死</div>
-    <div id="word-pool2" class="word-pool"></div>
-    <div id="drop-area2" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 <strong>若</strong> = «если», <strong>乃</strong> = «тогда, и тогда» — указывает на следствие</p>
-    </div>
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
 </div>
 
 <div class="controls">
@@ -44,31 +84,18 @@
 <p id="result"></p>
 
 <script>
-// Ожидаемые правильные варианты
-const expected1 = [
-    ['Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»'],
-    ['Правитель сказал: «Не благоприятно. Если благоприятно — к несчастью»'],
-    ['Правитель прочел: «Не благоприятно. А если и благоприятно, то к несчастью»']
+const sentences = [
+    { text: "旬亡禍", type: "direct", explanation: "Простое предсказание: «За десятидневку не будет беды» — прямое утверждение" },
+    { text: "其有來艱，其亡來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды, [если] не придут беды» — частица 其 вводит гипотетические ситуации" },
+    { text: "有祟", type: "direct", explanation: "Простое предсказание: «Есть знамение» — прямое утверждение без условий" },
+    { text: "其有來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды» — введение гипотетического сценария с помощью 其" },
+    { text: "王占曰有祟", type: "direct", explanation: "Простое предсказание: «Правитель прочел ответ: есть знамение» — прямое утверждение" },
+    { text: "王占曰不嘉，其嘉，不吉", type: "chain", explanation: "Контрастная альтернатива: «Правитель прочел ответ: не осуществится. [А если и] осуществится, то к несчастью» — противопоставление исходов" },
+    { text: "允有來艱", type: "direct", explanation: "Простое предсказание: «Действительно были беды» — констатация факта" },
+    { text: "其有設，不吉，其唯甲有設，吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] будет знамение, к несчастью; [если] знамение будет в день цзя, к счастью» — условные прогнозы с противопоставлением" },
+    { text: "土方征于我東鄙", type: "direct", explanation: "Простое предсказание: «Племя Ту нападает на нашу восточную окраину» — прямое сообщение" },
+    { text: "其唯辛有設，亦不吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] знамение будет в день синь, [то] также к несчастью» — гипотетический сценарий" }
 ];
-
-const expected2 = [
-    ['Если будет так, то она умрёт'],
-    ['Если будет так, тогда она умрёт'],
-    ['Если так, то она умрёт']
-];
-
-// Слова для выбора (с лишними)
-const words1 = ['Правитель', 'прочитал', 'ответ', 'Не', 'благоприятно', 'А', 'если', 'и', 'благоприятно', 'то', 'к', 'несчастью', 'урожай', 'дождь', 'и', 'солнце', 'они', 'молились', 'в', 'храм'];
-const words2 = ['Если', 'будет', 'так', 'то', 'она', 'умрёт', 'мы', 'пришли', 'на праздник', 'царь', 'отправил', 'вестника', 'вчера', 'приказал', 'охотиться', 'в', 'горах'];
-
-// DOM-элементы
-const wordPool1 = document.getElementById('word-pool1');
-const wordPool2 = document.getElementById('word-pool2');
-const dropArea1 = document.getElementById('drop-area1');
-const dropArea2 = document.getElementById('drop-area2');
-const checkBtn = document.getElementById('check-btn');
-const resetBtn = document.getElementById('reset-btn');
-const resultEl = document.getElementById('result');
 
 function shuffleArray(array) {
     const arr = [...array];
@@ -79,116 +106,108 @@ function shuffleArray(array) {
     return arr;
 }
 
-function createWordElements(words, pool, dropArea) {
-    const shuffledWords = shuffleArray(words);
-    return shuffledWords.map(word => {
-        const box = document.createElement('div');
-        box.className = 'word-box';
-        box.textContent = word;
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
 
-        box.onclick = () => {
-            box.remove();
-            dropArea.appendChild(box);
-            updatePlaceholder(dropArea);
-        };
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">Простое</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">Альтернатива</span>
+        </div>
+    `;
 
-        return box;
-    });
+    return item;
 }
-
-function updatePlaceholder(dropArea) {
-    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
-    dropArea.classList.toggle('has-words', hasWords);
-}
-
-let wordElements1 = [];
-let wordElements2 = [];
 
 function init() {
-    // Очистка
-    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
-    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
-    resultEl.style.display = 'none';
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
 
-    // Создание элементов
-    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
-    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
 
-    // Добавление в пулы
-    wordElements1.forEach(el => wordPool1.appendChild(el));
-    wordElements2.forEach(el => wordPool2.appendChild(el));
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
 
-    // Обновление плейсхолдеров
-    [dropArea1, dropArea2].forEach(updatePlaceholder);
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
 }
 
-// Возврат слов в пул при клике
-[dropArea1, dropArea2].forEach((area, i) => {
-    area.addEventListener('click', (e) => {
-        if (e.target.classList.contains('word-box')) {
-            const box = e.target;
-            box.remove();
-            [wordPool1, wordPool2][i].appendChild(box);
-            updatePlaceholder(area);
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "chain") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
         }
     });
-});
 
-function getWords(dropArea) {
-    return Array.from(dropArea.children)
-        .filter(el => el.classList.contains('word-box'))
-        .map(el => el.textContent.trim());
-}
-
-function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    return a.every((val, i) => val === b[i]);
-}
-
-checkBtn.addEventListener('click', () => {
-    const current1 = getWords(dropArea1);
-    const current2 = getWords(dropArea2);
-
-    const isCorrect1 = expected1.some(option => arraysEqual(current1, option.split(' ')));
-    const isCorrect2 = expected2.some(option => arraysEqual(current2, option.split(' ')));
-
-    if (isCorrect1 && isCorrect2) {
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
         resultEl.innerHTML = `
-            ✅ <b>Отлично!</b> Вы усвоили ключевую тему Урока 10:<br>
-            • <strong>Сложные и условные предложения</strong>:<br>
-            &nbsp;&nbsp;Части связываются по смыслу, без союзов.<br>
-            • <em>其嘉，不吉</em> — условное следствие<br>
-            • <em>若茲乃死</em> — «если будет так, то умрёт»<br>
-            • <em>占曰</em> — ввод прямой речи после гадания
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи контрастных альтернатив.<br>
+            <small>Вы усвоили: частица 其 — ключевой маркер условных и противопоставленных прогнозов.</small>
         `;
-        resultEl.className = 'message success';
-        resultEl.style.display = 'block';
+        resultEl.className = 'success';
         sendResult(true);
     } else {
-        let message = '❌ Проверьте структуру:';
-        if (!isCorrect1) message += '<br>• «其嘉，不吉» — это не отдельное утверждение, а условное следствие к «不嘉»';
-        if (!isCorrect2) message += '<br>• «乃» указывает на следствие: «тогда», «и тогда»';
-
-        resultEl.innerHTML = message;
-        resultEl.className = 'message error';
-        resultEl.style.display = 'block';
-        sendResult(false, message);
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
     }
-});
+    resultEl.style.display = 'block';
+}
 
-resetBtn.addEventListener('click', init);
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
 
-function sendResult(success, message) {
+function sendResult(success) {
     window.parent.postMessage({
         type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Верно" : "Ошибка")
+        success: success,
+        message: success ? "Верно" : "Ошибка"
     }, "*");
 }
 
 // Инициализация
 window.onload = init;
 window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
 </script>
 </body>
 </html>

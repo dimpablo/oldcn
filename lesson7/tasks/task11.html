@@ -4,80 +4,110 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Задание: Урок 7 — Военные походы и приказы</title>
+    <title>Урок 7: Военные походы и приказы</title>
 </head>
 <body>
-  <h2>Какой предлог означает «к моменту...» или «когда наступит…»?</h2>
-  <p><strong>Пример: «及茲二月有大雨»</strong></p>
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">jí zī èr yuè yǒu dà yǔ</div>
-  </div>
-  <div id="answers"></div>
-  <button onclick="check('answers', 'result', options)">Проверить</button>
-  <p id="result"></p>
+<h2>Как правильно понять предложение «王令婦好從侯高伐夷»?</h2>
+<p><strong>Пример из текста: «王令婦好從侯高伐夷»</strong></p>
 
-  <script>
-    const options = [
-      { text: "及 (jí) — к моменту, когда наступит", correct: true },
-      { text: "于 (yú) — в (месте или времени)", correct: false },
-      { text: "自 (zì) — от, начиная с", correct: false },
-      { text: "至 (zhì) — достигать", correct: false }
-    ];
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">wáng lìng fù hǎo cóng hóu gāo fá yí</div>
+</div>
 
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+<p>Это гадательное предложение затрагивает ключевые грамматические конструкции Урока 7. Каково его правильное значение и структура?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И» — верно: это цепочка сказуемых 令 → 從 → 伐, где «從» указывает на подчинённое участие", 
+      correct: true 
+    },
+    { 
+      text: "«Правитель приказал невестке Хао возглавить поход против племени Ту» — неверно: в предложении нет указания на самостоятельное командование, а «土方» — это «племя Ту», а не «夷»", 
+      correct: false 
+    },
+    { 
+      text: "«Правитель не приказал невестке Хао участвовать в походе» — неверно: предложение утвердительное, «令» означает «приказал»", 
+      correct: false 
+    },
+    { 
+      text: "«Хоу Гао повелел невестке Хао собрать войско» — неверно: субъект действия — «王», а не «侯高»", 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
     }
 
-    function renderOptions() {
-      const shuffled = shuffle(options);
-      const container = document.getElementById("answers");
-      container.innerHTML = "";
-      shuffled.forEach((opt, index) => {
-        const label = document.createElement("label");
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "q";
-        input.value = opt.correct ? "1" : "0_" + index;
-        input.dataset.correct = opt.correct.toString();
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(opt.text));
-        container.appendChild(label);
-      });
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это типичное предложение Урока 7, демонстрирующее <strong>цепочку сказуемых</strong>:<br>
+        • <strong>令 lìng</strong> — «приказать»<br>
+        • <strong>從 cóng</strong> — «следовать за» (указывает на подчинённое участие)<br>
+        • <strong>伐 fá</strong> — «поход против»<br><br>
+        Полный перевод: «Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И».
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Обратите внимание: субъект — «王», а не «侯高»; «從» означает «следовать за», а не «возглавить».";
+      sendResult(false);
     }
+  }
 
-    function check(containerId, resultId, optionsArray) {
-      const selected = document.querySelector('input[name="q"]:checked');
-      const resultEl = document.getElementById(resultId);
-      if (!selected) {
-        resultEl.textContent = "Выберите вариант.";
-        return;
-      }
-      if (selected.dataset.correct === "true") {
-        resultEl.innerHTML = `
-          ✅ <strong>Правильно!</strong><br>
-          <strong>及 jí</strong> — это предлог, означающий «к моменту...»<br>
-          В сочетании с <strong>有</strong> он указывает на ожидаемое состояние:<br>
-          <em>Ко второму месяцу будет сильный дождь</em>.
-        `;
-        sendResult(true);
-      } else {
-        resultEl.textContent = "❌ Неверно. Подумайте о значении 及 в контексте времени.";
-        sendResult(false);
-      }
-    }
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
 
-    function sendResult(success) {
-      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-    }
-
-    window.onload = renderOptions;
-  </script>
+  window.onload = renderOptions;
+</script>
 </body>
 </html>
+
+<!-- Уведомление, что задание существует -->
 <script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>

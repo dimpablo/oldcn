@@ -7,8 +7,8 @@
     <title>Задание: Урок 8 — Включенные предложения</title>
 </head>
 <body>
-  <h2>Какой из вариантов является правильным переводом фразы?</h2>
-  <p><strong>Пример: «于大甲求王受年»</strong></p>
+  <h2>Что означает конструкция «于大甲求王受年»?</h2>
+  <p><strong>Обратите внимание на структуру включенного предложения: 王受年 — дополнение к глаголу «求».</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
     <div class="pinyin-text">yú dà jiǎ qiú wáng shòu nián</div>
@@ -62,7 +62,9 @@
         resultEl.innerHTML = `
           ✅ <strong>Правильно!</strong><br>
           Это пример <strong>включенного предложения</strong>:<br>
-          <em>王受年</em> (Правитель получит урожай) — это прямое дополнение к глаголу <em>求</em> (просить).
+          • <strong>求 qiú</strong> — «просить»<br>
+          • <strong>王受年 wáng shòu nián</strong> — «чтобы правитель получил урожай»<br>
+          Весь блок <strong>王受年</strong> является прямым дополнением к глаголу <strong>求</strong>.
         `;
         sendResult(true);
       } else {

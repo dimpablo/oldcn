@@ -4,206 +4,188 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Одиночное vs Цепочка: Урок 7</title>
+    <title>Сопоставьте: Урок 7</title>
 </head>
 <body>
-
-<h2>Одиночное vs Цепочка: Сказуемые в действии</h2>
-
-<div class="instructions">
-    <div class="instructions-header" onclick="toggleInstructions()">
-        <strong>📌 Инструкция (нажми для развертывания)</strong>
-        <span class="arrow">▼</span>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
     </div>
-    <div class="instructions-content" style="display:none">
-        <p><strong>Одиночное сказуемое vs Цепочка сказуемых</strong></p>
-        <p>В архаическом древнекитайском языке сказуемое может быть не только одиночным, но и образовывать <strong>цепочку</strong>, что особенно характерно для военных приказов и миссий.</p>
-
-        <p>🟢 <strong>Одиночное сказуемое</strong> — одно действие:</p>
-        <ul>
-            <li>王令婦好 wáng lìng fù hǎo — «Правитель приказал невестке Хао»</li>
-            <li>Завершает смысл, не требует продолжения</li>
-        </ul>
-
-        <p>🔴 <strong>Цепочка сказуемых</strong> — последовательность действий:</p>
-        <ul>
-            <li>王令婦好從侯高伐夷 wáng lìng fù hǎo cóng hóu gāo fá yí — «Правитель приказал невестке Хао следовать за хоу Гао в походе против племени И»</li>
-            <li>Цепочка: 令 → 從 → 伐 (приказать → следовать → поход)</li>
-            <li>Второе и последующие сказуемые не требуют нового подлежащего — оно подразумевается</li>
-        </ul>
-
-        <p><em>Примеры:</em><br>
-        "登人五千" → 🟢 (одиночное: собрать пять тысяч человек)<br>
-        "令羽眔雞以尹從洗震" → 🔴 (цепочка: приказать Юй и Цзи с尹ом следовать за Чжэнем)</p>
-
-        <p><strong>Важно!</strong><br>
-        Эта дихотомия используется, когда:
-        <ol>
-            <li>Речь о <strong>приказах</strong>, <strong>походах</strong> или <strong>миссиях</strong></li>
-            <li>Первое действие (часто 令 или 呼) <strong>порождает</strong> второе</li>
-            <li>Нет модальных глаголов — вместо «хочу сделать» используется цепочка действий</li>
-        </ol>
-        Это ключевая грамматическая структура Урока 7.</p>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
     </div>
-</div>
+  </div>
 
-<script>
-function toggleInstructions() {
-    const content = document.querySelector('.instructions-content');
-    const header = document.querySelector('.instructions-header');
-    const arrow = header.querySelector('.arrow');
-    const isHidden = content.style.display === 'none';
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
 
-    content.style.display = isHidden ? 'block' : 'none';
-    arrow.textContent = isHidden ? '▲' : '▼';
+  <script>
+// Словарь Урока 7 — значения из dict_human.txt
 
-    // Уведомление родителя о новой высоте
-    setTimeout(() => {
-        window.parent.postMessage({
-            type: "UPDATE_HEIGHT",
-            height: document.body.scrollHeight
-        }, "*");
-    }, 100);
-}
-</script>
-
-<div class="columns">
-    <div id="column1" class="column"></div>
-    <div id="column2" class="column"></div>
-</div>
-
-<div class="controls">
-    <button id="check-btn">Проверить</button>
-    <button id="reset-btn">Сбросить</button>
-</div>
-
-<p id="result"></p>
-
-<script>
-const sentences = [
-    { text: "王令婦好", type: "direct", explanation: "Одиночное сказуемое: «Правитель приказал невестке Хао» — действие завершено" },
-    { text: "王令婦好從侯高伐夷", type: "chain", explanation: "Цепочка сказуемых: 令 → 從 → 伐 — приказать, следовать, поход" },
-    { text: "登人五千", type: "direct", explanation: "Одиночное: «Собрать пять тысяч человек» — нет продолжения действия" },
-    { text: "令羽眔雞以尹從洗震", type: "chain", explanation: "Цепочка: «Приказать Юй и Цзи с尹ом следовать за Чжэнем из племени Си»" },
-    { text: "王勿從洗震", type: "direct", explanation: "Одиночное сказуемое: «Правителю не следует следовать за Чжэнем» — отрицание одного действия" },
-    { text: "呼伐工方", type: "chain", explanation: "Цепочка: «Отдать приказ — поход против племени Гун» — два сказуемых подряд" },
-    { text: "征土方", type: "direct", explanation: "Одиночное: «Поход против племени Ту» — одно действие" },
-    { text: "令畢以衆伐工方", type: "chain", explanation: "Цепочка: «Приказать Би с ополчением идти походом против племени Гун»" },
-    { text: "登婦妌三千", type: "direct", explanation: "Одиночное: «Собрать трёх тысяч под руководством невестки Цзин»" },
-    { text: "令婦好從侯高", type: "chain", explanation: "Цепочка: «Приказать невестке Хао следовать за хоу Гао» — два действия" }
+// Первая пятерка
+const pairs1 = [
+  { char: "下", meaning: "нижний; снизу, под; опускаться" },
+  { char: "衆", meaning: "многочисленный, толпа; собств. Чжун" },
+  { char: "震", meaning: "собств. Чжэнь" },
+  { char: "危", meaning: "опасность; собств. Вэй" },
+  { char: "羽", meaning: "перья; собств. Юй" }
 ];
 
-function shuffleArray(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+// Вторая пятерка
+const pairs2 = [
+  { char: "周", meaning: "собств. Чжоу" },
+  { char: "令", meaning: "приказывать; допускать; начальник; прекрасный; собств. Лин" },
+  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
+  { char: "望", meaning: "смотреть издалека" },
+  { char: "婦", meaning: "невестка" }
+];
+
+// Третья пятерка
+const pairs3 = [
+  { char: "人", meaning: "человек" },
+  { char: "乘", meaning: "ехать на повозке; связка из четырех стрел; собств. Чэн" },
+  { char: "千", meaning: "тысяча" },
+  { char: "征", meaning: "карательный поход" },
+  { char: "高", meaning: "высокий" }
+];
+
+// Четвёртая пятерка
+const pairs4 = [
+  { char: "雞", meaning: "курица; собств. Цзи" },
+  { char: "三", meaning: "три" },
+  { char: "夷", meaning: "чужеземец" },
+  { char: "從", meaning: "следовать; служ. предлог из" },
+  { char: "呼", meaning: "приказывать, повелевать; кричать; рычать" }
+];
+
+// Пятая пятерка
+const pairs5 = [
+  { char: "畢", meaning: "конец, завершение" },
+  { char: "洗", meaning: "мыться; собств. Си" },
+  { char: "妌", meaning: "собств. Цзин" },
+  { char: "一", meaning: "один" },
+  { char: "尹", meaning: "название должности; собств. Инь" }
+];
+
+// Шестая пятерка
+const pairs6 = [
+  { char: "寇", meaning: "грабить, нападать" },
+  { char: "萬", meaning: "десять тысяч" },
+  { char: "倉", meaning: "собств. Цан (название племени)" },
+  { char: "登", meaning: "собирать; садиться (в повозку), входить (в дом)" },
+  { char: "夷", meaning: "чужеземец" }
+
+];
+pairs = pairs1;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
     }
-    return arr;
-}
 
-function createSentenceElement(sentence, index) {
-    const item = document.createElement('div');
-    item.className = 'sentence-item';
-    item.dataset.index = index;
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
 
-    item.innerHTML = `
-        <div class="oracle-text">${sentence.text}</div>
-        <div class="toggle-container">
-            <span class="toggle-text">Одиночное</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-            </label>
-            <span class="toggle-text">Цепочка</span>
-        </div>
-    `;
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
 
-    return item;
-}
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
 
-function init() {
-    const shuffled = shuffleArray([...sentences]);
-    const column1 = document.getElementById('column1');
-    const column2 = document.getElementById('column2');
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
 
-    column1.innerHTML = '';
-    column2.innerHTML = '';
-    document.getElementById('result').style.display = 'none';
+      el.classList.add("selected");
+      selectedWord = el;
+    }
 
-    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
 
-    shuffled.slice(0, 5).forEach((s, i) => {
-        const el = createSentenceElement(s, i);
-        column1.appendChild(el);
-    });
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
 
-    shuffled.slice(5).forEach((s, i) => {
-        const el = createSentenceElement(s, i + 5);
-        column2.appendChild(el);
-    });
-}
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
 
-function checkAnswers() {
-    const items = document.querySelectorAll('.sentence-item');
-    let allCorrect = true;
-
-    items.forEach(item => {
-        const index = item.dataset.index;
-        const input = item.querySelector('input');
-        const expectedType = sentences[index].type;
-        const isCorrect = (input.checked && expectedType === "chain") ||
-                          (!input.checked && expectedType === "direct");
-
-        item.classList.remove('correct', 'incorrect');
-        if (isCorrect) {
-            item.classList.add('correct');
-        } else {
-            item.classList.add('incorrect');
-            allCorrect = false;
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
         }
-    });
-
-    const resultEl = document.getElementById('result');
-    if (allCorrect) {
-        resultEl.innerHTML = `
-            ✅ <b>Отлично!</b> Вы правильно определили все случаи одиночных и цепочечных сказуемых.<br>
-            <small>Вы усвоили: цепочка сказуемых — ключевая структура военных приказов.</small>
-        `;
-        resultEl.className = 'success';
-        sendResult(true);
-    } else {
-        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
-        resultEl.className = 'error';
-        sendResult(false);
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
     }
-    resultEl.style.display = 'block';
-}
 
-function reset() {
-    document.querySelectorAll('.toggle-switch input').forEach(input => {
-        input.checked = false;
-    });
-    document.querySelectorAll('.sentence-item').forEach(item => {
-        item.classList.remove('correct', 'incorrect');
-    });
-    document.getElementById('result').style.display = 'none';
-}
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
 
-function sendResult(success) {
-    window.parent.postMessage({
+    function sendResult(success, message) {
+      window.parent.postMessage({
         type: "TASK_RESULT",
-        success: success,
-        message: success ? "Верно" : "Ошибка"
-    }, "*");
-}
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
 
-// Инициализация
-window.onload = init;
-window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
-
-document.getElementById('check-btn').addEventListener('click', checkAnswers);
-document.getElementById('reset-btn').addEventListener('click', reset);
-</script>
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
 </body>
-</html>

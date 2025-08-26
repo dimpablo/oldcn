@@ -7,11 +7,11 @@
     <title>Задание: Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
-  <h2>Что означает фраза «王占曰不嘉，若其嘉，不吉»?</h2>
-  <p><strong>Обратите внимание на структуру: это сложное высказывание с условным подчинением и местопредикативом.</strong></p>
+  <h2>Что означает фраза «王占曰不嘉，其嘉，不吉»?</h2>
+  <p><strong>Обратите внимание: это сложное предложение, где «其嘉，不吉» уточняет условное следствие к основному утверждению.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">wáng zhān yuē bù jiā, ruò qí jiā, bù jí</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
@@ -19,7 +19,7 @@
 
   <script>
     const options = [
-      { text: "Правитель сказал: «Урожай будет плохим, но если будет хорошим, то всё равно хорошо».", correct: false },
+      { text: "Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо».", correct: false },
       { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
       { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
       { text: "Если всё хорошо сейчас, то она не умрёт.", correct: false }
@@ -61,10 +61,10 @@
       if (selected.dataset.correct === "true") {
         resultEl.innerHTML = `
           ✅ <strong>Правильно!</strong><br>
-          Это пример <strong>сложного условного предложения</strong>:<br>
+          Это пример <strong>сложного предложения</strong>:<br>
           • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
-          • <strong>若其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
-          Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Это типичная конструкция Урока 10.
+          • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Такие конструкции характерны для гадательных текстов Урока 10.
         `;
         sendResult(true);
       } else {

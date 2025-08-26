@@ -4,175 +4,192 @@
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Урок 9 — Эмфатические конструкции</title>
+    <title>Собери перевод: Урок 9</title>
 </head>
 <body>
 
-<h2>Выберите правильное значение или объяснение</h2>
+<h2>Собери перевод: Урок 9</h2>
 
-<div class="grid">
-    <div class="cell" onclick="openModal('q1')">
-        <strong>貞王唯從洗震</strong>
-        <span class="status" id="status-q1">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q2')">
-        <strong>貞王勿從洗震</strong>
-        <span class="status" id="status-q2">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q3')">
-        <strong>我叀乙巳出</strong>
-        <span class="status" id="status-q3">?</span>
-    </div>
-    <div class="cell" onclick="openModal('q4')">
-        <strong>余唯鹿獲</strong>
-        <span class="status" id="status-q4">?</span>
+<div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Задания построены на ключевой теме Урока 9: <strong>эмфатические конструкции</strong>.</p>
+    <p>💡 <em>Обратите внимание: частица «唯» придаёт вопросу выразительность и выделяет субъект или объект!</em></p>
+</div>
+
+<div class="task-container">
+    <div class="task-title">1. 貞王唯從洗震</div>
+    <div class="oracle-text">貞王唯從洗震</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>唯</strong> — частица эмфазы: не просто «пойдёт ли», а <strong>«именно ли»</strong></p>
     </div>
 </div>
 
-<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<div class="task-container">
+    <div class="task-title">2. 余唯鹿獲</div>
+    <div class="oracle-text">余唯鹿獲</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>唯</strong> выделяет дополнение: вопрос не просто «поймаю ли оленя?», а <strong>«оленя ли я поймаю?»</strong></p>
+    </div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
 <p id="result"></p>
 
-<!-- Модальные окна -->
-<div id="modal-q1" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">貞王唯從洗震</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q1" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q1" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q1" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q1" value="Правитель повелел племени Си-Чжэнь выступить">Правитель повелел племени Си-Чжэнь выступить</label>
-        </div>
-        <button onclick="closeModal('q1')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q2" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">貞王勿從洗震</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">zhēn wáng wù cóng xǐ zhèn</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q2" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q2" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q2" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
-            <label><input type="radio" name="q2" value="Правитель не пойдёт походом на племя Си-Чжэнь">Правитель не пойдёт походом на племя Си-Чжэнь</label>
-        </div>
-        <button onclick="closeModal('q2')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q3" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">我叀乙巳出</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">wǒ huì yǐ sì chū</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q3" value="Я выйду в день И-сы">Я выйду в день И-сы</label>
-            <label><input type="radio" name="q3" value="Не выйду ли я в день И-сы">Не выйду ли я в день И-сы</label>
-            <label><input type="radio" name="q3" value="Именно ли я выйду в день И-сы">Именно ли я выйду в день И-сы</label>
-            <label><input type="radio" name="q3" value="Я не выйду в день И-сы">Я не выйду в день И-сы</label>
-        </div>
-        <button onclick="closeModal('q3')">OK</button>
-    </div>
-</div>
-
-<div id="modal-q4" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">余唯鹿獲</div>
-        <div class="pinyin-container">
-            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-                Показать пиньинь
-            </button>
-            <div class="pinyin-text">yú wéi lù huò</div>
-        </div>
-        <div class="options">
-            <label><input type="radio" name="q4" value="Я поймаю оленя">Я поймаю оленя</label>
-            <label><input type="radio" name="q4" value="Не поймаю ли я оленя">Не поймаю ли я оленя</label>
-            <label><input type="radio" name="q4" value="Оленя ли я поймаю">Оленя ли я поймаю</label>
-            <label><input type="radio" name="q4" value="Я не поймаю оленя">Я не поймаю оленя</label>
-        </div>
-        <button onclick="closeModal('q4')">OK</button>
-    </div>
-</div>
-
 <script>
-    const correctAnswers = {
-        q1: "Именно ли правитель пойдёт походом на племя Си-Чжэнь",
-        q2: "Не пойдёт ли правитель походом на племя Си-Чжэнь",
-        q3: "Именно ли я выйду в день И-сы",
-        q4: "Оленя ли я поймаю"
-    };
+// Ожидаемые правильные варианты
+const expected1 = [
+    ['Именно ли правитель пойдёт походом на племя Си-Чжэнь'],
+    ['Именно ли правитель пойдёт в поход на племя Си-Чжэнь'],
+    ['Именно ли правитель пойдёт на племя Си-Чжэнь походом']
+];
 
-    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+const expected2 = [
+    ['Оленя ли я поймаю'],
+    ['Оленя ли я поймаю?'],
+    ['Я поймаю именно оленя?'],
+    ['Именно оленя я поймаю?']
+];
 
-    function openModal(id) {
-        document.getElementById(`modal-${id}`).style.display = "flex";
+// Слова для выбора (с лишними)
+const words1 = ['Именно ли', 'Правитель', 'пойдёт', 'походом', 'на', 'племя', 'Си-Чжэнь', 'Не', 'ужели', 'прикажет', 'молится', 'дождь', 'они', 'охотятся', 'вчера', 'выступит'];
+const words2 = ['Оленя', 'ли', 'я', 'поймаю', 'Мне', 'удастся', 'поймать', 'зверя', 'Мы', 'возвращаемся', 'домой', 'сегодня', 'именно', 'зайца', 'ловить', 'нужно'];
+
+// DOM-элементы
+const wordPool1 = document.getElementById('word-pool1');
+const wordPool2 = document.getElementById('word-pool2');
+const dropArea1 = document.getElementById('drop-area1');
+const dropArea2 = document.getElementById('drop-area2');
+const checkBtn = document.getElementById('check-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultEl = document.getElementById('result');
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
+}
 
-    function closeModal(id) {
-        const selected = document.querySelector(`input[name="${id}"]:checked`);
-        if (selected) {
-            userAnswers[id] = selected.value;
-            document.getElementById(`status-${id}`).textContent = "✓";
-            document.getElementById(`status-${id}`).style.color = "green";
+function createWordElements(words, pool, dropArea) {
+    const shuffledWords = shuffleArray(words);
+    return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+            box.remove();
+            dropArea.appendChild(box);
+            updatePlaceholder(dropArea);
+        };
+
+        return box;
+    });
+}
+
+function updatePlaceholder(dropArea) {
+    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+    dropArea.classList.toggle('has-words', hasWords);
+}
+
+let wordElements1 = [];
+let wordElements2 = [];
+
+function init() {
+    // Очистка
+    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
+    resultEl.style.display = 'none';
+
+    // Создание элементов
+    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+
+    // Добавление в пулы
+    wordElements1.forEach(el => wordPool1.appendChild(el));
+    wordElements2.forEach(el => wordPool2.appendChild(el));
+
+    // Обновление плейсхолдеров
+    [dropArea1, dropArea2].forEach(updatePlaceholder);
+}
+
+// Возврат слов в пул при клике
+[dropArea1, dropArea2].forEach((area, i) => {
+    area.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word-box')) {
+            const box = e.target;
+            box.remove();
+            [wordPool1, wordPool2][i].appendChild(box);
+            updatePlaceholder(area);
         }
-        document.getElementById(`modal-${id}`).style.display = "none";
+    });
+});
+
+function getWords(dropArea) {
+    return Array.from(dropArea.children)
+        .filter(el => el.classList.contains('word-box'))
+        .map(el => el.textContent.trim());
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+checkBtn.addEventListener('click', () => {
+    const current1 = getWords(dropArea1);
+    const current2 = getWords(dropArea2);
+
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+
+    if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы усвоили ключевую тему Урока 9:<br>
+            • <strong>Эмфатическая конструкция</strong>:<br>
+            &nbsp;&nbsp;Частица <em>唯 (wéi)</em> придаёт вопросу выразительность,<br>
+            &nbsp;&nbsp;выделяя субъект или объект.<br>
+            • <em>王唯從...</em> — «Именно ли правитель пойдёт?»<br>
+            • <em>余唯鹿獲</em> — «Оленя ли я поймаю?» (инверсия дополнения)
+        `;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+    } else {
+        let message = '❌ Проверьте структуру:';
+        if (!isCorrect1) message += '<br>• Частица «唯» — это не отрицание, а <strong>эмфаза</strong>: «именно ли правитель?»';
+        if (!isCorrect2) message += '<br>• «Оленя ли я поймаю?» — пример <strong>инверсии дополнения</strong>: объект вынесён на первое место';
+
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
     }
+});
 
-    function checkAll() {
-        const resultEl = document.getElementById("result");
-        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+resetBtn.addEventListener('click', init);
 
-        if (!allAnswered) {
-            resultEl.textContent = "Ответьте на все.";
-            return;
-        }
+function sendResult(success, message) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
+    }, "*");
+}
 
-        let correctCount = 0;
-        for (const id in correctAnswers) {
-            if (userAnswers[id] === correctAnswers[id]) correctCount++;
-        }
-
-        if (correctCount === 4) {
-            resultEl.innerHTML = `
-                ✅ <strong>Все верно!</strong><br>
-                Вы отлично усвоили Урок 9:<br>
-                • <strong>Эмфатическая конструкция</strong>:<br>
-                &nbsp;&nbsp;Частица <em>唯 (wéi)</em> придаёт вопросу выразительность,<br>
-                &nbsp;&nbsp;выделяя субъект или объект.<br>
-                • <em>王唯從...</em> — «Именно ли правитель пойдёт?»<br>
-                • <em>我叀...</em> — «Именно ли я выйду?»<br>
-                • <em>余唯鹿獲</em> — «Оленя ли я поймаю?» (инверсия дополнения)<br>
-                • <em>勿</em> — отрицательный вопрос, <em>唯</em> — эмфатический.
-            `;
-            sendResult(true);
-        } else {
-            const wrong = 4 - correctCount;
-            resultEl.textContent = `❌ ${wrong} ошибки.`;
-            sendResult(false, `Ошибки: ${wrong}/4`);
-        }
-    }
-
-    function sendResult(success, message) {
-        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
-    }
-
-    // Уведомление, что задание существует
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </script>
 </body>
 </html>
