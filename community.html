@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сообщество — Курс древнекитайского</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
+      font-family: 'Segoe UI', Verdana, sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .tab.active {
+      background: #00838f;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #00838f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #006064;
+    }
+
+    .leaderboard {
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .leaderboard table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .leaderboard th, .leaderboard td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .leaderboard th {
+      color: #ffcc80;
+    }
+
+    .leaderboard tr:first-child td {
+      font-weight: bold;
+      color: gold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🌐 Сообщество учеников</h1>
+
+    <!-- Вкладки -->
+    <div class="tabs">
+      <div class="tab active" data-tab="users">Пользователи</div>
+      <div class="tab" data-tab="leaderboard">Лига лидеров</div>
+    </div>
+
+    <!-- Секция: Пользователи -->
+    <div id="users-section">
+      <div class="loading">Загрузка пользователей...</div>
+      <div class="grid" id="users-grid">
+        <!-- Карточки будут добавлены здесь -->
+      </div>
+    </div>
+
+    <!-- Секция: Лига -->
+    <div id="leaderboard-section" class="hidden">
+      <div class="loading">Загрузка рейтинга...</div>
+      <div class="leaderboard">
+        <h2>🏆 Лига лидеров</h2>
+        <table id="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Место</th>
+              <th>Имя</th>
+              <th>Баллы</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Данные будут добавлены здесь -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Импорт Firebase
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+    // Инициализация
+    const auth = getAuth();
+    const db = getFirestore();
+
+    // Элементы DOM
+    const tabs = document.querySelectorAll('.tab');
+    const usersSection = document.getElementById('users-section');
+    const leaderboardSection = document.getElementById('leaderboard-section');
+    const usersGrid = document.getElementById('users-grid');
+    const leaderboardTable = document.getElementById('leaderboard-table').querySelector('tbody');
+    const userLoading = usersSection.querySelector('.loading');
+    const leaderLoading = leaderboardSection.querySelector('.loading');
+
+    // Переключение вкладок
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        if (tab.dataset.tab === 'users') {
+          usersSection.classList.remove('hidden');
+          leaderboardSection.classList.add('hidden');
+        } else {
+          usersSection.classList.add('hidden');
+          leaderboardSection.classList.remove('hidden');
+        }
+      });
+    });
+
+    // Загрузка пользователей
+    function loadUsers() {
+      userLoading.style.display = 'block';
+      usersGrid.innerHTML = '';
+
+      const q = query(collection(db, 'users'));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        userLoading.style.display = 'none';
+        usersGrid.innerHTML = '';
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (!data.displayName) return;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
+            <h3>${data.displayName}</h3>
+            <p>Баллы: ${data.points || 0}</p>
+            <button class="btn" onclick="wink('${data.uid}', '${data.displayName}')">💬 Подмигнуть</button>
+          `;
+          usersGrid.appendChild(card);
+        });
+      }, (error) => {
+        console.error("Ошибка загрузки пользователей:", error);
+        userLoading.textContent = 'Ошибка загрузки';
+      });
+
+      return unsubscribe;
+    }
+
+    // Загрузка лиги
+    function loadLeaderboard() {
+      leaderLoading.style.display = 'block';
+      leaderboardTable.innerHTML = '';
+
+      const q = query(collection(db, 'users'));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        leaderLoading.style.display = 'none';
+        const users = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.displayName) {
+            users.push({ id: doc.id, ...data });
+          }
+        });
+
+        // Сортировка по баллам (по убыванию)
+        users.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+        leaderboardTable.innerHTML = '';
+        users.slice(0, 10).forEach((user, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${user.displayName}</td>
+            <td><strong>${user.points || 0}</strong></td>
+          `;
+          leaderboardTable.appendChild(row);
+        });
+      }, (error) => {
+        console.error("Ошибка загрузки лиги:", error);
+        leaderLoading.textContent = 'Ошибка загрузки';
+      });
+
+      return unsubscribe;
+    }
+
+    // Функция "подмигнуть"
+    window.wink = (uid, name) => {
+      alert(`Ты подмигнул(а) пользователю "${name}"! 💫\n(Скоро будет чат!)`);
+      // Здесь можно добавить отправку сообщения
+    };
+
+    // Проверка авторизации
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadUsers();
+        loadLeaderboard();
+      } else {
+        location.href = 'index.html'; // Если не авторизован — на главную
+      }
+    });
+  </script>
+</body>
+</html>
