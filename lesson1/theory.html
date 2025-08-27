@@ -853,5 +853,194 @@
     });
   });
 </script>
+<script>
+  // Мобильная адаптация: запускается после полной загрузки DOM и всех скриптов
+  document.addEventListener('DOMContentLoaded', function () {
+    // Запускаем с небольшой задержкой, чтобы дождаться завершения всех скриптов (например, createOracleTable)
+    setTimeout(function () {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (!isMobile) return; // Только для мобильных
+
+      console.log("Мобильное устройство обнаружено. Применяются адаптивные стили.");
+
+      // === 1. Основные стили для мобильного вида ===
+      const mobileStyles = document.createElement('style');
+      mobileStyles.id = 'mobile-styles';
+      mobileStyles.textContent = `
+        body {
+          margin: 10px auto;
+          padding: 10px;
+          font-size: 16px;
+          line-height: 1.6;
+        }
+
+        h1 {
+          font-size: 1.5em;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+
+        h2 {
+          font-size: 1.3em;
+          padding-bottom: 8px;
+          margin: 30px 0 15px;
+        }
+
+        h3 {
+          font-size: 1.1em;
+          margin-top: 20px;
+        }
+
+        .original {
+          padding: 12px 15px;
+          font-size: 1em;
+          border-left-width: 4px;
+        }
+
+        .footer {
+          font-size: 0.8em;
+          margin-top: 40px;
+          padding-top: 15px;
+        }
+
+        /* === Адаптация таблиц === */
+        .table-container,
+        .table-container table,
+        .cycle-table {
+          width: 100%;
+          font-size: 0.85em;
+          display: block;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .table-container table,
+        .cycle-table {
+          min-width: 600px; /* Минимальная ширина для удобства прокрутки */
+        }
+
+        th, td {
+          padding: 6px 4px;
+          white-space: nowrap;
+        }
+
+        .col-num, .line-num {
+          font-size: 0.75em;
+          padding: 3px 4px;
+        }
+
+        /* === Адаптация таблицы оракула === */
+        .oracle-table {
+          width: 100% !important;
+          margin: 15px auto;
+          table-layout: auto; /* Чтобы не ломалась на узких экранах */
+        }
+
+        .oracle-table td {
+          padding: 4px 2px;
+          font-size: 1.1em;
+        }
+
+        /* Подсказки — чуть меньше и аккуратнее */
+        .char-tooltip {
+          max-width: 220px;
+          font-size: 0.8em;
+          padding: 8px 10px;
+        }
+
+        /* Список иероглифов — одна колонка на мобильных */
+        .char-list {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .char-item {
+          font-size: 1.05em;
+          padding: 6px 10px;
+        }
+
+        /* Аудио — на всю ширину */
+        audio {
+          width: 100% !important;
+          height: 45px;
+        }
+
+        .footnote {
+          font-size: 0.9em;
+        }
+
+        /* Переключатель — чуть меньше */
+        .toggle-switch {
+          width: 50px;
+          height: 25px;
+        }
+
+        .toggle-switch .slider:before {
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+        }
+
+        input:checked + .slider:before {
+          transform: translateX(25px);
+        }
+
+        #toggleLabel {
+          font-size: 0.95em;
+        }
+      `;
+      document.head.appendChild(mobileStyles);
+
+      // === 2. Дополнительная обработка таблиц после их появления ===
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              // Если добавлена таблица — применяем мобильные стили
+              if (node.matches && (node.matches('.oracle-table') || node.querySelector('.oracle-table'))) {
+                const table = node.matches('.oracle-table') ? node : node.querySelector('.oracle-table');
+                table.style.tableLayout = 'auto';
+                table.style.width = '100%';
+              }
+            }
+          });
+        });
+      });
+
+      // Наблюдаем за изменениями в body
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // === 3. Обработка уже существующих таблиц ===
+      const tables = document.querySelectorAll('table');
+      tables.forEach(table => {
+        table.style.tableLayout = 'auto';
+        if (!table.closest('.table-container')) {
+          const container = document.createElement('div');
+          container.className = 'table-container';
+          container.style.overflowX = 'auto';
+          container.style.margin = '15px 0';
+          table.parentNode.insertBefore(container, table);
+          container.appendChild(table);
+        }
+      });
+
+      // === 4. Адаптация ширины страницы ===
+      const meta = document.querySelector('meta[name="viewport"]');
+      if (!meta) {
+        const metaTag = document.createElement('meta');
+        metaTag.name = 'viewport';
+        metaTag.content = 'width=device-width, initial-scale=1.0, user-scalable=yes';
+        document.head.appendChild(metaTag);
+      } else {
+        meta.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+      }
+
+      // === 5. Корректировка ширины контейнера ===
+      document.body.style.maxWidth = '100%';
+    }, 300); // Задержка 300мс — чтобы дождаться завершения всех скриптов
+  });
+</script>
 </body>
 </html>
