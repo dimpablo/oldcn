@@ -70,9 +70,9 @@ const SentenceData = {
     },
     {
       "number": 12,
-      "original": "貞zhong1不其來犬",
+      "original": "貞冓不其來犬",
       "transliteration": "zhēn zhōng bù qí lái quǎn",
-      "translation": "Вопрос: «Чжун не пришлет собак?»."
+      "translation": "Вопрос: «Гоу не пришлет собак?»."
     },
     {
       "number": 13,

@@ -277,7 +277,7 @@
                     <li>Нажмите на слово, чтобы добавить его в ответ</li>
                     <li>Нажмите на слово в ответе, чтобы вернуть его</li>
                     <li>Соберите правильный перевод</li>
-                    <li>Знаки препинания не важны</li>
+                    <li>Знаки препинания и пробелы игнорируются</li>
                 </ul>
             </div>
         </div>
@@ -310,28 +310,34 @@
     <script src="segmentation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Подготовка данных
-            const allOriginals = SentenceData.sentences.map(s => s.original);
-            const allTranslations = SentenceData.sentences.map(s => s.translation);
+            // Функция очистки китайского текста от пунктуации и пробелов
+            function cleanChinese(text) {
+                return text.replace(/[，,：:；;。.？?！!、\s]/g, '');
+            }
             
             // Функция очистки русского текста
             function cleanRussian(text) {
                 return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
             }
             
-            // Сбор всех слов
+            // Получаем оригиналы и переводы
+            const allOriginals = SentenceData.sentences.map(s => cleanChinese(s.original));
+            const allTranslations = SentenceData.sentences.map(s => s.translation);
+            
+            // Сбор всех чистых слов (русские)
             const allRussianWords = [];
             allTranslations.forEach(trans => {
                 const cleaned = cleanRussian(trans);
-                allRussianWords.push(...cleaned.split(' ').filter(word => word));
+                allRussianWords.push(...cleaned.split(' ').filter(word => word.trim()));
             });
             
+            // Сбор всех чистых иероглифов (китайские)
             const allChineseChars = [];
             allOriginals.forEach(orig => {
                 allChineseChars.push(...orig.split(''));
             });
             
-            // Перемешивание
+            // Перемешивание массива
             function shuffleArray(array) {
                 const arr = [...array];
                 for (let i = arr.length - 1; i > 0; i--) {
@@ -341,30 +347,55 @@
                 return arr;
             }
             
-            // Генерация заданий
+            // Генерация задания: китайский → русский
+            function generateTranslationTask(original, correctTranslation) {
+                const cleanedTranslation = cleanRussian(correctTranslation);
+                const correctWords = cleanedTranslation.split(' ').filter(word => word);
+                
+                // Лишние слова (из других переводов)
+                const numExtra = Math.max(3, Math.floor(correctWords.length * 0.4));
+                const extraWords = shuffleArray(allRussianWords)
+                    .filter(word => !correctWords.includes(word))
+                    .slice(0, numExtra);
+                
+                const words = shuffleArray([...correctWords, ...extraWords]);
+                
+                return {
+                    type: 'toTranslation',
+                    source: original,
+                    correctAnswer: cleanedTranslation,
+                    words: words,
+                    direction: 'с китайского на русский'
+                };
+            }
+            
+            // Генерация задания: русский → китайский
+            function generateOriginalTask(translation, correctOriginal) {
+                const correctChars = correctOriginal.split('');
+                
+                // Лишние иероглифы (из других предложений)
+                const numExtra = Math.max(2, Math.floor(correctChars.length * 0.25));
+                const extraChars = shuffleArray(allChineseChars)
+                    .filter(char => !correctChars.includes(char))
+                    .slice(0, numExtra);
+                
+                const chars = shuffleArray([...correctChars, ...extraChars]);
+                
+                return {
+                    type: 'toOriginal',
+                    source: translation,
+                    correctAnswer: correctOriginal,
+                    words: chars,
+                    direction: 'с русского на китайский'
+                };
+            }
+            
+            // Создание всех заданий
             let tasks = [];
             SentenceData.sentences.forEach(sentence => {
-                tasks.push({
-                    type: 'toTranslation',
-                    source: sentence.original,
-                    correctAnswer: cleanRussian(sentence.translation),
-                    words: shuffleArray([
-                        ...cleanRussian(sentence.translation).split(' ').filter(w => w),
-                        ...shuffleArray(allRussianWords).slice(0, Math.max(3, Math.floor(sentence.translation.length * 0.3)))
-                    ]),
-                    direction: 'с китайского на русский'
-                });
-                
-                tasks.push({
-                    type: 'toOriginal',
-                    source: sentence.translation,
-                    correctAnswer: sentence.original,
-                    words: shuffleArray([
-                        ...sentence.original.split(''),
-                        ...shuffleArray(allChineseChars).slice(0, Math.max(2, Math.floor(sentence.original.length * 0.2)))
-                    ]),
-                    direction: 'с русского на китайский'
-                });
+                const cleanOrig = cleanChinese(sentence.original);
+                tasks.push(generateTranslationTask(cleanOrig, sentence.translation));
+                tasks.push(generateOriginalTask(sentence.translation, cleanOrig));
             });
             
             tasks = shuffleArray(tasks);
@@ -400,13 +431,16 @@
                 answerList.innerHTML = '';
                 wordsList.innerHTML = '';
                 
-                task.words.forEach(word => {
-                    const el = document.createElement('div');
-                    el.className = 'word';
-                    el.textContent = word;
-                    el.dataset.word = word;
-                    wordsList.appendChild(el);
-                });
+                // Добавляем слова без пустых или пунктуационных
+                task.words
+                    .filter(word => word && word.trim()) // Убираем пустые/пробельные
+                    .forEach(word => {
+                        const el = document.createElement('div');
+                        el.className = 'word';
+                        el.textContent = word;
+                        el.dataset.word = word;
+                        wordsList.appendChild(el);
+                    });
                 
                 // Обработчики для слов
                 document.querySelectorAll('#wordsList .word').forEach(el => {
@@ -429,15 +463,22 @@
                 resultMessage.textContent = 'Соберите перевод.';
             }
             
-            // Проверка
+            // Проверка ответа
             function checkAnswer() {
                 const task = tasks[currentTaskIndex];
                 const currentText = currentAnswer.join(' ').trim();
                 
                 if (task.type === 'toTranslation') {
-                    if (currentText === task.correctAnswer) showSuccess();
-                } else {
-                    if (currentAnswer.join('') === task.correctAnswer) showSuccess();
+                    // Сравниваем очищенные строки
+                    if (currentText === task.correctAnswer) {
+                        showSuccess();
+                    }
+                } else if (task.type === 'toOriginal') {
+                    // Для китайского — объединяем символы
+                    const chineseAnswer = currentAnswer.join('');
+                    if (chineseAnswer === task.correctAnswer) {
+                        showSuccess();
+                    }
                 }
             }
             
@@ -452,7 +493,7 @@
                 }, 1200);
             }
             
-            // Клик по ответу — возврат слова
+            // Клик по слову в ответе — возврат
             answerList.addEventListener('click', function(e) {
                 if (e.target.classList.contains('word')) {
                     const word = e.target.dataset.word;

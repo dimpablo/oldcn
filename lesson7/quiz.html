@@ -15,7 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            padding: 15px;
+            padding: 10px;
             background-color: #f5f5f5;
         }
         
@@ -26,73 +26,103 @@
         
         .instruction {
             background-color: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
         }
         
         .instruction h2 {
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 16px;
         }
         
         .instruction p {
-            font-size: 14px;
+            font-size: 13px;
             color: #555;
+        }
+        
+        .instruction ul {
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+        
+        .instruction li {
+            margin-bottom: 5px;
+            font-size: 13px;
         }
         
         .color-tools {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 10px;
             background-color: #fff;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            align-items: center;
         }
         
         .color-picker {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
-            min-width: 200px;
+            min-width: 150px;
         }
         
         .color-picker label {
-            font-size: 14px;
+            font-size: 13px;
             color: #555;
             white-space: nowrap;
         }
         
         input[type="color"] {
-            width: 40px;
-            height: 30px;
+            width: 36px;
+            height: 28px;
             border: none;
             cursor: pointer;
             border-radius: 4px;
         }
         
+        .random-color-btn {
+            background-color: #a8dadc;
+            color: #1d3557;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .random-color-btn:hover {
+            background-color: #81b29a;
+            color: white;
+        }
+        
         .color-info {
             background-color: #f8f9fa;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             font-size: 13px;
             color: #555;
             flex: 1;
-            min-width: 200px;
+            min-width: 150px;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             background-color: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         tr {
@@ -106,34 +136,34 @@
         td {
             border: 1px solid #ddd;
             text-align: center;
-            padding: 8px 5px;
-            font-size: 18px;
-            min-width: 24px;
-            height: 24px;
+            padding: 6px 4px;
+            font-size: 16px;
+            min-width: 20px;
+            height: 20px;
             cursor: pointer;
             transition: all 0.2s;
         }
         
         td:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             z-index: 1;
             position: relative;
         }
         
         .controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
         
         button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -163,12 +193,13 @@
         }
         
         #result {
-            padding: 15px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 6px;
             font-weight: bold;
             text-align: center;
-            margin-top: 10px;
-            min-height: 24px;
+            margin-top: 8px;
+            min-height: 20px;
+            font-size: 13px;
         }
         
         .success {
@@ -189,46 +220,41 @@
         .legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 6px;
+            margin-top: 10px;
             background-color: #fff;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 14px;
+            gap: 4px;
+            font-size: 12px;
         }
         
         .legend-color {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 4px;
             border: 1px solid #ccc;
         }
         
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            td {
-                padding: 5px 3px;
-                font-size: 16px;
-                min-width: 20px;
-                height: 20px;
-            }
-            
             .color-tools, .controls, .legend {
                 flex-direction: column;
             }
             
             button {
-                padding: 10px;
+                padding: 9px;
+                font-size: 14px;
+            }
+            
+            td {
+                font-size: 15px;
+                padding: 5px 3px;
             }
         }
     </style>
@@ -237,51 +263,45 @@
     <div class="container">
         <div class="instruction">
             <h2>Задание по сегментации текста</h2>
-            <p>Вам нужно сегментировать древнекитайский текст на отдельные предложения. Для этого закрашивайте соответствующие символы текста любыми цветами. Каждое предложение должно быть закрашено своим цветом.</p>
-            <p><strong>Правила:</strong></p>
+            <p>Закрасьте символы, чтобы выделить предложения. Каждое предложение — своим цветом.</p>
             <ul>
-                <li>Всего в тексте <span id="sentenceCount" style="font-weight: bold;"></span> предложений</li>
-                <li>Каждое предложение должно быть закрашено одним цветом</li>
-                <li>Разные предложения должны иметь разные цвета</li>
-                <li>Все символы текста должны быть закрашены</li>
+                <li>Всего <span id="sentenceCount">0</span> предложений</li>
+                <li>Разные предложения — разными цветами</li>
+                <li>Все символы должны быть закрашены</li>
             </ul>
         </div>
         
         <div class="color-tools">
             <div class="color-picker">
-                <label for="colorSelect">Выберите цвет:</label>
-                <input type="color" id="colorSelect" value="#3498db">
+                <label for="colorSelect">Цвет:</label>
+                <input type="color" id="colorSelect" value="#a8dadc">
             </div>
+            <button class="random-color-btn" id="randomColorBtn">Любой случайный цвет</button>
             <div class="color-info">
-                Текущий цвет: <span id="currentColor">#3498db</span>. 
-                Нажмите на символы текста, чтобы закрасить их выбранным цветом.
+                Текущий цвет: <span id="currentColor">#a8dadc</span>
             </div>
         </div>
         
         <table id="textTable"></table>
         
         <div class="controls">
-            <button id="checkBtn">Проверить задание</button>
-            <button id="resetBtn">Сбросить все</button>
+            <button id="checkBtn">Проверить</button>
+            <button id="resetBtn">Сбросить</button>
         </div>
         
         <div id="result"></div>
         
-        <div class="legend" id="colorLegend">
-            <div class="legend-item">
-                <div class="legend-color" style="background-color: #3498db;"></div>
-                <span>Цвет 1 (выбран)</span>
-            </div>
-        </div>
+        <div class="legend" id="colorLegend"></div>
     </div>
 
+    <!-- Подключаем данные -->
     <script src="segmentation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Отображение количества предложений
             document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
             
-            // Построение таблицы из текста
+            // Построение таблицы
             const table = document.getElementById('textTable');
             const lines = SentenceData.text.split('\n').filter(line => line.trim() !== '');
             
@@ -296,103 +316,125 @@
             });
             
             // Управление цветом
-            let currentColor = '#3498db';
+            let currentColor = '#a8dadc';
             const colorInput = document.getElementById('colorSelect');
             const currentColorDisplay = document.getElementById('currentColor');
             
-            // Обновление отображения текущего цвета
+            // Функция обновления отображения цвета
             function updateColorDisplay() {
                 currentColorDisplay.textContent = currentColor;
-                currentColorDisplay.style.color = currentColor;
-                // Make text white if background is dark, black if light
-                const r = parseInt(currentColor.substr(1, 2), 16);
-                const g = parseInt(currentColor.substr(3, 2), 16);
-                const b = parseInt(currentColor.substr(5, 2), 16);
-                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-                currentColorDisplay.style.color = brightness > 128 ? '#000' : '#fff';
+                const r = parseInt(currentColor.slice(1, 3), 16);
+                const g = parseInt(currentColor.slice(3, 5), 16);
+                const b = parseInt(currentColor.slice(5, 7), 16);
+                currentColorDisplay.style.color = (r*0.299 + g*0.587 + b*0.114) > 128 ? '#000' : '#fff';
             }
             
-            // Обработчик изменения цвета
+            // Обработчик выбора цвета
             colorInput.addEventListener('input', function(e) {
                 currentColor = e.target.value;
                 updateColorDisplay();
             });
             
-            // Инициализация отображения цвета
+            // Генерация случайного пастельного цвета
+            function getRandomPastelColor() {
+                // Генерируем цвета в диапазоне пастельных: смешиваем яркий цвет с белым
+                const hue = Math.floor(Math.random() * 360);
+                const saturation = 50 + Math.random() * 20; // 50-70%
+                const lightness = 70 + Math.random() * 15;  // 70-85%
+                
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+            
+            // Обработчик кнопки "Случайный цвет"
+            document.getElementById('randomColorBtn').addEventListener('click', function() {
+                const randomColor = getRandomPastelColor();
+                colorInput.value = hexToHex(randomColor); // Устанавливаем в пикер
+                currentColor = hexToHex(randomColor);
+                updateColorDisplay();
+            });
+            
+            // Вспомогательная функция: конвертация HSL в HEX (упрощённо)
+            function hexToHex(color) {
+                if (color.startsWith('#')) return color;
+                
+                if (color.startsWith('hsl')) {
+                    const div = document.createElement('div');
+                    div.style.color = color;
+                    document.body.appendChild(div);
+                    const rgb = window.getComputedStyle(div).color;
+                    document.body.removeChild(div);
+                    
+                    const rgbMatch = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
+                    if (rgbMatch) {
+                        return "#" + 
+                            parseInt(rgbMatch[1]).toString(16).padStart(2, '0') +
+                            parseInt(rgbMatch[2]).toString(16).padStart(2, '0') +
+                            parseInt(rgbMatch[3]).toString(16).padStart(2, '0');
+                    }
+                }
+                return '#a8dadc'; // fallback
+            }
+            
+            // Инициализация
             updateColorDisplay();
             
-            // Клик по ячейкам таблицы
+            // Клик по ячейкам
             table.addEventListener('click', function(e) {
                 if (e.target.tagName === 'TD') {
                     e.target.style.backgroundColor = currentColor;
                     e.target.setAttribute('data-color', currentColor);
-                    
-                    // Обновляем легенду
                     updateColorLegend();
                 }
             });
             
             // Легенда использованных цветов
             const colorLegend = document.getElementById('colorLegend');
-            const maxColors = 15; // Максимальное количество цветов для отображения в легенде
             
             function updateColorLegend() {
-                // Собираем все использованные цвета
                 const cells = document.querySelectorAll('#textTable td');
                 const usedColors = new Set();
                 
                 cells.forEach(cell => {
                     const color = cell.getAttribute('data-color');
-                    if (color) {
-                        usedColors.add(color);
-                    }
+                    if (color) usedColors.add(color);
                 });
                 
-                // Очищаем легенду
                 colorLegend.innerHTML = '';
-                
-                // Добавляем элементы в легенду
-                let colorIndex = 1;
+                let idx = 1;
                 usedColors.forEach(color => {
-                    const legendItem = document.createElement('div');
-                    legendItem.className = 'legend-item';
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
                     
-                    const colorBox = document.createElement('div');
-                    colorBox.className = 'legend-color';
-                    colorBox.style.backgroundColor = color;
+                    const box = document.createElement('div');
+                    box.className = 'legend-color';
+                    box.style.backgroundColor = color;
                     
-                    const colorName = document.createElement('span');
-                    colorName.textContent = `Цвет ${colorIndex}${color === currentColor ? ' (выбран)' : ''}`;
+                    const label = document.createElement('span');
+                    label.textContent = `Цв.${idx}`;
                     
-                    legendItem.appendChild(colorBox);
-                    legendItem.appendChild(colorName);
-                    colorLegend.appendChild(legendItem);
-                    
-                    colorIndex++;
+                    item.appendChild(box);
+                    item.appendChild(label);
+                    colorLegend.appendChild(item);
+                    idx++;
                 });
                 
-                // Если нет использованных цветов, показываем текущий цвет
                 if (usedColors.size === 0) {
-                    const legendItem = document.createElement('div');
-                    legendItem.className = 'legend-item';
-                    
-                    const colorBox = document.createElement('div');
-                    colorBox.className = 'legend-color';
-                    colorBox.style.backgroundColor = currentColor;
-                    
-                    const colorName = document.createElement('span');
-                    colorName.textContent = 'Цвет 1 (выбран)';
-                    
-                    legendItem.appendChild(colorBox);
-                    legendItem.appendChild(colorName);
-                    colorLegend.appendChild(legendItem);
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    const box = document.createElement('div');
+                    box.className = 'legend-color';
+                    box.style.backgroundColor = currentColor;
+                    const label = document.createElement('span');
+                    label.textContent = 'Цв.1 (выбран)';
+                    item.appendChild(box);
+                    item.appendChild(label);
+                    colorLegend.appendChild(item);
                 }
             }
             
-            // Сброс всех закрашенных ячеек
+            // Сброс
             document.getElementById('resetBtn').addEventListener('click', function() {
-                const cells = document.querySelectorAll('#textTable td');
-                cells.forEach(cell => {
+                document.querySelectorAll('#textTable td').forEach(cell => {
                     cell.style.backgroundColor = '';
                     cell.removeAttribute('data-color');
                 });
@@ -401,73 +443,43 @@
                 document.getElementById('result').textContent = '';
             });
             
-            // Проверка задания
+            // Проверка
             document.getElementById('checkBtn').addEventListener('click', function() {
                 const cells = Array.from(document.querySelectorAll('#textTable td'));
-                const resultDiv = document.getElementById('result');
+                const result = document.getElementById('result');
                 
-                // Проверка, все ли ячейки покрашены
-                const unpaintedCells = cells.filter(cell => !cell.hasAttribute('data-color'));
-                if (unpaintedCells.length > 0) {
-                    resultDiv.className = 'error';
-                    resultDiv.textContent = `Ошибка: ${unpaintedCells.length} символов не покрашены.`;
+                const unpainted = cells.filter(c => !c.hasAttribute('data-color'));
+                if (unpainted.length > 0) {
+                    result.className = 'error';
+                    result.textContent = `Не закрашено: ${unpainted.length} символов`;
                     return;
                 }
                 
-                // Сбор цветовых групп
                 const colorGroups = {};
-                cells.forEach(cell => {
-                    const color = cell.getAttribute('data-color');
-                    if (!colorGroups[color]) {
-                        colorGroups[color] = [];
-                    }
-                    colorGroups[color].push(cell.textContent);
+                cells.forEach(c => {
+                    const color = c.getAttribute('data-color');
+                    if (!colorGroups[color]) colorGroups[color] = '';
+                    colorGroups[color] += c.textContent;
                 });
                 
                 const colors = Object.keys(colorGroups);
-                const expectedCount = SentenceData.sentences.length;
+                const expected = SentenceData.sentences.length;
                 
-                // Проверка количества цветов
-                if (colors.length !== expectedCount) {
-                    resultDiv.className = 'error';
-                    resultDiv.textContent = `Неверное количество цветов. Должно быть ${expectedCount}, вы использовали ${colors.length}.`;
+                if (colors.length !== expected) {
+                    result.className = 'error';
+                    result.textContent = `Цветов: ${colors.length}, нужно: ${expected}`;
                     return;
                 }
                 
-                // Формируем строки для каждого цвета
-                const colorStrings = colors.map(color => colorGroups[color].join(''));
-                const sentenceOriginals = SentenceData.sentences.map(s => s.original);
+                const userSentences = Object.values(colorGroups).sort();
+                const correctSentences = SentenceData.sentences.map(s => s.original).sort();
                 
-                // Сортируем для сравнения
-                const sortedColorStrings = [...colorStrings].sort();
-                const sortedOriginals = [...sentenceOriginals].sort();
-                
-                // Проверяем соответствие
-                if (JSON.stringify(sortedColorStrings) === JSON.stringify(sortedOriginals)) {
-                    resultDiv.className = 'success';
-                    resultDiv.innerHTML = '✅ Задание выполнено верно!<br>Вы успешно сегментировали текст на все предложения.';
+                if (JSON.stringify(userSentences) === JSON.stringify(correctSentences)) {
+                    result.className = 'success';
+                    result.innerHTML = '✅ Все верно!';
                 } else {
-                    // Проверяем, какие предложения не совпали
-                    const matchedSentences = [];
-                    const unmatchedSentences = [];
-                    
-                    colorStrings.forEach(str => {
-                        if (sentenceOriginals.includes(str)) {
-                            matchedSentences.push(str);
-                        } else {
-                            unmatchedSentences.push(str);
-                        }
-                    });
-                    
-                    const missingCount = expectedCount - matchedSentences.length;
-                    
-                    if (missingCount > 0) {
-                        resultDiv.className = 'error';
-                        resultDiv.innerHTML = `❌ Не все предложения найдены.<br>Найдено: ${matchedSentences.length} из ${expectedCount}.`;
-                    } else {
-                        resultDiv.className = 'error';
-                        resultDiv.innerHTML = `❌ Цветовые области не соответствуют предложениям.<br>Возможно, вы неправильно разделили текст.`;
-                    }
+                    result.className = 'error';
+                    result.innerHTML = '❌ Проверьте границы предложений.';
                 }
             });
             

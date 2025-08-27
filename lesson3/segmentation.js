@@ -34,7 +34,7 @@ const SentenceData = {
     },
     {
       "number": 6,
-      "original": "貞告gong1方于上甲于大甲告于大丁告gong1方",
+      "original": "貞告工方于上甲于大甲告于大丁告工方",
       "transliteration": "zhēn gào gōng fāng yú shàng jiǎ yú dà jiǎ gào yú dà dīng gào gōng fāng",
       "translation": "Вопрос: «Сообщить Верхнему Цзя о племени Гун-фан? Сообщить Великому Цзя? Сообщить о племени Гун-фан Великому Дину?»."
     },
