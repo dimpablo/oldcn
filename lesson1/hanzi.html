@@ -282,74 +282,79 @@
     });
   }
 
-  // --- 🔥 НОВОЕ: Firebase инициализация ---
-  let db = null;
-  let auth = null;
-  let currentUser = null;
 
-  async function initFirebase() {
-    try {
-      // Импортируем Firebase динамически
-      const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc }] = await Promise.all([
-        import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js'),
-        import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'),
-        import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'),
-        import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js')
-      ]);
+// --- 🔥 Исправленная инициализация Firebase ---
+let db = null;
+let auth = null;
+let currentUser = null;
+let updateDocRef = null;
+let docRef = null;
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-        authDomain: "antient-9bff0.firebaseapp.com",
-        projectId: "antient-9bff0",
-        storageBucket: "antient-9bff0.firebasestorage.app",
-        messagingSenderId: "311792589414",
-        appId: "1:311792589414:web:5fff3154735007c2006ba7",
-        measurementId: "G-W4ZQXWRTKK"
-      };
+async function initFirebase() {
+  try {
+    const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc }] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'),
+      import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js')
+    ]);
 
-      const app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+      authDomain: "antient-9bff0.firebaseapp.com",
+      projectId: "antient-9bff0",
+      storageBucket: "antient-9bff0.firebasestorage.app",
+      messagingSenderId: "311792589414",
+      appId: "1:311792589414:web:5fff3154735007c2006ba7",
+      measurementId: "G-W4ZQXWRTKK"
+    };
 
-      onAuthStateChanged(auth, (user) => {
-        currentUser = user;
-        console.log('🔐 Пользователь:', user ? user.displayName : 'не авторизован');
-      });
-    } catch (e) {
-      console.error("❌ Ошибка инициализации Firebase:", e);
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    updateDocRef = updateDoc;
+    docRef = doc;
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      console.log('🔐 Пользователь:', user ? user.displayName : 'не авторизован');
+    });
+  } catch (e) {
+    console.error("❌ Ошибка инициализации Firebase:", e);
+  }
+}
+
+// Запускаем Firebase
+initFirebase();
+
+// --- 🔥 Обработка баллов ---
+window.addEventListener("message", async function(event) {
+  if (event.data.type === "TASK_RESULT") {
+    const { success, message, points = 0 } = event.data;
+
+    console.log(`[Баллы] Получено: ${points} | Сообщение: ${message}`);
+
+    if (success && points !== 0 && db && currentUser && updateDocRef && docRef) {
+      try {
+        const userRef = docRef(db, 'users', currentUser.uid);
+        await updateDocRef(userRef, {
+          points: (currentUser.points || 0) + points
+        });
+        // Обновляем локально
+        if (currentUser.points === undefined) currentUser.points = 0;
+        currentUser.points += points;
+        console.log(`[Баллы] Сохранено. Теперь: ${currentUser.points}`);
+      } catch (e) {
+        console.error("❌ Не удалось сохранить баллы в Firestore:", e);
+      }
+    }
+
+    if (success) {
+      statusEl.textContent = "✅ Готово! Можно дальше";
+      nextBtn.disabled = false;
     }
   }
-
-  // Запускаем Firebase
-  initFirebase();
-
-  // --- 🔥 НОВОЕ: Обработка баллов ---
-  window.addEventListener("message", async function(event) {
-    if (event.data.type === "TASK_RESULT") {
-      const { success, message, points = 0 } = event.data;
-
-      console.log(`[Баллы] Получено: ${points} | Сообщение: ${message}`);
-
-      if (success && points !== 0 && db && currentUser) {
-        try {
-          const userRef = doc(db, 'users', currentUser.uid);
-          await updateDoc(userRef, {
-            points: (currentUser.points || 0) + points
-          });
-          // Обновляем локально
-          currentUser.points = (currentUser.points || 0) + points;
-          console.log(`[Баллы] Сохранено. Теперь: ${currentUser.points}`);
-        } catch (e) {
-          console.error("❌ Не удалось сохранить баллы в Firestore:", e);
-        }
-      }
-
-      if (success) {
-        statusEl.textContent = "✅ Готово! Можно дальше";
-        nextBtn.disabled = false;
-      }
-    }
-  });
+});
 
   function loadNextTask() {
     if (currentTaskIndex >= totalTasks) return;
@@ -401,26 +406,30 @@
     setTimeout(() => window.location.href = "../", 3000);
   });
 
-  if (skipBtn) {
-    skipBtn.addEventListener("click", () => {
-      // ❌ Пропуск — штраф -1
-      if (db && currentUser) {
-        const userRef = doc(db, 'users', currentUser.uid);
-        updateDoc(userRef, {
+if (skipBtn) {
+  skipBtn.addEventListener("click", async () => {
+    // ❌ Пропуск — штраф -1
+    if (db && currentUser && updateDocRef && docRef) {
+      try {
+        const userRef = docRef(db, 'users', currentUser.uid);
+        await updateDocRef(userRef, {
           points: (currentUser.points || 0) - 1
-        }).then(() => {
-          currentUser.points = (currentUser.points || 0) - 1;
-          console.log("[Баллы] Пропуск: -1");
         });
+        if (currentUser.points === undefined) currentUser.points = 0;
+        currentUser.points -= 1;
+        console.log("[Баллы] Пропуск: -1");
+      } catch (e) {
+        console.error("❌ Не удалось применить штраф:", e);
       }
+    }
 
-      loadNextTask();
-      currentTaskIndex++;
-      if (currentTaskIndex >= totalTasks) {
-        nextBtn.click();
-      }
-    });
-  }
+    loadNextTask();
+    currentTaskIndex++;
+    if (currentTaskIndex >= totalTasks) {
+      nextBtn.click();
+    }
+  });
+}
 
   window.addEventListener("load", () => {
     console.log(`📚 Урок ${LESSON}: ${lessonwords.length} иероглифов`);
