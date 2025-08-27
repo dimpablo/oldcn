@@ -234,6 +234,9 @@
   </div>
 
 <script type="module">
+  // === 🔢 НОМЕР УРОКА (установи вручную для каждой папки) ===
+  const LESSON = 1; // Например: lesson1 → 1, lesson2 → 2
+
   // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
   import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
@@ -266,6 +269,41 @@
     }
   });
 
+  // === 📚 Загружаем словарь и получаем иероглифы урока ===
+  let lessonwords = [];
+
+  async function loadDictionary() {
+    try {
+      const response = await fetch('./../dictionary.js');
+      const scriptText = await response.text();
+
+      // Создаём временный скрипт, чтобы выполнить код
+      const script = document.createElement('script');
+      script.textContent = scriptText;
+      document.head.appendChild(script);
+      document.head.removeChild(script);
+
+      if (typeof charData === 'undefined') {
+        throw new Error('charData not found in dictionary.js');
+      }
+
+      // Фильтруем иероглифы по уроку
+      lessonwords = Object.keys(charData).filter(key => {
+        const data = charData[key];
+        return data.lesson === LESSON && key.length === 1;
+      });
+
+      if (lessonwords.length === 0) {
+        throw new Error(`Нет иероглифов для урока ${LESSON}`);
+      }
+
+      console.log(`📚 Урок ${LESSON}: найдено ${lessonwords.length} иероглифов`, lessonwords);
+    } catch (e) {
+      console.error("❌ Ошибка загрузки словаря:", e);
+      statusEl.innerHTML = `❌ Ошибка: не удалось загрузить словарь иероглифов.`;
+    }
+  }
+
   // === ✅ Функция начисления баллов ===
   async function addPoints(points, reason) {
     if (!currentUser) return;
@@ -283,11 +321,6 @@
   }
 
   // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
-  const lessonwords = [
-    '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
-    '亥', '不', '允', '王', '占', '丑', '己', '卯', '㱿', '壬', '午'
-  ];
-
   let tasks = [];
   let currentTaskIndex = 0;
   let currentScale = 1.0;
@@ -302,7 +335,7 @@
   const progressBar = document.getElementById("progress-bar");
   const scaleValueEl = document.getElementById("scale-value");
   const zoomInBtn = document.getElementById("zoom-in");
-  const zoomOutBtn = document.getElementById("zoom-out");
+  const zoomOutBtn = document.getElementById("zoom-in");
 
   let hasProcessedHanzi = false;
   let discoveryCompleted = false;
@@ -475,7 +508,7 @@
   window.addEventListener("message", async (event) => {
     const { type, success } = event.data;
 
-    if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+    if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted && lessonwords.length > 0) {
       hasProcessedHanzi = true;
       const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
       const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
@@ -569,8 +602,10 @@
     }, 400);
   }
 
-  // Запуск
-  discoverTasks();
+  // === 🚀 ЗАПУСК ===
+  loadDictionary().then(() => {
+    discoverTasks();
+  });
 </script>
 </body>
 </html>
