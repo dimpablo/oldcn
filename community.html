@@ -101,6 +101,14 @@
       background: #006064;
     }
 
+    .btn-danger {
+      background: #d32f2f;
+    }
+
+    .btn-danger:hover {
+      background: #b71c1c;
+    }
+
     .leaderboard {
       background: rgba(255,255,255,0.2);
       border-radius: 12px;
@@ -138,6 +146,17 @@
       font-size: 18px;
       margin: 40px 0;
     }
+
+    .notification {
+      background: rgba(255,255,0,0.2);
+      border: 1px solid #ffcc00;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -149,17 +168,17 @@
     <div class="tabs">
       <div class="tab active" data-tab="users">Пользователи</div>
       <div class="tab" data-tab="leaderboard">Лига лидеров</div>
+      <div class="tab" data-tab="friends">Друзья</div>
+      <div class="tab" data-tab="reactions">Реакции</div>
     </div>
 
-    <!-- Секция: Пользователи -->
+    <!-- Пользователи -->
     <div id="users-section">
       <div class="loading">Загрузка пользователей...</div>
-      <div class="grid" id="users-grid">
-        <!-- Карточки будут добавлены здесь -->
-      </div>
+      <div class="grid" id="users-grid"></div>
     </div>
 
-    <!-- Секция: Лига -->
+    <!-- Лига -->
     <div id="leaderboard-section" class="hidden">
       <div class="loading">Загрузка рейтинга...</div>
       <div class="leaderboard">
@@ -172,145 +191,259 @@
               <th>Баллы</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Данные будут добавлены здесь -->
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Друзья -->
+    <div id="friends-section" class="hidden">
+      <div class="loading">Загрузка друзей...</div>
+      <div class="grid" id="friends-grid"></div>
+    </div>
+
+    <!-- Реакции -->
+    <div id="reactions-section" class="hidden">
+      <div class="loading">Загрузка реакций...</div>
+      <div id="reactions-list"></div>
     </div>
   </div>
 
   <!-- Firebase SDK -->
-<script type="module">
-  // Импорт Firebase
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-  import { getFirestore, collection, getDocs, query, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+  <script type="module">
+    // Импорт
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, where, onSnapshot, addDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-  // 🔥 Твой конфиг — должен совпадать с index.html
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-    authDomain: "antient-9bff0.firebaseapp.com",
-    projectId: "antient-9bff0",
-    storageBucket: "antient-9bff0.firebasestorage.app",
-    messagingSenderId: "311792589414",
-    appId: "1:311792589414:web:5fff3154735007c2006ba7",
-    measurementId: "G-W4ZQXWRTKK"
-  };
+    // Конфиг
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+      authDomain: "antient-9bff0.firebaseapp.com",
+      projectId: "antient-9bff0",
+      storageBucket: "antient-9bff0.firebasestorage.app",
+      messagingSenderId: "311792589414",
+      appId: "1:311792589414:web:5fff3154735007c2006ba7",
+      measurementId: "G-W4ZQXWRTKK"
+    };
 
-  // ✅ Инициализация Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app); // Теперь знает, с каким проектом работать
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  // Элементы DOM
-  const tabs = document.querySelectorAll('.tab');
-  const usersSection = document.getElementById('users-section');
-  const leaderboardSection = document.getElementById('leaderboard-section');
-  const usersGrid = document.getElementById('users-grid');
-  const leaderboardTable = document.getElementById('leaderboard-table').querySelector('tbody');
-  const userLoading = usersSection.querySelector('.loading');
-  const leaderLoading = leaderboardSection.querySelector('.loading');
+    // Элементы
+    const tabs = document.querySelectorAll('.tab');
+    const sections = {
+      users: document.getElementById('users-section'),
+      leaderboard: document.getElementById('leaderboard-section'),
+      friends: document.getElementById('friends-section'),
+      reactions: document.getElementById('reactions-section')
+    };
+    const grids = {
+      users: document.getElementById('users-grid'),
+      friends: document.getElementById('friends-grid')
+    };
+    const loading = {
+      users: grids.users.parentElement.querySelector('.loading'),
+      friends: grids.friends.parentElement.querySelector('.loading'),
+      leaderboard: document.querySelector('#leaderboard-section .loading'),
+      reactions: document.getElementById('reactions-list').parentElement.querySelector('.loading')
+    };
+    const reactionsList = document.getElementById('reactions-list');
 
-  // Переключение вкладок
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      if (tab.dataset.tab === 'users') {
-        usersSection.classList.remove('hidden');
-        leaderboardSection.classList.add('hidden');
+    let currentUser = null;
+    let allUsers = [];
+    let friendRequests = [];
+
+    // Переключение вкладок
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        Object.values(sections).forEach(s => s.classList.add('hidden'));
+        sections[tab.dataset.tab].classList.remove('hidden');
+      });
+    });
+
+    // Загрузка пользователей
+    function loadUsers() {
+      loading.users.style.display = 'block';
+      grids.users.innerHTML = '';
+      const q = query(collection(db, 'users'));
+      onSnapshot(q, (snap) => {
+        allUsers = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (data.displayName) {
+            allUsers.push({ id: doc.id, ...data });
+          }
+        });
+        renderUsers();
+        loading.users.style.display = 'none';
+      }, () => loading.users.textContent = 'Ошибка загрузки');
+    }
+
+    function renderUsers() {
+      grids.users.innerHTML = '';
+      allUsers
+        .filter(u => u.id !== currentUser.uid)
+        .forEach(user => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+            <h3>${user.displayName}</h3>
+            <p>Баллы: ${user.points || 0}</p>
+            <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить в друзья</button>
+          `;
+          grids.users.appendChild(card);
+        });
+    }
+
+    // Загрузка лиги
+    function loadLeaderboard() {
+      loading.leaderboard.style.display = 'block';
+      const tbody = document.querySelector('#leaderboard-table tbody');
+      tbody.innerHTML = '';
+      const q = query(collection(db, 'users'));
+      onSnapshot(q, (snap) => {
+        const users = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (data.displayName) users.push(data);
+        });
+        users.sort((a, b) => (b.points || 0) - (a.points || 0));
+        tbody.innerHTML = '';
+        users.slice(0, 10).forEach((u, i) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${i+1}</td><td>${u.displayName}</td><td><strong>${u.points || 0}</strong></td>`;
+          tbody.appendChild(row);
+        });
+        loading.leaderboard.style.display = 'none';
+      });
+    }
+
+    // Загрузка друзей
+    function loadFriends() {
+      loading.friends.style.display = 'block';
+      grids.friends.innerHTML = '';
+      const friends = currentUser.friends || [];
+      if (friends.length === 0) {
+        grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
+        loading.friends.style.display = 'none';
+        return;
+      }
+      const q = query(collection(db, 'users'), where('__name__', 'in', friends.slice(0, 10)));
+      onSnapshot(q, (snap) => {
+        grids.friends.innerHTML = '';
+        snap.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${data.photoURL || '...'}" alt="${data.displayName}" />
+            <h3>${data.displayName}</h3>
+            <p>Баллы: ${data.points || 0}</p>
+          `;
+          grids.friends.appendChild(card);
+        });
+        loading.friends.style.display = 'none';
+      });
+    }
+
+    // Загрузка запросов
+    function loadReactions() {
+      loading.reactions.style.display = 'block';
+      reactionsList.innerHTML = '';
+      const q = query(collection(db, 'friendRequests'), where('to', '==', currentUser.uid));
+      onSnapshot(q, (snap) => {
+        friendRequests = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          friendRequests.push({ id: doc.id, ...data });
+        });
+        renderReactions();
+        loading.reactions.style.display = 'none';
+      });
+    }
+
+    function renderReactions() {
+      reactionsList.innerHTML = '';
+      if (friendRequests.length === 0) {
+        reactionsList.innerHTML = '<p style="text-align:center">Нет новых реакций</p>';
+        return;
+      }
+      friendRequests.forEach(req => {
+        const item = document.createElement('div');
+        item.className = 'notification';
+        item.innerHTML = `
+          <span>💬 <strong>${req.fromName}</strong> хочет с тобой дружить!</span>
+          <div>
+            <button class="btn" onclick="acceptFriend('${req.id}', '${req.from}')">Принять</button>
+            <button class="btn btn-danger" onclick="declineFriend('${req.id}')">Отклонить</button>
+          </div>
+        `;
+        reactionsList.appendChild(item);
+      });
+    }
+
+    // Функции
+    window.sendFriendRequest = async (toId, toName) => {
+      const reqRef = collection(db, 'friendRequests');
+      await addDoc(reqRef, {
+        from: currentUser.uid,
+        fromName: currentUser.displayName,
+        to: toId,
+        toName,
+        timestamp: new Date()
+      });
+      alert(`Запрос в друзья отправлен пользователю ${toName}!`);
+    };
+
+    window.acceptFriend = async (reqId, fromId) => {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const fromRef = doc(db, 'users', fromId);
+      const reqDoc = doc(db, 'friendRequests', reqId);
+
+      // Добавляем друга к себе
+      const curr = currentUser;
+      const friends = curr.friends ? [...curr.friends, fromId] : [fromId];
+      await updateDoc(userRef, { friends });
+
+      // Добавляем себя к нему (опционально)
+      const fromSnap = await getDoc(fromRef);
+      const fromData = fromSnap.data();
+      const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
+      await updateDoc(fromRef, { friends: fromFriends });
+
+      // Удаляем запрос
+      await deleteDoc(reqDoc);
+      alert('Теперь вы друзья!');
+    };
+
+    window.declineFriend = async (reqId) => {
+      await deleteDoc(doc(db, 'friendRequests', reqId));
+    };
+
+    // Обновление профиля с друзьями
+    function updateCurrentUser(data) {
+      currentUser = data;
+      if (!currentUser.friends) currentUser.friends = [];
+    }
+
+    // Наблюдение за авторизацией
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        updateCurrentUser({ uid: user.uid, ...userDoc.data() });
+        loadUsers();
+        loadLeaderboard();
+        loadFriends();
+        loadReactions();
       } else {
-        usersSection.classList.add('hidden');
-        leaderboardSection.classList.remove('hidden');
+        location.href = 'index.html';
       }
     });
-  });
-
-  // Загрузка пользователей
-  function loadUsers() {
-    userLoading.style.display = 'block';
-    usersGrid.innerHTML = '';
-
-    const q = query(collection(db, 'users'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      userLoading.style.display = 'none';
-      usersGrid.innerHTML = '';
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        if (!data.displayName) return;
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
-          <h3>${data.displayName}</h3>
-          <p>Баллы: ${data.points || 0}</p>
-          <button class="btn" onclick="wink('${data.uid}', '${data.displayName}')">💬 Подмигнуть</button>
-        `;
-        usersGrid.appendChild(card);
-      });
-    }, (error) => {
-      console.error("Ошибка загрузки пользователей:", error);
-      userLoading.textContent = 'Ошибка загрузки: ' + error.message;
-    });
-
-    return unsubscribe;
-  }
-
-  // Загрузка лиги
-  function loadLeaderboard() {
-    leaderLoading.style.display = 'block';
-    leaderboardTable.innerHTML = '';
-
-    const q = query(collection(db, 'users'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      leaderLoading.style.display = 'none';
-      const users = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.displayName) {
-          users.push({ id: doc.id, ...data });
-        }
-      });
-
-      users.sort((a, b) => (b.points || 0) - (a.points || 0));
-
-      leaderboardTable.innerHTML = '';
-      users.slice(0, 10).forEach((user, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${user.displayName}</td>
-          <td><strong>${user.points || 0}</strong></td>
-        `;
-        leaderboardTable.appendChild(row);
-      });
-    }, (error) => {
-      console.error("Ошибка загрузки лиги:", error);
-      leaderLoading.textContent = 'Ошибка: ' + error.message;
-    });
-
-    return unsubscribe;
-  }
-
-  // Подмигивание
-  window.wink = (uid, name) => {
-    alert(`Подмигнул(а): ${name}! 💫`);
-  };
-
-  // Проверка авторизации
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      loadUsers();
-      loadLeaderboard();
-    } else {
-      console.log("Не авторизован — перенаправляю на главную...");
-      setTimeout(() => {
-        location.href = 'index.html';
-      }, 1500);
-    }
-  });
-</script>
+  </script>
 </body>
 </html>
