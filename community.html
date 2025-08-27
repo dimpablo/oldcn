@@ -11,6 +11,8 @@
       background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
       font-family: 'Segoe UI', Verdana, sans-serif;
       color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
@@ -31,24 +33,37 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
     .tab {
-      padding: 10px 20px;
+      padding: 14px 24px;
       background: rgba(255,255,255,0.2);
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
-      transition: 0.3s;
+      transition: all 0.3s ease;
+      user-select: none;
+      font-size: 16px;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .tab:hover,
+    .tab:focus {
+      background: #006064;
+      transform: translateY(-2px);
+      outline: none;
     }
 
     .tab.active {
       background: #00838f;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 20px;
     }
 
@@ -59,11 +74,12 @@
       text-align: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
-      transition: transform 0.3s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
 
     .card img {
@@ -73,11 +89,13 @@
       object-fit: cover;
       border: 3px solid #fff;
       margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
     .card h3 {
       margin: 0 0 5px 0;
       font-size: 16px;
+      font-weight: 600;
     }
 
     .card p {
@@ -88,13 +106,14 @@
 
     .btn {
       margin-top: 10px;
-      padding: 6px 12px;
+      padding: 8px 14px;
       background: #00838f;
       color: white;
       border: none;
       border-radius: 6px;
       font-size: 14px;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
     .btn:hover {
@@ -123,18 +142,20 @@
     }
 
     .leaderboard th, .leaderboard td {
-      padding: 10px;
+      padding: 12px 10px;
       text-align: left;
       border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
     .leaderboard th {
       color: #ffcc80;
+      font-weight: 600;
     }
 
     .leaderboard tr:first-child td {
       font-weight: bold;
       color: gold;
+      font-size: 16px;
     }
 
     .hidden {
@@ -145,17 +166,37 @@
       text-align: center;
       font-size: 18px;
       margin: 40px 0;
+      color: #e0f7fa;
     }
 
     .notification {
       background: rgba(255,255,0,0.2);
       border: 1px solid #ffcc00;
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .notification button {
+      min-width: 80px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .tab {
+        padding: 12px 18px;
+        font-size: 15px;
+      }
+      h1 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
@@ -214,9 +255,20 @@
     // Импорт
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-    import { getFirestore, collection, getDocs, query, where, onSnapshot, addDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      query, 
+      where, 
+      onSnapshot, 
+      addDoc, 
+      deleteDoc, 
+      doc, 
+      getDoc  // теперь импортирован
+    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    // Конфиг
+    // Конфиг (должен совпадать с index.html)
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -227,6 +279,7 @@
       measurementId: "G-W4ZQXWRTKK"
     };
 
+    // Инициализация
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -280,7 +333,10 @@
         });
         renderUsers();
         loading.users.style.display = 'none';
-      }, () => loading.users.textContent = 'Ошибка загрузки');
+      }, (error) => {
+        console.error("Ошибка загрузки пользователей:", error);
+        loading.users.textContent = 'Ошибка: ' + error.message;
+      });
     }
 
     function renderUsers() {
@@ -294,7 +350,7 @@
             <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
             <h3>${user.displayName}</h3>
             <p>Баллы: ${user.points || 0}</p>
-            <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить в друзья</button>
+            <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить</button>
           `;
           grids.users.appendChild(card);
         });
@@ -320,20 +376,22 @@
           tbody.appendChild(row);
         });
         loading.leaderboard.style.display = 'none';
+      }, (error) => {
+        console.error("Ошибка загрузки лиги:", error);
+        loading.leaderboard.textContent = 'Ошибка: ' + error.message;
       });
     }
 
     // Загрузка друзей
     function loadFriends() {
-      loading.friends.style.display = 'block';
-      grids.friends.innerHTML = '';
-      const friends = currentUser.friends || [];
-      if (friends.length === 0) {
-        grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
+      if (!currentUser.friends || currentUser.friends.length === 0) {
         loading.friends.style.display = 'none';
+        grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
         return;
       }
-      const q = query(collection(db, 'users'), where('__name__', 'in', friends.slice(0, 10)));
+      loading.friends.style.display = 'block';
+      grids.friends.innerHTML = '';
+      const q = query(collection(db, 'users'), where('__name__', 'in', currentUser.friends));
       onSnapshot(q, (snap) => {
         grids.friends.innerHTML = '';
         snap.forEach(doc => {
@@ -341,13 +399,16 @@
           const card = document.createElement('div');
           card.className = 'card';
           card.innerHTML = `
-            <img src="${data.photoURL || '...'}" alt="${data.displayName}" />
+            <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
             <h3>${data.displayName}</h3>
             <p>Баллы: ${data.points || 0}</p>
           `;
           grids.friends.appendChild(card);
         });
         loading.friends.style.display = 'none';
+      }, (error) => {
+        console.error("Ошибка загрузки друзей:", error);
+        loading.friends.textContent = 'Ошибка';
       });
     }
 
@@ -364,6 +425,9 @@
         });
         renderReactions();
         loading.reactions.style.display = 'none';
+      }, (error) => {
+        console.error("Ошибка загрузки реакций:", error);
+        loading.reactions.textContent = 'Ошибка';
       });
     }
 
@@ -389,61 +453,92 @@
 
     // Функции
     window.sendFriendRequest = async (toId, toName) => {
-      const reqRef = collection(db, 'friendRequests');
-      await addDoc(reqRef, {
-        from: currentUser.uid,
-        fromName: currentUser.displayName,
-        to: toId,
-        toName,
-        timestamp: new Date()
-      });
-      alert(`Запрос в друзья отправлен пользователю ${toName}!`);
+      try {
+        await addDoc(collection(db, 'friendRequests'), {
+          from: currentUser.uid,
+          fromName: currentUser.displayName,
+          to: toId,
+          toName,
+          timestamp: new Date()
+        });
+        alert(`Запрос в друзья отправлен пользователю ${toName}!`);
+      } catch (e) {
+        console.error("Ошибка отправки запроса:", e);
+        alert("Не удалось отправить запрос");
+      }
     };
 
     window.acceptFriend = async (reqId, fromId) => {
-      const userRef = doc(db, 'users', currentUser.uid);
-      const fromRef = doc(db, 'users', fromId);
-      const reqDoc = doc(db, 'friendRequests', reqId);
+      try {
+        const userRef = doc(db, 'users', currentUser.uid);
+        const fromRef = doc(db, 'users', fromId);
+        const reqDoc = doc(db, 'friendRequests', reqId);
 
-      // Добавляем друга к себе
-      const curr = currentUser;
-      const friends = curr.friends ? [...curr.friends, fromId] : [fromId];
-      await updateDoc(userRef, { friends });
+        // Добавляем в друзья
+        const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
+        await updateDoc(userRef, { friends });
 
-      // Добавляем себя к нему (опционально)
-      const fromSnap = await getDoc(fromRef);
-      const fromData = fromSnap.data();
-      const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
-      await updateDoc(fromRef, { friends: fromFriends });
+        // Добавляем обратно (двусторонняя дружба)
+        const fromSnap = await getDoc(fromRef);
+        if (fromSnap.exists()) {
+          const fromData = fromSnap.data();
+          const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
+          await updateDoc(fromRef, { friends: fromFriends });
+        }
 
-      // Удаляем запрос
-      await deleteDoc(reqDoc);
-      alert('Теперь вы друзья!');
+        // Удаляем запрос
+        await deleteDoc(reqDoc);
+
+        alert('Теперь вы друзья!');
+        loadFriends(); // обновляем
+      } catch (e) {
+        console.error("Ошибка при принятии:", e);
+      }
     };
 
     window.declineFriend = async (reqId) => {
-      await deleteDoc(doc(db, 'friendRequests', reqId));
+      try {
+        await deleteDoc(doc(db, 'friendRequests', reqId));
+        alert('Запрос отклонён');
+      } catch (e) {
+        console.error("Ошибка при отклонении:", e);
+      }
     };
 
-    // Обновление профиля с друзьями
+    // Обновление текущего пользователя
     function updateCurrentUser(data) {
       currentUser = data;
       if (!currentUser.friends) currentUser.friends = [];
     }
 
     // Наблюдение за авторизацией
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        updateCurrentUser({ uid: user.uid, ...userDoc.data() });
-        loadUsers();
-        loadLeaderboard();
-        loadFriends();
-        loadReactions();
+        const userRef = doc(db, 'users', user.uid);
+        onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            updateCurrentUser({ uid: user.uid, ...docSnap.data() });
+            loadUsers();
+            loadLeaderboard();
+            loadFriends();
+            loadReactions();
+          } else {
+            console.error("Профиль не найден");
+            location.href = 'index.html';
+          }
+        }, (error) => {
+          console.error("Ошибка загрузки профиля:", error);
+        });
       } else {
         location.href = 'index.html';
       }
     });
+
+    // Для обновления друзей (если используется updateDoc)
+    function updateDoc(ref, data) {
+      return window.updateDoc ? updateDoc(ref, data) : import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js').then(m => m.updateDoc(ref, data));
+    }
+    window.updateDoc = (ref, data) => import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js').then(m => m.updateDoc(ref, data));
   </script>
 </body>
 </html>
