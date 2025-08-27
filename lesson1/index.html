@@ -258,16 +258,6 @@
   let currentUser = null;
   let totalEarnedForLesson = 0;
 
-  // Следим за пользователем
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      console.log('🔐 Пользователь:', user.displayName);
-    } else {
-      alert("Для доступа нужно войти");
-      window.location.href = "../index.html";
-    }
-  });
 
   // === 📚 Загружаем словарь и получаем иероглифы урока ===
   let lessonwords = [];
