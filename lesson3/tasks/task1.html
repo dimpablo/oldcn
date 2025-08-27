@@ -102,12 +102,13 @@
 <div id="feedback-overlay"></div>
 
 <script>
-  // ✅ Универсальная функция отправки результата
-  function sendResult(success, message) {
+  // ✅ Универсальная функция отправки результата и баллов
+  function sendResult(success, message, points = 0) {
     window.parent.postMessage({
       type: "TASK_RESULT",
       success: !!success,
-      message: message || (success ? "Задание выполнено" : "Ошибка")
+      message: message || (success ? "Задание выполнено" : "Ошибка"),
+      points: points // ✅ Отправляем баллы
     }, "*");
   }
 
@@ -123,6 +124,10 @@
     }, 800);
   }
 
+  let totalPointsEarned = 0;
+  let strokeCount = 0;
+  let mistakes = 0;
+
   window.onload = function() {
     const splashScreen = document.getElementById('splash-screen');
     const characterDiv = document.getElementById('character-target-div');
@@ -133,7 +138,7 @@
       const hash = window.location.hash.slice(1);
       if (!hash) {
         splashP.textContent = "⚠️ Не указан иероглиф";
-        sendResult(false, "Не указан иероглиф");
+        sendResult(false, "Не указан иероглиф", 0);
         return;
       }
 
@@ -149,6 +154,9 @@
           splashScreen.style.display = 'none';
           characterDiv.style.display = 'block';
 
+          // Считаем количество штрихов
+          strokeCount = charData.strokes.length;
+
           const writer = HanziWriter.create('character-target-div', char, {
             width: 300,
             height: 300,
@@ -163,20 +171,32 @@
             leniency: 2.0,
 
             onCorrectStroke: function(strokeData) {
-              // Можно добавить тихую обратную связь
+              // ✅ +1 балл за каждый правильный штрих
+              totalPointsEarned += 1;
+              console.log(`✅ Штрих ${strokeData.strokeNum} — +1 балл`);
             },
 
             onMistake: function(strokeData) {
               console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
               flashScreen('error');
+              mistakes++;
             },
 
             onComplete: function(summaryData) {
               console.log("🎯 Квиз завершён:", summaryData);
               flashScreen('success');
-              sendResult(true, `Иероглиф "${char}" нарисован верно`);
+
+              // ✅ +2 балла за полное завершение
+              totalPointsEarned += 2;
+
+              sendResult(
+                true,
+                `Иероглиф "${char}" нарисован верно`,
+                totalPointsEarned
+              );
             }
           });
+
         })
         .catch(err => {
           // ❌ Данных нет — древний иероглиф
@@ -184,7 +204,7 @@
 
           // === ОСТАВЛЯЕМ ЗАСТАВКУ, МЕНЯЕМ ТЕКСТ ===
           splashP.innerHTML = `
-            Очень древний и редикий иероглиф 😔<br>
+            Очень древний и редкий иероглиф 😔<br>
             Софт не поддерживает его отрисовку.<br>
             <strong>Придётся выписать его от руки ✍️</strong>
           `;
@@ -192,13 +212,25 @@
           // Мерцание — ошибка
           flashScreen('error');
 
-          // Через 1.2 секунды — засчитываем как "выполненное"
+          // ✅ Ничего не штрафуем и не награждаем
           setTimeout(() => {
-            sendResult(true, `Древний иероглиф "${char}" — задание пропущено (нет данных)`);
+            sendResult(
+              true,
+              `Древний иероглиф "${char}" — задание пропущено (нет данных)`,
+              0 // 🟢 0 баллов — не вина пользователя
+            );
           }, 1200);
         });
     }, 1000);
   };
+
+  // Обработка пропуска (например, если пользователь закрыл окно без завершения)
+  window.addEventListener('beforeunload', () => {
+    if (totalPointsEarned === 0 && mistakes > 0) {
+      // ❌ Пропуск с ошибками — штраф -1
+      sendResult(false, "Задание пропущено", -1);
+    }
+  });
 </script>
 
 <!-- Сигналы родительскому окну -->
