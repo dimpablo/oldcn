@@ -233,302 +233,344 @@
     <button id="skip-btn">Пропустить задание</button>
   </div>
 
-  <script>
-        const lessonwords = [
-      '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
-      '亥', '不', '允', '王', '占', '丑', '己', '卯', '㱿', '壬', '午'
-    ];
-    
-    let tasks = [];
-    let currentTaskIndex = 0;
-    let currentScale = 1.0;
-    const minScale = 0.25;
-    const maxScale = 2.0;
-    const scaleStep = 0.1;
+<script type="module">
+  // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+  import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    const iframe = document.getElementById("task-frame");
-    const statusEl = document.getElementById("status");
-    const nextBtn = document.getElementById("next-btn");
-    const skipBtn = document.getElementById("skip-btn");
-    const progressBar = document.getElementById("progress-bar");
-    const scaleValueEl = document.getElementById("scale-value");
-    const zoomInBtn = document.getElementById("zoom-in");
-    const zoomOutBtn = document.getElementById("zoom-out");
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+    authDomain: "antient-9bff0.firebaseapp.com",
+    projectId: "antient-9bff0",
+    storageBucket: "antient-9bff0.firebasestorage.app",
+    messagingSenderId: "311792589414",
+    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+    measurementId: "G-W4ZQXWRTKK"
+  };
 
-    let hasProcessedHanzi = false;
-    let discoveryCompleted = false;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null;
+  let totalEarnedForLesson = 0;
 
-    function shuffleArray(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+  // Следим за пользователем
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+      console.log('🔐 Пользователь:', user.displayName);
+    } else {
+      alert("Для доступа нужно войти");
+      window.location.href = "../index.html";
     }
+  });
 
-    function checkTaskIsValid(n) {
-      return new Promise((resolve) => {
-        const filename = `tasks/task${n}.html`;
-        const frame = document.createElement("iframe");
-        frame.classList.add("hidden-iframe");
-        frame.setAttribute("data-check", n);
+  // === ✅ Функция начисления баллов ===
+  async function addPoints(points, reason) {
+    if (!currentUser) return;
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+      const newPoints = currentPoints + points;
+      await updateDoc(userRef, { points: newPoints });
+      totalEarnedForLesson += points;
+      console.log(`[Баллы] ${points} (${reason}) → всего в уроке: ${totalEarnedForLesson}`);
+    } catch (e) {
+      console.error("❌ Не удалось обновить баллы:", e);
+    }
+  }
 
-        let responded = false;
-        let timeoutId;
+  // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
+  const lessonwords = [
+    '丙', '寅', '卜', '爭', '貞', '雨', '曰', '其', '癸',
+    '亥', '不', '允', '王', '占', '丑', '己', '卯', '㱿', '壬', '午'
+  ];
 
-        function onMessage(event) {
-          const frameN = parseInt(frame.getAttribute("data-check"));
-          if (event.data.type === "TASK_EXISTS" && event.data.valid) {
-            if (!responded && frameN === n) {
-              responded = true;
-              clearTimeout(timeoutId);
-              document.body.removeChild(frame);
-              window.removeEventListener("message", onMessage);
-              resolve({ exists: true, n });
-            }
-          }
-        }
+  let tasks = [];
+  let currentTaskIndex = 0;
+  let currentScale = 1.0;
+  const minScale = 0.25;
+  const maxScale = 2.0;
+  const scaleStep = 0.1;
 
-        window.addEventListener("message", onMessage);
+  const iframe = document.getElementById("task-frame");
+  const statusEl = document.getElementById("status");
+  const nextBtn = document.getElementById("next-btn");
+  const skipBtn = document.getElementById("skip-btn");
+  const progressBar = document.getElementById("progress-bar");
+  const scaleValueEl = document.getElementById("scale-value");
+  const zoomInBtn = document.getElementById("zoom-in");
+  const zoomOutBtn = document.getElementById("zoom-out");
 
-        timeoutId = setTimeout(() => {
-          if (!responded) {
-            document.body.removeChild(frame);
-            window.removeEventListener("message", onMessage);
-            resolve({ exists: false, n });
-          }
-        }, 3000);
+  let hasProcessedHanzi = false;
+  let discoveryCompleted = false;
 
-        frame.onload = () => {
-          try {
-            if (frame.contentDocument && frame.contentDocument.title === "404 Not Found") {
-              if (!responded) {
-                clearTimeout(timeoutId);
-                document.body.removeChild(frame);
-                window.removeEventListener("message", onMessage);
-                resolve({ exists: false, n });
-              }
-            }
-          } catch (e) {}
-        };
+  function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
 
-        frame.onerror = () => {
-          if (!responded) {
+  function checkTaskIsValid(n) {
+    return new Promise((resolve) => {
+      const filename = `tasks/task${n}.html`;
+      const frame = document.createElement("iframe");
+      frame.classList.add("hidden-iframe");
+      frame.setAttribute("data-check", n);
+
+      let responded = false;
+      let timeoutId;
+
+      function onMessage(event) {
+        const frameN = parseInt(frame.getAttribute("data-check"));
+        if (event.data.type === "TASK_EXISTS" && event.data.valid) {
+          if (!responded && frameN === n) {
+            responded = true;
             clearTimeout(timeoutId);
             document.body.removeChild(frame);
             window.removeEventListener("message", onMessage);
-            resolve({ exists: false, n });
+            resolve({ exists: true, n });
+          }
+        }
+      }
+
+      window.addEventListener("message", onMessage);
+
+      timeoutId = setTimeout(() => {
+        if (!responded) {
+          document.body.removeChild(frame);
+          window.removeEventListener("message", onMessage);
+          resolve({ exists: false, n });
+        }
+      }, 3000);
+
+      frame.onload = () => {
+        try {
+          if (frame.contentDocument && frame.contentDocument.title === "404 Not Found") {
+            if (!responded) {
+              clearTimeout(timeoutId);
+              document.body.removeChild(frame);
+              window.removeEventListener("message", onMessage);
+              resolve({ exists: false, n });
+            }
+          }
+        } catch (e) {}
+      };
+
+      frame.onerror = () => {
+        if (!responded) {
+          clearTimeout(timeoutId);
+          document.body.removeChild(frame);
+          window.removeEventListener("message", onMessage);
+          resolve({ exists: false, n });
+        }
+      };
+
+      frame.src = filename + "?_=" + Date.now();
+      document.body.appendChild(frame);
+    });
+  }
+
+  async function discoverTasks() {
+    const existingTasks = [];
+    let n = 1;
+
+    statusEl.textContent = "🔍 Ищем задания...";
+
+    while (true) {
+      const result = await checkTaskIsValid(n);
+      if (result.exists) {
+        existingTasks.push(`tasks/task${n}.html`);
+        n++;
+      } else {
+        break;
+      }
+      if (n > 200) break;
+    }
+
+    if (existingTasks.length === 0) {
+      statusEl.innerHTML = `
+        ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
+        Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
+        <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
+      `;
+      return;
+    }
+
+    tasks = shuffleArray(existingTasks);
+    discoveryCompleted = true;
+    statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
+    updateProgress();
+    document.getElementById("task-container").classList.add("active");
+
+    if (isMobile()) setScale(1);
+    loadTask(0);
+  }
+
+  function loadTask(index) {
+    if (index >= tasks.length) {
+      iframe.style.display = "none";
+      nextBtn.disabled = true;
+      skipBtn.disabled = true;
+
+      statusEl.innerHTML = `<div style="text-align: center;">
+        <h2>🎉 Поздравляем!</h2>
+        <p>Вы успешно завершили урок!</p>
+        <p><strong>+10 баллов за полное прохождение!</strong></p>
+        <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
+      </div>`;
+
+      addPoints(10, `успешное завершение урока ${window.location.pathname.split('/')[1]}`);
+      createFireworks();
+
+      setTimeout(() => {
+        window.location.href = "../";
+      }, 5000);
+
+      updateProgress();
+      return;
+    }
+
+    hasProcessedHanzi = false;
+    const url = tasks[index] + "?_=" + Date.now();
+    iframe.src = url;
+    updateProgress();
+    nextBtn.disabled = true;
+    currentTaskIndex = index;
+  }
+
+  function updateProgress() {
+    const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
+    progressBar.style.width = `${progress}%`;
+  }
+
+  function setScale(scale) {
+    currentScale = scale;
+    iframe.style.transform = `scale(${currentScale})`;
+    scaleValueEl.textContent = currentScale.toFixed(1);
+  }
+
+  zoomInBtn.addEventListener("click", () => {
+    if (currentScale < maxScale) {
+      setScale(Math.round((currentScale + scaleStep) * 10) / 10);
+    }
+  });
+
+  zoomOutBtn.addEventListener("click", () => {
+    if (currentScale > minScale) {
+      setScale(Math.round((currentScale - scaleStep) * 10) / 10);
+    }
+  });
+
+  function isMobile() {
+    return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+  }
+
+  // === 🎯 ОБРАБОТКА СООБЩЕНИЙ ОТ ЗАДАНИЙ ===
+  window.addEventListener("message", async (event) => {
+    const { type, success } = event.data;
+
+    if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
+      hasProcessedHanzi = true;
+      const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
+      const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
+      iframe.src = '';
+      setTimeout(() => { iframe.src = newSrc; }, 10);
+      nextBtn.disabled = true;
+      return;
+    }
+
+    if (type === "TASK_RESULT") {
+      if (success) {
+        statusEl.textContent = "✅ Задание выполнено!";
+        nextBtn.disabled = false;
+        addPoints(5, `успешное задание ${tasks[currentTaskIndex]}`);
+      } else {
+        statusEl.textContent = "❌ Ошибка или пропуск";
+        nextBtn.disabled = false;
+        addPoints(-4, `ошибка или пропуск в ${tasks[currentTaskIndex]}`);
+      }
+    }
+  });
+
+  // === ⏭️ Кнопки ===
+  nextBtn.addEventListener("click", () => {
+    currentTaskIndex++;
+    loadTask(currentTaskIndex);
+  });
+
+  skipBtn.addEventListener("click", () => {
+    addPoints(-4, `пропуск задания ${tasks[currentTaskIndex]}`);
+    currentTaskIndex++;
+    loadTask(currentTaskIndex);
+  });
+
+  // === 🎆 Анимация фейерверков ===
+  function createFireworks() {
+    const container = document.getElementById("fireworks");
+    const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
+    const particles = 50;
+
+    function createExplosion(x, y) {
+      for (let i = 0; i < particles; i++) {
+        const particle = document.createElement("div");
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 3;
+        const size = 2 + Math.random() * 4;
+
+        particle.style.position = "absolute";
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = "50%";
+        particle.style.boxShadow = "0 0 6px currentColor";
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.pointerEvents = "none";
+
+        container.appendChild(particle);
+
+        let dx = Math.cos(angle) * speed;
+        let dy = Math.sin(angle) * speed;
+        let opacity = 1;
+        let posX = x;
+        let posY = y;
+
+        const animate = () => {
+          opacity -= 0.02;
+          posX += dx;
+          posY += dy + 0.1;
+          dy += 0.05;
+
+          particle.style.opacity = opacity;
+          particle.style.left = `${posX}px`;
+          particle.style.top = `${posY}px`;
+
+          if (opacity > 0) {
+            requestAnimationFrame(animate);
+          } else {
+            container.removeChild(particle);
           }
         };
 
-        frame.src = filename + "?_=" + Date.now();
-        document.body.appendChild(frame);
-      });
+        requestAnimationFrame(animate);
+      }
     }
 
-    async function discoverTasks() {
-      const existingTasks = [];
-      let n = 1;
+    setInterval(() => {
+      const x = 50 + Math.random() * (container.offsetWidth - 100);
+      const y = 100 + Math.random() * (container.offsetHeight - 100);
+      createExplosion(x, y);
+    }, 400);
+  }
 
-      statusEl.textContent = "🔍 Ищем задания...";
-
-      while (true) {
-        const result = await checkTaskIsValid(n);
-
-        if (result.exists) {
-          existingTasks.push(`tasks/task${n}.html`);
-          n++;
-        } else {
-          break;
-        }
-
-        if (n > 200) break;
-      }
-
-      if (existingTasks.length === 0) {
-        statusEl.innerHTML = `
-          ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
-          Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
-          <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
-        `;
-        return;
-      }
-
-      tasks = shuffleArray(existingTasks);
-      discoveryCompleted = true;
-      statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
-      updateProgress();
-
-      // Показываем iframe только после поиска
-      document.getElementById("task-container").classList.add("active");
-
-      if (isMobile()) {
-        setScale(1);
-      }
-
-      loadTask(0);
-    }
-
-    function loadTask(index) {
-      if (index >= tasks.length) {
-        iframe.style.display = "none";
-        nextBtn.disabled = true;
-        skipBtn.disabled = true;
-
-        statusEl.innerHTML = `<div style="text-align: center;">
-          <h2>🎉 Поздравляем!</h2>
-          <p>Вы успешно завершили урок<br><strong>Древнекитайские оракульные надписи</strong>!</p>
-          <div id="fireworks" style="width: 100%; height: 200px; position: relative; background: #0000; border-radius: 8px; margin: 10px 0;"></div>
-        </div>`;
-
-        createFireworks();
-
-        setTimeout(() => {
-          window.location.href = "../";
-        }, 5000);
-
-        updateProgress();
-        return;
-      }
-
-      hasProcessedHanzi = false;
-      const url = tasks[index] + "?_=" + Date.now();
-      console.log(`▶️ Загрузка: ${url}`);
-      iframe.src = url;
-
-      updateProgress();
-      nextBtn.disabled = true;
-      currentTaskIndex = index;
-    }
-
-    function updateProgress() {
-      const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
-      progressBar.style.width = `${progress}%`;
-    }
-
-    function setScale(scale) {
-      currentScale = scale;
-      iframe.style.transform = `scale(${currentScale})`;
-      scaleValueEl.textContent = currentScale.toFixed(1);
-    }
-
-    zoomInBtn.addEventListener("click", () => {
-      if (currentScale < maxScale) {
-        setScale(Math.round((currentScale + scaleStep) * 10) / 10);
-      }
-    });
-
-    zoomOutBtn.addEventListener("click", () => {
-      if (currentScale > minScale) {
-        setScale(Math.round((currentScale - scaleStep) * 10) / 10);
-      }
-    });
-
-    function isMobile() {
-      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
-    }
-
-    window.addEventListener("message", (event) => {
-      const { type, success } = event.data;
-
-      if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted) {
-        hasProcessedHanzi = true;
-
-        const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
-        const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
-
-        console.log(`🎨 DO_HANZI: перезагрузка с #${randomChar}`);
-
-        iframe.src = '';
-        setTimeout(() => {
-          iframe.src = newSrc;
-        }, 10);
-
-        nextBtn.disabled = true;
-        return;
-      }
-
-      if (type === "TASK_RESULT") {
-        if (success) {
-          statusEl.textContent = "✅ Задание выполнено!";
-          nextBtn.disabled = false;
-        } else {
-          statusEl.textContent = "⏳ Задание загружается...";
-        }
-      }
-    });
-
-    nextBtn.addEventListener("click", () => {
-      currentTaskIndex++;
-      loadTask(currentTaskIndex);
-    });
-
-    skipBtn.addEventListener("click", () => {
-      currentTaskIndex++;
-      loadTask(currentTaskIndex);
-    });
-
-    function createFireworks() {
-      const container = document.getElementById("fireworks");
-      const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFA500", "#FFFFFF"];
-      const particles = 50;
-
-      function createExplosion(x, y) {
-        for (let i = 0; i < particles; i++) {
-          const particle = document.createElement("div");
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 1 + Math.random() * 3;
-          const size = 2 + Math.random() * 4;
-
-          particle.style.position = "absolute";
-          particle.style.width = `${size}px`;
-          particle.style.height = `${size}px`;
-          particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-          particle.style.borderRadius = "50%";
-          particle.style.boxShadow = "0 0 6px currentColor";
-          particle.style.left = `${x}px`;
-          particle.style.top = `${y}px`;
-          particle.style.pointerEvents = "none";
-
-          container.appendChild(particle);
-
-          let dx = Math.cos(angle) * speed;
-          let dy = Math.sin(angle) * speed;
-          let opacity = 1;
-          let posX = x;
-          let posY = y;
-
-          const animate = () => {
-            opacity -= 0.02;
-            posX += dx;
-            posY += dy + 0.1;
-            dy += 0.05;
-
-            particle.style.opacity = opacity;
-            particle.style.left = `${posX}px`;
-            particle.style.top = `${posY}px`;
-
-            if (opacity > 0) {
-              requestAnimationFrame(animate);
-            } else {
-              container.removeChild(particle);
-            }
-          };
-
-          requestAnimationFrame(animate);
-        }
-      }
-
-      setInterval(() => {
-        const x = 50 + Math.random() * (container.offsetWidth - 100);
-        const y = 100 + Math.random() * (container.offsetHeight - 100);
-        createExplosion(x, y);
-      }, 400);
-    }
-
-    // Запуск поиска заданий
-    discoverTasks();
-  </script>
+  // Запуск
+  discoverTasks();
+</script>
 </body>
 </html>
