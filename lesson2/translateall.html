@@ -308,235 +308,263 @@
 
     <!-- Подключаем данные -->
     <script src="segmentation.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Функция очистки китайского текста от пунктуации и пробелов
-            function cleanChinese(text) {
-                return text.replace(/[，,：:；;。.？?！!、\s]/g, '');
-            }
-            
-            // Функция очистки русского текста
-            function cleanRussian(text) {
-                return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
-            }
-            
-            // Получаем оригиналы и переводы
-            const allOriginals = SentenceData.sentences.map(s => cleanChinese(s.original));
-            const allTranslations = SentenceData.sentences.map(s => s.translation);
-            
-            // Сбор всех чистых слов (русские)
-            const allRussianWords = [];
-            allTranslations.forEach(trans => {
-                const cleaned = cleanRussian(trans);
-                allRussianWords.push(...cleaned.split(' ').filter(word => word.trim()));
-            });
-            
-            // Сбор всех чистых иероглифов (китайские)
-            const allChineseChars = [];
-            allOriginals.forEach(orig => {
-                allChineseChars.push(...orig.split(''));
-            });
-            
-            // Перемешивание массива
-            function shuffleArray(array) {
-                const arr = [...array];
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-            
-            // Генерация задания: китайский → русский
-            function generateTranslationTask(original, correctTranslation) {
-                const cleanedTranslation = cleanRussian(correctTranslation);
-                const correctWords = cleanedTranslation.split(' ').filter(word => word);
-                
-                // Лишние слова (из других переводов)
-                const numExtra = Math.max(3, Math.floor(correctWords.length * 0.4));
-                const extraWords = shuffleArray(allRussianWords)
-                    .filter(word => !correctWords.includes(word))
-                    .slice(0, numExtra);
-                
-                const words = shuffleArray([...correctWords, ...extraWords]);
-                
-                return {
-                    type: 'toTranslation',
-                    source: original,
-                    correctAnswer: cleanedTranslation,
-                    words: words,
-                    direction: 'с китайского на русский'
-                };
-            }
-            
-            // Генерация задания: русский → китайский
-            function generateOriginalTask(translation, correctOriginal) {
-                const correctChars = correctOriginal.split('');
-                
-                // Лишние иероглифы (из других предложений)
-                const numExtra = Math.max(2, Math.floor(correctChars.length * 0.25));
-                const extraChars = shuffleArray(allChineseChars)
-                    .filter(char => !correctChars.includes(char))
-                    .slice(0, numExtra);
-                
-                const chars = shuffleArray([...correctChars, ...extraChars]);
-                
-                return {
-                    type: 'toOriginal',
-                    source: translation,
-                    correctAnswer: correctOriginal,
-                    words: chars,
-                    direction: 'с русского на китайский'
-                };
-            }
-            
-            // Создание всех заданий
-            let tasks = [];
-            SentenceData.sentences.forEach(sentence => {
-                const cleanOrig = cleanChinese(sentence.original);
-                tasks.push(generateTranslationTask(cleanOrig, sentence.translation));
-                tasks.push(generateOriginalTask(sentence.translation, cleanOrig));
-            });
-            
-            tasks = shuffleArray(tasks);
-            
-            // Состояние
-            let currentTaskIndex = 0;
-            let currentAnswer = [];
-            
-            // Элементы
-            const sourceText = document.getElementById('sourceText');
-            const wordsList = document.getElementById('wordsList');
-            const answerList = document.getElementById('answerList');
-            const resultMessage = document.getElementById('resultMessage');
-            const tasksLeft = document.getElementById('tasksLeft');
-            const taskType = document.getElementById('taskType');
-            const mainContent = document.getElementById('mainContent');
-            const congratulations = document.getElementById('congratulations');
-            const returnBtn = document.getElementById('returnBtn');
-            
-            // Отображение задания
-            function renderTask() {
-                if (currentTaskIndex >= tasks.length) {
-                    showCompletionScreen();
-                    return;
-                }
-                
-                const task = tasks[currentTaskIndex];
-                taskType.textContent = `Перевод ${task.direction}`;
-                sourceText.textContent = task.source;
-                tasksLeft.textContent = tasks.length - currentTaskIndex;
-                
-                currentAnswer = [];
-                answerList.innerHTML = '';
-                wordsList.innerHTML = '';
-                
-                // Добавляем слова без пустых или пунктуационных
-                task.words
-                    .filter(word => word && word.trim()) // Убираем пустые/пробельные
-                    .forEach(word => {
-                        const el = document.createElement('div');
-                        el.className = 'word';
-                        el.textContent = word;
-                        el.dataset.word = word;
-                        wordsList.appendChild(el);
-                    });
-                
-                // Обработчики для слов
-                document.querySelectorAll('#wordsList .word').forEach(el => {
-                    el.addEventListener('click', function() {
-                        const word = this.dataset.word;
-                        this.remove();
-                        
-                        const answerEl = document.createElement('div');
-                        answerEl.className = 'word selected';
-                        answerEl.textContent = word;
-                        answerEl.dataset.word = word;
-                        answerList.appendChild(answerEl);
-                        
-                        currentAnswer.push(word);
-                        checkAnswer();
-                    });
-                });
-                
-                resultMessage.className = 'info';
-                resultMessage.textContent = 'Соберите перевод.';
-            }
-            
-            // Проверка ответа
-            function checkAnswer() {
-                const task = tasks[currentTaskIndex];
-                const currentText = currentAnswer.join(' ').trim();
-                
-                if (task.type === 'toTranslation') {
-                    // Сравниваем очищенные строки
-                    if (currentText === task.correctAnswer) {
-                        showSuccess();
-                    }
-                } else if (task.type === 'toOriginal') {
-                    // Для китайского — объединяем символы
-                    const chineseAnswer = currentAnswer.join('');
-                    if (chineseAnswer === task.correctAnswer) {
-                        showSuccess();
-                    }
-                }
-            }
-            
-            // Успешно
-            function showSuccess() {
-                resultMessage.className = 'success';
-                resultMessage.textContent = '✅ Верно! Следующее задание...';
-                
-                setTimeout(() => {
-                    currentTaskIndex++;
-                    renderTask();
-                }, 1200);
-            }
-            
-            // Клик по слову в ответе — возврат
-            answerList.addEventListener('click', function(e) {
-                if (e.target.classList.contains('word')) {
-                    const word = e.target.dataset.word;
-                    e.target.remove();
-                    
-                    const wordEl = document.createElement('div');
-                    wordEl.className = 'word';
-                    wordEl.textContent = word;
-                    wordEl.dataset.word = word;
-                    wordsList.appendChild(wordEl);
-                    
-                    const index = currentAnswer.indexOf(word);
-                    if (index !== -1) currentAnswer.splice(index, 1);
-                    
-                    // Восстанавливаем обработчик
-                    wordEl.addEventListener('click', function() {
-                        const w = this.dataset.word;
-                        this.remove();
-                        const aEl = document.createElement('div');
-                        aEl.className = 'word selected';
-                        aEl.textContent = w;
-                        aEl.dataset.word = w;
-                        answerList.appendChild(aEl);
-                        currentAnswer.push(w);
-                        checkAnswer();
-                    });
-                    
-                    checkAnswer();
-                }
-            });
-            
-            // Завершение
-            function showCompletionScreen() {
-                mainContent.style.display = 'none';
-                congratulations.style.display = 'block';
-            }
-            
-            returnBtn.addEventListener('click', () => {
-                window.location.href = '../index.html';
-            });
-            
-            renderTask();
+<script type="module">
+  // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+  import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+    authDomain: "antient-9bff0.firebaseapp.com",
+    projectId: "antient-9bff0",
+    storageBucket: "antient-9bff0.firebasestorage.app",
+    messagingSenderId: "311792589414",
+    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+    measurementId: "G-W4ZQXWRTKK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null;
+  let totalEarned = 0; // Для логирования
+
+  // Следим за пользователем
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+      console.log('🔐 Пользователь:', user.displayName);
+    } else {
+      alert("Для доступа нужно войти");
+      window.location.href = '../index.html';
+    }
+  });
+
+  // === ✅ Функция начисления/списания баллов ===
+  async function updatePoints(points, reason) {
+    if (!currentUser) return;
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+      const newPoints = currentPoints + points;
+      await updateDoc(userRef, { points: newPoints });
+      totalEarned += points;
+      console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
+    } catch (e) {
+      console.error("❌ Ошибка обновления баллов:", e);
+    }
+  }
+
+  // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
+  document.addEventListener('DOMContentLoaded', function() {
+    function cleanChinese(text) {
+      return text.replace(/[，,：:；;。.？?！!、\s]/g, '');
+    }
+
+    function cleanRussian(text) {
+      return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
+    }
+
+    const allOriginals = SentenceData.sentences.map(s => cleanChinese(s.original));
+    const allTranslations = SentenceData.sentences.map(s => s.translation);
+
+    const allRussianWords = [];
+    allTranslations.forEach(trans => {
+      allRussianWords.push(...cleanRussian(trans).split(' ').filter(word => word.trim()));
+    });
+
+    const allChineseChars = [];
+    allOriginals.forEach(orig => {
+      allChineseChars.push(...orig.split(''));
+    });
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function generateTranslationTask(original, correctTranslation) {
+      const cleanedTranslation = cleanRussian(correctTranslation);
+      const correctWords = cleanedTranslation.split(' ').filter(word => word);
+      const numExtra = Math.max(3, Math.floor(correctWords.length * 0.4));
+      const extraWords = shuffleArray(allRussianWords)
+        .filter(word => !correctWords.includes(word))
+        .slice(0, numExtra);
+      const words = shuffleArray([...correctWords, ...extraWords]);
+
+      return {
+        type: 'toTranslation',
+        source: original,
+        correctAnswer: cleanedTranslation,
+        words: words,
+        direction: 'с китайского на русский'
+      };
+    }
+
+    function generateOriginalTask(translation, correctOriginal) {
+      const correctChars = correctOriginal.split('');
+      const numExtra = Math.max(2, Math.floor(correctChars.length * 0.25));
+      const extraChars = shuffleArray(allChineseChars)
+        .filter(char => !correctChars.includes(char))
+        .slice(0, numExtra);
+      const chars = shuffleArray([...correctChars, ...extraChars]);
+
+      return {
+        type: 'toOriginal',
+        source: translation,
+        correctAnswer: correctOriginal,
+        words: chars,
+        direction: 'с русского на китайский'
+      };
+    }
+
+    let tasks = [];
+    SentenceData.sentences.forEach(sentence => {
+      const cleanOrig = cleanChinese(sentence.original);
+      tasks.push(generateTranslationTask(cleanOrig, sentence.translation));
+      tasks.push(generateOriginalTask(sentence.translation, cleanOrig));
+    });
+
+    tasks = shuffleArray(tasks);
+
+    let currentTaskIndex = 0;
+    let currentAnswer = [];
+
+    const sourceText = document.getElementById('sourceText');
+    const wordsList = document.getElementById('wordsList');
+    const answerList = document.getElementById('answerList');
+    const resultMessage = document.getElementById('resultMessage');
+    const tasksLeft = document.getElementById('tasksLeft');
+    const taskType = document.getElementById('taskType');
+    const mainContent = document.getElementById('mainContent');
+    const congratulations = document.getElementById('congratulations');
+    const returnBtn = document.getElementById('returnBtn');
+
+    function renderTask() {
+      if (currentTaskIndex >= tasks.length) {
+        showCompletionScreen();
+        return;
+      }
+
+      const task = tasks[currentTaskIndex];
+      taskType.textContent = `Перевод ${task.direction}`;
+      sourceText.textContent = task.source;
+      tasksLeft.textContent = tasks.length - currentTaskIndex;
+
+      currentAnswer = [];
+      answerList.innerHTML = '';
+      wordsList.innerHTML = '';
+
+      task.words
+        .filter(word => word && word.trim())
+        .forEach(word => {
+          const el = document.createElement('div');
+          el.className = 'word';
+          el.textContent = word;
+          el.dataset.word = word;
+          wordsList.appendChild(el);
         });
-    </script>
+
+      document.querySelectorAll('#wordsList .word').forEach(el => {
+        el.addEventListener('click', function() {
+          const word = this.dataset.word;
+          this.remove();
+
+          const answerEl = document.createElement('div');
+          answerEl.className = 'word selected';
+          answerEl.textContent = word;
+          answerEl.dataset.word = word;
+          answerList.appendChild(answerEl);
+
+          currentAnswer.push(word);
+          checkAnswer();
+        });
+      });
+
+      resultMessage.className = 'info';
+      resultMessage.textContent = 'Соберите перевод.';
+    }
+
+    function checkAnswer() {
+      const task = tasks[currentTaskIndex];
+      const currentText = currentAnswer.join(' ').trim();
+
+      if (task.type === 'toTranslation') {
+        if (currentText === task.correctAnswer) {
+          showSuccess();
+        }
+      } else if (task.type === 'toOriginal') {
+        const chineseAnswer = currentAnswer.join('');
+        if (chineseAnswer === task.correctAnswer) {
+          showSuccess();
+        }
+      }
+    }
+
+    function showSuccess() {
+      resultMessage.className = 'success';
+      resultMessage.textContent = '✅ Верно! Следующее задание...';
+      updatePoints(10, `успешный перевод: ${tasks[currentTaskIndex].source}`);
+      setTimeout(() => {
+        currentTaskIndex++;
+        renderTask();
+      }, 1200);
+    }
+
+    // === 🔥 Обработчик удаления слова (штраф) ===
+    answerList.addEventListener('click', function(e) {
+      if (e.target.classList.contains('word')) {
+        const word = e.target.dataset.word;
+        e.target.remove();
+
+        const wordEl = document.createElement('div');
+        wordEl.className = 'word';
+        wordEl.textContent = word;
+        wordEl.dataset.word = word;
+        wordsList.appendChild(wordEl);
+
+        const index = currentAnswer.indexOf(word);
+        if (index !== -1) currentAnswer.splice(index, 1);
+
+        // ❌ Штраф за исправление
+        updatePoints(-5, `исправление перевода: ${tasks[currentTaskIndex]?.source || 'unknown'}`);
+
+        // Восстанавливаем обработчик
+        wordEl.addEventListener('click', function() {
+          const w = this.dataset.word;
+          this.remove();
+          const aEl = document.createElement('div');
+          aEl.className = 'word selected';
+          aEl.textContent = w;
+          aEl.dataset.word = w;
+          answerList.appendChild(aEl);
+          currentAnswer.push(w);
+          checkAnswer();
+        });
+
+        checkAnswer();
+      }
+    });
+
+    // === 🎉 Завершение всех заданий ===
+    function showCompletionScreen() {
+      mainContent.style.display = 'none';
+      congratulations.style.display = 'block';
+      updatePoints(30, 'завершение всего цикла переводов');
+    }
+
+    returnBtn.addEventListener('click', () => {
+      window.location.href = '../index.html';
+    });
+
+    renderTask();
+  });
+</script>
 </body>
 </html>
