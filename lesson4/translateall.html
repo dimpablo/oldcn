@@ -330,16 +330,7 @@
   let currentUser = null;
   let totalEarned = 0; // Для логирования
 
-  // Следим за пользователем
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      console.log('🔐 Пользователь:', user.displayName);
-    } else {
-      alert("Для доступа нужно войти");
-      window.location.href = '../index.html';
-    }
-  });
+
 
   // === ✅ Функция начисления/списания баллов ===
   async function updatePoints(points, reason) {

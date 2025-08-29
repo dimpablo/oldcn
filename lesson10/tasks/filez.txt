@@ -248,26 +248,27 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 侯虎余其得汝</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
-  <h2>Что означает фраза «侯虎余其得汝»?</h2>
-  <p><strong>Обратите внимание на личные местоимения.</strong></p>
+  <h2>Что означает фраза «王占曰不嘉，其嘉，不吉»?</h2>
+  <p><strong>Обратите внимание: это сложное предложение, где «其嘉，不吉» уточняет условное следствие к основному утверждению.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Hóu Hǔ yú qí dé rǔ</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Хоу Ху, я получу тебя (в жёны)", correct: true },
-      { text: "Хоу Ху, ты получишь меня", correct: false },
-      { text: "Я отдам тебя Хоу Ху", correct: false },
-      { text: "Хоу Ху, я не получу тебя", correct: false }
+      { text: "Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо».", correct: false },
+      { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
+      { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
+      { text: "Если всё хорошо сейчас, то она не умрёт.", correct: false }
     ];
 
     function shuffle(array) {
@@ -304,10 +305,16 @@
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>сложного предложения</strong>:<br>
+          • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+          • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Такие конструкции характерны для гадательных текстов Урока 10.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление «не благоприятно» и «если благоприятно — к несчастью».";
         sendResult(false);
       }
     }
@@ -327,198 +334,22 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 帝其作王祸</title>
-</head>
-<body>
-  <h2>Какой глагол требует двойного дополнения в древнекитайском?</h2>
-  <p><strong>Пример: «帝其作王祸»</strong></p>
-  <div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Dì qí zuò wáng huò</div>
-  </div>
-  <div id="answers"></div>
-  <button onclick="check('answers', 'result', options)">Проверить</button>
-  <p id="result"></p>
-  <script>
-    const options = [
-      { text: "作 (zuò) — причинять, создавать", correct: true },
-      { text: "求 (qiú) — просить", correct: false },
-      { text: "至 (zhì) — достигать", correct: false },
-      { text: "卜 (bǔ) — гадать", correct: false }
-    ];
-
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function renderOptions() {
-      const shuffled = shuffle(options);
-      const container = document.getElementById("answers");
-      container.innerHTML = "";
-      shuffled.forEach((opt, index) => {
-        const label = document.createElement("label");
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "q";
-        input.value = opt.correct ? "1" : "0_" + index;
-        input.dataset.correct = opt.correct.toString();
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(opt.text));
-        container.appendChild(label);
-      });
-    }
-
-    function check(containerId, resultId, optionsArray) {
-      const selected = document.querySelector('input[name="q"]:checked');
-      const resultEl = document.getElementById(resultId);
-      if (!selected) {
-        resultEl.textContent = "Выберите вариант.";
-        return;
-      }
-      if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
-        sendResult(true);
-      } else {
-        resultEl.textContent = "❌ Неверно.";
-        sendResult(false);
-      }
-    }
-
-    function sendResult(success) {
-      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-    }
-
-    window.onload = renderOptions;
-  </script>
-</body>
-</html>
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
-
-=== 📄 task12.html ===
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Урок 5: Гадания о помощи Небесного Владыки</title>
+    <title>Урок 10: Сложные и условные предложения</title>
 </head>
 <body>
-<h2>Как правильно понять инверсию местоимения в отрицании?</h2>
-<p><strong>Пример: «帝不我降熯»</strong></p>
+<h2>Как правильно понять предложение «王占曰不嘉，其嘉，不吉»?</h2>
+<p><strong>Пример из текста: «王占曰不嘉，其嘉，不吉»</strong></p>
 
 <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
         Показать пиньинь
     </button>
-    <div class="pinyin-text">dì bù wǒ jiàng hàn</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
 </div>
 
-<p>Это предложение из гадательной надписи. Каково его правильное значение и грамматическое построение?</p>
-
-<div id="answers"></div>
-<button onclick="check('answers', 'result', options)">Проверить</button>
-<p id="result"></p>
-
-<script>
-  const options = [
-    { text: "«Небесный Владыка не пошлёт нам засуху» — верно: инверсия местоимения «我» перед глаголом в отрицательном предложении", correct: true },
-    { text: "«Небесный Владыка не пошлёт засуху им» — неверно: местоимение «我» относится к «ним», а не к «нам»", correct: false },
-    { text: "«Небесный Владыка не мы пошлём засуху» — неверно: это бессмыслица, нарушена грамматика", correct: false },
-    { text: "«Небесный Владыка не пошлёт засуху» — верно, но игнорируется роль местоимения «我»", correct: false }
-  ];
-
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function renderOptions() {
-    const shuffled = shuffle(options);
-    const container = document.getElementById("answers");
-    if (!container) {
-      console.error("Контейнер #answers не найден");
-      return;
-    }
-    container.innerHTML = "";
-
-    shuffled.forEach((opt, index) => {
-      const label = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "q";
-      input.value = opt.correct ? "1" : "0_" + index;
-      input.dataset.correct = opt.correct.toString();
-
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(opt.text));
-      container.appendChild(label);
-    });
-  }
-
-  function check(containerId, resultId, optionsArray) {
-    const selected = document.querySelector('input[name="q"]:checked');
-    const resultEl = document.getElementById(resultId);
-
-    if (!selected) {
-      resultEl.textContent = "Выберите вариант.";
-      return;
-    }
-
-    if (selected.dataset.correct === "true") {
-      resultEl.textContent = "✅ Правильно! Это пример обязательной инверсии беспредложного местоимения «我» в отрицательном предложении: «帝不我降熯» = «Небесный Владыка не пошлёт нам засуху».";
-      sendResult(true);
-    } else {
-      resultEl.textContent = "❌ Неверно. Вспомните правило: в отрицательных предложениях местоимение-дополнение ставится перед глаголом, сразу после отрицания.";
-      sendResult(false);
-    }
-  }
-
-  function sendResult(success) {
-    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
-  }
-
-  // Загрузка вариантов при открытии страницы
-  window.onload = renderOptions;
-</script>
-</body>
-</html>
-
-<!-- Уведомление, что задание существует -->
-<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
-
-=== 📄 task13.html ===
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Урок 5: Божественная помощь и человеческие дела</title>
-</head>
-<body>
-<h2>Как правильно понять предложение «帝不我其受佑»?</h2>
-<p><strong>Пример из текста: «帝不我其受佑»</strong></p>
-
-<div class="pinyin-container">
-    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
-        Показать пиньинь
-    </button>
-    <div class="pinyin-text">dì bù wǒ qí shòu yòu</div>
-</div>
-
-<p>Это гадательное предложение затрагивает несколько грамматических особенностей Урока 5. Каково его правильное значение и структура?</p>
+<p>Это гадательное высказывание из текста Урока 10 содержит сложную структуру. Каково его правильное значение и грамматическое построение?</p>
 
 <div id="answers"></div>
 <button onclick="check('answers', 'result', options)">Проверить</button>
@@ -527,19 +358,19 @@
 <script>
   const options = [
     { 
-      text: "«Небесный Владыка не пошлёт нам помощь» — верно: здесь инверсия местоимения «我» перед глаголом в отрицании, а «受佑» — предикатив с двойным дополнением (кому? что?)", 
+      text: "«Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“» — верно: это сложное предложение, где «其嘉，不吉» уточняет условное следствие к основному утверждению «不嘉»", 
       correct: true 
     },
     { 
-      text: "«Небесный Владыка не пошлёт помощь им» — неверно: «我» не может означать «их», это 1-е лицо", 
+      text: "«Правитель сказал: „Не будет урожая, но если будет — всё будет хорошо“» — неверно: «不吉» означает «к несчастью», а не «хорошо»", 
       correct: false 
     },
     { 
-      text: "«Небесный Владыка не мы получим помощь» — неверно: нарушена синтаксическая структура", 
+      text: "«Правитель спросил: „Будет ли урожай? Если будет — это хорошо?“» — неверно: «占曰» вводит прямую речь (ответ), а не вопрос", 
       correct: false 
     },
     { 
-      text: "«Небесный Владыка не пошлёт помощь» — частично верно, но игнорирует грамматику: «我» не может стоять после «不» без инверсии", 
+      text: "«Если всё хорошо сейчас, то она не умрёт» — неверно: в предложении речь идёт о благоприятности гадания, а не о состоянии здоровья», 
       correct: false 
     }
   ];
@@ -588,15 +419,15 @@
     if (selected.dataset.correct === "true") {
       resultEl.innerHTML = `
         ✅ <strong>Правильно!</strong><br>
-        Это сложное предложение, объединяющее несколько тем Урока 5:<br>
-        • <strong>Предикатив «受佑»</strong> требует двойного дополнения: «послать помощь кому?» (косвенное) и «что?» (прямое).<br>
-        • <strong>Инверсия «不我受佑»</strong> — обязательна в отрицательных предложениях с местоимением-дополнением.<br>
-        • Использование <strong>「我」</strong> как косвенного дополнения (реципиент) без предлога — норма для таких конструкций.<br><br>
-        Полный перевод: «Небесный Владыка не пошлёт нам помощь».
+        Это типичное предложение Урока 10, демонстрирующее <strong>сложную условную структуру</strong>:<br>
+        • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+        • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br><br>
+        Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Вся фраза — пример сложного высказывания без союзов, где связь между частями устанавливается по смыслу.<br>
+        Полный перевод: «Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“».
       `;
       sendResult(true);
     } else {
-      resultEl.textContent = "❌ Неверно. Вспомните: в отрицательных предложениях местоимение-дополнение к глаголу «дать/послать» ставится перед глаголом.";
+      resultEl.textContent = "❌ Неверно. Обратите внимание: «占曰» вводит прямую речь, а «其» заменяет предыдущее утверждение, создавая условную связь.";
       sendResult(false);
     }
   }
@@ -613,14 +444,14 @@
 <!-- Уведомление, что задание существует -->
 <script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
 
-=== 📄 task14.html ===
+=== 📄 task12.html ===
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Урок 5 — Божественная помощь и человеческие судьбы</title>
+    <title>Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
 
@@ -628,19 +459,19 @@
 
 <div class="grid">
     <div class="cell" onclick="openModal('q1')">
-        <strong>帝不我降熯</strong>
+        <strong>王占曰不嘉，其嘉，不吉</strong>
         <span class="status" id="status-q1">?</span>
     </div>
     <div class="cell" onclick="openModal('q2')">
-        <strong>余其得汝</strong>
+        <strong>若茲乃死</strong>
         <span class="status" id="status-q2">?</span>
     </div>
     <div class="cell" onclick="openModal('q3')">
-        <strong>朕使</strong>
+        <strong>有祟其有來艱</strong>
         <span class="status" id="status-q3">?</span>
     </div>
     <div class="cell" onclick="openModal('q4')">
-        <strong>帝受我佑</strong>
+        <strong>乃茲亦有祟</strong>
         <span class="status" id="status-q4">?</span>
     </div>
 </div>
@@ -651,18 +482,18 @@
 <!-- Модальные окна -->
 <div id="modal-q1" class="modal">
     <div class="modal-content">
-        <div class="modal-header">帝不我降熯</div>
+        <div class="modal-header">王占曰不嘉，其嘉，不吉</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">dì bù wǒ jiàng hàn</div>
+            <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт нам засуху">Небесный Владыка не пошлёт нам засуху</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не мы пошлём засуху">Небесный Владыка не мы пошлём засуху</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт засуху им">Небесный Владыка не пошлёт засуху им</label>
-            <label><input type="radio" name="q1" value="Небесный Владыка не пошлёт засуху">Небесный Владыка не пошлёт засуху</label>
+            <label><input type="radio" name="q1" value="Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»">Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо»</label>
+            <label><input type="radio" name="q1" value="Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»">Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»</label>
+            <label><input type="radio" name="q1" value="Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»">Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»</label>
+            <label><input type="radio" name="q1" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
         </div>
         <button onclick="closeModal('q1')">OK</button>
     </div>
@@ -670,18 +501,18 @@
 
 <div id="modal-q2" class="modal">
     <div class="modal-content">
-        <div class="modal-header">余其得汝</div>
+        <div class="modal-header">若茲乃死</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">yú qí dé rǔ</div>
+            <div class="pinyin-text">ruò zī, nǎi sǐ</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q2" value="Я получу тебя (твою помощь)">Я получу тебя (твою помощь)</label>
-            <label><input type="radio" name="q2" value="Я получу его">Я получу его</label>
-            <label><input type="radio" name="q2" value="Мы получим вас">Мы получим вас</label>
-            <label><input type="radio" name="q2" value="Я дам тебе">Я дам тебе</label>
+            <label><input type="radio" name="q2" value="Если всё хорошо, то она не умрёт">Если всё хорошо, то она не умрёт</label>
+            <label><input type="radio" name="q2" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
+            <label><input type="radio" name="q2" value="Не благоприятно, но если благоприятно — к счастью">Не благоприятно, но если благоприятно — к счастью</label>
+            <label><input type="radio" name="q2" value="Правитель прочитал ответ: «К несчастью»">Правитель прочитал ответ: «К несчастью»</label>
         </div>
         <button onclick="closeModal('q2')">OK</button>
     </div>
@@ -689,18 +520,18 @@
 
 <div id="modal-q3" class="modal">
     <div class="modal-content">
-        <div class="modal-header">朕使</div>
+        <div class="modal-header">有祟其有來艱</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">zhèn shǐ</div>
+            <div class="pinyin-text">yǒu suì qí yǒu lái jiān</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q3" value="мой посланник">мой посланник</label>
-            <label><input type="radio" name="q3" value="я пошлю">я пошлю</label>
-            <label><input type="radio" name="q3" value="твой посланник">твой посланник</label>
-            <label><input type="radio" name="q3" value="мы пошлём">мы пошлём</label>
+            <label><input type="radio" name="q3" value="Есть вред, и если есть — придут трудности">Есть вред, и если есть — придут трудности</label>
+            <label><input type="radio" name="q3" value="Есть вред, и придут трудности">Есть вред, и придут трудности</label>
+            <label><input type="radio" name="q3" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
+            <label><input type="radio" name="q3" value="Нет вреда, и трудности не придут">Нет вреда, и трудности не придут</label>
         </div>
         <button onclick="closeModal('q3')">OK</button>
     </div>
@@ -708,18 +539,18 @@
 
 <div id="modal-q4" class="modal">
     <div class="modal-content">
-        <div class="modal-header">帝受我佑</div>
+        <div class="modal-header">乃茲亦有祟</div>
         <div class="pinyin-container">
             <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
                 Показать пиньинь
             </button>
-            <div class="pinyin-text">dì shòu wǒ yòu</div>
+            <div class="pinyin-text">nǎi zī yì yǒu suì</div>
         </div>
         <div class="options">
-            <label><input type="radio" name="q4" value="Небесный Владыка пошлёт нам помощь">Небесный Владыка пошлёт нам помощь</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка получит нашу помощь">Небесный Владыка получит нашу помощь</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка не пошлёт помощи">Небесный Владыка не пошлёт помощи</label>
-            <label><input type="radio" name="q4" value="Небесный Владыка поможет мне">Небесный Владыка поможет мне</label>
+            <label><input type="radio" name="q4" value="И в этом месте тоже есть вред">И в этом месте тоже есть вред</label>
+            <label><input type="radio" name="q4" value="Если есть вред, то придут трудности">Если есть вред, то придут трудности</label>
+            <label><input type="radio" name="q4" value="Правитель прочитал ответ: «Не благоприятно»">Правитель прочитал ответ: «Не благоприятно»</label>
+            <label><input type="radio" name="q4" value="Если будет так, то она умрёт">Если будет так, то она умрёт</label>
         </div>
         <button onclick="closeModal('q4')">OK</button>
     </div>
@@ -727,10 +558,10 @@
 
 <script>
     const correctAnswers = {
-        q1: "Небесный Владыка не пошлёт нам засуху",
-        q2: "Я получу тебя (твою помощь)",
-        q3: "мой посланник",
-        q4: "Небесный Владыка пошлёт нам помощь"
+        q1: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»",
+        q2: "Если будет так, то она умрёт",
+        q3: "Есть вред, и придут трудности",
+        q4: "И в этом месте тоже есть вред"
     };
 
     let userAnswers = { q1: null, q2: null, q3: null, q4: null };
@@ -766,11 +597,12 @@
         if (correctCount === 4) {
             resultEl.innerHTML = `
                 ✅ <strong>Все верно!</strong><br>
-                Вы отлично усвоили Урок 5:<br>
-                • Инверсия местоимения в отрицании (不我降熯)<br>
-                • Двойное дополнение (受佑)<br>
-                • Функции местоимений (余 — подлежащее, 朕 — определение)<br>
-                • Божественное вмешательство (帝)
+                Вы отлично усвоили Урок 10:<br>
+                • <strong>占曰</strong> — ввод прямой речи после гадания<br>
+                • <strong>其嘉，不吉</strong> — условное следствие<br>
+                • <strong>若茲乃死</strong> — «если будет так, то умрёт» (условие + следствие)<br>
+                • <strong>乃</strong> — указывает на следствие или продолжение действия<br>
+                • <strong>有祟</strong> — «есть вред» — ключевое выражение гадательного текста
             `;
             sendResult(true);
         } else {
@@ -790,62 +622,42 @@
 </body>
 </html>
 
-=== 📄 task15.html ===
+=== 📄 task13.html ===
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Собери перевод: Урок 5</title>
+    <title>Собери перевод: Урок 10</title>
 </head>
 <body>
 
-<h2>Собери перевод: Урок 5</h2>
+<h2>Собери перевод: Урок 10</h2>
 
 <div class="instructions">
     <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
-    <p>Каждое задание фокусируется на ключевых грамматических структурах Урока 5.</p>
-    <p>💡 <em>Обратите внимание на инверсию, двойное дополнение и функции местоимений!</em></p>
+    <p>Задания построены на ключевой теме Урока 10: <strong>сложные и условные предложения</strong>.</p>
+    <p>💡 <em>Обратите внимание: вторая часть предложения часто уточняет следствие или условие!</em></p>
 </div>
 
 <div class="task-container">
-    <div class="task-title">1. 帝不我降熯</div>
-    <div class="oracle-text">帝不我降熯</div>
+    <div class="task-title">1. 王占曰不嘉，其嘉，不吉</div>
+    <div class="oracle-text">王占曰不嘉，其嘉，不吉</div>
     <div id="word-pool1" class="word-pool"></div>
     <div id="drop-area1" class="drop-area"></div>
     <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 Здесь важно: <strong>инверсия «我»</strong> перед глаголом в отрицании</p>
+        <p>💡 <strong>占曰</strong> вводит прямую речь. <strong>其嘉</strong> — условное следствие: «если благоприятно»</p>
     </div>
 </div>
 
 <div class="task-container">
-    <div class="task-title">2. 帝受我佑</div>
-    <div class="oracle-text">帝受我佑</div>
+    <div class="task-title">2. 若茲乃死</div>
+    <div class="oracle-text">若茲乃死</div>
     <div id="word-pool2" class="word-pool"></div>
     <div id="drop-area2" class="drop-area"></div>
     <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 Обратите внимание: <strong>двойное дополнение</strong> — кому? что?</p>
-    </div>
-</div>
-
-<div class="task-container">
-    <div class="task-title">3. 余其得汝</div>
-    <div class="oracle-text">余其得汝</div>
-    <div id="word-pool3" class="word-pool"></div>
-    <div id="drop-area3" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 Помните: <strong>「余」</strong> — 1-е лицо, может быть подлежащим и дополнением</p>
-    </div>
-</div>
-
-<div class="task-container">
-    <div class="task-title">4. 朕使</div>
-    <div class="oracle-text">朕使</div>
-    <div id="word-pool4" class="word-pool"></div>
-    <div id="drop-area4" class="drop-area"></div>
-    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
-        <p>💡 Важно: <strong>「朕」</strong> употребляется ТОЛЬКО как определение</p>
+        <p>💡 <strong>若</strong> = «если», <strong>乃</strong> = «тогда, и тогда» — указывает на следствие</p>
     </div>
 </div>
 
@@ -859,44 +671,26 @@
 <script>
 // Ожидаемые правильные варианты
 const expected1 = [
-    ['Небесный Владыка', 'не', 'послал', 'нам', 'засуху'],
-    ['Небесный Владыка', 'не', 'послал', 'засуху', 'нам'],
-    ['не', 'послал', 'нам', 'засуху', 'Небесный Владыка']
+    ['Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью»'],
+    ['Правитель сказал: «Не благоприятно. Если благоприятно — к несчастью»'],
+    ['Правитель прочел: «Не благоприятно. А если и благоприятно, то к несчастью»']
 ];
 
 const expected2 = [
-    ['Небесный Владыка', 'пошлёт', 'нам', 'помощь'],
-    ['Небесный Владыка', 'ниспошлёт', 'нам', 'помощь'],
-    ['нам', 'помощь', 'пошлёт', 'Небесный Владыка']
-];
-
-const expected3 = [
-    ['Я', 'получу', 'тебя'],
-    ['ты', 'будешь', 'получен', 'мной'],
-    ['Я', 'получу', 'твою', 'помощь']
-];
-
-const expected4 = [
-    ['мой', 'посланник'],
-    ['мой', 'емиссар'],
-    ['посланник', 'мой']
+    ['Если будет так, то она умрёт'],
+    ['Если будет так, тогда она умрёт'],
+    ['Если так, то она умрёт']
 ];
 
 // Слова для выбора (с лишними)
-const words1 = ['Небесный Владыка', 'не', 'послал', 'нам', 'засуху', 'их', 'ему', 'он', 'послал', 'дождь', 'вчера'];
-const words2 = ['Небесный Владыка', 'пошлёт', 'нам', 'помощь', 'им', 'урожай', 'власть', 'мир', 'помощь', 'послал', 'вчера'];
-const words3 = ['Я', 'получу', 'тебя', 'его', 'вас', 'власть', 'помощь', 'мы', 'ты', 'он', 'получил', 'меня'];
-const words4 = ['мой', 'посланник', 'твой', 'емиссар', 'он', 'ему', 'наш', 'они', 'гость', 'воин', 'слуга'];
+const words1 = ['Правитель', 'прочитал', 'ответ', 'Не', 'благоприятно', 'А', 'если', 'и', 'благоприятно', 'то', 'к', 'несчастью', 'урожай', 'дождь', 'и', 'солнце', 'они', 'молились', 'в', 'храм'];
+const words2 = ['Если', 'будет', 'так', 'то', 'она', 'умрёт', 'мы', 'пришли', 'на праздник', 'царь', 'отправил', 'вестника', 'вчера', 'приказал', 'охотиться', 'в', 'горах'];
 
 // DOM-элементы
 const wordPool1 = document.getElementById('word-pool1');
 const wordPool2 = document.getElementById('word-pool2');
-const wordPool3 = document.getElementById('word-pool3');
-const wordPool4 = document.getElementById('word-pool4');
 const dropArea1 = document.getElementById('drop-area1');
 const dropArea2 = document.getElementById('drop-area2');
-const dropArea3 = document.getElementById('drop-area3');
-const dropArea4 = document.getElementById('drop-area4');
 const checkBtn = document.getElementById('check-btn');
 const resetBtn = document.getElementById('reset-btn');
 const resultEl = document.getElementById('result');
@@ -934,38 +728,32 @@ function updatePlaceholder(dropArea) {
 
 let wordElements1 = [];
 let wordElements2 = [];
-let wordElements3 = [];
-let wordElements4 = [];
 
 function init() {
     // Очистка
-    [wordPool1, wordPool2, wordPool3, wordPool4].forEach(p => p.innerHTML = '');
-    [dropArea1, dropArea2, dropArea3, dropArea4].forEach(d => d.innerHTML = '');
+    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
     resultEl.style.display = 'none';
 
     // Создание элементов
     wordElements1 = createWordElements(words1, wordPool1, dropArea1);
     wordElements2 = createWordElements(words2, wordPool2, dropArea2);
-    wordElements3 = createWordElements(words3, wordPool3, dropArea3);
-    wordElements4 = createWordElements(words4, wordPool4, dropArea4);
 
     // Добавление в пулы
     wordElements1.forEach(el => wordPool1.appendChild(el));
     wordElements2.forEach(el => wordPool2.appendChild(el));
-    wordElements3.forEach(el => wordPool3.appendChild(el));
-    wordElements4.forEach(el => wordPool4.appendChild(el));
 
     // Обновление плейсхолдеров
-    [dropArea1, dropArea2, dropArea3, dropArea4].forEach(updatePlaceholder);
+    [dropArea1, dropArea2].forEach(updatePlaceholder);
 }
 
 // Возврат слов в пул при клике
-[dropArea1, dropArea2, dropArea3, dropArea4].forEach((area, i) => {
+[dropArea1, dropArea2].forEach((area, i) => {
     area.addEventListener('click', (e) => {
         if (e.target.classList.contains('word-box')) {
             const box = e.target;
             box.remove();
-            [wordPool1, wordPool2, wordPool3, wordPool4][i].appendChild(box);
+            [wordPool1, wordPool2][i].appendChild(box);
             updatePlaceholder(area);
         }
     });
@@ -985,31 +773,26 @@ function arraysEqual(a, b) {
 checkBtn.addEventListener('click', () => {
     const current1 = getWords(dropArea1);
     const current2 = getWords(dropArea2);
-    const current3 = getWords(dropArea3);
-    const current4 = getWords(dropArea4);
 
-    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
-    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
-    const isCorrect3 = expected3.some(option => arraysEqual(current3, option));
-    const isCorrect4 = expected4.some(option => arraysEqual(current4, option));
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option.split(' ')));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option.split(' ')));
 
-    if (isCorrect1 && isCorrect2 && isCorrect3 && isCorrect4) {
+    if (isCorrect1 && isCorrect2) {
         resultEl.innerHTML = `
-            ✅ <b>Идеально!</b> Вы усвоили ключевые темы Урока 5:<br>
-            • <strong>Инверсия в отрицании</strong> (不我降熯)<br>
-            • <strong>Двойное дополнение</strong> (受我佑)<br>
-            • <strong>Функции местоимений</strong> (余, 朕)<br>
-            • <strong>Божественное вмешательство</strong> (帝)
+            ✅ <b>Отлично!</b> Вы усвоили ключевую тему Урока 10:<br>
+            • <strong>Сложные и условные предложения</strong>:<br>
+            &nbsp;&nbsp;Части связываются по смыслу, без союзов.<br>
+            • <em>其嘉，不吉</em> — условное следствие<br>
+            • <em>若茲乃死</em> — «если будет так, то умрёт»<br>
+            • <em>占曰</em> — ввод прямой речи после гадания
         `;
         resultEl.className = 'message success';
         resultEl.style.display = 'block';
         sendResult(true);
     } else {
-        let message = '❌ Проверьте порядок слов и грамматические конструкции:';
-        if (!isCorrect1) message += '<br>• Инверсия «我» в отрицании: «не пошлёт нам»';
-        if (!isCorrect2) message += '<br>• Двойное дополнение: «нам помощь»';
-        if (!isCorrect3) message += '<br>• Местоимение «余» — 1-е лицо, подлежащее';
-        if (!isCorrect4) message += '<br>• «朕» — только определение, не подлежащее';
+        let message = '❌ Проверьте структуру:';
+        if (!isCorrect1) message += '<br>• «其嘉，不吉» — это не отдельное утверждение, а условное следствие к «不嘉»';
+        if (!isCorrect2) message += '<br>• «乃» указывает на следствие: «тогда», «и тогда»';
 
         resultEl.innerHTML = message;
         resultEl.className = 'message error';
@@ -1035,18 +818,18 @@ window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
 </body>
 </html>
 
-=== 📄 task16.html ===
+=== 📄 task14.html ===
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Инверсия vs Прямой порядок: Урок 5</title>
+    <title>Контрастные альтернативы: Урок 10</title>
 </head>
 <body>
 
-<h2>Инверсия vs Прямой порядок</h2>
+<h2>Контрастные альтернативы: Сложные прогнозы</h2>
 
 <div class="instructions">
     <div class="instructions-header" onclick="toggleInstructions()">
@@ -1054,34 +837,38 @@ window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
         <span class="arrow">▼</span>
     </div>
     <div class="instructions-content" style="display:none">
-        <p><strong>Инверсия дополнения в архаическом китайском</strong></p>
-        <p>В архаическом древнекитайском языке беспредложные дополнения (особенно местоимения) могут стоять перед глаголом — это называется <strong>инверсией</strong>.</p>
+        <p><strong>Простое предсказание vs Контрастная альтернатива</strong></p>
+        <p>В архаическом древнекитайском языке для выражения сложных, условных или противопоставленных прогнозов используется специальная конструкция с частицей <strong>其 (qí)</strong>. Это ключевая тема Урока 10.</p>
 
-        <p>🟢 <strong>Прямой порядок</strong> (зеленый):</p>
+        <p>🟢 <strong>Простое предсказание</strong> — выражает прямое утверждение или прогноз:</p>
         <ul>
-            <li>Дополнение стоит после глагола: «受我佑» — «послать нам помощь»</li>
-            <li>Используется в утвердительных предложениях</li>
+            <li>有祟 yǒu suì — «есть знамение»</li>
+            <li>亡禍 wáng huò — «нет беды»</li>
+            <li>Не содержит условий, альтернатив или сомнений.</li>
         </ul>
 
-        <p>🔴 <strong>Инверсия</strong> (красный):</p>
+        <p>🔴 <strong>Контрастная альтернатива</strong> — выражает альтернативные, условные или противопоставленные прогнозы с помощью частицы <strong>其 (qí)</strong>:</p>
         <ul>
-            <li>Дополнение (чаще местоимение) стоит <strong>перед</strong> глаголом: «不我受佑» — «не пошлёт нам помощи»</li>
-            <li>Обязательна в <strong>отрицательных предложениях</strong> с местоимением-дополнением</li>
-            <li>Только с отрицанием <strong>不</strong>, а не 弗</li>
+            <li>其有來艱，其亡來艱 qí yǒu lái jiān, qí wáng lái jiān — «[Если] придут беды, [если] не придут беды»</li>
+            <li>不嘉，其嘉，不吉 bù jiā, qí jiā, bù jí — «Не осуществится. [А если и] осуществится, то к несчастью»</li>
+            <li>Частица <strong>其</strong> вводит гипотетическую или условную ситуацию.</li>
+            <li>Часто используется для противопоставления неблагоприятного и благоприятного исхода.</li>
+            <li>На русский язык переводится как «если», «а если», «то... то».</li>
         </ul>
 
         <p><em>Примеры:</em><br>
-        "帝受我佑" → 🟢 (прямой порядок)<br>
-        "帝不我受佑" → 🔴 (инверсия)</p>
+        "旬亡禍" → 🟢 (простое утверждение)<br>
+        "其有來艱，其亡來艱" → 🔴 (альтернативные прогнозы)</p>
 
         <p><strong>Важно!</strong><br>
-        Инверсия <strong>обязательна</strong>, если:
+        Конструкция с <strong>其</strong> используется:
         <ol>
-            <li>Предложение отрицательное</li>
-            <li>Дополнение — местоимение</li>
-            <li>Глагол требует двойного дополнения (受, 降, 作 и др.)</li>
+            <li>Для выражения <strong>условности</strong> и <strong>альтернативы</strong> в предсказаниях.</li>
+            <li>С частицей <strong>其 (qí)</strong>, которая вводит гипотетическую ситуацию.</li>
+            <li>Чтобы показать <strong>зависимость</strong> одного исхода от другого («если... то»).</li>
+            <li>В ответах правителя (<strong>王占曰</strong>) для описания возможных сценариев.</li>
         </ol>
-        Нарушение этого правила — грамматическая ошибка.</p>
+        Это ключевая грамматическая структура Урока 10.</p>
     </div>
 </div>
 
@@ -1119,16 +906,16 @@ function toggleInstructions() {
 
 <script>
 const sentences = [
-    { text: "帝受我佑", type: "direct", explanation: "Небесный Владыка пошлёт нам помощь — прямой порядок, утверждение" },
-    { text: "帝不我受佑", type: "inversion", explanation: "Небесный Владыка не пошлёт нам помощи — инверсия обязательна в отрицании с местоимением" },
-    { text: "帝降我熯", type: "direct", explanation: "Небесный Владыка пошлёт нам засуху — прямой порядок, утверждение" },
-    { text: "帝不我降熯", type: "inversion", explanation: "Небесный Владыка не пошлёт нам засуху — инверсия обязательна" },
-    { text: "洹作兹邑祸", type: "direct", explanation: "Река Хуань нанесёт несчастье этому городу — прямой порядок" },
-    { text: "洹弗作兹邑祸", type: "direct", explanation: "Река Хуань не нанесёт несчастье этому городу — здесь 弗, но нет местоимения, инверсия не требуется" },
-    { text: "帝不我其受佑", type: "inversion", explanation: "Небесный Владыка не пошлёт ли нам помощи? — инверсия сохраняется даже с частицей 其" },
-    { text: "余其得汝", type: "direct", explanation: "Я получу тебя — прямой порядок, утверждение, нет отрицания" },
-    { text: "余不其得汝", type: "inversion", explanation: "Я не получу ли тебя? — отрицание + местоимение → инверсия обязательна" },
-    { text: "朕使", type: "direct", explanation: "мой посланник — здесь 朕 в функции определения, не дополнение" }
+    { text: "旬亡禍", type: "direct", explanation: "Простое предсказание: «За десятидневку не будет беды» — прямое утверждение" },
+    { text: "其有來艱，其亡來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды, [если] не придут беды» — частица 其 вводит гипотетические ситуации" },
+    { text: "有祟", type: "direct", explanation: "Простое предсказание: «Есть знамение» — прямое утверждение без условий" },
+    { text: "其有來艱", type: "chain", explanation: "Контрастная альтернатива: «[Если] придут беды» — введение гипотетического сценария с помощью 其" },
+    { text: "王占曰有祟", type: "direct", explanation: "Простое предсказание: «Правитель прочел ответ: есть знамение» — прямое утверждение" },
+    { text: "王占曰不嘉，其嘉，不吉", type: "chain", explanation: "Контрастная альтернатива: «Правитель прочел ответ: не осуществится. [А если и] осуществится, то к несчастью» — противопоставление исходов" },
+    { text: "允有來艱", type: "direct", explanation: "Простое предсказание: «Действительно были беды» — констатация факта" },
+    { text: "其有設，不吉，其唯甲有設，吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] будет знамение, к несчастью; [если] знамение будет в день цзя, к счастью» — условные прогнозы с противопоставлением" },
+    { text: "土方征于我東鄙", type: "direct", explanation: "Простое предсказание: «Племя Ту нападает на нашу восточную окраину» — прямое сообщение" },
+    { text: "其唯辛有設，亦不吉", type: "chain", explanation: "Контрастная альтернатива: «[Если] знамение будет в день синь, [то] также к несчастью» — гипотетический сценарий" }
 ];
 
 function shuffleArray(array) {
@@ -1148,12 +935,12 @@ function createSentenceElement(sentence, index) {
     item.innerHTML = `
         <div class="oracle-text">${sentence.text}</div>
         <div class="toggle-container">
-            <span class="toggle-text">прямой</span>
+            <span class="toggle-text">Простое</span>
             <label class="toggle-switch">
                 <input type="checkbox">
                 <span class="slider"></span>
             </label>
-            <span class="toggle-text">инверсия</span>
+            <span class="toggle-text">Альтернатива</span>
         </div>
     `;
 
@@ -1190,7 +977,7 @@ function checkAnswers() {
         const index = item.dataset.index;
         const input = item.querySelector('input');
         const expectedType = sentences[index].type;
-        const isCorrect = (input.checked && expectedType === "inversion") ||
+        const isCorrect = (input.checked && expectedType === "chain") ||
                           (!input.checked && expectedType === "direct");
 
         item.classList.remove('correct', 'incorrect');
@@ -1205,8 +992,8 @@ function checkAnswers() {
     const resultEl = document.getElementById('result');
     if (allCorrect) {
         resultEl.innerHTML = `
-            ✅ <b>Отлично!</b> Вы правильно определили все случаи инверсии.<br>
-            <small>Вы усвоили: инверсия обязательна в отрицаниях с местоимением, даже с частицей 其, и только с 不.</small>
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи контрастных альтернатив.<br>
+            <small>Вы усвоили: частица 其 — ключевой маркер условных и противопоставленных прогнозов.</small>
         `;
         resultEl.className = 'success';
         sendResult(true);
@@ -1246,14 +1033,14 @@ document.getElementById('reset-btn').addEventListener('click', reset);
 </body>
 </html>
 
-=== 📄 task17.html ===
+=== 📄 task15.html ===
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 5</title>
+    <title>Сопоставьте: Урок 6</title>
 </head>
 <body>
   <h2>Сопоставьте иероглиф и значение</h2>
@@ -1274,43 +1061,406 @@ document.getElementById('reset-btn').addEventListener('click', reset);
   <p id="result"></p>
 
   <script>
-    // Словарь Урока 5 — ключевые лексемы с грамматическими и культурными пояснениями
-// Первая пятерка
 const pairs1 = [
-  { char: "帝", meaning: "Небесный Владыка — высшее божество, от которого зависят урожай, победа и природные явления" },
-  { char: "熯", meaning: "иссушить, вызвать засуху — природное бедствие, противоположность дождю" },
-  { char: "申", meaning: "заяц (земная ветвь); также может означать 'заявлять, объявлять'" },
-  { char: "降", meaning: "послать (сверху вниз) — используется с божественными действиями, например, «послать помощь» или «послать засуху»" },
-  { char: "伐", meaning: "нанести удар, напасть — военное действие, часто совершается с божественного разрешения" }
+  { char: "迄", meaning: "служ. предлог вплоть до" },
+  { char: "臣", meaning: "подданный" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "車", meaning: "колесница, повозка" },
+  { char: "亦", meaning: "служ. наречие также" }
 ];
 
-// Вторая пятерка
 const pairs2 = [
-  { char: "佑", meaning: "помощь, покровительство — обычно от Небесного Владыки; в глагольной конструкции «受佑» — «получить помощь»" },
-  { char: "洹", meaning: "река Хуань — приток Хуанхэ, угрожавшая наводнениями столице Шан" },
-  { char: "作", meaning: "нанести, причинить (вред) — часто с «祸»: «作祸» = «навредить, принести несчастье»" },
-  { char: "茲", meaning: "этот, здесь — указательное местоимение для времени и пространства, синоним «今»" },
-  { char: "禍", meaning: "бедствие, несчастье — может быть вызвано рекой, племенами или божеством" }
+  { char: "侵", meaning: "вторгаться" },
+  { char: "田", meaning: "поле" },
+  { char: "四", meaning: "четыре" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "俘", meaning: "брать в плен" }
 ];
 
-// Третья пятерка
 const pairs3 = [
-  { char: "余", meaning: "я (1-е лицо) — подлежащее или дополнение; может означать и 'мы'" },
-  { char: "得", meaning: "получить, обрести — часто в значении 'удастся ли получить'" },
-  { char: "汝", meaning: "ты (2-е лицо) — может быть подлежащим или дополнением" },
-  { char: "使", meaning: "посланник, посол — существительное, производное от глагола 'посылать'" },
-  { char: "合", meaning: "собрать, объединить (воинов) — военная мобилизация" }
+  { char: "十", meaning: "десять" },
+  { char: "若", meaning: "быть подобным; служ. если" },
+  { char: "往", meaning: "идти туда, уходить" },
+  { char: "娩", meaning: "разрешаться от бремени" },
+  { char: "嘉", meaning: "благополучный, счастливый, хороший" }
 ];
 
-// Четвёртая пятерка (неполная)
 const pairs4 = [
-  { char: "乃", meaning: "твой (2-е лицо, только в функции определения!) — например, «твой посланник»" },
-  { char: "以", meaning: "привести, использовать (посланников) — глагол управления" },
-  { char: "羌", meaning: "племя Цянь — одно из враждебных племён на западных границах Шан" },
-  { char: "朕", meaning: "мой (только в функции определения!) — не может быть подлежащим, только «мой посланник», «моя помощь» и т.д." }
+  { char: "死", meaning: "умирать" },
+  { char: "偁", meaning: "собств. Чэн" },
+  { char: "馭", meaning: "управлять (лошадьми)" },
+  { char: "央", meaning: "собств. Ян" },
+  { char: "墜", meaning: "падать, сваливаться" }
 ];
+
+const pairs5 = [
+  { char: "央", meaning: "собств. Ян" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "墜", meaning: "падать, сваливаться" },
+  { char: "硪", meaning: "собств. Во" }
+];
+
 
 pairs = pairs1;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+
+
+=== 📄 task16.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте: Урок 6</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+const pairs1 = [
+  { char: "迄", meaning: "служ. предлог вплоть до" },
+  { char: "臣", meaning: "подданный" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "車", meaning: "колесница, повозка" },
+  { char: "亦", meaning: "служ. наречие также" }
+];
+
+const pairs2 = [
+  { char: "侵", meaning: "вторгаться" },
+  { char: "田", meaning: "поле" },
+  { char: "四", meaning: "четыре" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "俘", meaning: "брать в плен" }
+];
+
+const pairs3 = [
+  { char: "十", meaning: "десять" },
+  { char: "若", meaning: "быть подобным; служ. если" },
+  { char: "往", meaning: "идти туда, уходить" },
+  { char: "娩", meaning: "разрешаться от бремени" },
+  { char: "嘉", meaning: "благополучный, счастливый, хороший" }
+];
+
+const pairs4 = [
+  { char: "死", meaning: "умирать" },
+  { char: "偁", meaning: "собств. Чэн" },
+  { char: "馭", meaning: "управлять (лошадьми)" },
+  { char: "央", meaning: "собств. Ян" },
+  { char: "墜", meaning: "падать, сваливаться" }
+];
+
+const pairs5 = [
+  { char: "央", meaning: "собств. Ян" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "墜", meaning: "падать, сваливаться" },
+  { char: "硪", meaning: "собств. Во" }
+];
+
+
+pairs = pairs2;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+
+
+=== 📄 task17.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте: Урок 6</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+const pairs1 = [
+  { char: "迄", meaning: "служ. предлог вплоть до" },
+  { char: "臣", meaning: "подданный" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "車", meaning: "колесница, повозка" },
+  { char: "亦", meaning: "служ. наречие также" }
+];
+
+const pairs2 = [
+  { char: "侵", meaning: "вторгаться" },
+  { char: "田", meaning: "поле" },
+  { char: "四", meaning: "четыре" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "俘", meaning: "брать в плен" }
+];
+
+const pairs3 = [
+  { char: "十", meaning: "десять" },
+  { char: "若", meaning: "быть подобным; служ. если" },
+  { char: "往", meaning: "идти туда, уходить" },
+  { char: "娩", meaning: "разрешаться от бремени" },
+  { char: "嘉", meaning: "благополучный, счастливый, хороший" }
+];
+
+const pairs4 = [
+  { char: "死", meaning: "умирать" },
+  { char: "偁", meaning: "собств. Чэн" },
+  { char: "馭", meaning: "управлять (лошадьми)" },
+  { char: "央", meaning: "собств. Ян" },
+  { char: "墜", meaning: "падать, сваливаться" }
+];
+
+const pairs5 = [
+  { char: "央", meaning: "собств. Ян" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "墜", meaning: "падать, сваливаться" },
+  { char: "硪", meaning: "собств. Во" }
+];
+
+
+pairs = pairs3;
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -1427,7 +1577,7 @@ pairs = pairs1;
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 5</title>
+    <title>Сопоставьте: Урок 6</title>
 </head>
 <body>
   <h2>Сопоставьте иероглиф и значение</h2>
@@ -1448,43 +1598,48 @@ pairs = pairs1;
   <p id="result"></p>
 
   <script>
-    // Словарь Урока 5 — ключевые лексемы с грамматическими и культурными пояснениями
-// Первая пятерка
 const pairs1 = [
-  { char: "帝", meaning: "Небесный Владыка — высшее божество, от которого зависят урожай, победа и природные явления" },
-  { char: "熯", meaning: "иссушить, вызвать засуху — природное бедствие, противоположность дождю" },
-  { char: "申", meaning: "заяц (земная ветвь); также может означать 'заявлять, объявлять'" },
-  { char: "降", meaning: "послать (сверху вниз) — используется с божественными действиями, например, «послать помощь» или «послать засуху»" },
-  { char: "伐", meaning: "нанести удар, напасть — военное действие, часто совершается с божественного разрешения" }
+  { char: "迄", meaning: "служ. предлог вплоть до" },
+  { char: "臣", meaning: "подданный" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "車", meaning: "колесница, повозка" },
+  { char: "亦", meaning: "служ. наречие также" }
 ];
 
-// Вторая пятерка
 const pairs2 = [
-  { char: "佑", meaning: "помощь, покровительство — обычно от Небесного Владыки; в глагольной конструкции «受佑» — «получить помощь»" },
-  { char: "洹", meaning: "река Хуань — приток Хуанхэ, угрожавшая наводнениями столице Шан" },
-  { char: "作", meaning: "нанести, причинить (вред) — часто с «祸»: «作祸» = «навредить, принести несчастье»" },
-  { char: "茲", meaning: "этот, здесь — указательное местоимение для времени и пространства, синоним «今»" },
-  { char: "禍", meaning: "бедствие, несчастье — может быть вызвано рекой, племенами или божеством" }
+  { char: "侵", meaning: "вторгаться" },
+  { char: "田", meaning: "поле" },
+  { char: "四", meaning: "четыре" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "俘", meaning: "брать в плен" }
 ];
 
-// Третья пятерка
 const pairs3 = [
-  { char: "余", meaning: "я (1-е лицо) — подлежащее или дополнение; может означать и 'мы'" },
-  { char: "得", meaning: "получить, обрести — часто в значении 'удастся ли получить'" },
-  { char: "汝", meaning: "ты (2-е лицо) — может быть подлежащим или дополнением" },
-  { char: "使", meaning: "посланник, посол — существительное, производное от глагола 'посылать'" },
-  { char: "合", meaning: "собрать, объединить (воинов) — военная мобилизация" }
+  { char: "十", meaning: "десять" },
+  { char: "若", meaning: "быть подобным; служ. если" },
+  { char: "往", meaning: "идти туда, уходить" },
+  { char: "娩", meaning: "разрешаться от бремени" },
+  { char: "嘉", meaning: "благополучный, счастливый, хороший" }
 ];
 
-// Четвёртая пятерка (неполная)
 const pairs4 = [
-  { char: "乃", meaning: "твой (2-е лицо, только в функции определения!) — например, «твой посланник»" },
-  { char: "以", meaning: "привести, использовать (посланников) — глагол управления" },
-  { char: "羌", meaning: "племя Цянь — одно из враждебных племён на западных границах Шан" },
-  { char: "朕", meaning: "мой (только в функции определения!) — не может быть подлежащим, только «мой посланник», «моя помощь» и т.д." }
+  { char: "死", meaning: "умирать" },
+  { char: "偁", meaning: "собств. Чэн" },
+  { char: "馭", meaning: "управлять (лошадьми)" },
+  { char: "央", meaning: "собств. Ян" },
+  { char: "墜", meaning: "падать, сваливаться" }
 ];
 
-pairs = pairs2;
+const pairs5 = [
+  { char: "央", meaning: "собств. Ян" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "墜", meaning: "падать, сваливаться" },
+  { char: "硪", meaning: "собств. Во" }
+];
+
+
+pairs = pairs4;
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -1601,7 +1756,7 @@ pairs = pairs2;
     <link rel="stylesheet" href="../../tasks.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 5</title>
+    <title>Сопоставьте: Урок 6</title>
 </head>
 <body>
   <h2>Сопоставьте иероглиф и значение</h2>
@@ -1622,43 +1777,48 @@ pairs = pairs2;
   <p id="result"></p>
 
   <script>
-    // Словарь Урока 5 — ключевые лексемы с грамматическими и культурными пояснениями
-// Первая пятерка
 const pairs1 = [
-  { char: "帝", meaning: "Небесный Владыка — высшее божество, от которого зависят урожай, победа и природные явления" },
-  { char: "熯", meaning: "иссушить, вызвать засуху — природное бедствие, противоположность дождю" },
-  { char: "申", meaning: "заяц (земная ветвь); также может означать 'заявлять, объявлять'" },
-  { char: "降", meaning: "послать (сверху вниз) — используется с божественными действиями, например, «послать помощь» или «послать засуху»" },
-  { char: "伐", meaning: "нанести удар, напасть — военное действие, часто совершается с божественного разрешения" }
+  { char: "迄", meaning: "служ. предлог вплоть до" },
+  { char: "臣", meaning: "подданный" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "車", meaning: "колесница, повозка" },
+  { char: "亦", meaning: "служ. наречие также" }
 ];
 
-// Вторая пятерка
 const pairs2 = [
-  { char: "佑", meaning: "помощь, покровительство — обычно от Небесного Владыки; в глагольной конструкции «受佑» — «получить помощь»" },
-  { char: "洹", meaning: "река Хуань — приток Хуанхэ, угрожавшая наводнениями столице Шан" },
-  { char: "作", meaning: "нанести, причинить (вред) — часто с «祸»: «作祸» = «навредить, принести несчастье»" },
-  { char: "茲", meaning: "этот, здесь — указательное местоимение для времени и пространства, синоним «今»" },
-  { char: "禍", meaning: "бедствие, несчастье — может быть вызвано рекой, племенами или божеством" }
+  { char: "侵", meaning: "вторгаться" },
+  { char: "田", meaning: "поле" },
+  { char: "四", meaning: "четыре" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "俘", meaning: "брать в плен" }
 ];
 
-// Третья пятерка
 const pairs3 = [
-  { char: "余", meaning: "я (1-е лицо) — подлежащее или дополнение; может означать и 'мы'" },
-  { char: "得", meaning: "получить, обрести — часто в значении 'удастся ли получить'" },
-  { char: "汝", meaning: "ты (2-е лицо) — может быть подлежащим или дополнением" },
-  { char: "使", meaning: "посланник, посол — существительное, производное от глагола 'посылать'" },
-  { char: "合", meaning: "собрать, объединить (воинов) — военная мобилизация" }
+  { char: "十", meaning: "десять" },
+  { char: "若", meaning: "быть подобным; служ. если" },
+  { char: "往", meaning: "идти туда, уходить" },
+  { char: "娩", meaning: "разрешаться от бремени" },
+  { char: "嘉", meaning: "благополучный, счастливый, хороший" }
 ];
 
-// Четвёртая пятерка (неполная)
 const pairs4 = [
-  { char: "乃", meaning: "твой (2-е лицо, только в функции определения!) — например, «твой посланник»" },
-  { char: "以", meaning: "привести, использовать (посланников) — глагол управления" },
-  { char: "羌", meaning: "племя Цянь — одно из враждебных племён на западных границах Шан" },
-  { char: "朕", meaning: "мой (только в функции определения!) — не может быть подлежащим, только «мой посланник», «моя помощь» и т.д." }
+  { char: "死", meaning: "умирать" },
+  { char: "偁", meaning: "собств. Чэн" },
+  { char: "馭", meaning: "управлять (лошадьми)" },
+  { char: "央", meaning: "собств. Ян" },
+  { char: "墜", meaning: "падать, сваливаться" }
 ];
 
-pairs = pairs3;
+const pairs5 = [
+  { char: "央", meaning: "собств. Ян" },
+  { char: "昔", meaning: "вчера; в прошлом" },
+  { char: "鄙", meaning: "окраина; грубый" },
+  { char: "墜", meaning: "падать, сваливаться" },
+  { char: "硪", meaning: "собств. Во" }
+];
+
+
+pairs = pairs5;
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -1781,17 +1941,20 @@ pairs = pairs3;
   <h2>Собери фразу</h2>
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Небесный Владыка пошлет нам помощь.</em></p>
+    <p><em>Правитель прочитал ответ на гадательной кости: „Не осуществится. А если и осуществится, то к несчастью“.</em></p>
   </div>
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>帝 — Небесный Владыка</li>
-      <li>受 — даровать, пошлёт</li>
-      <li>我 — нам</li>
-      <li>佑 — помощь</li>
+      <li>王 — Правитель</li>
+      <li>占曰 — прочитал ответ (гадательный акт, "правитель сказал")</li>
+      <li>不嘉 — не осуществится / не будет благоприятно</li>
+      <li>其嘉 — если осуществится</li>
+      <li>不吉 — к несчастью</li>
+      <li>若 — если, в случае</li>
+      <li>乃 — тогда, в таком случае</li>
     </ul>
   </div>
   <p><strong>Иероглифы:</strong></p>
@@ -1804,10 +1967,10 @@ pairs = pairs3;
   </div>
   <p id="result" class="message"></p>
   <script>
-    const expected = ['帝', '受', '我', '佑'];
+    const expected = ['王', '占', '曰', '不', '嘉', '若', '其', '嘉', '不', '吉'];
     const allChars = [
-      '帝', '受', '我', '佑',
-      '不', '其', '熯', '降', '伐', '作', '祸', '余', '汝', '乃', '以'
+      '王', '占', '曰', '不', '嘉', '若', '其', '吉', '乃',
+      '癸', '巳', '卜', '㱿', '贞', '旬', '亡', '祸', '有', '来', '艰', '迄', '至', '五', '日', '丁', '酉', '允', '自', '西', '洗', '震', '告', '土', '方', '征', '于', '我', '东', '鄙', '烖', '二', '邑', '工', '亦', '侵', '田', '四', '庚', '申', '北', '子', '商', '昔', '甲', '辰', '俘', '人', '十', '有', '六', '戊', '午', '往', '逐', '兕', '小', '臣', '叶', '车', '马', '硪', '驭', '央', '坠', '妇', '好', '娩', '死', '后'
     ].sort(() => Math.random() - 0.5);
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
@@ -1816,12 +1979,14 @@ pairs = pairs3;
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
@@ -1830,6 +1995,7 @@ pairs = pairs3;
       box.remove();
       dropArea.appendChild(clone);
     }
+
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
@@ -1842,10 +2008,11 @@ pairs = pairs3;
         charPool.appendChild(box);
       });
     }
+
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>帝受我佑';
+        resultEl.innerHTML = '✅ Правильно!<br>王占曰不嘉，若其嘉，不吉';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -1854,10 +2021,13 @@ pairs = pairs3;
         sendResult(false, 'Неверный порядок');
       }
     });
+
     resetBtn.addEventListener('click', initCharPool);
+
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -1865,8 +2035,10 @@ pairs = pairs3;
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
+
     // Инициализация
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
@@ -1878,66 +2050,68 @@ pairs = pairs3;
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Сопоставьте: Урок 5</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
 </head>
 <body>
-  <h2>Сопоставьте иероглиф и значение</h2>
-  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
-  
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
   <div class="match-container">
     <div class="column">
       <h3>Иероглифы</h3>
       <div id="words"></div>
     </div>
     <div class="column">
-      <h3>Значения</h3>
+      <h3>Транскрипция</h3>
       <div id="defs"></div>
     </div>
   </div>
-
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
-
   <script>
-    // Словарь Урока 5 — ключевые лексемы с грамматическими и культурными пояснениями
-// Первая пятерка
 const pairs1 = [
-  { char: "帝", meaning: "Небесный Владыка — высшее божество, от которого зависят урожай, победа и природные явления" },
-  { char: "熯", meaning: "иссушить, вызвать засуху — природное бедствие, противоположность дождю" },
-  { char: "申", meaning: "заяц (земная ветвь); также может означать 'заявлять, объявлять'" },
-  { char: "降", meaning: "послать (сверху вниз) — используется с божественными действиями, например, «послать помощь» или «послать засуху»" },
-  { char: "伐", meaning: "нанести удар, напасть — военное действие, часто совершается с божественного разрешения" }
+  { char: "迄", pinyin: "qì" },
+  { char: "臣", pinyin: "chén" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "車", pinyin: "jū" }, // основное чтение в классическом тексте
+  { char: "亦", pinyin: "yì" }
 ];
 
-// Вторая пятерка
 const pairs2 = [
-  { char: "佑", meaning: "помощь, покровительство — обычно от Небесного Владыки; в глагольной конструкции «受佑» — «получить помощь»" },
-  { char: "洹", meaning: "река Хуань — приток Хуанхэ, угрожавшая наводнениями столице Шан" },
-  { char: "作", meaning: "нанести, причинить (вред) — часто с «祸»: «作祸» = «навредить, принести несчастье»" },
-  { char: "茲", meaning: "этот, здесь — указательное местоимение для времени и пространства, синоним «今»" },
-  { char: "禍", meaning: "бедствие, несчастье — может быть вызвано рекой, племенами или божеством" }
+  { char: "侵", pinyin: "qīn" },
+  { char: "田", pinyin: "tián" },
+  { char: "四", pinyin: "sì" },
+  { char: "昔", pinyin: "xī" },
+  { char: "俘", pinyin: "fú" }
 ];
 
-// Третья пятерка
 const pairs3 = [
-  { char: "余", meaning: "я (1-е лицо) — подлежащее или дополнение; может означать и 'мы'" },
-  { char: "得", meaning: "получить, обрести — часто в значении 'удастся ли получить'" },
-  { char: "汝", meaning: "ты (2-е лицо) — может быть подлежащим или дополнением" },
-  { char: "使", meaning: "посланник, посол — существительное, производное от глагола 'посылать'" },
-  { char: "合", meaning: "собрать, объединить (воинов) — военная мобилизация" }
+  { char: "十", pinyin: "shí" },
+  { char: "若", pinyin: "ruò" },
+  { char: "往", pinyin: "wǎng" },
+  { char: "娩", pinyin: "miǎn" },
+  { char: "嘉", pinyin: "jiā" }
 ];
 
-// Четвёртая пятерка (неполная)
 const pairs4 = [
-  { char: "乃", meaning: "твой (2-е лицо, только в функции определения!) — например, «твой посланник»" },
-  { char: "以", meaning: "привести, использовать (посланников) — глагол управления" },
-  { char: "羌", meaning: "племя Цянь — одно из враждебных племён на западных границах Шан" },
-  { char: "朕", meaning: "мой (только в функции определения!) — не может быть подлежащим, только «мой посланник», «моя помощь» и т.д." }
+  { char: "死", pinyin: "sǐ" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "馭", pinyin: "yù" },
+  { char: "央", pinyin: "yāng" },
+  { char: "墜", pinyin: "zhuì" }
 ];
 
-pairs = pairs3;
+const pairs5 = [
+  { char: "偁", pinyin: "chēng" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "四", pinyin: "sì" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "硪", pinyin: "wò" }
+];
+
+
+pairs = pairs1
 
     let selectedWord = null;
     let matchedPairs = 0;
@@ -2002,15 +2176,9 @@ pairs = pairs3;
         selectedWord = null;
         matchedPairs++;
 
-        if (matchedPairs === 10) {
+        if (matchedPairs === 5) {
           const resultEl = document.getElementById("result");
-          resultEl.innerHTML = `
-            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
-            • Божественное вмешательство (<strong>帝</strong>)<br>
-            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
-            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
-            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
-          `;
+          resultEl.textContent = "✅ Все пары верны!";
           resultEl.className = "success";
           sendResult(true);
         }
@@ -2045,6 +2213,8 @@ pairs = pairs3;
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
 </body>
+</html>
+
 
 
 === 📄 task21.html ===
@@ -2072,38 +2242,49 @@ pairs = pairs3;
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
   <script>
-    // Словарь Урока 4 — только ключевые лексемы
 const pairs1 = [
-  { char: "帝", meaning: "dì" },
-  { char: "熯", meaning: "hàn" },
-  { char: "申", meaning: "shēn" },
-  { char: "降", meaning: "jiàng" },
-  { char: "伐", meaning: "fá" }
+  { char: "迄", pinyin: "qì" },
+  { char: "臣", pinyin: "chén" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "車", pinyin: "jū" }, // основное чтение в классическом тексте
+  { char: "亦", pinyin: "yì" }
 ];
 
 const pairs2 = [
-  { char: "佑", meaning: "yòu" },
-  { char: "洹", meaning: "huán" },
-  { char: "作", meaning: "zuò" },
-  { char: "茲", meaning: "zī" },
-  { char: "禍", meaning: "huò" }
+  { char: "侵", pinyin: "qīn" },
+  { char: "田", pinyin: "tián" },
+  { char: "四", pinyin: "sì" },
+  { char: "昔", pinyin: "xī" },
+  { char: "俘", pinyin: "fú" }
 ];
 
 const pairs3 = [
-  { char: "余", meaning: "yú" },
-  { char: "得", meaning: "dé" },
-  { char: "汝", meaning: "rǔ" },
-  { char: "使", meaning: "shǐ" },
-  { char: "合", meaning: "hé" }
+  { char: "十", pinyin: "shí" },
+  { char: "若", pinyin: "ruò" },
+  { char: "往", pinyin: "wǎng" },
+  { char: "娩", pinyin: "miǎn" },
+  { char: "嘉", pinyin: "jiā" }
 ];
 
 const pairs4 = [
-  { char: "乃", meaning: "nǎi" },
-  { char: "以", meaning: "yǐ" },
-  { char: "羌", meaning: "qiāng" },
-  { char: "朕", meaning: "zhèn" }
+  { char: "死", pinyin: "sǐ" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "馭", pinyin: "yù" },
+  { char: "央", pinyin: "yāng" },
+  { char: "墜", pinyin: "zhuì" }
 ];
-pairs = pairs1
+
+const pairs5 = [
+  { char: "偁", pinyin: "chēng" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "四", pinyin: "sì" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "硪", pinyin: "wò" }
+];
+
+
+pairs = pairs2
+
     let selectedWord = null;
     let matchedPairs = 0;
 
@@ -2233,38 +2414,49 @@ pairs = pairs1
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
   <script>
-    // Словарь Урока 4 — только ключевые лексемы
 const pairs1 = [
-  { char: "帝", meaning: "dì" },
-  { char: "熯", meaning: "hàn" },
-  { char: "申", meaning: "shēn" },
-  { char: "降", meaning: "jiàng" },
-  { char: "伐", meaning: "fá" }
+  { char: "迄", pinyin: "qì" },
+  { char: "臣", pinyin: "chén" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "車", pinyin: "jū" }, // основное чтение в классическом тексте
+  { char: "亦", pinyin: "yì" }
 ];
 
 const pairs2 = [
-  { char: "佑", meaning: "yòu" },
-  { char: "洹", meaning: "huán" },
-  { char: "作", meaning: "zuò" },
-  { char: "茲", meaning: "zī" },
-  { char: "禍", meaning: "huò" }
+  { char: "侵", pinyin: "qīn" },
+  { char: "田", pinyin: "tián" },
+  { char: "四", pinyin: "sì" },
+  { char: "昔", pinyin: "xī" },
+  { char: "俘", pinyin: "fú" }
 ];
 
 const pairs3 = [
-  { char: "余", meaning: "yú" },
-  { char: "得", meaning: "dé" },
-  { char: "汝", meaning: "rǔ" },
-  { char: "使", meaning: "shǐ" },
-  { char: "合", meaning: "hé" }
+  { char: "十", pinyin: "shí" },
+  { char: "若", pinyin: "ruò" },
+  { char: "往", pinyin: "wǎng" },
+  { char: "娩", pinyin: "miǎn" },
+  { char: "嘉", pinyin: "jiā" }
 ];
 
 const pairs4 = [
-  { char: "乃", meaning: "nǎi" },
-  { char: "以", meaning: "yǐ" },
-  { char: "羌", meaning: "qiāng" },
-  { char: "朕", meaning: "zhèn" }
+  { char: "死", pinyin: "sǐ" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "馭", pinyin: "yù" },
+  { char: "央", pinyin: "yāng" },
+  { char: "墜", pinyin: "zhuì" }
 ];
-pairs = pairs2
+
+const pairs5 = [
+  { char: "偁", pinyin: "chēng" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "四", pinyin: "sì" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "硪", pinyin: "wò" }
+];
+
+
+pairs = pairs3
+
     let selectedWord = null;
     let matchedPairs = 0;
 
@@ -2394,38 +2586,49 @@ pairs = pairs2
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
   <script>
-    // Словарь Урока 4 — только ключевые лексемы
 const pairs1 = [
-  { char: "帝", meaning: "dì" },
-  { char: "熯", meaning: "hàn" },
-  { char: "申", meaning: "shēn" },
-  { char: "降", meaning: "jiàng" },
-  { char: "伐", meaning: "fá" }
+  { char: "迄", pinyin: "qì" },
+  { char: "臣", pinyin: "chén" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "車", pinyin: "jū" }, // основное чтение в классическом тексте
+  { char: "亦", pinyin: "yì" }
 ];
 
 const pairs2 = [
-  { char: "佑", meaning: "yòu" },
-  { char: "洹", meaning: "huán" },
-  { char: "作", meaning: "zuò" },
-  { char: "茲", meaning: "zī" },
-  { char: "禍", meaning: "huò" }
+  { char: "侵", pinyin: "qīn" },
+  { char: "田", pinyin: "tián" },
+  { char: "四", pinyin: "sì" },
+  { char: "昔", pinyin: "xī" },
+  { char: "俘", pinyin: "fú" }
 ];
 
 const pairs3 = [
-  { char: "余", meaning: "yú" },
-  { char: "得", meaning: "dé" },
-  { char: "汝", meaning: "rǔ" },
-  { char: "使", meaning: "shǐ" },
-  { char: "合", meaning: "hé" }
+  { char: "十", pinyin: "shí" },
+  { char: "若", pinyin: "ruò" },
+  { char: "往", pinyin: "wǎng" },
+  { char: "娩", pinyin: "miǎn" },
+  { char: "嘉", pinyin: "jiā" }
 ];
 
 const pairs4 = [
-  { char: "乃", meaning: "nǎi" },
-  { char: "以", meaning: "yǐ" },
-  { char: "羌", meaning: "qiāng" },
-  { char: "朕", meaning: "zhèn" }
+  { char: "死", pinyin: "sǐ" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "馭", pinyin: "yù" },
+  { char: "央", pinyin: "yāng" },
+  { char: "墜", pinyin: "zhuì" }
 ];
-pairs = pairs3
+
+const pairs5 = [
+  { char: "偁", pinyin: "chēng" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "四", pinyin: "sì" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "硪", pinyin: "wò" }
+];
+
+
+pairs = pairs5
+
     let selectedWord = null;
     let matchedPairs = 0;
 
@@ -2555,38 +2758,49 @@ pairs = pairs3
   <button onclick="reset()">Сбросить</button>
   <p id="result"></p>
   <script>
-    // Словарь Урока 4 — только ключевые лексемы
 const pairs1 = [
-  { char: "帝", meaning: "dì" },
-  { char: "熯", meaning: "hàn" },
-  { char: "申", meaning: "shēn" },
-  { char: "降", meaning: "jiàng" },
-  { char: "伐", meaning: "fá" }
+  { char: "迄", pinyin: "qì" },
+  { char: "臣", pinyin: "chén" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "車", pinyin: "jū" }, // основное чтение в классическом тексте
+  { char: "亦", pinyin: "yì" }
 ];
 
 const pairs2 = [
-  { char: "佑", meaning: "yòu" },
-  { char: "洹", meaning: "huán" },
-  { char: "作", meaning: "zuò" },
-  { char: "茲", meaning: "zī" },
-  { char: "禍", meaning: "huò" }
+  { char: "侵", pinyin: "qīn" },
+  { char: "田", pinyin: "tián" },
+  { char: "四", pinyin: "sì" },
+  { char: "昔", pinyin: "xī" },
+  { char: "俘", pinyin: "fú" }
 ];
 
 const pairs3 = [
-  { char: "余", meaning: "yú" },
-  { char: "得", meaning: "dé" },
-  { char: "汝", meaning: "rǔ" },
-  { char: "使", meaning: "shǐ" },
-  { char: "合", meaning: "hé" }
+  { char: "十", pinyin: "shí" },
+  { char: "若", pinyin: "ruò" },
+  { char: "往", pinyin: "wǎng" },
+  { char: "娩", pinyin: "miǎn" },
+  { char: "嘉", pinyin: "jiā" }
 ];
 
 const pairs4 = [
-  { char: "乃", meaning: "nǎi" },
-  { char: "以", meaning: "yǐ" },
-  { char: "羌", meaning: "qiāng" },
-  { char: "朕", meaning: "zhèn" }
+  { char: "死", pinyin: "sǐ" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "馭", pinyin: "yù" },
+  { char: "央", pinyin: "yāng" },
+  { char: "墜", pinyin: "zhuì" }
 ];
+
+const pairs5 = [
+  { char: "偁", pinyin: "chēng" },
+  { char: "偁", pinyin: "chēng" },
+  { char: "四", pinyin: "sì" },
+  { char: "鄙", pinyin: "bǐ" },
+  { char: "硪", pinyin: "wò" }
+];
+
+
 pairs = pairs4
+
     let selectedWord = null;
     let matchedPairs = 0;
 
@@ -2696,42 +2910,62 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
 </head>
 <body>
   <h2>Собери фразу</h2>
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Я получу помощь от племени Ма.</em></p>
+    <p><em>Правитель прочитал ответ: „Не осуществится. А если и осуществится, то к несчастью“.</em></p>
   </div>
+
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>余 — я</li>
-      <li>受 — получу, пошлют</li>
-      <li>馬方 — племя Ма</li>
-      <li>佑 — помощь</li>
+      <li>王 — Правитель</li>
+      <li>占曰 — (гадатель) сказал, прочитал ответ</li>
+      <li>不嘉 — не благоприятно, не осуществится</li>
+      <li>其嘉 — если осуществится</li>
+      <li>不吉 — к несчастью</li>
+      <li>若 — если</li>
+      <li>， — (запятая, логическая пауза)</li>
     </ul>
   </div>
+
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
+
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
+
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
+
   <p id="result" class="message"></p>
+
   <script>
-    const expected = ['余', '受', '馬', '方', '佑'];
+    // Ожидаемая фраза: 王占曰不嘉，若其嘉，不吉
+    // Перевод: Правитель прочитал ответ: "Не осуществится. Если осуществится — к несчастью"
+    const expected = ['王', '占', '曰', '不', '嘉', '若', '其', '嘉', '不', '吉'];
+
+    // Список всех иероглифов — из Урока 10 и базовой лексики
     const allChars = [
-      '余', '受', '馬', '方', '佑',
-      '帝', '我', '不', '其', '作', '祸', '以', '乃', '伐', '得'
+      '王', '占', '曰', '不', '嘉', '若', '其', '吉', '乃', '茲', '有', '祟',
+      '来', '艰', '迄', '至', '五', '日', '丁', '酉', '允', '自', '西', '洗',
+      '震', '告', '土', '方', '征', '于', '我', '东', '鄙', '烖', '二', '邑',
+      '亦', '侵', '田', '四', '庚', '申', '北', '子', '商', '昔', '甲', '辰',
+      '俘', '人', '十', '有', '六', '戊', '午', '往', '逐', '兕', '小', '臣',
+      '叶', '車', '馬', '硪', '馭', '央', '坠', '妇', '好', '娩', '死', '偁',
+      '雨', '贞', '卜', '癸', '巳', '允', '亡', '祸', '今', '旬', '后', '至'
     ].sort(() => Math.random() - 0.5);
+
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -2739,12 +2973,15 @@ pairs = pairs4
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
+    // Переместить символ в зону сборки
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
@@ -2753,6 +2990,8 @@ pairs = pairs4
       box.remove();
       dropArea.appendChild(clone);
     }
+
+    // Инициализация панели с символами
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
@@ -2765,10 +3004,12 @@ pairs = pairs4
         charPool.appendChild(box);
       });
     }
+
+    // Проверка правильности сборки
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>余受馬方佑';
+        resultEl.innerHTML = '✅ Правильно!<br>王占曰不嘉，若其嘉，不吉';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -2777,10 +3018,16 @@ pairs = pairs4
         sendResult(false, 'Неверный порядок');
       }
     });
+
+    // Сбросить сборку
     resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -2788,8 +3035,10 @@ pairs = pairs4
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
-    // Инициализация
+
+    // Инициализация при загрузке
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
@@ -2801,43 +3050,61 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
 </head>
 <body>
   <h2>Собери фразу</h2>
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Правитель не пошлет мне помощь.</em></p>
+    <p><em>Правитель прочитал ответ: „Не благоприятно. А если благоприятно, то к несчастью“.</em></p>
   </div>
+
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>王 — правитель</li>
-      <li>不 — не</li>
-      <li>我 — мне</li>
-      <li>受 — пошлёт</li>
-      <li>佑 — помощь</li>
+      <li>王 — Правитель</li>
+      <li>占曰 — (гадатель) сказал, прочитал ответ</li>
+      <li>不嘉 — не благоприятно</li>
+      <li>其嘉 — если благоприятно</li>
+      <li>不吉 — к несчастью</li>
+      <li>若 — если</li>
+      <li>， — (логическая пауза, запятая)</li>
     </ul>
   </div>
+
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
+
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
+
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
+
   <p id="result" class="message"></p>
+
   <script>
-    const expected = ['王', '不', '我', '受', '佑'];
+    // Ожидаемая фраза: 王占曰不嘉，若其嘉，不吉
+    // Перевод: Правитель прочитал ответ: "Не благоприятно. Если благоприятно — к несчастью"
+    const expected = ['王', '占', '曰', '不', '嘉', '若', '其', '嘉', '不', '吉'];
+
+    // Все иероглифы из Урока 10 и предыдущих уроков (для разнообразия)
     const allChars = [
-      '王', '不', '我', '受', '佑',
-      '帝', '其', '作', '祸', '余', '以', '乃', '伐', '得', '汝'
+      '王', '占', '曰', '不', '嘉', '若', '其', '吉', '有', '祟', '來', '艱', '迄', '至',
+      '五', '日', '丁', '酉', '允', '自', '西', '洗', '震', '告', '土', '方', '征',
+      '于', '我', '東', '鄙', '烖', '二', '邑', '亦', '侵', '田', '四', '庚', '申',
+      '北', '子', '商', '昔', '甲', '辰', '俘', '人', '十', '又', '六', '戊', '午',
+      '往', '逐', '兕', '小', '臣', '叶', '車', '馬', '硪', '馭', '央', '墜', '婦',
+      '好', '娩', '死', '乃', '兹', '偁'
     ].sort(() => Math.random() - 0.5);
+
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -2845,12 +3112,15 @@ pairs = pairs4
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
+    // Переместить символ в зону сборки
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
@@ -2859,6 +3129,8 @@ pairs = pairs4
       box.remove();
       dropArea.appendChild(clone);
     }
+
+    // Инициализация панели с символами
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
@@ -2871,10 +3143,12 @@ pairs = pairs4
         charPool.appendChild(box);
       });
     }
+
+    // Проверка правильности сборки
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>王不我受佑';
+        resultEl.innerHTML = '✅ Правильно!<br>王占曰不嘉，若其嘉，不吉';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -2883,10 +3157,16 @@ pairs = pairs4
         sendResult(false, 'Неверный порядок');
       }
     });
+
+    // Сбросить сборку
     resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -2894,8 +3174,10 @@ pairs = pairs4
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
-    // Инициализация
+
+    // Инициализация при загрузке
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
@@ -2907,43 +3189,64 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
 </head>
 <body>
   <h2>Собери фразу</h2>
   <div class="instructions">
     <p><strong>Соберите фразу:</strong></p>
-    <p><em>Цяны не нанесут поражение моему послу.</em></p>
+    <p><em>Правитель прочитал ответ: „Не благоприятно. А если и благоприятно, то к несчастью“.</em></p>
   </div>
+
   <!-- Кнопка для раскрытия подсказок -->
   <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
   <!-- Контейнер подсказок (скрыт по умолчанию) -->
   <div class="hint-container" id="hint-container">
     <ul class="hint-list">
-      <li>羌 — цяны</li>
-      <li>弗 — не</li>
-      <li>朕 — мой (притяжательное)</li>
-      <li>使 — посол</li>
-      <li>烖 — нанесут поражение</li>
+      <li>王 — Правитель</li>
+      <li>占曰 — (гадатель) сказал, прочитал ответ</li>
+      <li>不嘉 — не благоприятно</li>
+      <li>其嘉 — если благоприятно</li>
+      <li>不吉 — к несчастью</li>
+      <li>若 — если</li>
+      <li>乃 — тогда, в таком случае</li>
+      <li>死 — умереть</li>
+      <li>茲 — в этом месте, при этом</li>
     </ul>
   </div>
+
   <p><strong>Иероглифы:</strong></p>
   <div id="char-pool"></div>
+
   <p><strong>Соберите здесь:</strong></p>
   <div id="drop-area"></div>
+
   <div class="controls">
     <button id="check-btn">Проверить</button>
     <button id="reset-btn">Сбросить</button>
   </div>
+
   <p id="result" class="message"></p>
+
   <script>
-    const expected = ['羌', '弗', '朕', '使', '烖'];
+    // Ожидаемая фраза: 王占曰不嘉，若其嘉，不吉
+    // Перевод: Правитель прочитал ответ: "Не благоприятно. А если и благоприятно, то к несчастью"
+    const expected = ['王', '占', '曰', '不', '嘉', '若', '其', '嘉', '不', '吉'];
+
+    // Все иероглифы из текста Урока 10 и предыдущих уроков
     const allChars = [
-      '羌', '弗', '朕', '使', '烖',
-      '帝', '我', '不', '其', '作', '祸', '余', '以', '乃', '得'
+      '王', '占', '曰', '不', '嘉', '若', '其', '吉', '有', '祟', '來', '艱', '迄', '至',
+      '五', '日', '丁', '酉', '允', '自', '西', '洗', '震', '告', '土', '方', '征',
+      '于', '我', '東', '鄙', '烖', '二', '邑', '亦', '侵', '田', '四', '庚', '申',
+      '北', '子', '商', '昔', '甲', '辰', '俘', '人', '十', '又', '六', '戊', '午',
+      '往', '逐', '兕', '小', '臣', '叶', '車', '馬', '硪', '馭', '央', '墜', '婦',
+      '好', '娩', '死', '乃', '兹', '偁', '亡', '禍', '允', '雨', '卜', '癸', '巳',
+      '后', '至', '用', '示', '御', '鼠', '宗', '門', '執', '墠'
     ].sort(() => Math.random() - 0.5);
+
     const toggleBtn = document.getElementById('toggle-hint-btn');
     const hintContainer = document.getElementById('hint-container');
     const charPool = document.getElementById('char-pool');
@@ -2951,12 +3254,15 @@ pairs = pairs4
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultEl = document.getElementById('result');
+
     // Переключение подсказок
     toggleBtn.addEventListener('click', () => {
       const isOpen = hintContainer.classList.contains('open');
       hintContainer.classList.toggle('open');
       toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
     });
+
+    // Переместить символ в зону сборки
     function moveToDropArea(box) {
       const clone = box.cloneNode(true);
       clone.draggable = false;
@@ -2965,6 +3271,8 @@ pairs = pairs4
       box.remove();
       dropArea.appendChild(clone);
     }
+
+    // Инициализация панели с символами
     function initCharPool() {
       charPool.innerHTML = '';
       dropArea.innerHTML = '';
@@ -2977,10 +3285,12 @@ pairs = pairs4
         charPool.appendChild(box);
       });
     }
+
+    // Проверка правильности сборки
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>羌弗朕使烖';
+        resultEl.innerHTML = '✅ Правильно!<br>王占曰不嘉，若其嘉，不吉';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
@@ -2989,10 +3299,16 @@ pairs = pairs4
         sendResult(false, 'Неверный порядок');
       }
     });
+
+    // Сбросить сборку
     resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
     function arraysEqual(a, b) {
       return a.length === b.length && a.every((v, i) => v === b[i]);
     }
+
+    // Отправка результата в родительское окно
     function sendResult(success, message) {
       window.parent.postMessage({
         type: "TASK_RESULT",
@@ -3000,8 +3316,10 @@ pairs = pairs4
         message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
       }, "*");
     }
-    // Инициализация
+
+    // Инициализация при загрузке
     initCharPool();
+
     // Сигнал, что задание загружено
     window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
   </script>
@@ -3013,132 +3331,27 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Собери фразу</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 10 — Сложные предложения</title>
 </head>
 <body>
-  <h2>Собери фразу</h2>
-  <div class="instructions">
-    <p><strong>Соберите фразу:</strong></p>
-    <p><em>Хоу Ху, я получу тебя (в жёны).</em></p>
-  </div>
-  <!-- Кнопка для раскрытия подсказок -->
-  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
-  <!-- Контейнер подсказок (скрыт по умолчанию) -->
-  <div class="hint-container" id="hint-container">
-    <ul class="hint-list">
-      <li>侯虎 — Хоу Ху</li>
-      <li>余 — я</li>
-      <li>其 — будет</li>
-      <li>得 — получить (в жёны)</li>
-      <li>汝 — тебя</li>
-    </ul>
-  </div>
-  <p><strong>Иероглифы:</strong></p>
-  <div id="char-pool"></div>
-  <p><strong>Соберите здесь:</strong></p>
-  <div id="drop-area"></div>
-  <div class="controls">
-    <button id="check-btn">Проверить</button>
-    <button id="reset-btn">Сбросить</button>
-  </div>
-  <p id="result" class="message"></p>
-  <script>
-    const expected = ['侯', '虎', '余', '其', '得', '汝'];
-    const allChars = [
-      '侯', '虎', '余', '其', '得', '汝',
-      '帝', '我', '不', '受', '佑', '以', '乃', '使', '伐'
-    ].sort(() => Math.random() - 0.5);
-    const toggleBtn = document.getElementById('toggle-hint-btn');
-    const hintContainer = document.getElementById('hint-container');
-    const charPool = document.getElementById('char-pool');
-    const dropArea = document.getElementById('drop-area');
-    const checkBtn = document.getElementById('check-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const resultEl = document.getElementById('result');
-    // Переключение подсказок
-    toggleBtn.addEventListener('click', () => {
-      const isOpen = hintContainer.classList.contains('open');
-      hintContainer.classList.toggle('open');
-      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
-    });
-    function moveToDropArea(box) {
-      const clone = box.cloneNode(true);
-      clone.draggable = false;
-      clone.style.cursor = 'default';
-      clone.onclick = null;
-      box.remove();
-      dropArea.appendChild(clone);
-    }
-    function initCharPool() {
-      charPool.innerHTML = '';
-      dropArea.innerHTML = '';
-      resultEl.textContent = '';
-      allChars.forEach(char => {
-        const box = document.createElement('div');
-        box.className = 'char-box';
-        box.textContent = char;
-        box.addEventListener('click', () => moveToDropArea(box));
-        charPool.appendChild(box);
-      });
-    }
-    checkBtn.addEventListener('click', () => {
-      const current = Array.from(dropArea.children).map(el => el.textContent);
-      if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>侯虎余其得汝';
-        resultEl.className = 'message success';
-        sendResult(true);
-      } else {
-        resultEl.textContent = '❌ Попробуйте снова.';
-        resultEl.className = 'message';
-        sendResult(false, 'Неверный порядок');
-      }
-    });
-    resetBtn.addEventListener('click', initCharPool);
-    function arraysEqual(a, b) {
-      return a.length === b.length && a.every((v, i) => v === b[i]);
-    }
-    function sendResult(success, message) {
-      window.parent.postMessage({
-        type: "TASK_RESULT",
-        success: !!success,
-        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
-      }, "*");
-    }
-    // Инициализация
-    initCharPool();
-    // Сигнал, что задание загружено
-    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
-  </script>
-</body>
-</html>
-
-=== 📄 task7.html ===
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 帝受我佑</title>
-</head>
-<body>
-  <h2>Какой из вариантов является правильным переводом фразы «帝受我佑»?</h2>
-  <p><strong>Пример: «帝受我佑»</strong></p>
+  <h2>Какой из вариантов является правильным переводом фразы?</h2>
+  <p><strong>Пример: «王占曰不嘉，若其嘉，不吉»</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Dì shòu wǒ yòu</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, ruò qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Небесный Владыка получит мою помощь", correct: false },
-      { text: "Небесный Владыка пошлёт мне помощь", correct: true },
-      { text: "Я получу помощь от Небесного Владыки", correct: false },
-      { text: "Небесный Владыка не пошлёт помощи", correct: false }
+      { text: "Правитель сказал: «Не будет урожая, и если будет, то всё равно хорошо».", correct: false },
+      { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
+      { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
+      { text: "Правитель приказал: «Не делай этого, но если сделаешь, то всё будет хорошо».", correct: false }
     ];
 
     function shuffle(array) {
@@ -3175,10 +3388,102 @@ pairs = pairs4
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>сложного подчинённого предложения</strong>:<br>
+          <em>不嘉</em> — «не благоприятно» (основное утверждение),<br>
+          <em>若其嘉，不吉</em> — «если благоприятно, то к несчастью» (условное дополнение).<br>
+          Такие конструкции характерны для гадательных текстов Урока 10.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на условную связку 若 и противопоставление благоприятного и неблагоприятного исхода.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task7.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 10 — Сложные и условные предложения</title>
+</head>
+<body>
+  <h2>Что означает фраза «王占曰不嘉，若其嘉，不吉»?</h2>
+  <p><strong>Обратите внимание на структуру: это сложное высказывание с условным подчинением.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, ruò qí jiā, bù jí</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель сказал: «Урожай будет плохим, но если будет хорошим, то всё равно хорошо».", correct: false },
+      { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
+      { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
+      { text: "Если сейчас всё хорошо, то она не умрёт.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>сложного условного предложения</strong>:<br>
+          • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+          • <strong>若其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Конструкция <strong>若...，不吉</strong> выражает условие с негативным следствием — типична для гадательных текстов Урока 10.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление «不嘉» и «若其嘉，不吉».";
         sendResult(false);
       }
     }
@@ -3198,26 +3503,27 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 帝不我受佑</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
-  <h2>Что означает конструкция «帝不我受佑»?</h2>
-  <p><strong>Обратите внимание на порядок слов.</strong></p>
+  <h2>Какой из вариантов точно передаёт смысл фразы «王占曰不嘉，其嘉，不吉»?</h2>
+  <p><strong>Обратите внимание на структуру: это сложное высказывание с условным подчинением.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Dì bù wǒ shòu yòu</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Небесный Владыка не пошлёт нам помощи", correct: true },
-      { text: "Небесный Владыка пошлёт нам помощь", correct: false },
-      { text: "Мы не получим урожай от Небесного Владыки", correct: false },
-      { text: "Небесный Владыка не примет мою молитву", correct: false }
+      { text: "Правитель сказал: «Не будет урожая, но если будет — всё будет хорошо».", correct: false },
+      { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
+      { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
+      { text: "Если всё хорошо сейчас, то она не умрёт.", correct: false }
     ];
 
     function shuffle(array) {
@@ -3254,10 +3560,16 @@ pairs = pairs4
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>сложного условного предложения</strong>:<br>
+          • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+          • <strong>其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Такие конструкции характерны для гадательных текстов Урока 10. Здесь <strong>其</strong> выступает как местопредикатив, заменяя предыдущее утверждение.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление благоприятного и неблагоприятного исхода.";
         sendResult(false);
       }
     }
@@ -3277,26 +3589,27 @@ pairs = pairs4
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="../../tasks.css">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Задание: 羌弗朕使烖</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 10 — Сложные и условные предложения</title>
 </head>
 <body>
-  <h2>Какой из вариантов точно передаёт смысл фразы «羌弗朕使烖»?</h2>
-  <p><strong>Обратите внимание на местоимение и отрицание.</strong></p>
+  <h2>Что означает фраза «王占曰不嘉，若其嘉，不吉»?</h2>
+  <p><strong>Обратите внимание на структуру: это сложное высказывание с условным подчинением и местопредикативом.</strong></p>
   <div class="pinyin-container">
     <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
-    <div class="pinyin-text">Qiāng fú zhèn shǐ zāi</div>
+    <div class="pinyin-text">wáng zhān yuē bù jiā, ruò qí jiā, bù jí</div>
   </div>
   <div id="answers"></div>
   <button onclick="check('answers', 'result', options)">Проверить</button>
   <p id="result"></p>
+
   <script>
     const options = [
-      { text: "Цяны не нанесут поражение моему послу", correct: true },
-      { text: "Цяны нанесут поражение послу врага", correct: false },
-      { text: "Мой посол не победит цянов", correct: false },
-      { text: "Цяны не нападут на город", correct: false }
+      { text: "Правитель сказал: «Урожай будет плохим, но если будет хорошим, то всё равно хорошо».", correct: false },
+      { text: "Правитель прочитал ответ: «Не благоприятно. А если благоприятно, то к несчастью».", correct: true },
+      { text: "Правитель спросил: «Будет ли урожай? Если будет — это хорошо?»", correct: false },
+      { text: "Если всё хорошо сейчас, то она не умрёт.", correct: false }
     ];
 
     function shuffle(array) {
@@ -3333,10 +3646,16 @@ pairs = pairs4
         return;
       }
       if (selected.dataset.correct === "true") {
-        resultEl.textContent = "✅ Правильно!";
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>сложного условного предложения</strong>:<br>
+          • <strong>王占曰不嘉</strong> — «Правитель прочитал ответ: „Не благоприятно“»<br>
+          • <strong>若其嘉，不吉</strong> — «Если благоприятно, то к несчастью»<br>
+          Здесь <strong>其</strong> — <em>местопредикатив</em>, заменяющий предыдущее утверждение. Это типичная конструкция Урока 10.
+        `;
         sendResult(true);
       } else {
-        resultEl.textContent = "❌ Неверно.";
+        resultEl.textContent = "❌ Неверно. Обратите внимание на противопоставление «не благоприятно» и «если благоприятно — к несчастью».";
         sendResult(false);
       }
     }

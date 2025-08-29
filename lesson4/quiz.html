@@ -318,16 +318,7 @@
   const db = getFirestore(app);
   let currentUser = null;
 
-  // Следим за авторизацией
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      console.log('🔐 Пользователь:', user.displayName);
-    } else {
-      alert("Для доступа нужно войти");
-      location.href = '../index.html';
-    }
-  });
+
 
   // === ✅ Функция начисления/списания баллов ===
   async function updatePoints(points, reason) {

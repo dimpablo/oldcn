@@ -1,0 +1,2498 @@
+=== 📄 task1.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Задание 1: Рисование</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f0f4ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      flex-direction: column;
+      text-align: center;
+      color: #333;
+    }
+
+    #splash-screen h1 {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #2c55d9;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      margin: 0;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    #splash-screen p {
+      font-size: 1.5rem;
+      color: #555;
+      margin-top: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #character-target-div {
+      display: none;
+      margin: 40px auto;
+      width: 300px;
+      height: 300px;
+    }
+
+    /* === Мерцающий overlay === */
+    #feedback-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0s;
+      z-index: 9999;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { opacity: 0; }
+    }
+
+    #feedback-overlay.success {
+      background: green;
+    }
+
+    #feedback-overlay.error {
+      background: red;
+    }
+
+    #feedback-overlay.animate {
+      opacity: 0.7;
+      animation: flash 0.8s ease-out;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Заставка -->
+<div id="splash-screen">
+  <h1>Нарисуй здесь</h1>
+  <p>любой иероглиф из словаря урока!</p>
+</div>
+
+<!-- Контейнер для HanziWriter -->
+<div id="character-target-div"></div>
+
+<!-- Overlay для мерцания -->
+<div id="feedback-overlay"></div>
+
+<script>
+  // ✅ Универсальная функция отправки результата и баллов
+  function sendResult(success, message, points = 0) {
+    window.parent.postMessage({
+      type: "TASK_RESULT",
+      success: !!success,
+      message: message || (success ? "Задание выполнено" : "Ошибка"),
+      points: points // ✅ Отправляем баллы
+    }, "*");
+  }
+
+  // ✅ Функция мерцания экрана
+  function flashScreen(color) {
+    const overlay = document.getElementById('feedback-overlay');
+    overlay.className = '';
+    overlay.classList.add(color === 'success' ? 'success' : 'error');
+    overlay.classList.add('animate');
+
+    setTimeout(() => {
+      overlay.classList.remove('animate');
+    }, 800);
+  }
+
+  let totalPointsEarned = 0;
+  let strokeCount = 0;
+  let mistakes = 0;
+
+  window.onload = function() {
+    const splashScreen = document.getElementById('splash-screen');
+    const characterDiv = document.getElementById('character-target-div');
+    const splashH1 = splashScreen.querySelector('h1');
+    const splashP = splashScreen.querySelector('p');
+
+    setTimeout(() => {
+      const hash = window.location.hash.slice(1);
+      if (!hash) {
+        splashP.textContent = "⚠️ Не указан иероглиф";
+        sendResult(false, "Не указан иероглиф", 0);
+        return;
+      }
+
+      const char = decodeURIComponent(hash);
+
+      // Показываем иероглиф
+      splashH1.textContent = char;
+
+      // === Попробуем загрузить данные для иероглифа ===
+      HanziWriter.loadCharacterData(char)
+        .then(charData => {
+          // ✅ Данные есть — запускаем квиз
+          splashScreen.style.display = 'none';
+          characterDiv.style.display = 'block';
+
+          // Считаем количество штрихов
+          strokeCount = charData.strokes.length;
+
+          const writer = HanziWriter.create('character-target-div', char, {
+            width: 300,
+            height: 300,
+            showCharacter: false,
+            showOutline: false,
+            showHintAfterMisses: 1,
+            highlightOnComplete: false,
+            padding: 5
+          });
+
+          writer.quiz({
+            leniency: 2.0,
+
+            onCorrectStroke: function(strokeData) {
+              // ✅ +1 балл за каждый правильный штрих
+              totalPointsEarned += 1;
+              console.log(`✅ Штрих ${strokeData.strokeNum} — +1 балл`);
+            },
+
+            onMistake: function(strokeData) {
+              console.log("❌ Ошибка на штрихе", strokeData.strokeNum);
+              flashScreen('error');
+              mistakes++;
+            },
+
+            onComplete: function(summaryData) {
+              console.log("🎯 Квиз завершён:", summaryData);
+              flashScreen('success');
+
+              // ✅ +2 балла за полное завершение
+              totalPointsEarned += 2;
+
+              sendResult(
+                true,
+                `Иероглиф "${char}" нарисован верно`,
+                totalPointsEarned
+              );
+            }
+          });
+
+        })
+        .catch(err => {
+          // ❌ Данных нет — древний иероглиф
+          console.warn(`🚫 Нет данных для иероглифа: ${char}`, err);
+
+          // === ОСТАВЛЯЕМ ЗАСТАВКУ, МЕНЯЕМ ТЕКСТ ===
+          splashP.innerHTML = `
+            Очень древний и редкий иероглиф 😔<br>
+            Софт не поддерживает его отрисовку.<br>
+            <strong>Придётся выписать его от руки ✍️</strong>
+          `;
+
+          // Мерцание — ошибка
+          flashScreen('error');
+
+          // ✅ Ничего не штрафуем и не награждаем
+          setTimeout(() => {
+            sendResult(
+              true,
+              `Древний иероглиф "${char}" — задание пропущено (нет данных)`,
+              0 // 🟢 0 баллов — не вина пользователя
+            );
+          }, 1200);
+        });
+    }, 1000);
+  };
+
+  // Обработка пропуска (например, если пользователь закрыл окно без завершения)
+  window.addEventListener('beforeunload', () => {
+    if (totalPointsEarned === 0 && mistakes > 0) {
+      // ❌ Пропуск с ошибками — штраф -1
+      sendResult(false, "Задание пропущено", -1);
+    }
+  });
+</script>
+
+<!-- Сигналы родительскому окну -->
+<script>
+  window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  window.parent.postMessage({ type: "DO_HANZI", valid: true }, "*");
+</script>
+
+</body>
+</html>
+
+=== 📄 task10.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+  <h2>Что означает конструкция «貞王唯從洗震»?</h2>
+  <p><strong>Обратите внимание: частица «唯» выделяет подлежащее «王», придавая вопросу эмфазу.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель пойдёт походом на племя Си-Чжэнь.", correct: false },
+      { text: "Не пойдёт ли правитель походом на племя Си-Чжэнь?", correct: false },
+      { text: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?", correct: true },
+      { text: "Правитель повелел племени Си-Чжэнь выступить.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>эмфатической конструкции</strong> с частицей <strong>唯 (wéi)</strong>:<br>
+          • <strong>貞 zhēn</strong> — «спрашивают»<br>
+          • <strong>王 wáng</strong> — «правитель»<br>
+          • <strong>唯 wéi</strong> — частица, выделяющая субъект вопроса<br>
+          • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br>
+          Фраза выражает вопрос: <em>«Именно ли правитель пойдёт?»</em>, подчёркивая его центральную роль.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу, а не простое отрицание.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task11.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 9: Эмфатические конструкции</title>
+</head>
+<body>
+<h2>Как правильно понять предложение «貞王唯從洗震»?</h2>
+<p><strong>Пример из текста: «貞王唯從洗震»</strong></p>
+
+<div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+        Показать пиньинь
+    </button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+</div>
+
+<p>Это гадательное предложение затрагивает ключевую грамматическую конструкцию Урока 9. Каково его правильное значение и структура?</p>
+
+<div id="answers"></div>
+<button onclick="check('answers', 'result', options)">Проверить</button>
+<p id="result"></p>
+
+<script>
+  const options = [
+    { 
+      text: "«Именно ли правитель пойдёт походом на племя Си-Чжэнь?» — верно: частица «唯» придаёт вопросу эмфазу, выделяя подлежащее «王»", 
+      correct: true 
+    },
+    { 
+      text: "«Правитель пойдёт походом на племя Си-Чжэнь» — неверно: отсутствие частицы «唯» и наличие глагола «貞» указывают на вопрос, а не утверждение", 
+      correct: false 
+    },
+    { 
+      text: "«Не пойдёт ли правитель походом на племя Си-Чжэнь?» — неверно: это значение передаёт частица «勿», а не «唯»", 
+      correct: false 
+    },
+    { 
+      text: "«Правитель повелел племени Си-Чжэнь выступить» — неверно: глагол «從» означает «пойти походом на», а не «повелел», и нет побудительной конструкции", 
+      correct: false 
+    }
+  ];
+
+  function shuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderOptions() {
+    const shuffled = shuffle(options);
+    const container = document.getElementById("answers");
+    if (!container) {
+      console.error("Контейнер #answers не найден");
+      return;
+    }
+    container.innerHTML = "";
+
+    shuffled.forEach((opt, index) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "q";
+      input.value = opt.correct ? "1" : "0_" + index;
+      input.dataset.correct = opt.correct.toString();
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt.text));
+      container.appendChild(label);
+    });
+  }
+
+  function check(containerId, resultId, optionsArray) {
+    const selected = document.querySelector('input[name="q"]:checked');
+    const resultEl = document.getElementById(resultId);
+
+    if (!selected) {
+      resultEl.textContent = "Выберите вариант.";
+      return;
+    }
+
+    if (selected.dataset.correct === "true") {
+      resultEl.innerHTML = `
+        ✅ <strong>Правильно!</strong><br>
+        Это типичное предложение Урока 9, демонстрирующее <strong>эмфатическую конструкцию</strong>:<br>
+        • <strong>貞 zhēn</strong> — «спрашивают»<br>
+        • <strong>王 wáng</strong> — «правитель»<br>
+        • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность и выделяющая субъект<br>
+        • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br><br>
+        Частица <strong>唯</strong> превращает нейтральный вопрос в эмфатический: акцент делается на подлежащем.<br>
+        Полный перевод: «<em>Именно ли</em> правитель пойдёт походом?»
+      `;
+      sendResult(true);
+    } else {
+      resultEl.textContent = "❌ Неверно. Обратите внимание: «唯» — это не отрицание, а частица эмфазы. Она выделяет «王» как центральный элемент вопроса.";
+      sendResult(false);
+    }
+  }
+
+  function sendResult(success) {
+    window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+  }
+
+  window.onload = renderOptions;
+</script>
+</body>
+</html>
+
+<!-- Уведомление, что задание существует -->
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task12.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+
+<h2>Выберите правильное значение или объяснение</h2>
+
+<div class="grid">
+    <div class="cell" onclick="openModal('q1')">
+        <strong>貞王唯從洗震</strong>
+        <span class="status" id="status-q1">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q2')">
+        <strong>貞王勿從洗震</strong>
+        <span class="status" id="status-q2">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q3')">
+        <strong>我叀乙巳出</strong>
+        <span class="status" id="status-q3">?</span>
+    </div>
+    <div class="cell" onclick="openModal('q4')">
+        <strong>余唯鹿獲</strong>
+        <span class="status" id="status-q4">?</span>
+    </div>
+</div>
+
+<button onclick="checkAll()" style="width:100%; margin-top:12px;">Проверить</button>
+<p id="result"></p>
+
+<!-- Модальные окна -->
+<div id="modal-q1" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">貞王唯從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q1" value="Правитель повелел племени Си-Чжэнь выступить">Правитель повелел племени Си-Чжэнь выступить</label>
+        </div>
+        <button onclick="closeModal('q1')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q2" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">貞王勿從洗震</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">zhēn wáng wù cóng xǐ zhèn</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="Правитель пойдёт походом на племя Си-Чжэнь">Правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Не пойдёт ли правитель походом на племя Си-Чжэнь">Не пойдёт ли правитель походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Именно ли правитель пойдёт походом на племя Си-Чжэнь">Именно ли правитель пойдёт походом на племя Си-Чжэнь</label>
+            <label><input type="radio" name="q2" value="Правитель не пойдёт походом на племя Си-Чжэнь">Правитель не пойдёт походом на племя Си-Чжэнь</label>
+        </div>
+        <button onclick="closeModal('q2')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q3" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">我叀乙巳出</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">wǒ huì yǐ sì chū</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="Я выйду в день И-сы">Я выйду в день И-сы</label>
+            <label><input type="radio" name="q3" value="Не выйду ли я в день И-сы">Не выйду ли я в день И-сы</label>
+            <label><input type="radio" name="q3" value="Именно ли я выйду в день И-сы">Именно ли я выйду в день И-сы</label>
+            <label><input type="radio" name="q3" value="Я не выйду в день И-сы">Я не выйду в день И-сы</label>
+        </div>
+        <button onclick="closeModal('q3')">OK</button>
+    </div>
+</div>
+
+<div id="modal-q4" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">余唯鹿獲</div>
+        <div class="pinyin-container">
+            <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">
+                Показать пиньинь
+            </button>
+            <div class="pinyin-text">yú wéi lù huò</div>
+        </div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="Я поймаю оленя">Я поймаю оленя</label>
+            <label><input type="radio" name="q4" value="Не поймаю ли я оленя">Не поймаю ли я оленя</label>
+            <label><input type="radio" name="q4" value="Оленя ли я поймаю">Оленя ли я поймаю</label>
+            <label><input type="radio" name="q4" value="Я не поймаю оленя">Я не поймаю оленя</label>
+        </div>
+        <button onclick="closeModal('q4')">OK</button>
+    </div>
+</div>
+
+<script>
+    const correctAnswers = {
+        q1: "Именно ли правитель пойдёт походом на племя Си-Чжэнь",
+        q2: "Не пойдёт ли правитель походом на племя Си-Чжэнь",
+        q3: "Именно ли я выйду в день И-сы",
+        q4: "Оленя ли я поймаю"
+    };
+
+    let userAnswers = { q1: null, q2: null, q3: null, q4: null };
+
+    function openModal(id) {
+        document.getElementById(`modal-${id}`).style.display = "flex";
+    }
+
+    function closeModal(id) {
+        const selected = document.querySelector(`input[name="${id}"]:checked`);
+        if (selected) {
+            userAnswers[id] = selected.value;
+            document.getElementById(`status-${id}`).textContent = "✓";
+            document.getElementById(`status-${id}`).style.color = "green";
+        }
+        document.getElementById(`modal-${id}`).style.display = "none";
+    }
+
+    function checkAll() {
+        const resultEl = document.getElementById("result");
+        const allAnswered = Object.values(userAnswers).every(ans => ans !== null);
+
+        if (!allAnswered) {
+            resultEl.textContent = "Ответьте на все.";
+            return;
+        }
+
+        let correctCount = 0;
+        for (const id in correctAnswers) {
+            if (userAnswers[id] === correctAnswers[id]) correctCount++;
+        }
+
+        if (correctCount === 4) {
+            resultEl.innerHTML = `
+                ✅ <strong>Все верно!</strong><br>
+                Вы отлично усвоили Урок 9:<br>
+                • <strong>Эмфатическая конструкция</strong>:<br>
+                &nbsp;&nbsp;Частица <em>唯 (wéi)</em> придаёт вопросу выразительность,<br>
+                &nbsp;&nbsp;выделяя субъект или объект.<br>
+                • <em>王唯從...</em> — «Именно ли правитель пойдёт?»<br>
+                • <em>我叀...</em> — «Именно ли я выйду?»<br>
+                • <em>余唯鹿獲</em> — «Оленя ли я поймаю?» (инверсия дополнения)<br>
+                • <em>勿</em> — отрицательный вопрос, <em>唯</em> — эмфатический.
+            `;
+            sendResult(true);
+        } else {
+            const wrong = 4 - correctCount;
+            resultEl.textContent = `❌ ${wrong} ошибки.`;
+            sendResult(false, `Ошибки: ${wrong}/4`);
+        }
+    }
+
+    function sendResult(success, message) {
+        window.parent.postMessage({ type: "TASK_RESULT", success, message }, "*");
+    }
+
+    // Уведомление, что задание существует
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
+
+=== 📄 task13.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери перевод: Урок 9</title>
+</head>
+<body>
+
+<h2>Собери перевод: Урок 9</h2>
+
+<div class="instructions">
+    <p><strong>Кликайте по словам</strong>, чтобы собрать правильный перевод.</p>
+    <p>Задания построены на ключевой теме Урока 9: <strong>эмфатические конструкции</strong>.</p>
+    <p>💡 <em>Обратите внимание: частица «唯» придаёт вопросу выразительность и выделяет субъект или объект!</em></p>
+</div>
+
+<div class="task-container">
+    <div class="task-title">1. 貞王唯從洗震</div>
+    <div class="oracle-text">貞王唯從洗震</div>
+    <div id="word-pool1" class="word-pool"></div>
+    <div id="drop-area1" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>唯</strong> — частица эмфазы: не просто «пойдёт ли», а <strong>«именно ли»</strong></p>
+    </div>
+</div>
+
+<div class="task-container">
+    <div class="task-title">2. 余唯鹿獲</div>
+    <div class="oracle-text">余唯鹿獲</div>
+    <div id="word-pool2" class="word-pool"></div>
+    <div id="drop-area2" class="drop-area"></div>
+    <div class="instructions" style="font-size:12px; padding:4px; margin-top:4px">
+        <p>💡 <strong>唯</strong> выделяет дополнение: вопрос не просто «поймаю ли оленя?», а <strong>«оленя ли я поймаю?»</strong></p>
+    </div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+// Ожидаемые правильные варианты
+const expected1 = [
+    ['Именно ли правитель пойдёт походом на племя Си-Чжэнь'],
+    ['Именно ли правитель пойдёт в поход на племя Си-Чжэнь'],
+    ['Именно ли правитель пойдёт на племя Си-Чжэнь походом']
+];
+
+const expected2 = [
+    ['Оленя ли я поймаю'],
+    ['Оленя ли я поймаю?'],
+    ['Я поймаю именно оленя?'],
+    ['Именно оленя я поймаю?']
+];
+
+// Слова для выбора (с лишними)
+const words1 = ['Именно ли', 'Правитель', 'пойдёт', 'походом', 'на', 'племя', 'Си-Чжэнь', 'Не', 'ужели', 'прикажет', 'молится', 'дождь', 'они', 'охотятся', 'вчера', 'выступит'];
+const words2 = ['Оленя', 'ли', 'я', 'поймаю', 'Мне', 'удастся', 'поймать', 'зверя', 'Мы', 'возвращаемся', 'домой', 'сегодня', 'именно', 'зайца', 'ловить', 'нужно'];
+
+// DOM-элементы
+const wordPool1 = document.getElementById('word-pool1');
+const wordPool2 = document.getElementById('word-pool2');
+const dropArea1 = document.getElementById('drop-area1');
+const dropArea2 = document.getElementById('drop-area2');
+const checkBtn = document.getElementById('check-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultEl = document.getElementById('result');
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createWordElements(words, pool, dropArea) {
+    const shuffledWords = shuffleArray(words);
+    return shuffledWords.map(word => {
+        const box = document.createElement('div');
+        box.className = 'word-box';
+        box.textContent = word;
+
+        box.onclick = () => {
+            box.remove();
+            dropArea.appendChild(box);
+            updatePlaceholder(dropArea);
+        };
+
+        return box;
+    });
+}
+
+function updatePlaceholder(dropArea) {
+    const hasWords = Array.from(dropArea.children).some(el => el.classList.contains('word-box'));
+    dropArea.classList.toggle('has-words', hasWords);
+}
+
+let wordElements1 = [];
+let wordElements2 = [];
+
+function init() {
+    // Очистка
+    [wordPool1, wordPool2].forEach(p => p.innerHTML = '');
+    [dropArea1, dropArea2].forEach(d => d.innerHTML = '');
+    resultEl.style.display = 'none';
+
+    // Создание элементов
+    wordElements1 = createWordElements(words1, wordPool1, dropArea1);
+    wordElements2 = createWordElements(words2, wordPool2, dropArea2);
+
+    // Добавление в пулы
+    wordElements1.forEach(el => wordPool1.appendChild(el));
+    wordElements2.forEach(el => wordPool2.appendChild(el));
+
+    // Обновление плейсхолдеров
+    [dropArea1, dropArea2].forEach(updatePlaceholder);
+}
+
+// Возврат слов в пул при клике
+[dropArea1, dropArea2].forEach((area, i) => {
+    area.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word-box')) {
+            const box = e.target;
+            box.remove();
+            [wordPool1, wordPool2][i].appendChild(box);
+            updatePlaceholder(area);
+        }
+    });
+});
+
+function getWords(dropArea) {
+    return Array.from(dropArea.children)
+        .filter(el => el.classList.contains('word-box'))
+        .map(el => el.textContent.trim());
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+checkBtn.addEventListener('click', () => {
+    const current1 = getWords(dropArea1);
+    const current2 = getWords(dropArea2);
+
+    const isCorrect1 = expected1.some(option => arraysEqual(current1, option));
+    const isCorrect2 = expected2.some(option => arraysEqual(current2, option));
+
+    if (isCorrect1 && isCorrect2) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы усвоили ключевую тему Урока 9:<br>
+            • <strong>Эмфатическая конструкция</strong>:<br>
+            &nbsp;&nbsp;Частица <em>唯 (wéi)</em> придаёт вопросу выразительность,<br>
+            &nbsp;&nbsp;выделяя субъект или объект.<br>
+            • <em>王唯從...</em> — «Именно ли правитель пойдёт?»<br>
+            • <em>余唯鹿獲</em> — «Оленя ли я поймаю?» (инверсия дополнения)
+        `;
+        resultEl.className = 'message success';
+        resultEl.style.display = 'block';
+        sendResult(true);
+    } else {
+        let message = '❌ Проверьте структуру:';
+        if (!isCorrect1) message += '<br>• Частица «唯» — это не отрицание, а <strong>эмфаза</strong>: «именно ли правитель?»';
+        if (!isCorrect2) message += '<br>• «Оленя ли я поймаю?» — пример <strong>инверсии дополнения</strong>: объект вынесён на первое место';
+
+        resultEl.innerHTML = message;
+        resultEl.className = 'message error';
+        resultEl.style.display = 'block';
+        sendResult(false, message);
+    }
+});
+
+resetBtn.addEventListener('click', init);
+
+function sendResult(success, message) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Верно" : "Ошибка")
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+</script>
+</body>
+</html>
+
+=== 📄 task14.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Эмфаза: Урок 9</title>
+</head>
+<body>
+
+<h2>Эмфаза: Выделение членов предложения</h2>
+
+<div class="instructions">
+    <div class="instructions-header" onclick="toggleInstructions()">
+        <strong>📌 Инструкция (нажми для развертывания)</strong>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="instructions-content" style="display:none">
+        <p><strong>Нейтральное предложение vs Эмфатическая конструкция</strong></p>
+        <p>В архаическом древнекитайском языке для логического выделения (акцентирования) определенного члена предложения используется специальная <strong>эмфатическая конструкция</strong>. Это ключевая тема Урока 9.</p>
+
+        <p>🟢 <strong>Нейтральное предложение</strong> — члены предложения стоят в своей обычной позиции:</p>
+        <ul>
+            <li>王勿從洗震 wáng wù cóng xǐ zhèn — «Правителю не следует следовать за Чжэнем»</li>
+            <li>顺序: Подлежащее (王) → Отрицание (勿) → Сказуемое (從) → Дополнение (洗震)</li>
+            <li>Нет специальных маркеров, никакого особого акцента.</li>
+        </ul>
+
+        <p>🔴 <strong>Эмфатическая конструкция</strong> — выделяемый член предложения маркируется частицей <strong>唯 (wéi)</strong> и часто меняет позицию:</p>
+        <ul>
+            <li>王勿唯洗震從 wáng wù wéi xǐ zhèn cóng — «Не за <strong>Чжэнем</strong> ли правителю не следует следовать?»</li>
+            <li>Частица <strong>唯</strong> ставится после выделяемого члена (в данном случае — дополнения <strong>洗震</strong>).</li>
+            <li>Выделяемый член часто перемещается перед сказуемое.</li>
+            <li>Создает вопрос-догадку: «именно это?», «именно он?»</li>
+        </ul>
+
+        <p><em>Примеры:</em><br>
+        "王勿從洗震" → 🟢 (нейтральное отрицание)<br>
+        "王勿唯洗震從" → 🔴 (эмфаза на дополнении «Чжэнь»)</p>
+
+        <p><strong>Важно!</strong><br>
+        Эмфатическая конструкция используется:
+        <ol>
+            <li>Для <strong>логического выделения</strong> подлежащего, дополнения или обстоятельства.</li>
+            <li>С частицей <strong>唯 (wéi)</strong>, которая следует <strong>после</strong> выделяемого члена.</li>
+            <li>Чтобы превратить утверждение в <strong>вопрос-догадку</strong> или придание особого веса определенной части высказывания.</li>
+            <li>В вопросах, начинающихся с <strong>贞 (zhēn)</strong>, как в текстах гаданий.</li>
+        </ol>
+        Это ключевая грамматическая структура Урока 9.</p>
+    </div>
+</div>
+
+<script>
+function toggleInstructions() {
+    const content = document.querySelector('.instructions-content');
+    const header = document.querySelector('.instructions-header');
+    const arrow = header.querySelector('.arrow');
+    const isHidden = content.style.display === 'none';
+
+    content.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲' : '▼';
+
+    // Уведомление родителя о новой высоте
+    setTimeout(() => {
+        window.parent.postMessage({
+            type: "UPDATE_HEIGHT",
+            height: document.body.scrollHeight
+        }, "*");
+    }, 100);
+}
+</script>
+
+<div class="columns">
+    <div id="column1" class="column"></div>
+    <div id="column2" class="column"></div>
+</div>
+
+<div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const sentences = [
+    { text: "王勿從洗震", type: "direct", explanation: "Нейтральное предложение: «Правителю не следует следовать за Чжэнем» — стандартная структура без акцента" },
+    { text: "王勿唯洗震從", type: "chain", explanation: "Эмфатическая конструкция: частица 唯 выделяет дополнение «洗震» — «Не за Чжэнем ли правителю не следует следовать?»" },
+    { text: "今春王從洗震", type: "direct", explanation: "Нейтральное предложение: «Весной этого года правитель следует за Чжэнем» — обстоятельство времени в обычной позиции" },
+    { text: "王唯洗震從", type: "chain", explanation: "Эмфатическая конструкция: «Именно за Чжэнем следует правитель?» — акцент на дополнении с помощью 唯" },
+    { text: "今春王逐兕", type: "direct", explanation: "Нейтральное предложение: «Весной этого года правитель охотится на носорога» — стандартная структура" },
+    { text: "貞唯茲商有作禍", type: "chain", explanation: "Эмфатическая конструкция: «Не в этом ли городе произойдет бедствие?» — частица 唯 выделяет обстоятельство места «兹商»" },
+    { text: "我使其烖", type: "direct", explanation: "Нейтральное предложение: «Я пошлю на него бедствие» — подлежащее «我» в обычной позиции" },
+    { text: "貞唯我禍", type: "chain", explanation: "Эмфатическая конструкция: «Не нам ли грозит бедствие?» — акцент на подлежащем «我» с помощью 唯" },
+    { text: "壬射貝鹿", type: "direct", explanation: "Нейтральное предложение: «Рэнь выстрелил в оленя Бэй» — дополнение в обычной позиции" },
+    { text: "貞唯禍我", type: "chain", explanation: "Эмфатическая конструкция: «Не бедствие ли грозит нам?» — выделение подлежащего «禍» (бедствие) с помощью 唯" }
+];
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function createSentenceElement(sentence, index) {
+    const item = document.createElement('div');
+    item.className = 'sentence-item';
+    item.dataset.index = index;
+
+    item.innerHTML = `
+        <div class="oracle-text">${sentence.text}</div>
+        <div class="toggle-container">
+            <span class="toggle-text">Нейтральное</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+            <span class="toggle-text">Эмфатическое</span>
+        </div>
+    `;
+
+    return item;
+}
+
+function init() {
+    const shuffled = shuffleArray([...sentences]);
+    const column1 = document.getElementById('column1');
+    const column2 = document.getElementById('column2');
+
+    column1.innerHTML = '';
+    column2.innerHTML = '';
+    document.getElementById('result').style.display = 'none';
+
+    document.querySelectorAll('.sentence-item').forEach(el => el.remove());
+
+    shuffled.slice(0, 5).forEach((s, i) => {
+        const el = createSentenceElement(s, i);
+        column1.appendChild(el);
+    });
+
+    shuffled.slice(5).forEach((s, i) => {
+        const el = createSentenceElement(s, i + 5);
+        column2.appendChild(el);
+    });
+}
+
+function checkAnswers() {
+    const items = document.querySelectorAll('.sentence-item');
+    let allCorrect = true;
+
+    items.forEach(item => {
+        const index = item.dataset.index;
+        const input = item.querySelector('input');
+        const expectedType = sentences[index].type;
+        const isCorrect = (input.checked && expectedType === "chain") ||
+                          (!input.checked && expectedType === "direct");
+
+        item.classList.remove('correct', 'incorrect');
+        if (isCorrect) {
+            item.classList.add('correct');
+        } else {
+            item.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    const resultEl = document.getElementById('result');
+    if (allCorrect) {
+        resultEl.innerHTML = `
+            ✅ <b>Отлично!</b> Вы правильно определили все случаи эмфатических конструкций.<br>
+            <small>Вы усвоили: частица 唯 — ключевой маркер логического выделения в древнекитайском языке.</small>
+        `;
+        resultEl.className = 'success';
+        sendResult(true);
+    } else {
+        resultEl.innerHTML = `❌ <b>Ошибка</b> в одном или нескольких определениях.`;
+        resultEl.className = 'error';
+        sendResult(false);
+    }
+    resultEl.style.display = 'block';
+}
+
+function reset() {
+    document.querySelectorAll('.toggle-switch input').forEach(input => {
+        input.checked = false;
+    });
+    document.querySelectorAll('.sentence-item').forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+    });
+    document.getElementById('result').style.display = 'none';
+}
+
+function sendResult(success) {
+    window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: success,
+        message: success ? "Верно" : "Ошибка"
+    }, "*");
+}
+
+// Инициализация
+window.onload = init;
+window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+
+document.getElementById('check-btn').addEventListener('click', checkAnswers);
+document.getElementById('reset-btn').addEventListener('click', reset);
+</script>
+</body>
+</html>
+
+=== 📄 task15.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте: Урок 6</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+const pairs1 = [
+  { char: "唯", meaning: "служ. эмфатическая частица; только" },
+  { char: "叀", meaning: "служ. эмфатическая частица" },
+  { char: "弜", meaning: "служ. отрицание" },
+  { char: "逐", meaning: "преследовать" },
+  { char: "兕", meaning: "носорог" }
+];
+
+const pairs2 = [
+  { char: "鹿", meaning: "олень" },
+  { char: "叀", meaning: "служ. эмфатическая частица" },
+  { char: "逐", meaning: "преследовать" },
+  { char: "貝", meaning: "раковина" },
+  { char: "兕", meaning: "носорог" }
+
+];
+
+pairs = pairs1;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+
+
+=== 📄 task16.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Сопоставьте: Урок 6</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и значение</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на значение справа</p>
+  
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Значения</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+
+  <script>
+const pairs1 = [
+  { char: "唯", meaning: "служ. эмфатическая частица; только" },
+  { char: "叀", meaning: "служ. эмфатическая частица" },
+  { char: "弜", meaning: "служ. отрицание" },
+  { char: "逐", meaning: "преследовать" },
+  { char: "兕", meaning: "носорог" }
+];
+
+const pairs2 = [
+  { char: "鹿", meaning: "олень" },
+  { char: "叀", meaning: "служ. эмфатическая частица" },
+  { char: "逐", meaning: "преследовать" },
+  { char: "貝", meaning: "раковина" },
+  { char: "兕", meaning: "носорог" }
+
+];
+
+pairs = pairs2;
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 10) {
+          const resultEl = document.getElementById("result");
+          resultEl.innerHTML = `
+            ✅ <strong>Отлично!</strong> Вы усвоили ключевую лексику Урока 5:<br>
+            • Божественное вмешательство (<strong>帝</strong>)<br>
+            • Глаголы «дать/нанести» (<strong>降</strong>, <strong>作</strong>)<br>
+            • Местоимения с ограничениями (<strong>朕</strong>, <strong>乃</strong>)<br>
+            • Природные явления (<strong>熯</strong>, <strong>禍</strong>)
+          `;
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+
+
+=== 📄 task17.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Транскрипция</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+  <script>
+const pairs1 = [
+  { char: "唯", pinyin: "wéi" },
+  { char: "叀", pinyin: "huì" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "逐", pinyin: "zhú" },
+  { char: "兕", pinyin: "sì" }
+];
+
+const pairs2 = [
+  { char: "鹿", pinyin: "lù" },
+  { char: "唯", pinyin: "wéi" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "兕", pinyin: "sì" },
+  { char: "貝", pinyin: "bèi" }
+];
+
+pairs = pairs1
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          const resultEl = document.getElementById("result");
+          resultEl.textContent = "✅ Все пары верны!";
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+
+
+=== 📄 task18.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сопоставьте</title>
+</head>
+<body>
+  <h2>Сопоставьте иероглиф и транскрипцию</h2>
+  <p class="intro">Кликните на иероглиф слева, затем — на транскрипцию справа</p>
+  <div class="match-container">
+    <div class="column">
+      <h3>Иероглифы</h3>
+      <div id="words"></div>
+    </div>
+    <div class="column">
+      <h3>Транскрипция</h3>
+      <div id="defs"></div>
+    </div>
+  </div>
+  <button onclick="reset()">Сбросить</button>
+  <p id="result"></p>
+  <script>
+const pairs1 = [
+  { char: "唯", pinyin: "wéi" },
+  { char: "叀", pinyin: "huì" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "逐", pinyin: "zhú" },
+  { char: "兕", pinyin: "sì" }
+];
+
+const pairs2 = [
+  { char: "鹿", pinyin: "lù" },
+  { char: "唯", pinyin: "wéi" },
+  { char: "弜", pinyin: "jiàng" },
+  { char: "兕", pinyin: "sì" },
+  { char: "貝", pinyin: "bèi" }
+];
+
+pairs = pairs2
+
+    let selectedWord = null;
+    let matchedPairs = 0;
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function init() {
+      const wordList = document.getElementById("words");
+      const defList = document.getElementById("defs");
+      wordList.innerHTML = "";
+      defList.innerHTML = "";
+      const shuffledChars = shuffle(pairs);
+      const shuffledMeanings = shuffle(pairs.map(p => p.meaning));
+
+      // Создаём иероглифы (слева)
+      shuffledChars.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "word-item";
+        el.dataset.char = item.char;
+        el.textContent = item.char;
+        el.onclick = () => selectWord(el);
+        wordList.appendChild(el);
+      });
+
+      // Создаём значения (справа)
+      shuffledMeanings.forEach(meaning => {
+        const el = document.createElement("div");
+        el.className = "def-item";
+        el.dataset.meaning = meaning;
+        el.textContent = meaning;
+        el.onclick = () => selectDefinition(el);
+        defList.appendChild(el);
+      });
+    }
+
+    function selectWord(el) {
+      if (el.classList.contains("matched")) return;
+      document.querySelectorAll(".word-item.selected").forEach(e => e.classList.remove("selected"));
+      selectedWord = null;
+
+      el.classList.add("selected");
+      selectedWord = el;
+    }
+
+    function selectDefinition(el) {
+      if (el.classList.contains("matched") || !selectedWord) return;
+
+      el.classList.add("selected");
+      const selectedMeaning = el.dataset.meaning;
+      const selectedChar = selectedWord.dataset.char;
+
+      // Поиск соответствующей пары
+      const correctPair = pairs.find(p => p.char === selectedChar);
+      if (correctPair && correctPair.meaning === selectedMeaning) {
+        // Верное сопоставление
+        selectedWord.classList.add("matched");
+        el.classList.add("matched");
+        selectedWord.onclick = null;
+        el.onclick = null;
+        selectedWord = null;
+        matchedPairs++;
+
+        if (matchedPairs === 5) {
+          const resultEl = document.getElementById("result");
+          resultEl.textContent = "✅ Все пары верны!";
+          resultEl.className = "success";
+          sendResult(true);
+        }
+      } else {
+        // Ошибка
+        document.getElementById("result").textContent = "❌ Ошибка.";
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+        }, 1500);
+        selectedWord.classList.remove("selected");
+        el.classList.remove("selected");
+        selectedWord = null;
+      }
+    }
+
+    function reset() {
+      matchedPairs = 0;
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").className = "";
+      init();
+    }
+
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Все верно" : "Ошибка")
+      }, "*");
+    }
+
+    window.onload = init;
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+
+
+=== 📄 task2.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Правитель не пойдёт ли походом на племя Си-Чжэнь?</em></p>
+  </div>
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>王 — Правитель</li>
+      <li>勿 — не, ли (в вопросах)</li>
+      <li>從 — пойти походом на</li>
+      <li>洗震 — племя Си-Чжэнь</li>
+      <li>貞 — гадают, спрашивают</li>
+    </ul>
+  </div>
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+  <p id="result" class="message"></p>
+  <script>
+    const expected = ['貞', '王', '勿', '從', '洗震'];
+    const allChars = [
+      '貞', '王', '勿', '從', '洗震',
+      '乙', '卯', '卜', '余', '丁', '丑', '今', '春', '辛', '巳', '唯', '其', '雨', '出', '疾', '亡', '有', '身', '叀', '弋', '射', '田', '允', '不', '其'
+    ].sort(() => Math.random() - 0.5);
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>貞王勿從洗震';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+    resetBtn.addEventListener('click', initCharPool);
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+    // Инициализация
+    initCharPool();
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+=== 📄 task3.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Именно ли правитель пойдёт походом на племя Си-Чжэнь?</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>貞 — гадают, спрашивают</li>
+      <li>王 — Правитель</li>
+      <li>唯 — именно ли? (эмфаза, вопрос)</li>
+      <li>從 — пойти походом на</li>
+      <li>洗震 — племя Си-Чжэнь</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?" → 貞王唯從洗震
+    const expected = ['貞', '王', '唯', '從', '洗震'];
+
+    // Дополнительные символы для усложнения (взяты из уроков 1–9)
+    const allChars = [
+      '貞', '王', '唯', '從', '洗震',
+      '乙', '卯', '卜', '余', '丁', '丑', '今', '春', '辛', '巳', '勿', '其', '雨', '出', '疾', '亡', '有', '身', '叀', '弋', '射', '田', '允', '不', '其', '我', '來', '受', '黍年', '于', '大甲', '求'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>貞王唯從洗震';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно (например, для LMS)
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+=== 📄 task4.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Именно ли правитель пойдёт походом на племя Си-Чжэнь?</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>貞 — гадают, спрашивают</li>
+      <li>王 — Правитель</li>
+      <li>唯 — именно ли? (эмфаза, вопрос)</li>
+      <li>從 — пойти походом на</li>
+      <li>洗震 — племя Си-Чжэнь</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?" → 貞王唯從洗震
+    const expected = ['貞', '王', '唯', '從', '洗震'];
+
+    // Дополнительные символы для усложнения (взяты из уроков 1–9)
+    const allChars = [
+      '貞', '王', '唯', '從', '洗震',
+      '乙', '卯', '卜', '余', '丁', '丑', '今', '春', '辛', '巳', '叀', '勿', '其', '雨', '出', '疾', '亡', '有', '身', '弋', '射', '田', '允', '不', '其', 
+      '我', '來', '受', '黍年', '于', '大甲', '求', '戌', '逆', '以', '羌', '宗', '門', '執', '墠', '用', '在', '獲', '祖', '小', '步', '父', '示', '御', '鼠'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>貞王唯從洗震';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно (например, для LMS)
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+=== 📄 task5.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Собери фразу</title>
+</head>
+<body>
+  <h2>Собери фразу</h2>
+  <div class="instructions">
+    <p><strong>Соберите фразу:</strong></p>
+    <p><em>Именно ли правитель пойдёт походом на племя Си-Чжэнь?</em></p>
+  </div>
+
+  <!-- Кнопка для раскрытия подсказок -->
+  <div class="toggle-hint" id="toggle-hint-btn">Показать подсказки</div>
+
+  <!-- Контейнер подсказок (скрыт по умолчанию) -->
+  <div class="hint-container" id="hint-container">
+    <ul class="hint-list">
+      <li>貞 — гадают, спрашивают</li>
+      <li>王 — Правитель</li>
+      <li>唯 — именно ли? (частица эмфазы в вопросе)</li>
+      <li>從 — пойти походом на</li>
+      <li>洗震 — племя Си-Чжэнь</li>
+    </ul>
+  </div>
+
+  <p><strong>Иероглифы:</strong></p>
+  <div id="char-pool"></div>
+
+  <p><strong>Соберите здесь:</strong></p>
+  <div id="drop-area"></div>
+
+  <div class="controls">
+    <button id="check-btn">Проверить</button>
+    <button id="reset-btn">Сбросить</button>
+  </div>
+
+  <p id="result" class="message"></p>
+
+  <script>
+    // Ожидаемая фраза: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?" → 貞王唯從洗震
+    const expected = ['貞', '王', '唯', '從', '洗震'];
+
+    // Дополнительные символы для усложнения (взяты из Уроков 1–9)
+    const allChars = [
+      '貞', '王', '唯', '從', '洗震',
+      '乙', '卯', '卜', '余', '丁', '丑', '今', '春', '辛', '巳', '叀', '勿', '其', '雨', '出', '疾', '亡', '有', '身', '弋', '射', '田', '允', '不', '其', 
+      '我', '來', '受', '黍年', '于', '大甲', '求', '戌', '逆', '以', '羌', '宗', '門', '執', '墠', '用', '在', '獲', '祖', '小', '步', '父', '示', '御', '鼠'
+    ].sort(() => Math.random() - 0.5);
+
+    const toggleBtn = document.getElementById('toggle-hint-btn');
+    const hintContainer = document.getElementById('hint-container');
+    const charPool = document.getElementById('char-pool');
+    const dropArea = document.getElementById('drop-area');
+    const checkBtn = document.getElementById('check-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultEl = document.getElementById('result');
+
+    // Переключение подсказок
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = hintContainer.classList.contains('open');
+      hintContainer.classList.toggle('open');
+      toggleBtn.textContent = isOpen ? 'Показать подсказки' : 'Скрыть подсказки';
+    });
+
+    // Переместить символ в зону сборки
+    function moveToDropArea(box) {
+      const clone = box.cloneNode(true);
+      clone.draggable = false;
+      clone.style.cursor = 'default';
+      clone.onclick = null;
+      box.remove();
+      dropArea.appendChild(clone);
+    }
+
+    // Инициализация панели с символами
+    function initCharPool() {
+      charPool.innerHTML = '';
+      dropArea.innerHTML = '';
+      resultEl.textContent = '';
+      allChars.forEach(char => {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.textContent = char;
+        box.addEventListener('click', () => moveToDropArea(box));
+        charPool.appendChild(box);
+      });
+    }
+
+    // Проверка правильности сборки
+    checkBtn.addEventListener('click', () => {
+      const current = Array.from(dropArea.children).map(el => el.textContent);
+      if (arraysEqual(current, expected)) {
+        resultEl.innerHTML = '✅ Правильно!<br>貞王唯從洗震';
+        resultEl.className = 'message success';
+        sendResult(true);
+      } else {
+        resultEl.textContent = '❌ Попробуйте снова.';
+        resultEl.className = 'message';
+        sendResult(false, 'Неверный порядок');
+      }
+    });
+
+    // Сбросить сборку
+    resetBtn.addEventListener('click', initCharPool);
+
+    // Сравнение массивов
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    // Отправка результата в родительское окно
+    function sendResult(success, message) {
+      window.parent.postMessage({
+        type: "TASK_RESULT",
+        success: !!success,
+        message: message || (success ? "Фраза собрана верно" : "Ошибка в порядке")
+      }, "*");
+    }
+
+    // Инициализация при загрузке
+    initCharPool();
+
+    // Сигнал, что задание загружено
+    window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");
+  </script>
+</body>
+</html>
+
+=== 📄 task6.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+  <h2>Какой из вариантов является правильным переводом фразы?</h2>
+  <p><strong>Пример: «貞王唯從洗震»</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель пойдёт походом на племя Си-Чжэнь.", correct: false },
+      { text: "Не пойдёт ли правитель походом на племя Си-Чжэнь?", correct: false },
+      { text: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?", correct: true },
+      { text: "Правитель повелел племени Си-Чжэнь выступить.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Частица <strong>唯 (wéi)</strong> придаёт вопросу <strong>эмфазу</strong>:<br>
+          Это не просто вопрос «Пойдёт ли правитель?», а <em>«Именно ли правитель пойдёт?»</em>,<br>
+          что подчёркивает важность субъекта действия.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу в вопросе.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task7.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+  <h2>Что означает конструкция «貞王唯從洗震»?</h2>
+  <p><strong>Обратите внимание на частицу «唯» — она придаёт вопросу эмфазу, выделяя подлежащее.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель пойдёт походом на племя Си-Чжэнь.", correct: false },
+      { text: "Не пойдёт ли правитель походом на племя Си-Чжэнь?", correct: false },
+      { text: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?", correct: true },
+      { text: "Правитель повелел племени Си-Чжэнь выступить.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>эмфатической конструкции</strong> с частицей <strong>唯 (wéi)</strong>:<br>
+          • <strong>貞 zhēn</strong> — «спрашивают»<br>
+          • <strong>王 wáng</strong> — «правитель»<br>
+          • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность<br>
+          • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br>
+          Вся конструкция означает: <em>«Именно ли правитель пойдёт походом?»</em> — с акцентом на субъекте.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу, а не простое отрицание.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task8.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+  <h2>Какой из вариантов точно передаёт смысл фразы «貞王唯從洗震»?</h2>
+  <p><strong>Обратите внимание на частицу «唯» — она придаёт вопросу эмфазу, выделяя подлежащее.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель пойдёт походом на племя Си-Чжэнь.", correct: false },
+      { text: "Не пойдёт ли правитель походом на племя Си-Чжэнь?", correct: false },
+      { text: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?", correct: true },
+      { text: "Правитель повелел племени Си-Чжэнь выступить.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>эмфатической конструкции</strong> с частицей <strong>唯 (wéi)</strong>:<br>
+          • <strong>貞 zhēn</strong> — «спрашивают»<br>
+          • <strong>王 wáng</strong> — «правитель»<br>
+          • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность<br>
+          • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br>
+          Вся конструкция означает: <em>«Именно ли правитель пойдёт походом?»</em> — с акцентом на субъекте.
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу, а не простое отрицание.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+
+=== 📄 task9.html ===
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="../../tasks.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задание: Урок 9 — Эмфатические конструкции</title>
+</head>
+<body>
+  <h2>Что означает фраза «貞王唯從洗震»?</h2>
+  <p><strong>Обратите внимание на частицу «唯» — она придаёт вопросу эмфазу, выделяя подлежащее.</strong></p>
+  <div class="pinyin-container">
+    <button class="pinyin-toggle" onclick="this.nextElementSibling.classList.toggle('expanded'); this.classList.toggle('expanded')">Показать пиньинь</button>
+    <div class="pinyin-text">zhēn wáng wéi cóng xǐ zhèn</div>
+  </div>
+  <div id="answers"></div>
+  <button onclick="check('answers', 'result', options)">Проверить</button>
+  <p id="result"></p>
+
+  <script>
+    const options = [
+      { text: "Правитель пойдёт походом на племя Си-Чжэнь.", correct: false },
+      { text: "Не пойдёт ли правитель походом на племя Си-Чжэнь?", correct: false },
+      { text: "Именно ли правитель пойдёт походом на племя Си-Чжэнь?", correct: true },
+      { text: "Правитель повелел племени Си-Чжэнь выступить.", correct: false }
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderOptions() {
+      const shuffled = shuffle(options);
+      const container = document.getElementById("answers");
+      container.innerHTML = "";
+      shuffled.forEach((opt, index) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q";
+        input.value = opt.correct ? "1" : "0_" + index;
+        input.dataset.correct = opt.correct.toString();
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt.text));
+        container.appendChild(label);
+      });
+    }
+
+    function check(containerId, resultId, optionsArray) {
+      const selected = document.querySelector('input[name="q"]:checked');
+      const resultEl = document.getElementById(resultId);
+      if (!selected) {
+        resultEl.textContent = "Выберите вариант.";
+        return;
+      }
+      if (selected.dataset.correct === "true") {
+        resultEl.innerHTML = `
+          ✅ <strong>Правильно!</strong><br>
+          Это пример <strong>эмфатической конструкции</strong> с частицей <strong>唯 (wéi)</strong>:<br>
+          • <strong>貞 zhēn</strong> — «спрашивают»<br>
+          • <strong>王 wáng</strong> — «правитель»<br>
+          • <strong>唯 wéi</strong> — частица, придающая вопросу выразительность<br>
+          • <strong>從洗震 cóng xǐ zhèn</strong> — «пойдёт походом на племя Си-Чжэнь»<br>
+          Вся фраза передаёт вопрос с акцентом: <em>«Именно ли правитель пойдёт?»</em>
+        `;
+        sendResult(true);
+      } else {
+        resultEl.textContent = "❌ Неверно. Обратите внимание на частицу 唯 — она выражает эмфазу, а не простое отрицание.";
+        sendResult(false);
+      }
+    }
+
+    function sendResult(success) {
+      window.parent.postMessage({ type: "TASK_RESULT", success }, "*");
+    }
+
+    window.onload = renderOptions;
+  </script>
+</body>
+</html>
+<script>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</script>
+

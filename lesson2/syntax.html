@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Синтаксис — Древний Китай</title>
     <script src="tasks.js"></script>
     <script src="../dictionary.js"></script>
@@ -278,679 +277,497 @@
         <button id="nextBtn" class="next">Следующее задание</button>
     </div>
 
+<script>
+    let currentTaskIndex = 0;
+    let syntaxData = null;
+    let selectedWord = null;
+    let drawnLinks = [];
+    let audioCache = new Map();
+    let currentAudioPlayers = [];
+    let taskOrder = [];
 
-    <!-- ОСНОВНОЙ СКРИПТ -->
-    <script>
-        let currentTaskIndex = 0;
-        let syntaxData = null;
-        let selectedWord = null;
-        let drawnLinks = [];
-        let audioCache = new Map(); // Кэш для аудио объектов
-        let currentAudioPlayers = []; // Текущие активные аудио плееры
-        let taskOrder = []; // Массив для хранения случайного порядка заданий
+    const workspace = document.getElementById('workspace');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const sentenceEl = document.getElementById('sentence');
+    const charInfoEl = document.getElementById('char-info');
+    const feedbackEl = document.getElementById('feedback');
+    const resetBtn = document.getElementById('resetBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-        const workspace = document.getElementById('workspace');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const sentenceEl = document.getElementById('sentence');
-        const charInfoEl = document.getElementById('char-info');
-        const feedbackEl = document.getElementById('feedback');
-        const resetBtn = document.getElementById('resetBtn');
-        const nextBtn = document.getElementById('nextBtn');
+    const infoChar = document.getElementById('info-char');
+    const infoPinyin = document.getElementById('info-pinyin');
+    const infoMeaning = document.getElementById('info-meaning');
+    const infoLesson = document.getElementById('info-lesson');
 
-        // Элементы для информации об иероглифе
-        const infoChar = document.getElementById('info-char');
-        const infoPinyin = document.getElementById('info-pinyin');
-        const infoMeaning = document.getElementById('info-meaning');
-        const infoLesson = document.getElementById('info-lesson');
+    if (typeof charData === 'undefined') {
+        console.error('❌ Не загружен dictionary.js');
+        alert('Ошибка: не удалось загрузить словарь иероглифов.');
+    }
 
-        // Проверка словаря
-        if (typeof charData === 'undefined') {
-            console.error('❌ Не загружен dictionary.js');
-            alert('Ошибка: не удалось загрузить словарь иероглифов.');
+    function resizeCanvas() {
+        const wrk = workspace.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = wrk.width * dpr;
+        canvas.height = wrk.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        canvas.style.width = `${wrk.width}px`;
+        canvas.style.height = `${wrk.height}px`;
+
+        // Важно: перерисовываем ТОЛЬКО если есть данные
+        if (syntaxData) {
+            redrawEverything();
         }
+    }
 
-        function resizeCanvas() {
-            setTimeout(() => {
-                canvas.width = workspace.offsetWidth;
-                canvas.height = workspace.offsetHeight;
-                if (syntaxData) placeWordsWithoutOverlap();
-                drawAllLinks();
-            }, 50);
-        }
+    function redrawEverything() {
+        drawAllLinks();
+        updateSyntaxLabels();
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Проверяем, что массив tasks существует и не пуст
-            if (typeof tasks === 'undefined' || !Array.isArray(tasks) || tasks.length === 0) {
-                sentenceEl.innerHTML = '<div style="text-align: center; padding: 10px;">Ошибка: Данные не загружены.</div>';
-                console.error("Переменная 'tasks' не определена или пуста.");
-                return;
+    function drawAllLinks() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.querySelectorAll('.arrow-tip').forEach(el => el.remove());
+
+        drawnLinks.forEach(link => {
+            const fromTag = document.querySelector(`.word-tag[data-word="${link.from}"]`);
+            const toTag = document.querySelector(`.word-tag[data-word="${link.to}"]`);
+
+            if (!fromTag || !toTag) return;
+
+            const fromPos = getCenter(fromTag);
+            const toPos = getCenter(toTag);
+
+            const targetRect = toTag.getBoundingClientRect();
+            const wrkRect = workspace.getBoundingClientRect();
+            const left = targetRect.left - wrkRect.left;
+            const right = left + targetRect.width;
+            const top = targetRect.top - wrkRect.top;
+            const bottom = top + targetRect.height;
+
+            const lines = [
+                { x1: left, y1: top, x2: right, y2: top },
+                { x1: right, y1: top, x2: right, y2: bottom },
+                { x1: left, y1: bottom, x2: right, y2: bottom },
+                { x1: left, y1: top, x2: left, y2: bottom }
+            ];
+
+            let closest = null;
+            let minDist = Infinity;
+            for (const side of lines) {
+                const inter = lineIntersection(fromPos.x, fromPos.y, toPos.x, toPos.y, side.x1, side.y1, side.x2, side.y2);
+                if (inter) {
+                    const dist = Math.hypot(inter.x - toPos.x, inter.y - toPos.y);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = inter;
+                    }
+                }
             }
-            
-            // Создаем случайный порядок заданий
-            createRandomTaskOrder();
-            loadTask(currentTaskIndex);
+
+            const intersection = closest || { x: (left + right) / 2, y: (top + bottom) / 2 };
+
+            ctx.beginPath();
+            ctx.moveTo(fromPos.x, fromPos.y);
+            ctx.lineTo(intersection.x, intersection.y);
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            const tip = document.createElement('div');
+            tip.className = 'arrow-tip';
+            tip.textContent = '⏩';
+            tip.style.position = 'absolute';
+            tip.style.left = `${intersection.x}px`;
+            tip.style.top = `${intersection.y}px`;
+            tip.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(toPos.y - fromPos.y, toPos.x - fromPos.x)}rad)`;
+            tip.style.fontSize = '18px';
+            tip.style.pointerEvents = 'none';
+            tip.style.zIndex = 10;
+            workspace.appendChild(tip);
+        });
+    }
+
+    function updateSyntaxLabels() {
+        document.querySelectorAll('.syntax-label').forEach(el => el.remove());
+
+        drawnLinks.forEach(link => {
+            const roles = syntaxData.links.find(l => l.from === link.from && l.to === link.to);
+            if (!roles) return;
+
+            const fromTag = document.querySelector(`.word-tag[data-word="${link.from}"]`);
+            const toTag = document.querySelector(`.word-tag[data-word="${link.to}"]`);
+            if (!fromTag || !toTag) return;
+
+            const midX = (getCenter(fromTag).x + getCenter(toTag).x) / 2;
+            const midY = (getCenter(fromTag).y + getCenter(toTag).y) / 2 - 25;
+
+            const label = document.createElement('div');
+            label.className = 'syntax-label';
+            label.textContent = `${roles.fromRole} → ${roles.toRole}`;
+            label.style.left = `${midX}px`;
+            label.style.top = `${midY}px`;
+            workspace.appendChild(label);
+        });
+    }
+
+    function getCenter(el) {
+        const rect = el.getBoundingClientRect();
+        const wrk = workspace.getBoundingClientRect();
+        return {
+            x: rect.left - wrk.left + rect.width / 2,
+            y: rect.top - wrk.top + rect.height / 2
+        };
+    }
+
+    function lineIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
+        const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (Math.abs(denom) < 0.001) return null;
+        const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+        const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+            return {
+                x: x1 + ua * (x2 - x1),
+                y: y1 + ua * (y2 - y1)
+            };
+        }
+        return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof tasks === 'undefined' || !Array.isArray(tasks) || tasks.length === 0) {
+            sentenceEl.innerHTML = '<div style="text-align: center; padding: 10px;">Ошибка: Данные не загружены.</div>';
+            return;
+        }
+
+        createRandomTaskOrder();
+        loadTask(currentTaskIndex);
+
+        const resizeObserver = new ResizeObserver(resizeCanvas);
+        resizeObserver.observe(workspace);
+    });
+
+    function createRandomTaskOrder() {
+        taskOrder = [...Array(tasks.length).keys()];
+        for (let i = taskOrder.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [taskOrder[i], taskOrder[j]] = [taskOrder[j], taskOrder[i]];
+        }
+    }
+
+    // ✅ ОСНОВНОЕ ИСПРАВЛЕНИЕ: loadTask теперь полностью очищает и перезагружает всё
+    function loadTask(index) {
+        if (index >= tasks.length) {
+            sentenceEl.innerHTML = '<div style="text-align: center; padding: 10px;">Все задания завершены!</div>';
+            charInfoEl.style.display = 'none';
+            return;
+        }
+
+        // ✅ Полная очистка перед загрузкой нового задания
+        drawnLinks = [];
+        selectedWord = null;
+        document.querySelectorAll('.word-tag, .arrow-tip, .syntax-label').forEach(el => el.remove());
+        charInfoEl.style.display = 'none';
+
+        const taskIndex = taskOrder[index];
+        syntaxData = tasks[taskIndex];
+        document.title = `Задание ${index + 1} — Синтаксис`;
+
+        createCharTable();
+
+        // ✅ Теперь сразу размещаем слова и перерисовываем
+        placeWordsWithoutOverlap();
+        resizeCanvas(); // гарантируем инициализацию canvas
+    }
+
+    function createCharTable() {
+        sentenceEl.innerHTML = '';
+        const uniqueChars = [...new Set(syntaxData.sentence.split(''))];
+        uniqueChars.forEach(char => {
+            const cell = document.createElement('div');
+            cell.className = 'char-cell';
+            cell.textContent = char;
+            cell.dataset.char = char;
+            cell.addEventListener('click', () => showCharInfo(char));
+            sentenceEl.appendChild(cell);
+        });
+    }
+
+    function showCharInfo(char) {
+        if (typeof charData === 'undefined') return;
+        const data = charData[char];
+        if (data) {
+            infoChar.textContent = char;
+            infoPinyin.textContent = data.pinyin || 'неизвестно';
+            infoMeaning.textContent = data.meaning || 'значение не найдено';
+            if (data.lesson) {
+                const lessonLink = document.createElement('a');
+                lessonLink.href = `../lesson${data.lesson}/theory.html`;
+                lessonLink.textContent = `Урок ${data.lesson}`;
+                lessonLink.className = 'lesson-link';
+                lessonLink.target = '_blank';
+                infoLesson.innerHTML = '';
+                infoLesson.appendChild(lessonLink);
+            } else {
+                infoLesson.textContent = 'урок не указан';
+            }
+            charInfoEl.style.display = 'block';
+            playHanziSound(char);
+        } else {
+            infoChar.textContent = char;
+            infoPinyin.textContent = 'неизвестно';
+            infoMeaning.textContent = 'не найдено в словаре';
+            infoLesson.textContent = '—';
+            charInfoEl.style.display = 'block';
+        }
+    }
+
+    function playHanziSound(char) {
+        const data = charData[char];
+        if (!data || !data.pinyin) return;
+        const audio = getAudioForChar(char);
+        if (audio) {
+            stopAllAudio();
+            const newAudio = new Audio(audio.src);
+            currentAudioPlayers.push(newAudio);
+            newAudio.play().catch(e => console.error(e));
+        }
+    }
+
+    function getAudioForChar(char) {
+        if (audioCache.has(char)) return audioCache.get(char);
+        const data = charData[char];
+        if (!data || !data.pinyin) return null;
+        let cleanPinyin = data.pinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'u').replace(/v/g, 'u');
+        let tone = '1';
+        if (data.pinyin.includes('ā')) tone = '1';
+        else if (data.pinyin.includes('á')) tone = '2';
+        else if (data.pinyin.includes('ǎ')) tone = '3';
+        else if (data.pinyin.includes('à')) tone = '4';
+        const pinyinKey = cleanPinyin + tone;
+        const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+        const audio = new Audio(url);
+        audioCache.set(char, audio);
+        return audio;
+    }
+
+    function stopAllAudio() {
+        currentAudioPlayers.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        currentAudioPlayers = [];
+    }
+
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function doOverlap(el1, el2) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+        const wrk = workspace.getBoundingClientRect();
+        const wrkRect1 = {
+            left: rect1.left - wrk.left,
+            right: rect1.right - wrk.left,
+            top: rect1.top - wrk.top,
+            bottom: rect1.bottom - wrk.top
+        };
+        const wrkRect2 = {
+            left: rect2.left - wrk.left,
+            right: rect2.right - wrk.left,
+            top: rect2.top - wrk.top,
+            bottom: rect2.bottom - wrk.top
+        };
+        return !(wrkRect1.right < wrkRect2.left || wrkRect1.left > wrkRect2.right || wrkRect1.bottom < wrkRect2.top || wrkRect1.top > wrkRect2.bottom);
+    }
+
+    function clearWords() {
+        document.querySelectorAll('.word-tag').forEach(el => el.remove());
+    }
+
+    // ✅ placeWordsWithoutOverlap теперь вызывает redrawEverything в конце
+    function placeWordsWithoutOverlap() {
+        clearWords();
+        const shuffled = shuffle(syntaxData.words);
+        const placed = [];
+
+        shuffled.forEach(word => {
+            let attempts = 0;
+            const maxAttempts = 300;
+            let success = false;
+
+            while (attempts < maxAttempts && !success) {
+                const x = 40 + Math.random() * (workspace.offsetWidth - 80);
+                const y = 40 + Math.random() * (workspace.offsetHeight - 80);
+
+                const tag = document.createElement('div');
+                tag.className = 'word-tag';
+                tag.textContent = word;
+                tag.dataset.word = word;
+                tag.style.left = `${x}px`;
+                tag.style.top = `${y}px`;
+                tag.style.opacity = '0';
+                workspace.appendChild(tag);
+
+                let overlaps = false;
+                for (const el of placed) {
+                    if (doOverlap(tag, el)) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+
+                if (!overlaps) {
+                    tag.style.opacity = '1';
+                    placed.push(tag);
+                    success = true;
+                } else {
+                    tag.remove();
+                }
+                attempts++;
+            }
+
+            if (!success) {
+                const grid = generateGrid(60, 60);
+                const available = grid.filter(cell => {
+                    const tag = document.createElement('div');
+                    tag.className = 'word-tag';
+                    tag.textContent = word;
+                    tag.style = `position: absolute; left: ${cell.x}px; top: ${cell.y}px; transform: translate(-50%, -50%); opacity: 0;`;
+                    workspace.appendChild(tag);
+                    const overlaps = placed.some(el => doOverlap(tag, el));
+                    tag.remove();
+                    return !overlaps;
+                });
+
+                const chosen = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : grid[0];
+                const tag = document.createElement('div');
+                tag.className = 'word-tag';
+                tag.textContent = word;
+                tag.dataset.word = word;
+                tag.style.left = `${chosen.x}px`;
+                tag.style.top = `${chosen.y}px`;
+                workspace.appendChild(tag);
+                placed.push(tag);
+            }
         });
 
-        window.addEventListener('resize', resizeCanvas);
+        placed.forEach(tag => {
+            tag.addEventListener('click', () => handleWordClick(tag));
+        });
 
-        // Функция для создания случайного порядка заданий
-        function createRandomTaskOrder() {
-            taskOrder = [...Array(tasks.length).keys()];
-            
-            // Перемешиваем массив индексов
-            for (let i = taskOrder.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [taskOrder[i], taskOrder[j]] = [taskOrder[j], taskOrder[i]];
-            }
-            
-            console.log('Случайный порядок заданий:', taskOrder);
-        }
+        redrawEverything(); // ✅ гарантируем перерисовку
+    }
 
-        function loadTask(index) {
-            if (index >= tasks.length) {
-                sentenceEl.innerHTML = '<div style="text-align: center; padding: 10px;">Все задания завершены!</div>';
-                charInfoEl.style.display = 'none';
-                return;
-            }
-
-            // Получаем индекс задания из случайного порядка
-            const taskIndex = taskOrder[index];
-            syntaxData = tasks[taskIndex];
-            document.title = `Задание ${index + 1} — Синтаксис`;
-
-            drawnLinks = [];
-            selectedWord = null;
-
-            // Создаем таблицу символов
-            createCharTable();
-            resizeCanvas();
-        }
-
-        function createCharTable() {
-            sentenceEl.innerHTML = '';
-            
-            // Получаем уникальные символы из текущего задания
-            const uniqueChars = [...new Set(syntaxData.sentence.split(''))];
-            
-            uniqueChars.forEach(char => {
-                const cell = document.createElement('div');
-                cell.className = 'char-cell';
-                cell.textContent = char;
-                cell.dataset.char = char;
-                cell.addEventListener('click', () => showCharInfo(char));
-                sentenceEl.appendChild(cell);
-            });
-        }
-
-        function showCharInfo(char) {
-            if (typeof charData === 'undefined') {
-                alert('Словарь не загружен');
-                return;
-            }
-            
-            const data = charData[char];
-            
-            if (data) {
-                // Заполняем информацию
-                infoChar.textContent = char;
-                infoPinyin.textContent = data.pinyin || 'неизвестно';
-                infoMeaning.textContent = data.meaning || 'значение не найдено';
-                
-                if (data.lesson) {
-                    const lessonLink = document.createElement('a');
-                    lessonLink.href = `../lesson${data.lesson}/theory.html`;
-                    lessonLink.textContent = `Урок ${data.lesson}`;
-                    lessonLink.className = 'lesson-link';
-                    lessonLink.target = '_blank';
-                    
-                    // Очищаем предыдущее содержимое и добавляем ссылку
-                    infoLesson.innerHTML = '';
-                    infoLesson.appendChild(lessonLink);
-                } else {
-                    infoLesson.textContent = 'урок не указан';
-                }
-                
-                // Показываем блок информации
-                charInfoEl.style.display = 'block';
-                
-                // Проигрываем звук
-                playHanziSound(char);
-            } else {
-                // Если иероглиф не найден в словаре
-                infoChar.textContent = char;
-                infoPinyin.textContent = 'неизвестно';
-                infoMeaning.textContent = 'не найдено в словаре';
-                infoLesson.textContent = '—';
-                charInfoEl.style.display = 'block';
+    function generateGrid(stepX, stepY) {
+        const grid = [];
+        for (let x = 60; x < workspace.offsetWidth - 60; x += stepX) {
+            for (let y = 60; y < workspace.offsetHeight - 60; y += stepY) {
+                grid.push({ x, y });
             }
         }
+        return shuffle(grid);
+    }
 
-        // Функция для получения аудио объекта
-        function getAudioForChar(char) {
-            // Проверяем кэш
-            if (audioCache.has(char)) {
-                return audioCache.get(char);
-            }
-            
-            if (typeof charData === 'undefined') {
-                return null;
-            }
-            
-            const data = charData[char];
-            if (!data || !data.pinyin) {
-                return null;
-            }
+    function handleWordClick(tag) {
+        const word = tag.dataset.word;
 
-            // Конвертируем пиньинь с диакритикой → с цифровым тоном
-            let cleanPinyin = data.pinyin
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/ü/g, 'u')
-                .replace(/v/g, 'u');
-
-            let tone = '1';
-            if (data.pinyin.includes('ā') || data.pinyin.includes('ē') || data.pinyin.includes('ī') || data.pinyin.includes('ō') || data.pinyin.includes('ū') || data.pinyin.includes('ǖ')) tone = '1';
-            else if (data.pinyin.includes('á') || data.pinyin.includes('é') || data.pinyin.includes('í') || data.pinyin.includes('ó') || data.pinyin.includes('ú') || data.pinyin.includes('ǘ')) tone = '2';
-            else if (data.pinyin.includes('ǎ') || data.pinyin.includes('ě') || data.pinyin.includes('ǐ') || data.pinyin.includes('ǒ') || data.pinyin.includes('ǔ') || data.pinyin.includes('ǚ')) tone = '3';
-            else if (data.pinyin.includes('à') || data.pinyin.includes('è') || data.pinyin.includes('ì') || data.pinyin.includes('ò') || data.pinyin.includes('ù') || data.pinyin.includes('ǜ')) tone = '4';
-
-            const pinyinKey = cleanPinyin + tone;
-            const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
-            
-            const audio = new Audio(url);
-            audioCache.set(char, audio);
-            
-            return audio;
-        }
-
-        // Функция для последовательного воспроизведения звуков слова
-        function playWordSounds(word) {
-            if (typeof charData === 'undefined') return;
-            
-            // Останавливаем все текущие аудио воспроизведения
-            stopAllAudio();
-            
-            const chars = word.split('');
-            playNextChar(chars, 0);
-        }
-
-        // Рекурсивная функция для последовательного воспроизведения
-        function playNextChar(chars, index) {
-            if (index >= chars.length) return;
-            
-            const char = chars[index];
-            const audio = getAudioForChar(char);
-            
-            if (audio) {
-                // Создаем новый экземпляр для каждого воспроизведения
-                const newAudio = new Audio(audio.src);
-                
-                // Добавляем в список активных плееров
-                currentAudioPlayers.push(newAudio);
-                
-                // Проигрываем звук
-                newAudio.play().then(() => {
-                    // После завершения воспроизведения текущего звука
-                    newAudio.onended = () => {
-                        // Удаляем из списка активных плееров
-                        const playerIndex = currentAudioPlayers.indexOf(newAudio);
-                        if (playerIndex > -1) {
-                            currentAudioPlayers.splice(playerIndex, 1);
-                        }
-                        
-                        // Проигрываем следующий звук с небольшой паузой
-                        setTimeout(() => {
-                            playNextChar(chars, index + 1);
-                        }, 150); // 150ms пауза между звуками
-                    };
-                }).catch(e => {
-                    console.error(`❌ Не удалось проиграть звук для '${char}':`, e);
-                    
-                    // Удаляем из списка активных плееров
-                    const playerIndex = currentAudioPlayers.indexOf(newAudio);
-                    if (playerIndex > -1) {
-                        currentAudioPlayers.splice(playerIndex, 1);
-                    }
-                    
-                    // Продолжаем с следующим символом
-                    setTimeout(() => {
-                        playNextChar(chars, index + 1);
-                    }, 400); // Большая пауза при ошибке
-                });
-            } else {
-                // Если звук не найден, просто продолжаем с следующим символом
-                setTimeout(() => {
-                    playNextChar(chars, index + 1);
-                }, 500);
-            }
-        }
-
-        // Функция для остановки всех аудио воспроизведений
-        function stopAllAudio() {
-            currentAudioPlayers.forEach(audio => {
-                try {
-                    audio.pause();
-                    audio.currentTime = 0;
-                } catch (e) {
-                    console.warn('Не удалось остановить аудио:', e);
-                }
-            });
-            currentAudioPlayers = [];
-        }
-
-        // Основная функция для проигрывания звука
-        function playHanziSound(char) {
-            if (typeof charData === 'undefined') return;
-            
-            const data = charData[char];
-            if (!data || !data.pinyin) return;
-            
-            const audio = getAudioForChar(char);
-            if (audio) {
-                // Останавливаем все текущие аудио воспроизведения
-                stopAllAudio();
-                
-                const newAudio = new Audio(audio.src);
-                currentAudioPlayers.push(newAudio);
-                
-                newAudio.play().then(() => {
-                    newAudio.onended = () => {
-                        const playerIndex = currentAudioPlayers.indexOf(newAudio);
-                        if (playerIndex > -1) {
-                            currentAudioPlayers.splice(playerIndex, 1);
-                        }
-                    };
-                }).catch(e => {
-                    console.error(`❌ Не удалось проиграть звук для '${char}':`, e);
-                    
-                    const playerIndex = currentAudioPlayers.indexOf(newAudio);
-                    if (playerIndex > -1) {
-                        currentAudioPlayers.splice(playerIndex, 1);
-                    }
-                });
-            }
-        }
-
-        function shuffle(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
-        function doOverlap(el1, el2) {
-            const rect1 = el1.getBoundingClientRect();
-            const rect2 = el2.getBoundingClientRect();
-            const wrk = workspace.getBoundingClientRect();
-            
-            const wrkRect1 = {
-                left: rect1.left - wrk.left,
-                right: rect1.right - wrk.left,
-                top: rect1.top - wrk.top,
-                bottom: rect1.bottom - wrk.top
-            };
-            
-            const wrkRect2 = {
-                left: rect2.left - wrk.left,
-                right: rect2.right - wrk.left,
-                top: rect2.top - wrk.top,
-                bottom: rect2.bottom - wrk.top
-            };
-            
-            return !(
-                wrkRect1.right < wrkRect2.left || 
-                wrkRect1.left > wrkRect2.right || 
-                wrkRect1.bottom < wrkRect2.top || 
-                wrkRect1.top > wrkRect2.bottom
-            );
-        }
-
-        function clearWords() {
-            document.querySelectorAll('.word-tag').forEach(el => el.remove());
-        }
-
-        function placeWordsWithoutOverlap() {
-            clearWords();
-            
-            const shuffled = shuffle(syntaxData.words);
-            const placed = [];
-
-            shuffled.forEach(word => {
-                let attempts = 0;
-                const maxAttempts = 300;
-                let success = false;
-
-                while (attempts < maxAttempts && !success) {
-                    const x = 40 + Math.random() * (canvas.width - 80);
-                    const y = 40 + Math.random() * (canvas.height - 80);
-
-                    const tag = document.createElement('div');
-                    tag.className = 'word-tag';
-                    tag.textContent = word;
-                    tag.dataset.word = word;
-                    tag.style.left = `${x}px`;
-                    tag.style.top = `${y}px`;
-                    tag.style.opacity = '0';
-                    workspace.appendChild(tag);
-
-                    let overlaps = false;
-                    for (const el of placed) {
-                        if (doOverlap(tag, el)) {
-                            overlaps = true;
-                            break;
-                        }
-                    }
-
-                    if (!overlaps) {
-                        tag.style.opacity = '1';
-                        placed.push(tag);
-                        success = true;
-                    } else {
-                        tag.remove();
-                    }
-
-                    attempts++;
-                }
-
-                if (!success) {
-                    const grid = generateGrid(60, 60);
-                    const available = grid.filter(cell => {
-                        const tag = document.createElement('div');
-                        tag.className = 'word-tag';
-                        tag.textContent = word;
-                        tag.style = `position: absolute; left: ${cell.x}px; top: ${cell.y}px; transform: translate(-50%, -50%); opacity: 0;`;
-                        workspace.appendChild(tag);
-                        const overlaps = placed.some(el => doOverlap(tag, el));
-                        tag.remove();
-                        return !overlaps;
-                    });
-
-                    const chosen = available.length > 0 ? 
-                        available[Math.floor(Math.random() * available.length)] : 
-                        grid[0];
-                    
-                    const tag = document.createElement('div');
-                    tag.className = 'word-tag';
-                    tag.textContent = word;
-                    tag.dataset.word = word;
-                    tag.style.left = `${chosen.x}px`;
-                    tag.style.top = `${chosen.y}px`;
-                    workspace.appendChild(tag);
-                    placed.push(tag);
-                }
-            });
-
-            placed.forEach(tag => {
-                tag.addEventListener('click', () => handleWordClick(tag));
-            });
-        }
-
-        function generateGrid(stepX, stepY) {
-            const grid = [];
-            for (let x = 60; x < canvas.width - 60; x += stepX) {
-                for (let y = 60; y < canvas.height - 60; y += stepY) {
-                    grid.push({ x, y });
-                }
-            }
-            return shuffle(grid);
-        }
-
-        function handleWordClick(tag) {
-            const word = tag.dataset.word;
-
-            if (!selectedWord) {
-                selectedWord = tag;
-                tag.classList.add('selected');
-                
-                // Проигрываем звук выбранного слова (все иероглифы последовательно)
-                playWordSounds(word);
-            } else {
-                if (selectedWord === tag) {
-                    selectedWord.classList.remove('selected');
-                    selectedWord = null;
-                    return;
-                }
-
-                const fromWord = selectedWord.dataset.word;
-                const toWord = word;
-
-                const isDuplicate = drawnLinks.some(link => 
-                    link.from === fromWord && link.to === toWord
-                );
-                if (isDuplicate) {
-                    flash('#e74c3c');
-                    showFeedback(false, "Эта связь уже существует");
-                } else {
-                    const isCorrect = syntaxData.links.some(link => 
-                        link.from === fromWord && link.to === toWord
-                    );
-                    
-                    flash(isCorrect ? '#27ae60' : '#e74c3c');
-                    showFeedback(isCorrect, isCorrect ? "✅ Правильно!" : "❌ Неверно");
-
-                    if (isCorrect) {
-                        const fromPos = getCenter(selectedWord);
-                        const toPos = getCenter(tag);
-                        const link = { from: fromWord, to: toWord, fromPos, toPos };
-                        drawnLinks.push(link);
-
-                        const midX = (fromPos.x + toPos.x) / 2;
-                        const midY = (fromPos.y + toPos.y) / 2 - 25;
-
-                        const label = document.createElement('div');
-                        label.className = 'syntax-label';
-                        const roles = syntaxData.links.find(l => l.from === fromWord && l.to === toWord);
-                        label.textContent = `${roles.fromRole} → ${roles.toRole}`;
-                        label.style.left = `${midX}px`;
-                        label.style.top = `${midY}px`;
-                        workspace.appendChild(label);
-
-                        drawAllLinks();
-                    }
-                }
-
+        if (!selectedWord) {
+            selectedWord = tag;
+            tag.classList.add('selected');
+            playWordSounds(word);
+        } else {
+            if (selectedWord === tag) {
                 selectedWord.classList.remove('selected');
                 selectedWord = null;
+                return;
             }
-        }
 
-        function checkCompletion() {
-            const correctLinks = syntaxData.links.map(link => [link.from, link.to]);
-            const drawnSet = drawnLinks.map(link => [link.from, link.to]);
-            
-            const allCorrect = correctLinks.every(correctLink => 
-                drawnSet.some(drawnLink => 
-                    drawnLink[0] === correctLink[0] && drawnLink[1] === correctLink[1]
-                )
-            );
+            const fromWord = selectedWord.dataset.word;
+            const toWord = word;
 
-            return allCorrect && drawnSet.length >= correctLinks.length;
-        }
-
-        function flash(color) {
-            document.body.style.backgroundColor = `rgba(${hexToRgb(color)}, 0.18)`;
-            setTimeout(() => document.body.style.backgroundColor = '', 300);
-        }
-
-        function hexToRgb(hex) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return `${r}, ${g}, ${b}`;
-        }
-
-        function getCenter(el) {
-            const rect = el.getBoundingClientRect();
-            const wrk = workspace.getBoundingClientRect();
-            return {
-                x: rect.left - wrk.left + rect.width / 2,
-                y: rect.top - wrk.top + rect.height / 2
-            };
-        }
-
-        function drawAllLinks() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            document.querySelectorAll('.arrow-tip').forEach(el => el.remove());
-
-            drawnLinks.forEach(link => {
-                const from = link.fromPos;
-                const toCenter = link.toPos;
-
-                const targetTag = [...document.querySelectorAll('.word-tag')].find(el => el.dataset.word === link.to);
-                if (!targetTag) return;
-
-                const rect = targetTag.getBoundingClientRect();
-                const wrk = workspace.getBoundingClientRect();
-                const left = rect.left - wrk.left;
-                const right = left + rect.width;
-                const top = rect.top - wrk.top;
-                const bottom = top + rect.height;
-
-                const lines = [
-                    { x1: left, y1: top, x2: right, y2: top },
-                    { x1: right, y1: top, x2: right, y2: bottom },
-                    { x1: left, y1: bottom, x2: right, y2: bottom },
-                    { x1: left, y1: top, x2: left, y2: bottom }
-                ];
-
-                let closest = null;
-                let minDist = Infinity;
-                for (const side of lines) {
-                    const inter = lineIntersection(from.x, from.y, toCenter.x, toCenter.y, side.x1, side.y1, side.x2, side.y2);
-                    if (inter) {
-                        const dist = Math.hypot(inter.x - toCenter.x, inter.y - toCenter.y);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            closest = inter;
-                        }
-                    }
-                }
-
-                const intersection = closest || { x: (left + right) / 2, y: (top + bottom) / 2 };
-
-                ctx.beginPath();
-                ctx.moveTo(from.x, from.y);
-                ctx.lineTo(intersection.x, intersection.y);
-                ctx.strokeStyle = '#27ae60';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                const tip = document.createElement('div');
-                tip.className = 'arrow-tip';
-                tip.textContent = '⏩';
-                tip.style.position = 'absolute';
-                tip.style.left = `${intersection.x}px`;
-                tip.style.top = `${intersection.y}px`;
-                tip.style.transform = `translate(-50%, -50%) rotate(${Math.atan2(toCenter.y - from.y, toCenter.x - from.x)}rad)`;
-                tip.style.fontSize = '18px';
-                tip.style.pointerEvents = 'none';
-                tip.style.zIndex = 10;
-                workspace.appendChild(tip);
-            });
-        }
-
-        function lineIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
-            const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-            if (Math.abs(denom) < 0.001) return null;
-
-            const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
-            const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
-
-            if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
-                return {
-                    x: x1 + ua * (x2 - x1),
-                    y: y1 + ua * (y2 - y1)
-                };
-            }
-            return null;
-        }
-
-        function showFeedback(isCorrect, message = null) {
-            feedbackEl.textContent = message || (isCorrect ? '✅ Правильно!' : '❌ Неверно');
-            feedbackEl.className = isCorrect ? 'success' : 'error';
-            feedbackEl.style.opacity = '1';
-            setTimeout(() => feedbackEl.style.opacity = '0', 1500);
-        }
-
-        function highlightMissingConnections() {
-            // Highlight workspace
-            workspace.classList.add('highlight');
-            setTimeout(() => workspace.classList.remove('highlight'), 1000);
-            
-            // Highlight words that are missing connections
-            const correctLinks = syntaxData.links.map(link => [link.from, link.to]);
-            const drawnSet = drawnLinks.map(link => [link.from, link.to]);
-            
-            // Find words that should be connected but aren't
-            const missingConnections = correctLinks.filter(correctLink => 
-                !drawnSet.some(drawnLink => 
-                    drawnLink[0] === correctLink[0] && drawnLink[1] === correctLink[1]
-                )
-            );
-            
-            // Highlight the words involved in missing connections
-            missingConnections.forEach(([from, to]) => {
-                const fromWord = document.querySelector(`.word-tag[data-word="${from}"]`);
-                const toWord = document.querySelector(`.word-tag[data-word="${to}"]`);
-                
-                if (fromWord) fromWord.classList.add('highlight');
-                if (toWord) toWord.classList.add('highlight');
-            });
-            
-            // Remove highlights after animation
-            setTimeout(() => {
-                document.querySelectorAll('.word-tag.highlight').forEach(el => {
-                    el.classList.remove('highlight');
-                });
-            }, 1000);
-            
-            showFeedback(false, "Не все связи расставлены!");
-        }
-
-        resetBtn.addEventListener('click', () => {
-            drawnLinks = [];
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            document.querySelectorAll('.arrow-tip, .syntax-label').forEach(el => el.remove());
-            selectedWord = null;
-            document.querySelectorAll('.word-tag.selected').forEach(el => el.classList.remove('selected'));
-            placeWordsWithoutOverlap();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (checkCompletion()) {
-                currentTaskIndex++;
-                if (currentTaskIndex >= tasks.length) {
-                    alert("Поздравляем! Все задания завершены!");
-                } else {
-                    loadTask(currentTaskIndex);
-                }
+            const isDuplicate = drawnLinks.some(link => link.from === fromWord && link.to === toWord);
+            if (isDuplicate) {
+                flash('#e74c3c');
+                showFeedback(false, "Эта связь уже существует");
             } else {
-                highlightMissingConnections();
-            }
-        });
-    </script>
+                const isCorrect = syntaxData.links.some(link => link.from === fromWord && link.to === toWord);
+                flash(isCorrect ? '#27ae60' : '#e74c3c');
+                showFeedback(isCorrect, isCorrect ? "✅ Правильно!" : "❌ Неверно");
 
-<script>
-    // Скрипт для скрытия панели информации при явном взаимодействии с canvas
-    document.addEventListener('DOMContentLoaded', () => {
-        const workspace = document.getElementById('workspace');
-        const charInfoEl = document.getElementById('char-info');
-        
-        // Функция скрытия панели информации
-        function hideCharInfo() {
-            if (charInfoEl.style.display !== 'none') {
-                charInfoEl.style.display = 'none';
+                if (isCorrect) {
+                    drawnLinks.push({ from: fromWord, to: toWord });
+                    redrawEverything(); // ✅ перерисовка линий + меток
+                }
             }
+
+            selectedWord.classList.remove('selected');
+            selectedWord = null;
         }
-        
-        // Скрываем только при явном клике в область canvas
-        workspace.addEventListener('click', hideCharInfo);
-        
-        // Скрываем только при явном touch-событии в области canvas
-        workspace.addEventListener('touchstart', hideCharInfo, { passive: true });
+    }
+
+    function checkCompletion() {
+        const correctLinks = syntaxData.links.map(link => [link.from, link.to]);
+        const drawnSet = drawnLinks.map(link => [link.from, link.to]);
+        return correctLinks.every(correctLink => drawnSet.some(drawnLink => drawnLink[0] === correctLink[0] && drawnLink[1] === correctLink[1]));
+    }
+
+    function flash(color) {
+        document.body.style.backgroundColor = `rgba(${hexToRgb(color)}, 0.18)`;
+        setTimeout(() => document.body.style.backgroundColor = '', 300);
+    }
+
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r}, ${g}, ${b}`;
+    }
+
+    function showFeedback(isCorrect, message) {
+        feedbackEl.textContent = message;
+        feedbackEl.className = isCorrect ? 'success' : 'error';
+        feedbackEl.style.opacity = '1';
+        setTimeout(() => feedbackEl.style.opacity = '0', 1500);
+    }
+
+    function highlightMissingConnections() {
+        workspace.classList.add('highlight');
+        setTimeout(() => workspace.classList.remove('highlight'), 1000);
+        showFeedback(false, "Не все связи расставлены!");
+    }
+
+    resetBtn.addEventListener('click', () => {
+        drawnLinks = [];
+        selectedWord = null;
+        document.querySelectorAll('.word-tag.selected, .arrow-tip, .syntax-label').forEach(el => el.remove());
+        placeWordsWithoutOverlap();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (checkCompletion()) {
+            currentTaskIndex++;
+            if (currentTaskIndex >= tasks.length) {
+                alert("Поздравляем! Все задания завершены!");
+            } else {
+                loadTask(currentTaskIndex); // ✅ теперь всё очищается
+            }
+        } else {
+            highlightMissingConnections();
+        }
+    });
+
+    workspace.addEventListener('click', () => {
+        if (charInfoEl.style.display !== 'none') {
+            charInfoEl.style.display = 'none';
+        }
     });
 </script>
 </body>
