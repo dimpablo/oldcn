@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王 (wáng) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #B71C1C;
+            --secondary: #C62828;
+            --accent: #EF5350;
+            --light: #FFCDD2;
+            --dark: #850000;
+            --text: #212121;
+            --background: #FFEBEE;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.subject {
+            background: #1976D2;
+            animation: pulse 2s infinite;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.location {
+            background: #7C4DFF;
+        }
+        
+        .word-block.negation {
+            background: #D32F2F;
+        }
+        
+        .word-block.qi {
+            background: #FF9800;
+        }
+        
+        .word-block.wei {
+            background: #FF5722;
+        }
+        
+        .word-block.jiang {
+            background: #2979FF;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>王 (wáng)</h1>
+            <div class="character">王</div>
+            <div class="pinyin">pinyin: wáng</div>
+            <div>Правитель, ван</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>王 (wáng)</strong> — ключевое слово в архаическом древнекитайском языке, обозначающее <strong>"правителя"</strong>, <strong>"вана"</strong>. Это слово является центральным в политической иерархии иньского общества и часто выступает в текстах как подлежащее глаголов действия.</p>
+            
+            <div class="example">
+                <div class="chinese">王田</div>
+                <div class="pinyin-text">wáng tián</div>
+                <div class="translation">Правитель охотится</div>
+            </div>
+            
+            <p>Как отмечается в учебнике, <strong>王</strong> является не только обозначением правителя, но и центральным элементом грамматической структуры многих предложений. В Уроке 1 прямо указано: "По своей форме повествовательные и вопросительные предложения не отличаются друг от друга: 王田 wáng tián — «Правитель охотится» 貞：王田？ zhēn: wáng tián? — «Спрашивают: „Правитель охотится?“»".</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <h3>Урок 1</h3>
+                    <p>Вводится как <strong>обозначение правителя</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.1</span> 王田 wáng tián — "Правитель охотится"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Изучается в контексте <strong>гадания и интерпретации</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 王占曰 吉 其 來 馬 wáng zhān yuē jí qí lái mǎ — "Правитель истолковал и сказал: хорошо, прибудут кони"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <h3>Урок 3</h3>
+                    <p>Исследуется в контексте передвижений и гаданий</p>
+                    <p class="example"><span class="lesson-reference">Ур.3</span> 王其 入 大 邑 商 wáng qí rù dà yì shāng — "Правитель войдет в большой город Шан"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">10</div>
+                    <h3>Урок 10</h3>
+                    <p>Используется в сложных интерпретациях гаданий</p>
+                    <p class="example"><span class="lesson-reference">Ур.10</span> 王占曰 不 嘉 其 嘉 不 吉 wáng zhān yuē bù jiā qí jiā bù jí — "Правитель истолковал и сказал: не осуществится, [а если и] осуществится, то к несчастью"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">王</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>王</strong> изображает топор, символизирующий власть и силу правителя</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">王</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>王</strong> уже выделилась как обозначение верховного правителя</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">王</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>王</strong> закрепилось как титул правителя, ван</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">王</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>王</strong> сохранилось как слово "король", "правитель"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции</h2>
+            <p><strong>王 (wáng)</strong> выполняет несколько ключевых грамматических функций в архаическом древнекитайском языке:</p>
+            
+            <h3>1. Основное подлежащее</h3>
+            <p>王 обычно выступает как подлежащее и стоит в начале предложения:</p>
+            
+            <div class="animation-container">
+                <div class="sentence-animation">
+                    <div class="word-block subject">王</div>
+                    <div class="word-block verb">田</div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王田</div>
+                <div class="pinyin-text">wáng tián</div>
+                <div class="translation">Правитель охотится</div>
+            </div>
+            
+            <h3>2. Часть цепочки сказуемых</h3>
+            <p>王 часто участвует в цепочке сказуемых с 占曰:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">占</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">占</div>
+                            <div class="word-block">曰</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">占</div>
+                            <div class="word-block">曰</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block">雨</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王占曰</div>
+                <div class="pinyin-text">wáng zhān yuē</div>
+                <div class="translation">Правитель истолковал и сказал</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王占曰 其雨</div>
+                <div class="pinyin-text">wáng zhān yuē qí yǔ</div>
+                <div class="translation">Правитель истолковал и сказал: будет дождь</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Эмфатические конструкции с 王</h2>
+            <p>В архаическом древнекитайском языке для логического выделения определенного члена предложения используется <strong>эмфатическая конструкция</strong>. В Уроке 9 подробно описана эта конструкция, и <strong>王</strong> играет в ней важную роль.</p>
+            
+            <h3>1. Эмфатическая частица 唯 (wéi)</h3>
+            <p>При использовании частицы 唯 (wéi) происходит инверсия подлежащего:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block wei">唯</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block wei">唯</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王伐羌方</div>
+                <div class="pinyin-text">wáng fá qiāng fāng</div>
+                <div class="translation">Правитель пойдет походом на племя Цян</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王唯羌方伐</div>
+                <div class="pinyin-text">wáng wéi qiāng fāng fá</div>
+                <div class="translation">Правитель пойдет походом именно на племя Цян</div>
+            </div>
+            
+            <h3>2. Эмфатическая частица 弜 (jiàng)</h3>
+            <p>При использовании частицы 弜 (jiàng) происходит инверсия подлежащего с отрицанием:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block jiang">弜</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block jiang">弜</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王弜羌方伐</div>
+                <div class="pinyin-text">wáng jiàng qiāng fāng fá</div>
+                <div class="translation">Не на племя Цян пойдет походом правитель?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">不唯王自伐羌方</div>
+                <div class="pinyin-text">bù wéi wáng zì fá qiāng fāng</div>
+                <div class="translation">В поход против племени Цян пойдет не сам правитель?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">70%</div>
+                    <div>Основное подлежащее</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">20%</div>
+                    <div>Часть цепочки сказуемых</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">8%</div>
+                    <div>Эмфатические конструкции</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">2%</div>
+                    <div>Другие функции</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические функции:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Основное подлежащее:</strong> стоит в начале предложения как субъект действия</li>
+                <li style="margin-bottom: 10px;"><strong>Часть цепочки сказуемых:</strong> образует с 占曰 цепочку однородных сказуемых</li>
+                <li style="margin-bottom: 10px;"><strong>Эмфатические конструкции:</strong> участвует в эмфатических конструкциях с 唯 (wéi) и 弜 (jiàng)</li>
+                <li style="margin-bottom: 10px;"><strong>Косвенное дополнение:</strong> может выступать как косвенное дополнение в эмфатических конструкциях</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h2>Рокировки слов с 王</h2>
+            <p><strong>王 (wáng)</strong> играет ключевую роль в эмфатических конструкциях, где происходит рокировка слов. Ниже представлены анимации основных типов рокировок с <strong>王</strong>.</p>
+            
+            <h3>1. Нормальный порядок</h3>
+            <p>王 стоит в начале предложения как подлежащее:</p>
+            
+            <div class="animation-container">
+                <div class="sentence-animation">
+                    <div class="word-block subject">王</div>
+                    <div class="word-block verb">入</div>
+                    <div class="word-block">于</div>
+                    <div class="word-block location">商</div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王入于商</div>
+                <div class="pinyin-text">wáng rù yú shāng</div>
+                <div class="translation">Правитель войдет в Шан</div>
+            </div>
+            
+            <h3>2. Эмфатическая конструкция с 唯 (wéi)</h3>
+            <p>При использовании частицы 唯 (wéi) происходит инверсия:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">入</div>
+                            <div class="word-block">于</div>
+                            <div class="word-block location">商</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">入</div>
+                            <div class="word-block">于</div>
+                            <div class="word-block location">商</div>
+                            <div class="word-block wei">唯</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">入</div>
+                            <div class="word-block">于</div>
+                            <div class="word-block location">商</div>
+                            <div class="word-block wei">唯</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王唯入于商</div>
+                <div class="pinyin-text">wáng wéi rù yú shāng</div>
+                <div class="translation">Именно правитель войдет в Шан</div>
+            </div>
+            
+            <h3>3. Эмфатическая конструкция с 弜 (jiàng)</h3>
+            <p>При использовании частицы 弜 (jiàng) происходит инверсия с отрицанием:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block jiang">弜</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">伐</div>
+                            <div class="word-block">羌</div>
+                            <div class="word-block">方</div>
+                            <div class="word-block jiang">弜</div>
+                            <div class="word-block subject">王</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王弜羌方伐</div>
+                <div class="pinyin-text">wáng jiàng qiāng fāng fá</div>
+                <div class="translation">Не на племя Цян пойдет походом правитель?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Сравнение с другими обозначениями власти</h2>
+            <p>В архаическом древнекитайском языке существуют несколько обозначений правителей и вождей:</p>
+            
+            <div class="example">
+                <div class="chinese">王 (wáng) — верховный правитель, ван</div>
+                <div class="chinese">侯 (hóu) — хоу, вождь племени</div>
+                <div class="chinese">伯 (bó) — бо, вождь племени</div>
+                <div class="chinese">子 (zǐ) — цзы, вождь племени</div>
+            </div>
+            
+            <h3>Ключевые различия:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>王 (wáng):</strong> верховный правитель, обладающий абсолютной властью над подчиненными племенами</li>
+                <li style="margin-bottom: 10px;"><strong>侯 (hóu), 伯 (bó), 子 (zǐ):</strong> титулы вождей подчиненных племен, которые получали их от вана</li>
+                <li style="margin-bottom: 10px;"><strong>Порядок упоминания:</strong> титул всегда предшествует личному имени: 侯虎 hóu hǔ — "Хоу Ху"</li>
+            </ul>
+            
+            <div class="example">
+                <div class="chinese">王令侯高伐夷 wáng lìng hóu gāo fá yí — "Правитель приказал Хоу Гао пойти походом на племя И"</div>
+                <div class="chinese">王占曰 有祟 其 有 wáng zhān yuē yǒu suì qí yǒu — "Правитель истолковал и сказал: есть беда, действительно есть"</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>王 (wáng)</strong> — фундаментальное слово архаического древнекитайского языка, которое играет ключевую роль в представлении политической структуры иньского общества. Его появление в тексте сразу указывает на то, что речь идет о верховном правителе, ване.</p>
+            
+            <p>Особенность <strong>王</strong> заключается в том, что оно является <strong>основным подлежащим</strong> во многих предложениях, а также активно участвует в эмфатических конструкциях. В отличие от многих других слов, <strong>王</strong> может менять свою позицию в предложении для логического выделения, что делает его важным элементом грамматической структуры.</p>
+            
+            <p>Кроме того, <strong>王</strong> играет важную роль в образовании <strong>цепочки сказуемых</strong> с <strong>占曰 (zhān yuē)</strong>, которая характерна для архаического древнекитайского языка. Эта грамматическая конструкция позволяет выражать последовательные действия (гадание → интерпретация → высказывание) без использования союзов или других связок.</p>
+            
+            <p>Изучение <strong>王</strong> открывает путь к пониманию структуры древнекитайских текстов, особенностей их композиции и грамматических особенностей архаического древнекитайского языка. Это слово является незаменимым ключом для интерпретации иньских надписей и понимания того, как древние китайцы представляли себе политическую иерархию и роль верховного правителя в обществе.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>
