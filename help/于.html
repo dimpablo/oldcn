@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>于 (yú) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #1B5E20;
+            --secondary: #2E7D32;
+            --accent: #4CAF50;
+            --light: #C8E6C9;
+            --dark: #0A3D1B;
+            --text: #212121;
+            --background: #E8F5E9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.subject {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.preposition {
+            background: #D32F2F;
+            animation: pulse 2s infinite;
+        }
+        
+        .word-block.object {
+            background: #FF9800;
+        }
+        
+        .word-block.location {
+            background: #7B1FA2;
+        }
+        
+        .word-block.time {
+            background: #FF5722;
+        }
+        
+        .word-block.address {
+            background: #5D4037;
+        }
+        
+        .word-block.omitted {
+            background: #9E9E9E;
+            opacity: 0.7;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .comparison-table {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>于 (yú)</h1>
+            <div class="character">于</div>
+            <div class="pinyin">pinyin: yú</div>
+            <div>Универсальный предлог для выражения места, времени и адресата</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>于 (yú)</strong> — наиболее употребительный предлог в архаическом древнекитайском языке, который по праву может быть назван <strong>универсальным предлогом</strong>. Эта частица используется для выражения различных отношений между членами предложения, особенно для маркировки косвенных дополнений.</p>
+            
+            <div class="example">
+                <div class="chinese">田于宋</div>
+                <div class="pinyin-text">tián yú sòng</div>
+                <div class="translation">Охотиться в Сун</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">入于商</div>
+                <div class="pinyin-text">rù yú shāng</div>
+                <div class="translation">Вступить в Шан</div>
+            </div>
+            
+            <p>Предлог <strong>于 (yú)</strong> в сочетании со следующим за ним словом может передавать три основных значения:</p>
+            <ol style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Точка в пространстве или времени:</strong> где происходит действие (田于宋 "охотиться в Сун", 于甲子田 "охотиться в день цзя-цзы")</li>
+                <li style="margin-bottom: 10px;"><strong>Конечный пункт движения:</strong> куда направлено действие (入于商 "вступить в Шан")</li>
+                <li style="margin-bottom: 10px;"><strong>Адресат действия:</strong> кому адресовано действие (告于王 "сообщить правителю")</li>
+            </ol>
+            
+            <p>Особенность <strong>于</strong> заключается в том, что он <strong>может быть опущен</strong> при определенных условиях (когда перед косвенным дополнением, стоящим в постпозиции к сказуемому, нет прямого дополнения) без ущерба для смысла.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <h3>Урок 3</h3>
+                    <p>Вводится как <strong>универсальный предлог</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.3</span> 入于商 (rù yú shāng) — "Вступить в Шан"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
+                    <h3>Урок 4</h3>
+                    <p>Изучается в сочетании с предлогом 自 (zì)</p>
+                    <p class="example"><span class="lesson-reference">Ур.4</span> 自今至于癸亥 (zì jīn zhì yú guǐ hài) — "Начиная с сегодняшнего дня и кончая днем гуй-хай"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <h3>Урок 5</h3>
+                    <p>Исследуется позиция в отрицательных предложениях</p>
+                    <p class="example"><span class="lesson-reference">Ур.5</span> 辛亥王不于宋獲鹿 (xīn hài wáng bù yú sòng huò lù) — "В день синь-хай ван не поймает оленя в Сун"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">9</div>
+                    <h3>Урок 9</h3>
+                    <p>Используется в сложных грамматических структурах</p>
+                    <p class="example"><span class="lesson-reference">Ур.9</span> 于小乙告馬方 (yú xiǎo yǐ gào mǎ fāng) — "Сообщить Малому И о племени Ма"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">于</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>于</strong> изображает пару ножниц, символизируя разделение или точку отсчета</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">于</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>于</strong> уже выделилась как универсальный предлог</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">于</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>于</strong> сохранил свою функцию универсального предлога</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">于</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>于</strong> сохранился, но с более узкими функциями</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические конструкции с 于 (yú)</h2>
+            <p><strong>于 (yú)</strong> используется для выражения различных типов косвенных дополнений. Ниже представлены основные типы конструкций с <strong>于</strong>.</p>
+            
+            <h3>1. Косвенное дополнение места</h3>
+            <p>Когда <strong>于</strong> выражает место действия или конечный пункт движения:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">田</div>
+                            <div class="word-block location">宋</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">田</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block location">宋</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王田宋</div>
+                <div class="pinyin-text">wáng tián sòng</div>
+                <div class="translation">Правитель охотится в Сун</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王田于宋</div>
+                <div class="pinyin-text">wáng tián yú sòng</div>
+                <div class="translation">Правитель охотится в Сун</div>
+            </div>
+            
+            <h3>2. Косвенное дополнение времени</h3>
+            <p>Когда <strong>于</strong> выражает время действия:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block time">甲子</div>
+                            <div class="word-block verb">田</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block verb">田</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block time">甲子</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">甲子田</div>
+                <div class="pinyin-text">jiǎ zǐ tián</div>
+                <div class="translation">Охотиться в день цзя-цзы</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">于甲子田</div>
+                <div class="pinyin-text">yú jiǎ zǐ tián</div>
+                <div class="translation">Охотиться в день цзя-цзы</div>
+            </div>
+            
+            <h3>3. Косвенное дополнение адресата</h3>
+            <p>Когда <strong>于</strong> выражает адресата действия:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">告</div>
+                            <div class="word-block address">小乙</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">王</div>
+                            <div class="word-block verb">告</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block address">小乙</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王告小乙</div>
+                <div class="pinyin-text">wáng gào xiǎo yǐ</div>
+                <div class="translation">Правитель сообщил Малому И</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">王告于小乙</div>
+                <div class="pinyin-text">wáng gào yú xiǎo yǐ</div>
+                <div class="translation">Правитель сообщил Малому И</div>
+            </div>
+            
+            <h3>4. Предложная конструкция 自...至于 (zì... zhì yú)</h3>
+            <p>Когда <strong>于</strong> используется в составе предложной конструкции для обозначения временных или пространственных рамок:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block preposition">自</div>
+                            <div class="word-block time">今</div>
+                            <div class="word-block">至</div>
+                            <div class="word-block time">癸亥</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block preposition">自</div>
+                            <div class="word-block time">今</div>
+                            <div class="word-block">至</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block time">癸亥</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">自今至癸亥</div>
+                <div class="pinyin-text">zì jīn zhì guǐ hài</div>
+                <div class="translation">Начиная с сегодняшнего дня и кончая днем гуй-хай</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">自今至于癸亥</div>
+                <div class="pinyin-text">zì jīn zhì yú guǐ hài</div>
+                <div class="translation">Начиная с сегодняшнего дня и кончая днем гуй-хай</div>
+            </div>
+            
+            <h3>5. Позиция в отрицательных предложениях</h3>
+            <p>В отрицательных предложениях косвенное дополнение ставится после отрицания:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block time">辛亥</div>
+                            <div class="word-block subject">王</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">獲</div>
+                            <div class="word-block object">鹿</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block location">宋</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block time">辛亥</div>
+                            <div class="word-block subject">王</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block preposition">于</div>
+                            <div class="word-block location">宋</div>
+                            <div class="word-block verb">獲</div>
+                            <div class="word-block object">鹿</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">辛亥王不獲鹿于宋</div>
+                <div class="pinyin-text">xīn hài wáng bù huò lù yú sòng</div>
+                <div class="translation">В день синь-хай ван не поймает оленя в Сун</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">辛亥王不于宋獲鹿</div>
+                <div class="pinyin-text">xīn hài wáng bù yú sòng huò lù</div>
+                <div class="translation">В день синь-хай ван не поймает оленя в Сун</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции и особенности</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">50%</div>
+                    <div>Косвенное дополнение места</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">30%</div>
+                    <div>Косвенное дополнение времени</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">15%</div>
+                    <div>Косвенное дополнение адресата</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">5%</div>
+                    <div>Другие функции</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические особенности:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Универсальность:</strong> <strong>于</strong> может выражать различные отношения в предложении</li>
+                <li style="margin-bottom: 10px;"><strong>Опущение:</strong> может быть опущен при определенных условиях без ущерба для смысла</li>
+                <li style="margin-bottom: 10px;"><strong>Позиция в отрицательных предложениях:</strong> косвенное дополнение ставится после отрицания</li>
+                <li style="margin-bottom: 10px;"><strong>Предложная конструкция:</strong> используется в составе конструкции 自...至于 (zì... zhì yú)</li>
+            </ul>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">С предлогом 于</div>
+                    <div class="example">
+                        <div class="chinese">王田于宋</div>
+                        <div class="pinyin-text">wáng tián yú sòng</div>
+                        <div class="translation">Правитель охотится в Сун</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">王告于小乙</div>
+                        <div class="pinyin-text">wáng gào yú xiǎo yǐ</div>
+                        <div class="translation">Правитель сообщил Малому И</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Без предлога 于</div>
+                    <div class="example">
+                        <div class="chinese">王田宋</div>
+                        <div class="pinyin-text">wáng tián sòng</div>
+                        <div class="translation">Правитель охотится в Сун</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">王告小乙</div>
+                        <div class="pinyin-text">wáng gào xiǎo yǐ</div>
+                        <div class="translation">Правитель сообщил Малому И</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Сравнение с другими предлогами</h2>
+            <p>В архаическом древнекитайском языке существует несколько предлогов, каждый из которых имеет свою область применения:</p>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">于 (yú)</div>
+                    <div class="example">
+                        <div class="chinese">田于宋</div>
+                        <div class="pinyin-text">tián yú sòng</div>
+                        <div class="translation">Охотиться в Сун</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">入于商</div>
+                        <div class="pinyin-text">rù yú shāng</div>
+                        <div class="translation">Вступить в Шан</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Универсальный предлог</li>
+                        <li style="margin-bottom: 10px;">Может выражать место, время, адресата</li>
+                        <li style="margin-bottom: 10px;">Может быть опущен</li>
+                        <li style="margin-bottom: 10px;">Самый распространенный предлог</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">自 (zì)</div>
+                    <div class="example">
+                        <div class="chinese">步自商</div>
+                        <div class="pinyin-text">bù zì shāng</div>
+                        <div class="translation">Отправиться из Шан</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">自今岁</div>
+                        <div class="pinyin-text">zì jīn suì</div>
+                        <div class="translation">Начиная с этого года</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Указывает на исходную точку</li>
+                        <li style="margin-bottom: 10px;">Не может быть опущен</li>
+                        <li style="margin-bottom: 10px;">Часто используется с 于 в конструкции 自...至于</li>
+                        <li style="margin-bottom: 10px;">Менее распространен, чем 于</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">迄 (qì)</div>
+                    <div class="example">
+                        <div class="chinese">迄至九日</div>
+                        <div class="pinyin-text">qì zhì jiǔ rì</div>
+                        <div class="translation">На девятый день</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Указывает на конечную точку</li>
+                        <li style="margin-bottom: 10px;">Часто используется с 至 (qì zhì)</li>
+                        <li style="margin-bottom: 10px;">Менее распространен</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Общая структура</div>
+                    <div class="example">
+                        <div class="chinese">田于宋</div>
+                        <div class="pinyin-text">tián yú sòng</div>
+                        <div class="translation">Охотиться в Сун</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">步自商</div>
+                        <div class="pinyin-text">bù zì shāng</div>
+                        <div class="translation">Отправиться из Шан</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">自今至于癸亥</div>
+                        <div class="pinyin-text">zì jīn zhì yú guǐ hài</div>
+                        <div class="translation">Начиная с сегодняшнего дня и кончая днем гуй-хай</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">迄至九日</div>
+                        <div class="pinyin-text">qì zhì jiǔ rì</div>
+                        <div class="translation">На девятый день</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>于 (yú)</strong> — универсальный предлог архаического древнекитайского языка, который является <strong>наиболее употребительным предлогом</strong> в системе древнекитайской грамматики. Его появление в предложении позволяет точно определить отношения между различными членами предложения.</p>
+            
+            <p>Ключевая особенность <strong>于</strong> заключается в его <strong>универсальности</strong> — он может выражать различные типы отношений: место действия, время действия и адресата действия. Это делает его незаменимым инструментом для построения сложных грамматических конструкций.</p>
+            
+            <p>Важно отметить, что <strong>于</strong> <strong>может быть опущен</strong> при определенных условиях без ущерба для смысла, что делает его использование еще более гибким. Однако в отрицательных предложениях косвенное дополнение ставится после отрицания, что является обязательным правилом.</p>
+            
+            <p>Изучение <strong>于</strong> важно для понимания структуры предложений в древнекитайских текстах, особенно в контексте выражения пространственных и временных отношений. Хотя эта частица может показаться простой, ее правильное использование критически важно для точного понимания и перевода древних текстов.</p>
+            
+            <p>В современном китайском языке <strong>于</strong> сохранился, но его функции стали более узкими, что делает изучение его древней формы особенно важным для работы с историческими текстами.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>

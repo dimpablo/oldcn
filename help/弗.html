@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弗 (fú) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #8B0000;
+            --secondary: #B71C1C;
+            --accent: #D32F2F;
+            --light: #FFEBEE;
+            --dark: #5D0000;
+            --text: #212121;
+            --background: #FFEBEE;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.subject {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.negation {
+            background: #D32F2F;
+            animation: pulse 2s infinite;
+        }
+        
+        .word-block.object {
+            background: #FF9800;
+        }
+        
+        .word-block.error {
+            background: #F44336;
+            transform: scale(0.9);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .comparison-table {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>弗 (fú)</h1>
+            <div class="character">弗</div>
+            <div class="pinyin">pinyin: fú</div>
+            <div>Отрицание, не допускающее рокировку слов</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>弗 (fú)</strong> — частица отрицания в архаическом древнекитайском языке, которая, как и <strong>不 (bù)</strong>, является <strong>нейтральным отрицанием</strong>. Однако у <strong>弗</strong> есть важные ограничения в использовании, которые делают его принципиально отличным от <strong>不</strong>.</p>
+            
+            <div class="example">
+                <div class="chinese">方弗出</div>
+                <div class="pinyin-text">fāng fú chū</div>
+                <div class="translation">Племя не выступит</div>
+            </div>
+            
+            <p>В большинстве случаев <strong>弗 (fú)</strong> и <strong>不 (bù)</strong> взаимозаменяемы:</p>
+            <div class="example">
+                <div class="chinese">不受年 (bù shòu nián) — Не получить урожай</div>
+                <div class="chinese">弗受年 (fú shòu nián) — Не получить урожай</div>
+            </div>
+            
+            <p>Однако <strong>弗</strong> имеет критические ограничения: он <strong>не употребляется перед безличными предикативами</strong>, а также <strong>не допускает инверсии</strong> при отрицании дополнения-местоимения.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Вводится как <strong>альтернативное отрицание</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 甫弗其受黍年 (fǔ fú qí shòu shǔ nián) — "Пу не получит урожая проса?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <h3>Урок 3</h3>
+                    <p>Изучается в контексте глаголов движения</p>
+                    <p class="example"><span class="lesson-reference">Ур.3</span> 勿弗入于商 (wù fú rù yú shāng) — "Не войдет ли в Шан?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <h3>Урок 5</h3>
+                    <p>Исследуется ограничения по сравнению с 不</p>
+                    <p class="example"><span class="lesson-reference">Ур.5</span> 洹弗作茲邑禍 (huán fú zuò zī yì huò) — "Река Хуань не причинит несчастья этому городу"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">-</div>
+                    <h3>Поздние тексты</h3>
+                    <p>Постепенно вытесняется частицей 不</p>
+                    <p class="example">В более поздних текстах 弗 практически не встречается</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">弗</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>弗</strong> изображает стрелу, которая не попадает в цель, символизируя запрет, невозможность</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">弗</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>弗</strong> уже выделилась как частица отрицания</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">弗</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>弗</strong> постепенно вытесняется частицей 不</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">弗</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>弗</strong> сохранилось в некоторых фиксированных выражениях, но не как частица отрицания</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Ограничения использования 弗 (fú)</h2>
+            <p>Главной особенностью <strong>弗 (fú)</strong> является то, что он <strong>не допускает рокировки слов</strong> в отличие от <strong>不 (bù)</strong>. Ниже представлены анимации, демонстрирующие эту ключевую разницу.</p>
+            
+            <h3>1. Базовое отрицание</h3>
+            <p>В простых конструкциях без местоимений-дополнений 弗 и 不 взаимозаменяемы:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">方</div>
+                            <div class="word-block verb">出</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">方</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">出</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">方</div>
+                            <div class="word-block negation">弗</div>
+                            <div class="word-block verb">出</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">方出</div>
+                <div class="pinyin-text">fāng chū</div>
+                <div class="translation">Племя выступит</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">方不出</div>
+                <div class="pinyin-text">fāng bù chū</div>
+                <div class="translation">Племя не выступит</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">方弗出</div>
+                <div class="pinyin-text">fāng fú chū</div>
+                <div class="translation">Племя не выступит</div>
+            </div>
+            
+            <h3>2. Критическое ограничение: отрицание с местоимением</h3>
+            <p>Когда дополнение к сказуемому выражено местоимением, <strong>弗 не допускает инверсии</strong>, тогда как <strong>不 позволяет рокировку</strong>:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">帝</div>
+                            <div class="word-block verb">受</div>
+                            <div class="word-block object">方佑</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">帝</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">受</div>
+                            <div class="word-block object">方佑</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">帝</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block object">我</div>
+                            <div class="word-block verb">受</div>
+                            <div class="word-block">佑</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">帝</div>
+                            <div class="word-block negation">弗</div>
+                            <div class="word-block verb">受</div>
+                            <div class="word-block object">方佑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">帝受方佑</div>
+                <div class="pinyin-text">dì shòu fāng yòu</div>
+                <div class="translation">Небесный Владыка ниспошлет помощь племенам</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">帝不受方佑</div>
+                <div class="pinyin-text">dì bù shòu fāng yòu</div>
+                <div class="translation">Небесный Владыка не ниспошлет помощь племенам</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">帝不我受佑</div>
+                <div class="pinyin-text">dì bù wǒ shòu yòu</div>
+                <div class="translation">Небесный Владыка не ниспошлет нам помощи</div>
+            </div>
+            
+            <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                <div class="chinese">帝弗我受佑</div>
+                <div class="pinyin-text">dì fú wǒ shòu yòu</div>
+                <div class="translation" style="color: #d32f2f;">Неправильная конструкция!</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции и ограничения</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">85%</div>
+                    <div>Базовое отрицание</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">10%</div>
+                    <div>Отрицание безличных конструкций</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">5%</div>
+                    <div>Другие функции</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">0%</div>
+                    <div>Инверсия с местоимениями</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические ограничения:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Нет инверсии:</strong> <strong>弗</strong> не допускает рокировки при отрицании дополнения-местоимения</li>
+                <li style="margin-bottom: 10px;"><strong>Безличные предикативы:</strong> <strong>弗</strong> не используется перед безличными предикативами</li>
+                <li style="margin-bottom: 10px;"><strong>Частота употребления:</strong> <strong>弗</strong> встречается реже, чем <strong>不</strong> (примерно 15% случаев отрицания)</li>
+                <li style="margin-bottom: 10px;"><strong>Контекст:</strong> чаще используется в официальных текстах и гадательных надписях</li>
+            </ul>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">Допустимо с 不 (bù)</div>
+                    <div class="example">
+                        <div class="chinese">帝不我受佑</div>
+                        <div class="pinyin-text">dì bù wǒ shòu yòu</div>
+                        <div class="translation">Небесный Владыка не ниспошлет нам помощи</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">帝不我降熯</div>
+                        <div class="pinyin-text">dì bù wǒ jiàng hàn</div>
+                        <div class="translation">Небесный Владыка не пошлет нам засуху</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Недопустимо с 弗 (fú)</div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">帝弗我受佑</div>
+                        <div class="pinyin-text">dì fú wǒ shòu yòu</div>
+                        <div class="translation" style="color: #d32f2f;">Грамматическая ошибка!</div>
+                    </div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">帝弗我降熯</div>
+                        <div class="pinyin-text">dì fú wǒ jiàng hàn</div>
+                        <div class="translation" style="color: #d32f2f;">Грамматическая ошибка!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Отличия от 不 (bù)</h2>
+            <p>Хотя <strong>弗 (fú)</strong> и <strong>不 (bù)</strong> оба являются нейтральными отрицаниями, между ними есть принципиальные грамматические различия:</p>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">弗 (fú)</div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Не допускает инверсии с местоимениями</li>
+                        <li style="margin-bottom: 10px;">Не используется перед безличными предикативами</li>
+                        <li style="margin-bottom: 10px;">Чаще в официальных текстах</li>
+                        <li style="margin-bottom: 10px;">Менее употребим (15% случаев)</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">不 (bù)</div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Допускает инверсию с местоимениями</li>
+                        <li style="margin-bottom: 10px;">Используется перед безличными предикативами</li>
+                        <li style="margin-bottom: 10px;">Универсальное отрицание</li>
+                        <li style="margin-bottom: 10px;">Более употребим (85% случаев)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Ключевые примеры различий:</h3>
+            <div class="example">
+                <div class="chinese">帝弗受方佑 (dì fú shòu fāng yòu) — Небесный Владыка не ниспошлет помощи племенам</div>
+                <div class="chinese">帝不我受佑 (dì bù wǒ shòu yòu) — Небесный Владыка не ниспошлет нам помощи</div>
+            </div>
+            
+            <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                <div class="chinese">帝弗我受佑 (dì fú wǒ shòu yòu) — Неправильная конструкция!</div>
+                <div class="chinese">帝不受方佑 (dì bù shòu fāng yòu) — Небесный Владыка не ниспошлет помощи племенам</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>弗 (fú)</strong> — важная, но ограниченная частица отрицания архаического древнекитайского языка. Ее появление в предложении указывает на отрицание действия, выраженного сказуемым.</p>
+            
+            <p>Ключевая особенность <strong>弗</strong> заключается в том, что <strong>она не допускает инверсии (рокировки)</strong> при отрицании дополнения-местоимения. Эта грамматическая ограничение делает ее принципиально отличной от <strong>不</strong>. В отличие от <strong>不</strong>, <strong>弗</strong> не может использоваться в конструкциях типа "帝不我受佑", где местоимение-дополнение вынесено перед сказуемым.</p>
+            
+            <p>Изучение <strong>弗</strong> критически важно для понимания нюансов грамматики текстов иньских надписей. Его ограничения помогают распознавать грамматически правильные и неправильные конструкции, что особенно важно при анализе древних текстов. Хотя <strong>弗</strong> встречается реже, чем <strong>不</strong>, его знание необходимо для полного понимания системы отрицаний в архаическом древнекитайском языке.</p>
+            
+            <p>В современном китайском языке <strong>弗</strong> практически не используется как частица отрицания, что делает его изучение особенно важным именно в контексте древних текстов.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>

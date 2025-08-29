@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>若 (ruò) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #0D47A1;
+            --secondary: #1565C0;
+            --accent: #2196F3;
+            --light: #BBDEFB;
+            --dark: #001D6E;
+            --text: #212121;
+            --background: #E3F2FD;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.subject {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.emphasis {
+            background: #D32F2F;
+            animation: pulse 2s infinite;
+        }
+        
+        .word-block.object {
+            background: #FF9800;
+        }
+        
+        .word-block.predicate {
+            background: #7B1FA2;
+        }
+        
+        .word-block.indicator {
+            background: #FF5722;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .comparison-table {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>若 (ruò)</h1>
+            <div class="character">若</div>
+            <div class="pinyin">pinyin: ruò</div>
+            <div>Местопредикатив "быть подобным"</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>若 (ruò)</strong> — уникальное служебное слово в архаическом древнекитайском языке, используемое как <strong>местопредикатив</strong>. Это слово означает "быть похожим", "подобный" и всегда используется в сочетании с указательными местоимениями для образования составных предикативных конструкций.</p>
+            
+            <div class="example">
+                <div class="chinese">若茲</div>
+                <div class="pinyin-text">ruò zī</div>
+                <div class="translation">быть подобным этому</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">若偁</div>
+                <div class="pinyin-text">ruò chēng</div>
+                <div class="translation">быть подобным тому</div>
+            </div>
+            
+            <p>В отличие от обычных предикативов, <strong>若</strong> не может употребляться самостоятельно. Оно всегда входит в состав сложных предикативных конструкций с указательными местоимениями. Эта особенность делает <strong>若</strong> уникальным элементом грамматики архаического китайского языка.</p>
+            
+            <p>Местопредикативы с <strong>若</strong> могут выступать в функции сказуемого в предложении, создавая выражения, которые на русский язык переводятся как "быть таким-то", "оказаться таким-то", "становиться таким-то".</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">10</div>
+                    <h3>Урок 10</h3>
+                    <p>Вводится как <strong>местопредикатив</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.10</span> 若茲不雨 (ruò zī bù yǔ) — "Так [долго] нет дождя"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">10</div>
+                    <h3>Урок 10</h3>
+                    <p>Изучается в сочетании с указательными местоимениями</p>
+                    <p class="example"><span class="lesson-reference">Ур.10</span> 日若茲晦 (rì ruò zī huǐ) — "Солнце так потемнело"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">10</div>
+                    <h3>Урок 10</h3>
+                    <p>Исследуется парная конструкция 若偁</p>
+                    <p class="example"><span class="lesson-reference">Ур.10</span> 乃若茲有祟若偁 (nǎi ruò zī yǒu suì ruò chēng) — "И в этом также будет вред, как в том"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">-</div>
+                    <h3>Поздние тексты</h3>
+                    <p>Постепенно изменяет функции</p>
+                    <p class="example">В более поздних текстах 若 приобретает значение "если"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">若</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>若</strong> изображает человека, ухаживающего за волосами, символизируя действие, похожее на что-то</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">若</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>若</strong> уже выделилась как местопредикатив</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">若</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>若</strong> начинает приобретать значение "если"</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">若</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>若</strong> сохранилось в значении "если", но потеряло функцию местопредикатива</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические конструкции с 若 (ruò)</h2>
+            <p><strong>若 (ruò)</strong> используется исключительно в составе сложных предикативных конструкций. Ниже представлены основные типы конструкций с <strong>若</strong>.</p>
+            
+            <h3>1. Местопредикатив 若茲 (ruò zī)</h3>
+            <p>Когда <strong>若</strong> сочетается с указательным местоимением 茲 (zī), образуется местопредикатив "быть подобным этому":</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">日</div>
+                            <div class="word-block">若</div>
+                            <div class="word-block indicator">茲</div>
+                            <div class="word-block verb">晦</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">日</div>
+                            <div class="word-block emphasis">若茲</div>
+                            <div class="word-block verb">晦</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">日若茲晦</div>
+                <div class="pinyin-text">rì ruò zī huǐ</div>
+                <div class="translation">Солнце так потемнело</div>
+            </div>
+            
+            <h3>2. Местопредикатив 若偁 (ruò chēng)</h3>
+            <p>Когда <strong>若</strong> сочетается с указательным местоимением 偁 (chēng), образуется местопредикатив "быть подобным тому":</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">乃</div>
+                            <div class="word-block">若</div>
+                            <div class="word-block indicator">茲</div>
+                            <div class="word-block verb">有</div>
+                            <div class="word-block object">祟</div>
+                            <div class="word-block">若</div>
+                            <div class="word-block indicator">偁</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">乃</div>
+                            <div class="word-block emphasis">若茲</div>
+                            <div class="word-block verb">有</div>
+                            <div class="word-block object">祟</div>
+                            <div class="word-block emphasis">若偁</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">乃若茲有祟若偁</div>
+                <div class="pinyin-text">nǎi ruò zī yǒu suì ruò chēng</div>
+                <div class="translation">И в этом также будет вред, как в том</div>
+            </div>
+            
+            <h3>3. Выражение длительности</h3>
+            <p>Когда <strong>若</strong> используется для выражения продолжительного состояния:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block emphasis">若茲</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">若茲</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">若茲不雨</div>
+                <div class="pinyin-text">ruò zī bù yǔ</div>
+                <div class="translation">Так [долго] нет дождя</div>
+            </div>
+            
+            <h3>4. Местопредикатив как сказуемое</h3>
+            <p>Когда местопредикатив выступает в функции сказуемого:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block subject">若茲</div>
+                            <div class="word-block verb">死</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block predicate">若茲</div>
+                            <div class="word-block verb">乃死</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">若茲乃死</div>
+                <div class="pinyin-text">ruò zī nǎi sǐ</div>
+                <div class="translation">Будет так, и [она] умрет</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции и особенности</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">70%</div>
+                    <div>Местопредикатив "быть подобным этому"</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">25%</div>
+                    <div>Местопредикатив "быть подобным тому"</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">5%</div>
+                    <div>Другие функции</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">0%</div>
+                    <div>Самостоятельное употребление</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические особенности:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Несамостоятельность:</strong> <strong>若</strong> никогда не употребляется самостоятельно, только в сочетании с указательными местоимениями</li>
+                <li style="margin-bottom: 10px;"><strong>Парные конструкции:</strong> образует парные конструкции: 若茲 (ruò zī) и 若偁 (ruò chēng)</li>
+                <li style="margin-bottom: 10px;"><strong>Функция сказуемого:</strong> может выступать в функции сказуемого в предложении</li>
+                <li style="margin-bottom: 10px;"><strong>Выражение длительности:</strong> часто используется для выражения продолжительного состояния</li>
+            </ul>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">Правильно</div>
+                    <div class="example">
+                        <div class="chinese">若茲不雨</div>
+                        <div class="pinyin-text">ruò zī bù yǔ</div>
+                        <div class="translation">Так [долго] нет дождя</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">日若茲晦</div>
+                        <div class="pinyin-text">rì ruò zī huǐ</div>
+                        <div class="translation">Солнце так потемнело</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Неправильно</div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">若不雨</div>
+                        <div class="pinyin-text">ruò bù yǔ</div>
+                        <div class="translation" style="color: #d32f2f;">"Так нет дождя" — грамматическая ошибка!</div>
+                    </div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">若晦</div>
+                        <div class="pinyin-text">ruò huǐ</div>
+                        <div class="translation" style="color: #d32f2f;">"Так потемнело" — грамматическая ошибка!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Сравнение с другими предикативами</h2>
+            <p>В архаическом древнекитайском языке существует несколько типов предикативов, каждый из которых имеет свою область применения:</p>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">若 (ruò)</div>
+                    <div class="example">
+                        <div class="chinese">若茲不雨</div>
+                        <div class="pinyin-text">ruò zī bù yǔ</div>
+                        <div class="translation">Так [долго] нет дождя</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">日若茲晦</div>
+                        <div class="pinyin-text">rì ruò zī huǐ</div>
+                        <div class="translation">Солнце так потемнело</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Местопредикатив</li>
+                        <li style="margin-bottom: 10px;">Всегда сочетается с указательными местоимениями</li>
+                        <li style="margin-bottom: 10px;">Выражает сходство, подобие</li>
+                        <li style="margin-bottom: 10px;">Не может употребляться самостоятельно</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">有 (yǒu)</div>
+                    <div class="example">
+                        <div class="chinese">旬有禍</div>
+                        <div class="pinyin-text">xún yǒu huò</div>
+                        <div class="translation">В течение декады будет несчастье?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">王有田</div>
+                        <div class="pinyin-text">wáng yǒu tián</div>
+                        <div class="translation">Правитель имеет охоту?</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Предикатив "иметь"</li>
+                        <li style="margin-bottom: 10px;">Может употребляться самостоятельно</li>
+                        <li style="margin-bottom: 10px;">Выражает наличие, обладание</li>
+                        <li style="margin-bottom: 10px;">Имеет отрицание 亡</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">是 (shì)</div>
+                    <div class="example">
+                        <div class="chinese">今是雨</div>
+                        <div class="pinyin-text">jīn shì yǔ</div>
+                        <div class="translation">Сейчас дождь</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Указательный предикатив</li>
+                        <li style="margin-bottom: 10px;">Указывает на идентичность</li>
+                        <li style="margin-bottom: 10px;">Чаще в поздних текстах</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Общая структура</div>
+                    <div class="example">
+                        <div class="chinese">若茲不雨</div>
+                        <div class="pinyin-text">ruò zī bù yǔ</div>
+                        <div class="translation">Так [долго] нет дождя</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">旬有禍</div>
+                        <div class="pinyin-text">xún yǒu huò</div>
+                        <div class="translation">В течение декады будет несчастье?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">今是雨</div>
+                        <div class="pinyin-text">jīn shì yǔ</div>
+                        <div class="translation">Сейчас дождь</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>若 (ruò)</strong> — уникальный местопредикатив архаического древнекитайского языка, который не имеет прямых аналогов в других языках. Его появление в предложении сразу указывает на выражение сходства или подобия.</p>
+            
+            <p>Ключевая особенность <strong>若</strong> заключается в его <strong>неспособности употребляться самостоятельно</strong> — он всегда входит в состав сложных предикативных конструкций с указательными местоимениями. Это делает его грамматически уникальным элементом в системе древнекитайской грамматики.</p>
+            
+            <p>Важно отметить, что <strong>若</strong> образует <strong>парные конструкции</strong> с различными указательными местоимениями:</p>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>若茲 (ruò zī)</strong> — "быть подобным этому", "такой"</li>
+                <li style="margin-bottom: 10px;"><strong>若偁 (ruò chēng)</strong> — "быть подобным тому", "такой как тот"</li>
+            </ul>
+            
+            <p>Эти конструкции могут выступать как в функции сказуемого, так и в функции определения, создавая сложные грамматические структуры. Особенно часто они используются для выражения продолжительных состояний или для сравнения различных явлений.</p>
+            
+            <p>Изучение <strong>若</strong> важно для понимания нюансов грамматики текстов иньских надписей, особенно в контексте выражения сходства и подобия. Хотя эта конструкция встречается не так часто, как другие грамматические элементы, ее знание необходимо для точного понимания и перевода древних текстов.</p>
+            
+            <p>В современном китайском языке <strong>若</strong> потерял свою функцию местопредикатива и приобрел значение "если", что делает изучение его древней формы особенно важным именно в контексте древних текстов.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>
