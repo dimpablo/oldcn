@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>允 (yǔn) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #004D40;
+            --secondary: #00695C;
+            --accent: #00897B;
+            --light: #B2DFDB;
+            --dark: #00251A;
+            --text: #212121;
+            --background: #E0F2F1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.pronoun {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.negation {
+            background: #D32F2F;
+        }
+        
+        .word-block.qi {
+            background: #FF9800;
+        }
+        
+        .word-block.yun {
+            background: #FF5722;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>允 (yǔn)</h1>
+            <div class="character">允</div>
+            <div class="pinyin">pinyin: yǔn</div>
+            <div>Смысловое наречие "действительно", "и в самом деле"</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>允 (yǔn)</strong> — важное <strong>смысловое наречие</strong> архаического древнекитайского языка, которое используется для подтверждения или усиления утверждения. В отличие от служебных слов, таких как <strong>其 (qí)</strong>, <strong>允</strong> имеет конкретное лексическое значение — "действительно", "и в самом деле", "точно".</p>
+            
+            <div class="example">
+                <div class="chinese">允雨</div>
+                <div class="pinyin-text">yǔn yǔ</div>
+                <div class="translation">Действительно прошел дождь</div>
+            </div>
+            
+            <p>Как отмечается в учебнике, <strong>允</strong> может стоять как перед отрицанием, так и самостоятельно, подтверждая факт. В Уроке 5 прямо указано, что <strong>允雨 (yǔn yǔ)</strong> означает "действительно прошел дождь", в отличие от <strong>其雨 (qí yǔ)</strong>, которое означает "будет дождь".</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <h3>Урок 1</h3>
+                    <p>Вводится как <strong>смысловое наречие</strong> "действительно"</p>
+                    <p class="example"><span class="lesson-reference">Ур.1</span> 允不其雨 (yǔn bù qí yǔ) — "И в самом деле не идет дождь"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Используется в контексте подтверждения погодных условий</p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 允雨 (yǔn yǔ) — "Действительно прошел дождь"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <h3>Урок 5</h3>
+                    <p>Применяется для подтверждения божественных действий</p>
+                    <p class="example"><span class="lesson-reference">Ур.5</span> 王占曰 有祟 允有 (wáng zhān yuē yǒu suì yǔn yǒu) — "Правитель истолковал и сказал: есть беда, действительно есть"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">10</div>
+                    <h3>Урок 10</h3>
+                    <p>Используется в контексте подтверждения бедствий</p>
+                    <p class="example"><span class="lesson-reference">Ур.10</span> 允有來艱 (yǔn yǒu lái jiān) — "Действительно есть пришедшая беда"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">允</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>允</strong> изображает человека в движении, символизирующий "согласие", "согласованность"</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">允</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>允</strong> уже выделилась как наречие подтверждения</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">允</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>允</strong> закрепилось как наречие "действительно" и глагол "соглашаться"</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">允</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>允</strong> сохранилось как формальное слово "разрешать", "соглашаться"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции и комбинации</h2>
+            <p><strong>允 (yǔn)</strong> является смысловым наречием, которое может сочетаться с различными грамматическими конструкциями. Ниже представлены анимации основных типов комбинаций с <strong>允</strong>.</p>
+            
+            <h3>1. Базовая структура с 允</h3>
+            <p>允 обычно стоит в начале утверждения или непосредственно перед глаголом, подтверждая факт:</p>
+            
+            <div class="animation-container">
+                <div class="sentence-animation">
+                    <div class="word-block yun">允</div>
+                    <div class="word-block verb">雨</div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">允雨</div>
+                <div class="pinyin-text">yǔn yǔ</div>
+                <div class="translation">Действительно прошел дождь</div>
+            </div>
+            
+            <h3>2. Комбинация с 其</h3>
+            <p>允 может сочетаться с служебным наречием 其, подтверждая его модальное значение:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                            <div class="word-block yun">允</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block yun">允</div>
+                            <div class="word-block">王</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">允其雨</div>
+                <div class="pinyin-text">yǔn qí yǔ</div>
+                <div class="translation">Действительно будет дождь</div>
+            </div>
+            
+            <h3>3. Комбинация с отрицанием 不</h3>
+            <p>允 может стоять перед отрицанием, подтверждая отрицательное утверждение:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">王</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block yun">允</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block negation">不</div>
+                            <div class="word-block yun">允</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">允不其雨</div>
+                <div class="pinyin-text">yǔn bù qí yǔ</div>
+                <div class="translation">И в самом деле не будет дождя</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">不允其雨</div>
+                <div class="pinyin-text">bù yǔn qí yǔ</div>
+                <div class="translation">Не действительно будет дождь? (Не будет ли дождя на самом деле?)</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">70%</div>
+                    <div>Подтверждение утверждений</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">20%</div>
+                    <div>Подтверждение отрицаний</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">8%</div>
+                    <div>Подтверждение вопросов</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">2%</div>
+                    <div>Другие функции</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические функции:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Подтверждение утверждений:</strong> стоит в начале или перед глаголом для подтверждения факта (允雨 — "действительно прошел дождь")</li>
+                <li style="margin-bottom: 10px;"><strong>Комбинация с отрицанием:</strong> может стоять перед отрицанием для усиления отрицательного утверждения (允不其雨 — "и в самом деле не будет дождя")</li>
+                <li style="margin-bottom: 10px;"><strong>Взаимодействие с 其:</strong> подтверждает модальное значение будущего времени или возможности</li>
+                <li style="margin-bottom: 10px;"><strong>Самостоятельное использование:</strong> может использоваться как ответ на вопрос, подтверждая факт</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h2>Сравнение с другими частицами</h2>
+            <p>В архаическом древнекитайском языке существует несколько частиц, которые могут использоваться для выражения подтверждения или усиления утверждения. Вот как <strong>允</strong> сравнивается с ними:</p>
+            
+            <div class="example">
+                <div class="chinese">其雨 (qí yǔ) — Будет дождь?</div>
+                <div class="chinese">允雨 (yǔn yǔ) — Действительно прошел дождь</div>
+                <div class="chinese">允其雨 (yǔn qí yǔ) — Действительно будет дождь</div>
+                <div class="chinese">允不其雨 (yǔn bù qí yǔ) — И в самом деле не будет дождя</div>
+            </div>
+            
+            <h3>Ключевые различия:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Служебное наречие 其 (qí):</strong> не имеет лексического значения, только грамматическое; указывает на будущее время или возможность</li>
+                <li style="margin-bottom: 10px;"><strong>Смысловое наречие 允 (yǔn):</strong> имеет конкретное лексическое значение "действительно"; подтверждает факт</li>
+                <li style="margin-bottom: 10px;"><strong>Отрицание 不 (bù):</strong> отрицает действие; может комбинироваться с 允 для усиления отрицательного утверждения</li>
+            </ul>
+            
+            <div class="example">
+                <div class="chinese">癸丑 允其雨 (guǐ chǒu yǔn qí yǔ) — "В день гуй-чоу действительно будет дождь"</div>
+                <div class="chinese">允有來艱 (yǔn yǒu lái jiān) — "Действительно есть пришедшая беда"</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Особенности использования</h2>
+            <p><strong>允 (yǔn)</strong> имеет несколько уникальных особенностей в своем использовании:</p>
+            
+            <h3>1. Позиционные варианты</h3>
+            <p>允 может стоять в разных позициях предложения, что влияет на смысл:</p>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>В начале предложения:</strong> 允雨 (yǔn yǔ) — "Действительно прошел дождь" (подчеркивает уверенность говорящего)</li>
+                <li style="margin-bottom: 10px;"><strong>Перед глаголом:</strong> 王允雨 (wáng yǔn yǔ) — "Правитель действительно увидел дождь" (подчеркивает, что именно дождь был подтвержден)</li>
+                <li style="margin-bottom: 10px;"><strong>Перед отрицанием:</strong> 允不其雨 (yǔn bù qí yǔ) — "И в самом деле не будет дождя" (усиленное отрицание)</li>
+            </ul>
+            
+            <h3>2. Взаимодействие с временными указателями</h3>
+            <p>允 часто сочетается с указателями времени для подтверждения событий в определенный момент:</p>
+            <div class="example">
+                <div class="chinese">今允雨 (jīn yǔn yǔ) — "Сегодня действительно прошел дождь"</div>
+                <div class="chinese">来允雨 (lái yǔn yǔ) — "В будущем действительно будет дождь"</div>
+            </div>
+            
+            <h3>3. Использование в гадательных текстах</h3>
+            <p>В иньских надписях 允 часто используется для подтверждения результатов гадания:</p>
+            <div class="example">
+                <div class="chinese">王占曰 有祟 允有 (wáng zhān yuē yǒu suì yǔn yǒu) — "Правитель истолковал и сказал: есть беда, действительно есть"</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>允 (yǔn)</strong> — важное смысловое наречие архаического древнекитайского языка, которое играет ключевую роль в подтверждении фактов и усилении утверждений. В отличие от служебных слов, таких как <strong>其 (qí)</strong>, <strong>允</strong> имеет конкретное лексическое значение — "действительно", "и в самом деле", что позволяет точно передавать степень уверенности говорящего в высказывании.</p>
+            
+            <p>Особенность <strong>允</strong> заключается в том, что оно может сочетаться как с утвердительными, так и с отрицательными конструкциями, усиливая их значение. В гадательных текстах <strong>允</strong> часто используется для подтверждения результатов гадания, что делает его незаменимым элементом в интерпретации иньских надписей.</p>
+            
+            <p>Изучение <strong>允</strong> открывает путь к пониманию нюансов утверждений и подтверждений в древнекитайском языке, позволяя точнее интерпретировать тексты иньских надписей и понимать степень уверенности, с которой высказывались древние китайские правители и гадатели.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>

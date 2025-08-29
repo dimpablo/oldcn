@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>其 (qí) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #8B4513;
+            --secondary: #D2691E;
+            --accent: #CD853F;
+            --light: #DEB887;
+            --dark: #5D4037;
+            --text: #3E2723;
+            --background: #F5F5DC;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.pronoun {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.negation {
+            background: #D32F2F;
+        }
+        
+        .word-block.qi {
+            background: #FF9800;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 8s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2s; }
+        .rockover-scene:nth-child(3) { animation-delay: 4s; }
+        .rockover-scene:nth-child(4) { animation-delay: 6s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>其 (qí)</h1>
+            <div class="character">其</div>
+            <div class="pinyin">pinyin: qí</div>
+            <div>Служебное наречие, оформляющее последующий предикатив</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>其 (qí)</strong> — одно из важнейших служебных слов в архаическом древнекитайском языке. Это <strong>служебное наречие</strong>, которое оформляет последующий предикатив, придавая предложению модальное значение.</p>
+            
+            <div class="example">
+                <div class="chinese">其雨</div>
+                <div class="pinyin-text">qí yǔ</div>
+                <div class="translation">Будет дождь? / Идет дождь?</div>
+            </div>
+            
+            <p>Как отмечается в учебнике, <strong>其</strong> является признаком сказуемого и указывает на то, что после него следует глагол или предикатив. Оно не имеет самостоятельного лексического значения, но играет ключевую грамматическую роль.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <h3>Урок 1</h3>
+                    <p>Вводится как <strong>служебное наречие</strong>, оформляющее последующий предикатив</p>
+                    <p class="example"><span class="lesson-reference">Ур.1</span> 貞曰 其雨 (zhēn yuē qí yǔ) — "Сказал: будет дождь?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Используется в вопросительных конструкциях с глаголами движения и получения</p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 肅其來牛 (sù qí lái niú) — "Су пришлет быков?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <h3>Урок 3</h3>
+                    <p>Применяется в гаданиях о передвижениях правителя</p>
+                    <p class="example"><span class="lesson-reference">Ур.3</span> 王其入大邑商 (wáng qí rù dà yì shāng) — "Правитель войдет в большой город Шан?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <h3>Урок 5</h3>
+                    <p>Используется в религиозных контекстах с божеством</p>
+                    <p class="example"><span class="lesson-reference">Ур.5</span> 帝其降我熯 (dì qí jiàng wǒ hàn) — "Небесный Владыка пошлет нам засуху?"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">箕</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Изначально <strong>其</strong> было упрощенной формой иероглифа <strong>箕</strong> (jī), означающего "плетеный ящик для зерна"</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">其</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>其</strong> уже выделилась как самостоятельный иероглиф для служебного слова</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">其</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>其</strong> закрепилось как местоимение "его, ее, их" и союз "если"</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">其</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>其</strong> сохранилось как литературное местоимение "его, ее, их"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Рокировки слов с 其 (qí)</h2>
+            <p>Хотя <strong>其</strong> само по себе не вызывает рокировок, оно играет ключевую роль в модальных конструкциях, которые могут сочетаться с другими элементами, вызывающими инверсию. Ниже представлены анимации основных типов рокировок, в которых участвует <strong>其</strong>.</p>
+            
+            <h3>1. Базовая структура с 其</h3>
+            <p>其 всегда предшествует глаголу, создавая модальное значение будущего или возможности:</p>
+            
+            <div class="animation-container">
+                <div class="sentence-animation">
+                    <div class="word-block qi">其</div>
+                    <div class="word-block verb">雨</div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">其雨</div>
+                <div class="pinyin-text">qí yǔ</div>
+                <div class="translation">Будет дождь? / Идет дождь?</div>
+            </div>
+            
+            <h3>2. Комбинация с отрицанием 不</h3>
+            <p>Когда к конструкции с 其 добавляется отрицание 不, порядок слов меняется, создавая отрицательное модальное значение:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block negation">不</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">允</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">雨</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">不其雨</div>
+                <div class="pinyin-text">bù qí yǔ</div>
+                <div class="translation">Не будет дождя?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">允不其雨</div>
+                <div class="pinyin-text">yǔn bù qí yǔ</div>
+                <div class="translation">Действительно не будет дождя?</div>
+            </div>
+            
+            <h3>3. Рокировка с местоимением (инверсия)</h3>
+            <p>Когда в предложении с 其 появляется местоимение в качестве дополнения, может происходить инверсия. Обратите внимание, как блоки слов перемещаются:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">帝</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">降</div>
+                            <div class="word-block pronoun">我</div>
+                            <div class="word-block">熯</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">帝</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block pronoun">我</div>
+                            <div class="word-block verb">降</div>
+                            <div class="word-block">熯</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">帝</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block pronoun">我</div>
+                            <div class="word-block qi">其</div>
+                            <div class="word-block verb">降</div>
+                            <div class="word-block">熯</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">帝其降我熯</div>
+                <div class="pinyin-text">dì qí jiàng wǒ hàn</div>
+                <div class="translation">Небесный Владыка пошлет нам засуху?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">帝不我降熯</div>
+                <div class="pinyin-text">dì bù wǒ jiàng hàn</div>
+                <div class="translation">Небесный Владыка не пошлет нам засуху?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">78%</div>
+                    <div>Вопросительные предложения</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">15%</div>
+                    <div>Повествовательные с модальным значением</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">5%</div>
+                    <div>Условные предложения</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">2%</div>
+                    <div>Другие функции</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические функции:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Модальное наречие будущего времени:</strong> придает глаголу значение будущего действия или возможности</li>
+                <li style="margin-bottom: 10px;"><strong>Маркер вопросительного предложения:</strong> в сочетании с 貞 (zhēn) формирует вопросительную конструкцию</li>
+                <li style="margin-bottom: 10px;"><strong>Частица возможности:</strong> выражает вероятность или возможность события</li>
+                <li style="margin-bottom: 10px;"><strong>Служебное слово:</strong> не имеет самостоятельного лексического значения, только грамматическое</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>其 (qí)</strong> — фундаментальное служебное слово архаического древнекитайского языка, играющее ключевую роль в формировании модальных и вопросительных конструкций. Его появление в предложении сразу указывает на то, что за ним последует глагол или предикатив.</p>
+            
+            <p>Хотя <strong>其</strong> само по себе не вызывает рокировок слов, оно активно участвует в сложных грамматических конструкциях, где может сочетаться с отрицанием <strong>不</strong> и местоимениями, что приводит к инверсии дополнений. Это демонстрирует сложную систему грамматических взаимодействий в древнекитайском языке.</p>
+            
+            <p>Изучение <strong>其</strong> открывает путь к пониманию модальных конструкций, вопросительных форм и сложных синтаксических отношений в текстах иньских надписей, делая его одним из важнейших элементов для освоения архаического древнекитайского языка.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>

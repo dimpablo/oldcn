@@ -1,0 +1,163 @@
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        .lesson-selector {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            flex: 1;
+        }
+        .status {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 500;
+            text-align: center;
+            background-color: #e9ecef;
+            color: #495057;
+            flex: 2;
+        }
+        .matching-container {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .item {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background-color: white;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .item:hover {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+        }
+        .item.selected {
+            border-color: #007bff;
+            background-color: #e8f4ff;
+        }
+        .item.matched {
+            border-color: #28a745;
+            background-color: #f0fff4;
+            cursor: default;
+        }
+        .character {
+            font-size: 28px;
+            text-align: center;
+        }
+        .pinyin {
+            font-size: 16px;
+            color: #6c757d;
+            text-align: center;
+        }
+        .meaning {
+            font-size: 14px;
+            color: #495057;
+            text-align: center;
+        }
+        .progress {
+            margin: 15px 0;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            background-color: #6c757d;
+            color: white;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #5a6268;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .correct-feedback {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect-feedback {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+/* Стиль для активной кнопки */
+.btn:not(:disabled) {
+    background-color: #A8E6A1 !important; /* Мягкий пастельно-зелёный */
+    color: #000 !important;
+}
+
+.btn:not(:disabled):hover {
+    background-color: #8FDAA0 !important; /* Немного насыщеннее при наведении */
+    transform: translateY(-1px);
+}
+
+/* Стиль для disabled кнопки */
+.btn:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}

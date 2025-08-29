@@ -15,6 +15,7 @@
     /* Цвета для различных типов юнитов */
     :root {
       --color-theory: #d32f2f;
+      --color-vocab: #6a5acd; /* Специальный пастельный цвет для словарного запаса (лавандово-синий) */
       --color-kanji: #311b92;
       --color-exercise: #ef6c00;
       --color-segmentation: #1565c0;
@@ -35,7 +36,7 @@
       line-height: 300px;
       border-radius: 50%;
       font-weight: bold;
-      font-size: 2em;
+      font-size: 1.5em;
       margin: 0 auto;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
       position: relative;
@@ -50,6 +51,7 @@
 
     /* Цвета для различных типов юнитов */
     .unit-theory { background-color: var(--color-theory); }
+    .unit-vocab { background-color: var(--color-vocab); }
     .unit-kanji { background-color: var(--color-kanji); }
     .unit-exercise { background-color: var(--color-exercise); }
     .unit-segmentation { background-color: var(--color-segmentation); }
@@ -92,7 +94,7 @@
       width: 100%;
       height: 100%;
       color: #e6e6fa;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       text-align: center;
       line-height: 20px;
       font-weight: bold;
@@ -231,7 +233,7 @@
         <div class="user-panel">
           <div id="login-container" class="login-container">
             <button class="btn btn-primary" id="loginWithGoogle">Войти через Google</button>
-            <button class="btn btn-primary" onclick="document.location.href='https://t.me/oldcnio'" >Связаться с разработчиком</button>
+            <button class="btn btn-primary" onclick="document.location.href='https://t.me/oldcnio  '" >Связаться с разработчиком</button>
 
           </div>
           
@@ -243,7 +245,7 @@
             </div>
             <div class="auth-buttons">
               <a href="./community.html" class="btn btn-secondary">Сообщество</a>
-              <a href="https://t.me/oldcnio" class="btn btn-secondary">Связаться с разработчиком</a>
+              <a href="https://t.me/oldcnio  " class="btn btn-secondary">Связаться с разработчиком</a>
               <button class="btn btn-logout" id="logoutBtn">Выйти</button>
             </div>
           </div>
@@ -276,6 +278,24 @@
       </td>
     </tr>
 
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson1/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <!-- Сегментация -->
     <tr>
       <td class="unit-row">
@@ -290,15 +310,6 @@
       <td class="unit-row">
         <a href="./lesson1/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-
-    <!-- Иероглифы -->
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson1/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -324,6 +335,24 @@
       <td class="unit-row">
         <a href="./lesson2/theory.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-theory">📚 Теория</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson2/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson2/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -364,15 +393,6 @@
       </td>
     </tr>
 
-    <!-- Иероглифы -->
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson2/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
-        </a>
-      </td>
-    </tr>
-
     <!-- Задания -->
     <tr>
       <td class="unit-row">
@@ -396,6 +416,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson3/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson3/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson3/quiz.html" style="display: block; text-decoration: none;">
@@ -407,13 +446,6 @@
       <td class="unit-row">
         <a href="./lesson3/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson3/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -438,6 +470,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson4/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson4/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson4/quiz.html" style="display: block; text-decoration: none;">
@@ -449,13 +500,6 @@
       <td class="unit-row">
         <a href="./lesson4/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson4/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -480,6 +524,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson5/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson5/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson5/quiz.html" style="display: block; text-decoration: none;">
@@ -491,13 +554,6 @@
       <td class="unit-row">
         <a href="./lesson5/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson5/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -522,6 +578,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson6/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson6/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson6/quiz.html" style="display: block; text-decoration: none;">
@@ -533,13 +608,6 @@
       <td class="unit-row">
         <a href="./lesson6/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson6/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -564,6 +632,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson7/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson7/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson7/quiz.html" style="display: block; text-decoration: none;">
@@ -575,13 +662,6 @@
       <td class="unit-row">
         <a href="./lesson7/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson7/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -606,6 +686,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson8/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson8/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson8/quiz.html" style="display: block; text-decoration: none;">
@@ -617,13 +716,6 @@
       <td class="unit-row">
         <a href="./lesson8/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson8/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -648,6 +740,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson9/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson9/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson9/quiz.html" style="display: block; text-decoration: none;">
@@ -659,13 +770,6 @@
       <td class="unit-row">
         <a href="./lesson9/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson9/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -690,6 +794,25 @@
         </a>
       </td>
     </tr>
+
+    <!-- Словарный запас -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson10/vocab.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-vocab">🔠 Словарный запас</div>
+        </a>
+      </td>
+    </tr>
+
+    <!-- Иероглифы -->
+    <tr>
+      <td class="unit-row">
+        <a href="./lesson10/hanzi.html" style="display: block; text-decoration: none;">
+          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
+        </a>
+      </td>
+    </tr>
+
     <tr>
       <td class="unit-row">
         <a href="./lesson10/quiz.html" style="display: block; text-decoration: none;">
@@ -701,13 +824,6 @@
       <td class="unit-row">
         <a href="./lesson10/translateall.html" style="display: block; text-decoration: none;">
           <div class="unit-circle unit-translation">🗣️ Перевод</div>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td class="unit-row">
-        <a href="./lesson10/hanzi.html" style="display: block; text-decoration: none;">
-          <div class="unit-circle unit-kanji">🪶 Иероглифы</div>
         </a>
       </td>
     </tr>
@@ -740,9 +856,9 @@
   <!-- Firebase SDK -->
 <script type="module">
   // Импорт Firebase
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-  import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  ';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  ';
+  import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ';
 
   // Конфиг
   const firebaseConfig = {
@@ -835,7 +951,7 @@
     // Обновить UI
     userName.textContent = user.displayName || 'Пользователь';
     userEmail.textContent = user.email;
-    userPhoto.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
+    userPhoto.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg  ';
 
     userPointsEl.textContent = data.points || 0;
     userFriendsEl.textContent = (data.friends ? data.friends.length : 0);

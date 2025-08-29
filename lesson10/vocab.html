@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квиз по китайским иероглифам</title>
+    <script src="../dictionary.js"></script>
+    <link rel="stylesheet" type="text/css" href="../vocab.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Сопоставление иероглифов</h1>
+        
+        <div class="controls">
+            <div id="status" class="status">Сопоставьте иероглифы</div>
+        </div>
+        
+        <div class="matching-container">
+            <div class="column" id="leftColumn"></div>
+            <div class="column" id="rightColumn"></div>
+        </div>
+        
+        <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        
+        <button id="nextBtn" class="btn">Следующее задание</button>
+        
+        <div class="feedback correct-feedback" id="correctFeedback">✓ Верно! +1 балл</div>
+        <div class="feedback incorrect-feedback" id="incorrectFeedback">✗ Неверно -1 балл</div>
+    </div>
+
+    <script>
+        // === НАСТРОЙКА УРОКА ===
+        const LESSON = 10;
+        
+        // === FIREBASE INIT ===
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let updateDocRef = null;
+        let docRef = null;
+
+        async function initFirebase() {
+            try {
+                const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc }] = await Promise.all([
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js'),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js')
+                ]);
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+                    authDomain: "antient-9bff0.firebaseapp.com",
+                    projectId: "antient-9bff0",
+                    storageBucket: "antient-9bff0.firebasestorage.app",
+                    messagingSenderId: "311792589414",
+                    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+                    measurementId: "G-W4ZQXWRTKK"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                updateDocRef = updateDoc;
+                docRef = doc;
+
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    console.log('🔐 Пользователь:', user ? user.displayName : 'не авторизован');
+                });
+            } catch (e) {
+                console.error("❌ Ошибка инициализации Firebase:", e);
+            }
+        }
+
+        // === ОЗВУЧКА ===
+        function playHanziSound(hanzi) {
+            const data = charData[hanzi];
+            if (!data || !data.pinyin) return;
+
+            let cleanPinyin = data.pinyin
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ü/g, 'u')
+                .replace(/v/g, 'u');
+
+            let tone = '1';
+            if (data.pinyin.includes('ā')) tone = '1';
+            else if (data.pinyin.includes('á')) tone = '2';
+            else if (data.pinyin.includes('ǎ')) tone = '3';
+            else if (data.pinyin.includes('à')) tone = '4';
+
+            const pinyinKey = cleanPinyin + tone;
+            const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+            const audio = new Audio(url);
+
+            audio.play().catch(e => {
+                console.warn(`🔇 Нет звука для ${hanzi}`);
+            });
+        }
+
+        // === СИСТЕМА БАЛЛОВ ===
+        async function updateUserPoints(pointsChange) {
+            if (!db || !currentUser || !updateDocRef || !docRef) {
+                console.warn("Firebase не инициализирован, баллы не сохранены");
+                return;
+            }
+
+            try {
+                const userRef = docRef(db, 'users', currentUser.uid);
+                await updateDocRef(userRef, {
+                    points: (currentUser.points || 0) + pointsChange
+                });
+                
+                if (currentUser.points === undefined) currentUser.points = 0;
+                currentUser.points += pointsChange;
+                console.log(`[Баллы] Изменение: ${pointsChange}. Теперь: ${currentUser.points}`);
+            } catch (e) {
+                console.error("❌ Не удалось сохранить баллы в Firestore:", e);
+            }
+        }
+
+        // === ОСНОВНАЯ ЛОГИКА КВИЗА ===
+        let selectedLeft = null;
+        let selectedRight = null;
+        let matchedPairs = 0;
+        let totalPairs = 0;
+        let leftItems = [];
+        let rightItems = [];
+        let allLessonChars = [];
+        
+        // Отслеживаем прогресс по каждому иероглифу
+        let charProgress = {};
+        let currentTaskType = ''; // 'pinyin' или 'meaning'
+        let currentChars = [];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initFirebase();
+            
+            // Получаем все иероглифы урока
+            allLessonChars = Object.keys(charData).filter(char => 
+                charData[char].lesson === LESSON
+            );
+            
+            totalPairs = allLessonChars.length * 2; // Каждый иероглиф проверяется дважды
+            
+            // Инициализируем прогресс для каждого иероглифа
+            allLessonChars.forEach(char => {
+                charProgress[char] = {
+                    pinyin: false,
+                    meaning: false
+                };
+            });
+            
+            loadTask();
+            
+            document.getElementById('nextBtn').addEventListener('click', loadTask);
+        });
+        
+        // Загрузка задания
+        function loadTask() {
+            selectedLeft = null;
+            selectedRight = null;
+            matchedPairs = 0;
+            
+            // Определяем доступные типы заданий
+            const remainingPinyin = allLessonChars.filter(char => !charProgress[char].pinyin);
+            const remainingMeaning = allLessonChars.filter(char => !charProgress[char].meaning);
+            
+            if (remainingPinyin.length === 0 && remainingMeaning.length === 0) {
+                // Все иероглифы полностью изучены
+                document.getElementById('status').textContent = 'Все иероглифы урока полностью изучены!';
+                document.getElementById('leftColumn').innerHTML = '';
+                document.getElementById('rightColumn').innerHTML = '';
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+            
+            // СЛУЧАЙНЫЙ ВЫБОР типа задания
+            const availableTypes = [];
+            if (remainingPinyin.length > 0) availableTypes.push('pinyin');
+            if (remainingMeaning.length > 0) availableTypes.push('meaning');
+            
+            // Случайно выбираем тип задания из доступных
+            const randomTypeIndex = Math.floor(Math.random() * availableTypes.length);
+            currentTaskType = availableTypes[randomTypeIndex];
+            
+            const remainingChars = currentTaskType === 'pinyin' ? remainingPinyin : remainingMeaning;
+            
+            // Берем 5 случайных из оставшихся (или меньше, если осталось меньше 5)
+            const count = Math.min(5, remainingChars.length);
+            currentChars = getRandomCharacters(remainingChars, count);
+            
+            createColumns(currentChars);
+            updateProgress();
+            updateStatus();
+            
+
+        }
+        
+        // Получение случайных иероглифов
+        function getRandomCharacters(charArray, count) {
+            const selectedChars = [];
+            const tempArray = [...charArray];
+            
+            for (let i = 0; i < count; i++) {
+                const randomIndex = Math.floor(Math.random() * tempArray.length);
+                const char = tempArray[randomIndex];
+                selectedChars.push({
+                    char: char,
+                    pinyin: charData[char].pinyin,
+                    meaning: charData[char].meaning
+                });
+                tempArray.splice(randomIndex, 1);
+            }
+            
+            return selectedChars;
+        }
+        
+        // Создание колонок
+        function createColumns(chars) {
+            const leftColumn = document.getElementById('leftColumn');
+            const rightColumn = document.getElementById('rightColumn');
+            
+            leftColumn.innerHTML = '';
+            rightColumn.innerHTML = '';
+            
+            // Обновляем заголовок статуса в зависимости от типа задания
+            const statusText = currentTaskType === 'pinyin' ? 
+                'Сопоставьте иероглифы с транскрипцией' : 
+                'Сопоставьте иероглифы со значениями';
+            document.getElementById('status').textContent = statusText;
+            
+            // Левая колонка - иероглифы
+            leftItems = [];
+            chars.forEach(charData => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `<div class="character">${charData.char}</div>`;
+                item.dataset.char = charData.char;
+                item.dataset.matched = 'false';
+                item.addEventListener('click', () => {
+                    selectItem(item, 'left');
+                    playHanziSound(charData.char);
+                });
+                leftColumn.appendChild(item);
+                leftItems.push(item);
+            });
+            
+            // Правая колонка - только один тип (либо pinyin, либо meaning)
+            rightItems = [];
+            const shuffledChars = [...chars].sort(() => Math.random() - 0.5);
+            
+            shuffledChars.forEach(charData => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                
+                if (currentTaskType === 'pinyin') {
+                    item.innerHTML = `<div class="pinyin">${charData.pinyin}</div>`;
+                    item.dataset.pinyin = charData.pinyin;
+                    item.dataset.type = 'pinyin';
+                } else {
+                    item.innerHTML = `<div class="meaning">${charData.meaning}</div>`;
+                    item.dataset.meaning = charData.meaning;
+                    item.dataset.type = 'meaning';
+                }
+                
+                item.dataset.char = charData.char;
+                item.dataset.matched = 'false';
+                item.addEventListener('click', () => selectItem(item, 'right'));
+                rightColumn.appendChild(item);
+                rightItems.push(item);
+            });
+        }
+        
+        // Выбор элемента
+        function selectItem(item, column) {
+            if (item.dataset.matched === 'true') return;
+            
+            if (column === 'left') {
+                if (selectedLeft) {
+                    selectedLeft.classList.remove('selected');
+                }
+                selectedLeft = item;
+                item.classList.add('selected');
+                
+                if (selectedRight) {
+                    checkMatch();
+                }
+            } else {
+                if (selectedRight) {
+                    selectedRight.classList.remove('selected');
+                }
+                selectedRight = item;
+                item.classList.add('selected');
+                
+                if (selectedLeft) {
+                    checkMatch();
+                }
+            }
+        }
+        
+        // Проверка соответствия
+        function checkMatch() {
+            const leftChar = selectedLeft.dataset.char;
+            let isMatch = false;
+            
+            if (currentTaskType === 'pinyin') {
+                isMatch = (charData[leftChar].pinyin === selectedRight.dataset.pinyin);
+            } else {
+                isMatch = (charData[leftChar].meaning === selectedRight.dataset.meaning);
+            }
+            
+            if (isMatch) {
+                showFeedback(true);
+                updateUserPoints(1); // +1 балл за правильный ответ
+                
+                selectedLeft.dataset.matched = 'true';
+                selectedRight.dataset.matched = 'true';
+                selectedLeft.classList.remove('selected');
+                selectedLeft.classList.add('matched');
+                selectedRight.classList.remove('selected');
+                selectedRight.classList.add('matched');
+                
+                matchedPairs++;
+                
+                // Если все пары в текущем задании сопоставлены
+                if (matchedPairs === leftItems.length) {
+                    // Отмечаем иероглифы как пройденные для текущего типа задания
+                    leftItems.forEach(item => {
+                        charProgress[item.dataset.char][currentTaskType] = true;
+                    });
+                    
+                    // Обновляем прогресс
+                    updateProgress();
+                    
+                    // Разблокируем кнопку для следующего задания
+                    document.getElementById('nextBtn').disabled = false;
+                }
+            } else {
+                showFeedback(false);
+                updateUserPoints(-1); // -1 балл за ошибку
+                
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+            }
+            
+            selectedLeft = null;
+            selectedRight = null;
+        }
+        
+        // Отображение обратной связи
+        function showFeedback(isCorrect) {
+            const feedbackElement = isCorrect ? 
+                document.getElementById('correctFeedback') : 
+                document.getElementById('incorrectFeedback');
+            
+            feedbackElement.style.opacity = '1';
+            
+            setTimeout(() => {
+                feedbackElement.style.opacity = '0';
+            }, 1500);
+        }
+        
+        // Обновление прогресса по всему уроку
+        function updateProgress() {
+            // Считаем общее количество пройденных проверок (pinyin + meaning)
+            let completedChecks = 0;
+            allLessonChars.forEach(char => {
+                if (charProgress[char].pinyin) completedChecks++;
+                if (charProgress[char].meaning) completedChecks++;
+            });
+            
+            const progress = (completedChecks / totalPairs) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        // Обновление статуса
+        function updateStatus() {
+            // Блокируем кнопку до завершения задания
+            document.getElementById('nextBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>
