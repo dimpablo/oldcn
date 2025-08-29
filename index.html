@@ -4,225 +4,252 @@
   <meta charset="UTF-8" />
   <title>Курс древнекитайского</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
-      font-family: Verdana, sans-serif;
-    }
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
+    font-family: Verdana, sans-serif;
+    min-height: 100vh;
+    overscroll-behavior: none; /* Отключает эффект "резиновой" прокрутки на iOS */
+  }
 
-    /* Цвета для различных типов юнитов */
-    :root {
-      --color-theory: #d32f2f;
-      --color-vocab: #6a5acd; /* Специальный пастельный цвет для словарного запаса (лавандово-синий) */
-      --color-kanji: #311b92;
-      --color-exercise: #ef6c00;
-      --color-segmentation: #1565c0;
-      --color-translation: #689f38;
-      --color-syntax: #8e24aa;
-      --color-puzzle: #f57c00;
-      --color-community: #00897b;
-    }
+  /* Цвета для различных типов юнитов */
+  :root {
+    --color-theory: #d32f2f;
+    --color-vocab: #6a5acd;
+    --color-kanji: #311b92;
+    --color-exercise: #ef6c00;
+    --color-segmentation: #1565c0;
+    --color-translation: #689f38;
+    --color-syntax: #8e24aa;
+    --color-puzzle: #f57c00;
+    --color-community: #00897b;
+  }
 
-    /* КРУЖОК дефолт 150x150 */
+  /* КРУЖОК дефолт 150x150 */
+  .unit-circle {
+    display: block;
+    width: 300px;
+    height: 300px;
+    color: #e6e6fa;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    text-align: center;
+    line-height: 300px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin: 0 auto;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .unit-circle:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+  }
+
+  /* Цвета для различных типов юнитов */
+  .unit-theory { background-color: var(--color-theory); }
+  .unit-vocab { background-color: var(--color-vocab); }
+  .unit-kanji { background-color: var(--color-kanji); }
+  .unit-exercise { background-color: var(--color-exercise); }
+  .unit-segmentation { background-color: var(--color-segmentation); }
+  .unit-translation { background-color: var(--color-translation); }
+  .unit-syntax { background-color: var(--color-syntax); }
+  .unit-puzzle { background-color: var(--color-puzzle); }
+
+  /* Ячейка для кружков — высокая */
+  .unit-row {
+    height: 180px;
+    background-color: transparent;
+    border-bottom: hidden;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  /* Ячейка для текстов — вдвое короче и с радостным цветом */
+  .label-row {
+    height: 30px;
+    border-bottom: hidden;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 10px 20px;
+    /* Добавлено: фиксация при прокрутке */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    pointer-events: none; /* Чтобы не мешал кликам */
+  }
+
+  .label-row * {
+    pointer-events: auto; /* Разрешаем клики по содержимому */
+  }
+
+  /* Прямоугольник на всю ячейку */
+  .unit-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #e6e6fa;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    background-color: transparent;
+    border-radius: 0;
+    z-index: 1;
+  }
+
+  /* Таблица — без границ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Убедимся, что таблица не обрезает sticky */
+    overflow: visible;
+  }
+
+  /* Панель пользователя */
+  .user-panel {
+    height: 100px;
+    border-bottom: hidden;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);
+    border-radius: 16px;
+    margin: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    /* Добавлено: фиксация панели */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 15px;
+  }
+
+  .user-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 15px;
+    color: white;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-weight: bold;
+    margin: 5px 0;
+  }
+
+  .user-email {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.6em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #4285F4;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #3367D6;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background-color: #00897b;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #00695C;
+    transform: translateY(-2px);
+  }
+
+  .btn-logout {
+    background-color: #d32f2f;
+    color: white;
+  }
+
+  .btn-logout:hover {
+    background-color: #c62828;
+    transform: translateY(-2px);
+  }
+
+  .auth-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Скрытие элементов по умолчанию */
+  #user-info,
+  #logoutBtn {
+    display: none;
+  }
+
+  /* Улучшение восприятия на тач-устройствах */
+  @media (hover: none) and (pointer: coarse) {
     .unit-circle {
-      display: block;
-      width: 300px;
-      height: 300px;
-      color: #e6e6fa;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      text-align: center;
-      line-height: 300px;
-      border-radius: 50%;
-      font-weight: bold;
-      font-size: 1.5em;
-      margin: 0 auto;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 2;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.2s ease;
     }
-
     .unit-circle:hover {
-      transform: scale(1.05) translateY(-5px);
-      box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+      transform: scale(1.05);
     }
-
-    /* Цвета для различных типов юнитов */
-    .unit-theory { background-color: var(--color-theory); }
-    .unit-vocab { background-color: var(--color-vocab); }
-    .unit-kanji { background-color: var(--color-kanji); }
-    .unit-exercise { background-color: var(--color-exercise); }
-    .unit-segmentation { background-color: var(--color-segmentation); }
-    .unit-translation { background-color: var(--color-translation); }
-    .unit-syntax { background-color: var(--color-syntax); }
-    .unit-puzzle { background-color: var(--color-puzzle); }
-
-    /* Ячейка для кружков — высокая */
-    .unit-row {
-      height: 180px;
-      background-color: transparent;
-      border-bottom: hidden;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-
-    /* Ячейка для текстов — вдвое короче и с радостным цветом */
-    .label-row {
-      height: 30px;
-      border-bottom: hidden;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 18px;
-      font-weight: 500;
-      margin: 10px 20px;
-    }
-
-    /* Прямоугольник на всю ячейку */
-    .unit-label {
-      display: block;
-      width: 100%;
-      height: 100%;
-      color: #e6e6fa;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      text-align: center;
-      line-height: 20px;
-      font-weight: bold;
-      font-size: 18px;
-      background-color: transparent;
-      border-radius: 0;
-      z-index: 1;
-    }
-
-    /* Таблица — без границ */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    /* Панель пользователя */
-    .user-panel {
-      height: 100px;
-      border-bottom: hidden;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-      background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);
-      border-radius: 16px;
-      margin: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      padding: 20px;
-    }
-
-    .login-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      gap: 15px;
-    }
-
-    .user-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      gap: 15px;
-      color: white;
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .user-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 3px solid white;
-      object-fit: cover;
-    }
-
-    .user-name {
-      font-weight: bold;
-      margin: 5px 0;
-    }
-
-    .user-email {
-      font-size: 14px;
-      opacity: 0.8;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background-color: #4285F4;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: #3367D6;
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background-color: #00897b;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #00695C;
-      transform: translateY(-2px);
-    }
-
-    .btn-logout {
-      background-color: #d32f2f;
-      color: white;
-    }
-
-    .btn-logout:hover {
-      background-color: #c62828;
-      transform: translateY(-2px);
-    }
-
-    .auth-buttons {
-      display: flex;
-      gap: 10px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* Скрытие элементов по умолчанию */
-    #user-info,
-    #logoutBtn {
-      display: none;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <!-- Основная таблица -->
