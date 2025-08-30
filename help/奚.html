@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奚 (xī) - Древнекитайская грамматика</title>
+    <style>
+        :root {
+            --primary: #004D40;
+            --secondary: #00695C;
+            --accent: #00897B;
+            --light: #B2DFDB;
+            --dark: #00251A;
+            --text: #212121;
+            --background: #E0F7FA;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .character {
+            font-size: 6rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .pinyin {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.6rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .example {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .pinyin-text {
+            font-style: italic;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .translation {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--accent);
+        }
+        
+        .sentence-animation {
+            display: flex;
+            gap: 10px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .word-block {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .word-block.subject {
+            background: #1976D2;
+        }
+        
+        .word-block.verb {
+            background: #388E3C;
+        }
+        
+        .word-block.question {
+            background: #D32F2F;
+            animation: pulse 2s infinite;
+        }
+        
+        .word-block.object {
+            background: #FF9800;
+        }
+        
+        .word-block.time {
+            background: #FF5722;
+        }
+        
+        .word-block.negation {
+            background: #5D4037;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .timeline-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            line-height: 50px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .etymology {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .etymology-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .ancient-character {
+            font-size: 3rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lesson-reference {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0 5px;
+        }
+        
+        .rockover-animation {
+            position: relative;
+            height: 100px;
+            margin: 40px 0;
+        }
+        
+        .rockover-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeInOut 10s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            5%, 25% { opacity: 1; }
+            30%, 95% { opacity: 0; }
+        }
+        
+        .rockover-scene:nth-child(1) { animation-delay: 0s; }
+        .rockover-scene:nth-child(2) { animation-delay: 2.5s; }
+        .rockover-scene:nth-child(3) { animation-delay: 5s; }
+        .rockover-scene:nth-child(4) { animation-delay: 7.5s; }
+        
+        .usage-statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .comparison-table {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--dark);
+            margin-top: 40px;
+            border-top: 1px solid var(--light);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .character {
+                font-size: 4rem;
+            }
+            
+            .chinese {
+                font-size: 1.4rem;
+            }
+            
+            .word-block {
+                font-size: 1.2rem;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>奚 (xī)</h1>
+            <div class="character">奚</div>
+            <div class="pinyin">pinyin: xī</div>
+            <div>Вопросительное местоимение для обозначения субъекта действия</div>
+        </header>
+        
+        <div class="card">
+            <h2>Основное значение и функция</h2>
+            <p><strong>奚 (xī)</strong> — вопросительное местоимение в архаическом древнекитайском языке, используемое <strong>для вопросов о субъекте действия</strong>. Это местоимение соответствует русским вопросительным местоимениям <strong>"кто?"</strong> или <strong>"что?"</strong>, когда речь идет о субъекте действия.</p>
+            
+            <div class="example">
+                <div class="chinese">奚來牛</div>
+                <div class="pinyin-text">xī lái niú</div>
+                <div class="translation">Кто/что привезет коров?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚來白馬</div>
+                <div class="pinyin-text">xī lái bái mǎ</div>
+                <div class="translation">Кто/что привезет белую лошадь?</div>
+            </div>
+            
+            <p>В отличие от других вопросительных местоимений, <strong>奚 (xī)</strong> используется <strong>только для вопросов о субъекте действия</strong>, то есть о том, кто или что совершает действие. Если вопрос касается дополнения (кого? что?), то используются другие вопросительные слова, например, <strong>何 (hé)</strong>.</p>
+            
+            <p>Важно отметить, что <strong>奚</strong> часто используется в сочетании с частицей <strong>其 (qí)</strong>, которая указывает на будущее или возможность:</p>
+            <div class="example">
+                <div class="chinese">奚不其來牛</div>
+                <div class="pinyin-text">xī bù qí lái niú</div>
+                <div class="translation">Кто/что не привезет коров?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Эволюция использования в уроках</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Вводится как <strong>вопросительное местоимение</strong></p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 奚來牛 (xī lái niú) — "Кто/что привезет коров?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <h3>Урок 2</h3>
+                    <p>Изучается в сочетании с частицей 其</p>
+                    <p class="example"><span class="lesson-reference">Ур.2</span> 奚不其來牛 (xī bù qí lái niú) — "Кто/что не привезет коров?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">9</div>
+                    <h3>Урок 9</h3>
+                    <p>Исследуется в эмфатических конструкциях</p>
+                    <p class="example"><span class="lesson-reference">Ур.9</span> 壬射奚弗畢 (rén shè xī fú bì) — "Кто не завершит стрельбу в день жэнь?"</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-number">-</div>
+                    <h3>Поздние тексты</h3>
+                    <p>Постепенно заменяется другими вопросительными местоимениями</p>
+                    <p class="example">В более поздних текстах 奚 теряет свою функцию вопросительного местоимения</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Этимология и развитие формы</h2>
+            
+            <div class="etymology">
+                <div class="etymology-item">
+                    <div class="ancient-character">奚</div>
+                    <h3>Оригинальная форма</h3>
+                    <p>Иероглиф <strong>奚</strong> изображает человека с веревкой, символизируя вопрос о происхождении или источнике действия</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">奚</div>
+                    <h3>Архаическая форма</h3>
+                    <p>В бронзовых надписях форма <strong>奚</strong> уже выделилась как вопросительное местоимение</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">奚</div>
+                    <h3>Классическая форма</h3>
+                    <p>В классическом древнекитайском <strong>奚</strong> начинает терять свою функцию вопросительного местоимения</p>
+                </div>
+                
+                <div class="etymology-item">
+                    <div class="ancient-character">奚</div>
+                    <h3>Современная форма</h3>
+                    <p>В современном китайском <strong>奚</strong> сохранилось как фамильный иероглиф, но не как вопросительное местоимение</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические конструкции с 奚 (xī)</h2>
+            <p><strong>奚 (xī)</strong> используется для вопросов о субъекте действия. Ниже представлены основные типы конструкций с <strong>奚</strong>.</p>
+            
+            <h3>1. Базовый вопрос о субъекте</h3>
+            <p>Когда <strong>奚</strong> используется для вопроса о субъекте действия:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block question">奚</div>
+                            <div class="word-block verb">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">來牛</div>
+                <div class="pinyin-text">lái niú</div>
+                <div class="translation">Привезут коров</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚來牛</div>
+                <div class="pinyin-text">xī lái niú</div>
+                <div class="translation">Кто/что привезет коров?</div>
+            </div>
+            
+            <h3>2. Вопрос с частицей 其 (qí)</h3>
+            <p>Когда <strong>奚</strong> используется с частицей <strong>其</strong>, которая указывает на будущее или возможность:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block question">奚</div>
+                            <div class="word-block verb">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block question">奚</div>
+                            <div class="word-block">其</div>
+                            <div class="word-block verb">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚來牛</div>
+                <div class="pinyin-text">xī lái niú</div>
+                <div class="translation">Кто/что привезет коров?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚其來牛</div>
+                <div class="pinyin-text">xī qí lái niú</div>
+                <div class="translation">Кто/что привезет коров? (в будущем)</div>
+            </div>
+            
+            <h3>3. Отрицательный вопрос</h3>
+            <p>Когда <strong>奚</strong> используется в отрицательном вопросе:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block question">奚</div>
+                            <div class="word-block verb">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block question">奚</div>
+                            <div class="word-block negation">不</div>
+                            <div class="word-block">其</div>
+                            <div class="word-block verb">來</div>
+                            <div class="word-block object">牛</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚來牛</div>
+                <div class="pinyin-text">xī lái niú</div>
+                <div class="translation">Кто/что привезет коров?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">奚不其來牛</div>
+                <div class="pinyin-text">xī bù qí lái niú</div>
+                <div class="translation">Кто/что не привезет коров?</div>
+            </div>
+            
+            <h3>4. Эмфатические конструкции</h3>
+            <p>Когда <strong>奚</strong> используется в эмфатических конструкциях:</p>
+            
+            <div class="rockover-animation">
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block time">壬</div>
+                            <div class="word-block verb">射</div>
+                            <div class="word-block question">奚</div>
+                            <div class="word-block negation">弗</div>
+                            <div class="word-block verb">畢</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rockover-scene">
+                    <div class="animation-container">
+                        <div class="sentence-animation">
+                            <div class="word-block time">壬</div>
+                            <div class="word-block verb">射</div>
+                            <div class="word-block emphasis">唯</div>
+                            <div class="word-block question">奚</div>
+                            <div class="word-block negation">弗</div>
+                            <div class="word-block verb">畢</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">壬射奚弗畢</div>
+                <div class="pinyin-text">rén shè xī fú bì</div>
+                <div class="translation">Кто не завершит стрельбу в день жэнь?</div>
+            </div>
+            
+            <div class="example">
+                <div class="chinese">壬射唯奚弗畢</div>
+                <div class="pinyin-text">rén shè wéi xī fú bì</div>
+                <div class="translation">Именно кто не завершит стрельбу в день жэнь?</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Грамматические функции и особенности</h2>
+            
+            <div class="usage-statistics">
+                <div class="stat-item">
+                    <div class="stat-number">70%</div>
+                    <div>Вопрос о субъекте действия</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">20%</div>
+                    <div>Вопрос в отрицательной конструкции</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">8%</div>
+                    <div>В эмфатических конструкциях</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">2%</div>
+                    <div>Другие функции</div>
+                </div>
+            </div>
+            
+            <h3>Основные грамматические особенности:</h3>
+            <ul style="margin: 20px 0 20px 40px;">
+                <li style="margin-bottom: 10px;"><strong>Специфическое употребление:</strong> <strong>奚</strong> используется <strong>только для вопросов о субъекте действия</strong></li>
+                <li style="margin-bottom: 10px;"><strong>Позиция в предложении:</strong> <strong>奚</strong> всегда стоит в позиции субъекта (перед сказуемым)</li>
+                <li style="margin-bottom: 10px;"><strong>Сочетание с частицей 其:</strong> часто используется с <strong>其</strong> для указания на будущее или возможность</li>
+                <li style="margin-bottom: 10px;"><strong>Отрицание:</strong> в отрицательных вопросах сочетается с <strong>不</strong> или <strong>弗</strong></li>
+            </ul>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">Правильно</div>
+                    <div class="example">
+                        <div class="chinese">奚來牛</div>
+                        <div class="pinyin-text">xī lái niú</div>
+                        <div class="translation">Кто/что привезет коров?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">奚不其來牛</div>
+                        <div class="pinyin-text">xī bù qí lái niú</div>
+                        <div class="translation">Кто/что не привезет коров?</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Неправильно</div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">來奚牛</div>
+                        <div class="pinyin-text">lái xī niú</div>
+                        <div class="translation" style="color: #d32f2f;">"Привезут кто коров" — грамматическая ошибка!</div>
+                    </div>
+                    <div class="example" style="background: #ffebee; border-left: 4px solid #f44336;">
+                        <div class="chinese">牛奚來</div>
+                        <div class="pinyin-text">niú xī lái</div>
+                        <div class="translation" style="color: #d32f2f;">"Коровы кто привезут" — грамматическая ошибка!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Сравнение с другими вопросительными местоимениями</h2>
+            <p>В архаическом древнекитайском языке существует несколько вопросительных местоимений, каждое из которых имеет свою область применения:</p>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">奚 (xī)</div>
+                    <div class="example">
+                        <div class="chinese">奚來牛</div>
+                        <div class="pinyin-text">xī lái niú</div>
+                        <div class="translation">Кто/что привезет коров?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">奚其來牛</div>
+                        <div class="pinyin-text">xī qí lái niú</div>
+                        <div class="translation">Кто/что привезет коров? (в будущем)</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Вопросительное местоимение для субъекта</li>
+                        <li style="margin-bottom: 10px;">Всегда стоит перед сказуемым</li>
+                        <li style="margin-bottom: 10px;">Часто используется с частицей 其</li>
+                        <li style="margin-bottom: 10px;">Специфично для вопросов о субъекте</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">何 (hé)</div>
+                    <div class="example">
+                        <div class="chinese">何來</div>
+                        <div class="pinyin-text">hé lái</div>
+                        <div class="translation">Что привезут?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">何其來</div>
+                        <div class="pinyin-text">hé qí lái</div>
+                        <div class="translation">Что привезут? (в будущем)</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Вопросительное местоимение для дополнения</li>
+                        <li style="margin-bottom: 10px;">Может стоять в позиции дополнения</li>
+                        <li style="margin-bottom: 10px;">Более универсальное местоимение</li>
+                        <li style="margin-bottom: 10px;">Может использоваться для разных вопросов</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="comparison-table">
+                <div class="comparison-item">
+                    <div class="comparison-title">谁 (shuí)</div>
+                    <div class="example">
+                        <div class="chinese">谁来</div>
+                        <div class="pinyin-text">shuí lái</div>
+                        <div class="translation">Кто придет?</div>
+                    </div>
+                    <ul style="margin: 20px 0 20px 20px;">
+                        <li style="margin-bottom: 10px;">Вопросительное местоимение "кто"</li>
+                        <li style="margin-bottom: 10px;">Появляется позже, чем 奚</li>
+                        <li style="margin-bottom: 10px;">Более узкая функция (только "кто")</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-item">
+                    <div class="comparison-title">Общая структура</div>
+                    <div class="example">
+                        <div class="chinese">奚來牛</div>
+                        <div class="pinyin-text">xī lái niú</div>
+                        <div class="translation">Кто/что привезет коров?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">何來牛</div>
+                        <div class="pinyin-text">hé lái niú</div>
+                        <div class="translation">Что привезут коров?</div>
+                    </div>
+                    <div class="example">
+                        <div class="chinese">谁来</div>
+                        <div class="pinyin-text">shuí lái</div>
+                        <div class="translation">Кто придет?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Заключение</h2>
+            <p><strong>奚 (xī)</strong> — уникальное вопросительное местоимение архаического древнекитайского языка, предназначенное <strong>исключительно для вопросов о субъекте действия</strong>. Его появление в предложении сразу указывает на вопрос о том, кто или что совершает действие.</p>
+            
+            <p>Ключевая особенность <strong>奚</strong> заключается в его <strong>специфической функции</strong> — он используется только для вопросов о субъекте действия. В отличие от универсальных вопросительных местоимений, таких как <strong>何 (hé)</strong>, <strong>奚</strong> не может использоваться для вопросов о дополнении или других членах предложения.</p>
+            
+            <p>Важно отметить, что <strong>奚</strong> <strong>всегда стоит в позиции субъекта</strong>, то есть перед сказуемым. Это делает его легко узнаваемым в текстах. Кроме того, он часто сочетается с частицей <strong>其 (qí)</strong>, которая указывает на будущее или возможность, создавая конструкции типа <strong>奚其來牛 (xī qí lái niú)</strong> "Кто/что привезет коров? (в будущем)".</p>
+            
+            <p>Изучение <strong>奚</strong> важно для понимания структуры вопросительных предложений в древнекитайских текстах, особенно в контексте выражения вопросов о субъекте действия. Хотя эта форма встречается не так часто, как другие грамматические элементы, ее знание необходимо для точного понимания и перевода древних текстов.</p>
+            
+            <p>В современном китайском языке <strong>奚</strong> потерял свою функцию вопросительного местоимения и сохранился лишь как фамильный иероглиф, что делает изучение его древней формы особенно важным именно в контексте древних текстов.</p>
+        </div>
+        
+        <footer>
+            <p>Интерактивное руководство по архаическому древнекитайскому языку</p>
+            <p>На основе учебника В.А. Крюкова и Шуин</p>
+        </footer>
+    </div>
+</body>
+</html>
