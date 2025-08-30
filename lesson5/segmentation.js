@@ -28,93 +28,39 @@ const SentenceData = {
     },
     {
       "number": 5,
-      "original": "甲辰卜爭貞我伐馬方",
-      "transliteration": "jiǎ chén bǔ zhēng zhēn wǒ fá mǎ fāng",
-      "translation": "В день цзя-чэнь гадатель Чжэн задал вопрос: «Мы пойдем походом на племя Ма-фан?»"
+      "original": "甲辰卜爭貞我伐馬方帝受我佑",
+      "transliteration": "jiǎ chén bǔ zhēng zhēn wǒ fá mǎ fāng dì shòu wǒ yòu",
+      "translation": "В день цзя-чэнь гадатель Чжэн задал вопрос: «Мы пойдем походом на племя Ма-фан? Ниспошлет ли нам Верховное божество свою помощь?»"
     },
     {
       "number": 6,
-      "original": "帝受我佑",
-      "transliteration": "dì shòu wǒ yòu",
-      "translation": "Ниспошлет ли нам Верховное божество свою помощь?"
+      "original": "貞勿伐工方帝不我其受佑",
+      "transliteration": "zhēn wù fá gōng fāng dì bù wǒ qí shòu yòu",
+      "translation": "Вопрос: «Нам не следует идти походом на племя Гун-фан? Верховное божество не ниспошлет нам помощи?»"
     },
     {
       "number": 7,
-      "original": "貞勿伐工方",
-      "transliteration": "zhēn wù fá gōng fāng",
-      "translation": "Вопрос: «Нам не следует идти походом на племя Гун-фан?»"
+      "original": "貞洹其作茲邑禍洹弗作茲邑禍",
+      "transliteration": "zhēn huán qí zuò zī yì huò huán fú zuò zī yì huò",
+      "translation": "Вопрос: «Река Хуань причинит вред этому городу? Река Хуань не причинит вреда этому городу?»"
     },
     {
       "number": 8,
-      "original": "帝不我其受佑",
-      "transliteration": "dì bù wǒ qí shòu yòu",
-      "translation": "Верховное божество не ниспошлет нам помощи?"
+      "original": "貞帝其作王禍余受馬方佑",
+      "transliteration": "zhēn dì qí zuò wáng huò yú shòu mǎ fāng yòu",
+      "translation": "Вопрос: «Верховное божество причинит вред вану? Я окажу помощь племени Ма-фан?»"
     },
     {
       "number": 9,
-      "original": "貞洹其作茲邑禍",
-      "transliteration": "zhēn huán qí zuò zī yì huò",
-      "translation": "Вопрос: «Река Хуань причинит вред этому городу?»"
+      "original": "乙亥卜㱿貞王曰侯虎余其得汝使余不其合以乃使",
+      "transliteration": "yǐ hài bǔ jué zhēn wáng yuē hóu hǔ yú qí dé rǔ shǐ yú bù qí hé yǐ nǎi shǐ",
+      "translation": "В день и-хай гадатель Цзюэ задал вопрос: «Скажет ли ван: „Хоу Ху, я сохраняю тебе посла. Я не встречусь с тобой. Приведи твоего посла!“?»"
     },
     {
       "number": 10,
-      "original": "洹弗作茲邑禍",
-      "transliteration": "huán fú zuò zī yì huò",
-      "translation": "Река Хуань не причинит вреда этому городу?"
-    },
-    {
-      "number": 11,
-      "original": "貞帝其作王禍",
-      "transliteration": "zhēn dì qí zuò wáng huò",
-      "translation": "Вопрос: «Верховное божество причинит вред вану?»"
-    },
-    {
-      "number": 12,
-      "original": "余受馬方佑",
-      "transliteration": "yú shòu mǎ fāng yòu",
-      "translation": "Я окажу помощь племени Ма-фан?"
-    },
-    {
-      "number": 13,
-      "original": "乙亥卜㱿貞王曰侯虎",
-      "transliteration": "yǐ hài bǔ jué zhēn wáng yuē hóu hǔ",
-      "translation": "В день и-хай гадатель Цзюэ задал вопрос: «Скажет ли ван: „Хоу Ху“?»"
-    },
-    {
-      "number": 14,
-      "original": "余其得汝使",
-      "transliteration": "yú qí dé rǔ shǐ",
-      "translation": "Я сохраняю тебе посла?"
-    },
-    {
-      "number": 15,
-      "original": "余不其合",
-      "transliteration": "yú bù qí hé",
-      "translation": "Я не встречусь с тобой?"
-    },
-    {
-      "number": 16,
-      "original": "以乃使",
-      "transliteration": "yǐ nǎi shǐ",
-      "translation": "Приведи твоего посла?"
-    },
-    {
-      "number": 17,
-      "original": "甲辰卜王貞羌弗烖朕使",
-      "transliteration": "jiǎ chén bǔ wáng zhēn qiāng fú zāi zhèn shǐ",
-      "translation": "В день цзя-чэнь гадали, правитель задал вопрос: «Цяны не нанесут поражения моему послу?»"
-    },
-    {
-      "number": 18,
-      "original": "其烖余",
-      "transliteration": "qí zāi yú",
-      "translation": "Он подведет меня?"
-    },
-    {
-      "number": 19,
-      "original": "不余烖",
-      "transliteration": "bù yú zāi",
-      "translation": "Не подведет меня?"
+      "original": "甲辰卜王貞羌弗烖朕使其烖余不余烖",
+      "transliteration": "jiǎ chén bǔ wáng zhēn qiāng fú zāi zhèn shǐ qí zāi yú bù yú zāi",
+      "translation": "В день цзя-чэнь гадали, правитель задал вопрос: «Цяны не нанесут поражения моему послу? Он подведет меня? Не подведет меня?»"
     }
   ]
 };
