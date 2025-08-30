@@ -32,7 +32,7 @@
 
     <script>
         // === НАСТРОЙКА УРОКА ===
-        const LESSON = 9;
+        const LESSON = 1;
         
         // === FIREBASE INIT ===
         let db = null;
@@ -40,10 +40,11 @@
         let currentUser = null;
         let updateDocRef = null;
         let docRef = null;
+        let getDocRef = null;
 
         async function initFirebase() {
             try {
-                const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc }] = await Promise.all([
+                const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc, getDoc }] = await Promise.all([
                     import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js'),
                     import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'),
                     import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'),
@@ -65,6 +66,7 @@
                 db = getFirestore(app);
                 updateDocRef = updateDoc;
                 docRef = doc;
+                getDocRef = getDoc;
 
                 onAuthStateChanged(auth, (user) => {
                     currentUser = user;
@@ -103,20 +105,31 @@
 
         // === СИСТЕМА БАЛЛОВ ===
         async function updateUserPoints(pointsChange) {
-            if (!db || !currentUser || !updateDocRef || !docRef) {
+            if (!db || !currentUser || !updateDocRef || !docRef || !getDocRef) {
                 console.warn("Firebase не инициализирован, баллы не сохранены");
                 return;
             }
 
             try {
                 const userRef = docRef(db, 'users', currentUser.uid);
+                
+                // Получаем текущие баллы пользователя
+                const userDoc = await getDocRef(userRef);
+                let currentPoints = 0;
+                
+                if (userDoc.exists()) {
+                    currentPoints = userDoc.data().points || 0;
+                }
+                
+                // Обновляем баллы с учетом текущих
+                const newPoints = currentPoints + pointsChange;
+                
                 await updateDocRef(userRef, {
-                    points: (currentUser.points || 0) + pointsChange
+                    points: newPoints
                 });
                 
-                if (currentUser.points === undefined) currentUser.points = 0;
-                currentUser.points += pointsChange;
-                console.log(`[Баллы] Изменение: ${pointsChange}. Теперь: ${currentUser.points}`);
+                currentUser.points = newPoints;
+                console.log(`[Баллы] Изменение: ${pointsChange}. Теперь: ${newPoints}`);
             } catch (e) {
                 console.error("❌ Не удалось сохранить баллы в Firestore:", e);
             }
@@ -177,6 +190,11 @@
                 document.getElementById('rightColumn').innerHTML = '';
                 document.getElementById('progressBar').style.width = '100%';
                 document.getElementById('nextBtn').disabled = true;
+                
+                // Редирект на главную страницу через 2 секунды
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 2000);
                 return;
             }
             
@@ -198,8 +216,6 @@
             createColumns(currentChars);
             updateProgress();
             updateStatus();
-            
-
         }
         
         // Получение случайных иероглифов
@@ -245,7 +261,10 @@
                 item.dataset.matched = 'false';
                 item.addEventListener('click', () => {
                     selectItem(item, 'left');
-                    playHanziSound(charData.char);
+                    // Озвучка при клике на иероглиф работает ТОЛЬКО для заданий на перевод
+                    if (currentTaskType === 'meaning') {
+                        playHanziSound(charData.char);
+                    }
                 });
                 leftColumn.appendChild(item);
                 leftItems.push(item);
@@ -318,6 +337,11 @@
             if (isMatch) {
                 showFeedback(true);
                 updateUserPoints(1); // +1 балл за правильный ответ
+                
+                // Воспроизводим звук только для заданий на транскрипцию при правильном ответе
+                if (currentTaskType === 'pinyin') {
+                    playHanziSound(leftChar);
+                }
                 
                 selectedLeft.dataset.matched = 'true';
                 selectedRight.dataset.matched = 'true';
