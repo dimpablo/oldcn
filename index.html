@@ -271,7 +271,7 @@
               <span id="user-email" class="user-email"></span>
             </div>
             <div class="auth-buttons">
-              <a href="./community.html" class="btn btn-secondary">Сообщество</a>
+              <a href="./community.html#users" class="btn btn-secondary">Сообщество</a>
               <a href="https://t.me/oldcnio  " class="btn btn-secondary">Связаться с разработчиком</a>
               <button class="btn btn-logout" id="logoutBtn">Выйти</button>
             </div>
@@ -915,20 +915,30 @@
   const userInfo = document.querySelector('#user-container .user-info');
 
   // === 📊 ДОБАВЛЕНИЕ СТАТИСТИКИ: баллы, друзья, сообщения ===
-  const statsContainer = document.createElement('div');
-  statsContainer.style.cssText = `
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    margin: 5px 0;
-    color: #e0f7fa;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  `;
-  statsContainer.innerHTML = `
-    <span>🎯 <strong id="user-points">0</strong> баллов</span>
-    <span>👥 <strong id="user-friends">0</strong> друзей</span>
-    <span>✉️ <strong id="user-unread">0</strong> новых</span>
-  `;
+// === 📊 ДОБАВЛЕНИЕ СТАТИСТИКИ: баллы, друзья, сообщения (кликабельные) ===
+
+const statsContainer = document.createElement('div');
+statsContainer.style.cssText = `
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  margin: 5px 0;
+  color: #e0f7fa;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+`;
+
+statsContainer.innerHTML = `
+  <a href="./community.html#leaderboard" style="color: inherit; text-decoration: none;" target="_blank">
+    🎯 <strong id="user-points">0</strong> баллов
+  </a>
+  <a href="./community.html#friends" style="color: inherit; text-decoration: none;" target="_blank">
+    👥 <strong id="user-friends">0</strong> друзей
+  </a>
+  <a href="./community.html#messages" style="color: inherit; text-decoration: none;" target="_blank">
+    ✉️ <strong id="user-unread">0</strong> новых
+  </a>
+`;
+
   userInfo.appendChild(statsContainer);
 
   // Ссылки на элементы
