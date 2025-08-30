@@ -63,17 +63,17 @@
       gap: 20px;
     }
 
-    .card {
-      background: rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      backdrop-filter: blur(10px);
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-
+.card {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  position: relative; /* Нужно для бейджа */
+}
     .card:hover {
       transform: translateY(-6px);
     }
@@ -295,6 +295,46 @@
     .btn-back:hover {
       background: #5a6268;
     }
+    /* === Уведомления === */
+.tab[data-tab="messages"] {
+  position: relative;
+}
+
+.tab[data-tab="messages"] .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #d32f2f;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+.card .msg-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #d32f2f;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  z-index: 3;
+}
   </style>
 </head>
 <body>
@@ -649,39 +689,83 @@
       });
     }
 
-    function loadMessagesUsers() {
-      loading.messages.style.display = 'block';
-      grids.messages.innerHTML = '';
-      const q = query(collection(db, 'users'));
-      onSnapshot(q, (snap) => {
-        allUsers = [];
-        snap.forEach(doc => {
-          const data = doc.data();
-          if (data.displayName) {
-            allUsers.push({ id: doc.id, ...data });
-          }
-        });
+let unreadCount = 0;
 
-        grids.messages.innerHTML = '';
-        allUsers
-          .filter(u => u.id !== currentUser.uid)
-          .forEach(user => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-              <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
-              <h3>${user.displayName}</h3>
-              <p>Баллы: ${user.points || 0}</p>
-            `;
-            card.addEventListener('click', () => showChatWith(user));
-            grids.messages.appendChild(card);
-          });
-        loading.messages.style.display = 'none';
-      }, (error) => {
-        console.error("Ошибка загрузки пользователей для чата:", error);
-        loading.messages.textContent = 'Ошибка';
+function loadMessagesUsers() {
+  loading.messages.style.display = 'block';
+  grids.messages.innerHTML = '';
+  const q = query(collection(db, 'users'));
+  onSnapshot(q, (snap) => {
+    allUsers = [];
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (data.displayName) {
+        allUsers.push({ id: doc.id, ...data });
+      }
+    });
+
+    // Загрузка сообщений для подсчёта непрочитанных
+    const msgQuery = query(collection(db, 'messages'), where('participants', 'array-contains', currentUser.uid));
+    onSnapshot(msgQuery, (msgSnap) => {
+      const userUnread = {};
+      unreadCount = 0;
+
+      msgSnap.forEach(doc => {
+        const data = doc.data();
+        const otherId = data.from === currentUser.uid ? data.to : data.from;
+        if (data.to === currentUser.uid && (!data.seenBy || !data.seenBy.includes(currentUser.uid))) {
+          userUnread[otherId] = (userUnread[otherId] || 0) + 1;
+          unreadCount++;
+        }
       });
-    }
+
+      // Обновляем бейдж на вкладке
+      const tab = document.querySelector('.tab[data-tab="messages"]');
+      const badge = tab.querySelector('.badge');
+      if (unreadCount > 0) {
+        if (!badge) {
+          const b = document.createElement('div');
+          b.className = 'badge';
+          b.textContent = unreadCount > 9 ? '9+' : unreadCount;
+          tab.appendChild(b);
+        } else {
+          badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        }
+      } else {
+        if (badge) badge.remove();
+      }
+
+      // Отрисовываем пользователей
+      grids.messages.innerHTML = '';
+      allUsers
+        .filter(u => u.id !== currentUser.uid)
+        .forEach(user => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+            <h3>${user.displayName}</h3>
+            <p>Баллы: ${user.points || 0}</p>
+          `;
+          if (userUnread[user.id]) {
+            const badge = document.createElement('div');
+            badge.className = 'msg-badge';
+            badge.textContent = userUnread[user.id] > 9 ? '9+' : userUnread[user.id];
+            card.appendChild(badge);
+          }
+          card.addEventListener('click', () => {
+            markMessagesAsRead(user.id);
+            showChatWith(user);
+          });
+          grids.messages.appendChild(card);
+        });
+      loading.messages.style.display = 'none';
+    });
+  }, (error) => {
+    console.error("Ошибка загрузки пользователей для чата:", error);
+    loading.messages.textContent = 'Ошибка';
+  });
+}
 
     // Кнопка "Назад"
     backToUsersBtn.addEventListener('click', () => {
@@ -858,6 +942,25 @@ window.addEventListener('load', () => {
   showMessagesUsers();
 });
 */
+
+
+async function markMessagesAsRead(otherId) {
+  const chatRef = query(
+    collection(db, 'messages'),
+    where('participants', 'array-contains', currentUser.uid),
+    where('participants', 'array-contains', otherId)
+  );
+
+  const snapshot = await getDocs(chatRef);
+  snapshot.forEach(async (doc) => {
+    const data = doc.data();
+    if (data.to === currentUser.uid && (!data.seenBy || !data.seenBy.includes(currentUser.uid))) {
+      await updateDoc(doc.ref, {
+        seenBy: arrayUnion(currentUser.uid)
+      });
+    }
+  });
+}
   </script>
 </body>
 </html>
