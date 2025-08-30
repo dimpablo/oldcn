@@ -71,6 +71,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
       transition: transform 0.3s ease;
+      cursor: pointer;
     }
 
     .card:hover {
@@ -175,7 +176,7 @@
     }
 
     /* === Чат === */
-    #chat-section {
+    #chat-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -274,25 +275,20 @@
       background: #006064;
     }
 
-    #user-selector {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+    .btn-back {
       width: 100%;
+      padding: 12px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
-      .tab {
-        padding: 12px 18px;
-        font-size: 15px;
-      }
-      h1 {
-        font-size: 24px;
-      }
+    .btn-back:hover {
+      background: #5a6268;
     }
   </style>
 </head>
@@ -348,17 +344,16 @@
 
     <!-- Сообщения -->
     <div id="messages-section" class="hidden">
-      <div class="loading">Выберите пользователя</div>
-
-      <!-- Селектор пользователя -->
-      <div style="margin-bottom: 10px;">
-        <select id="user-selector">
-          <option value="">Выберите собеседника...</option>
-        </select>
+      <!-- Список пользователей -->
+      <div id="messages-users">
+        <div class="loading">Загрузка пользователей...</div>
+        <div class="grid" id="messages-users-grid"></div>
       </div>
 
       <!-- Чат -->
-      <div id="chat-section" class="hidden">
+      <div id="chat-container" class="hidden">
+        <button class="btn-back" id="back-to-users">← Назад к списку</button>
+
         <div id="chat-header">
           <img id="chat-avatar" src="" alt="Avatar" />
           <h3 id="chat-name">Имя пользователя</h3>
@@ -388,8 +383,7 @@
       addDoc, 
       doc, 
       getDoc, 
-      updateDoc, 
-      getDocs
+      updateDoc
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
     // Конфиг
@@ -419,20 +413,22 @@
     };
     const grids = {
       users: document.getElementById('users-grid'),
-      friends: document.getElementById('friends-grid')
+      friends: document.getElementById('friends-grid'),
+      messages: document.getElementById('messages-users-grid')
     };
     const loading = {
       users: grids.users.parentElement.querySelector('.loading'),
       friends: grids.friends.parentElement.querySelector('.loading'),
       leaderboard: document.querySelector('#leaderboard-section .loading'),
       reactions: document.getElementById('reactions-list').parentElement.querySelector('.loading'),
-      messages: document.getElementById('messages-section').querySelector('.loading')
+      messages: document.getElementById('messages-users').querySelector('.loading')
     };
     const reactionsList = document.getElementById('reactions-list');
 
     // Элементы чата
-    const userSelector = document.getElementById('user-selector');
-    const chatSection = document.getElementById('chat-section');
+    const messagesUsers = document.getElementById('messages-users');
+    const chatContainer = document.getElementById('chat-container');
+    const backToUsersBtn = document.getElementById('back-to-users');
     const chatAvatar = document.getElementById('chat-avatar');
     const chatName = document.getElementById('chat-name');
     const messagesList = document.getElementById('messages-list');
@@ -451,8 +447,9 @@
         tab.classList.add('active');
         Object.values(sections).forEach(s => s.classList.add('hidden'));
         sections[tab.dataset.tab].classList.remove('hidden');
+
         if (tab.dataset.tab === 'messages') {
-          loadUserSelector();
+          showMessagesUsers();
         }
       });
     });
@@ -592,40 +589,25 @@
 
     // === 💬 ВКЛАДКА "СООБЩЕНИЯ" ===
 
-    // Загрузка списка пользователей в селектор
-    function loadUserSelector() {
-      userSelector.innerHTML = '<option value="">Выберите собеседника...</option>';
-      allUsers
-        .filter(u => u.id !== currentUser.uid)
-        .sort((a, b) => a.displayName.localeCompare(b))
-        .forEach(user => {
-          const option = document.createElement('option');
-          option.value = user.id;
-          option.textContent = user.displayName;
-          userSelector.appendChild(option);
-        });
-
-      // Сброс чата
-      chatSection.classList.add('hidden');
-      if (unsubscribeMessages) unsubscribeMessages();
+    // Показать список пользователей
+    function showMessagesUsers() {
+      messagesUsers.classList.remove('hidden');
+      chatContainer.classList.add('hidden');
+      if (unsubscribeMessages) {
+        unsubscribeMessages();
+        unsubscribeMessages = null;
+      }
     }
 
-    // Обработчик выбора пользователя
-    userSelector.addEventListener('change', () => {
-      const selectedId = userSelector.value;
-      if (!selectedId) {
-        chatSection.classList.add('hidden');
-        if (unsubscribeMessages) unsubscribeMessages();
-        return;
-      }
+    // Показать чат с пользователем
+    function showChatWith(user) {
+      currentChatUser = user;
+      messagesUsers.classList.add('hidden');
+      chatContainer.classList.remove('hidden');
 
-      currentChatUser = allUsers.find(u => u.id === selectedId);
-      if (!currentChatUser) return;
+      chatName.textContent = user.displayName;
+      chatAvatar.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
 
-      chatName.textContent = currentChatUser.displayName;
-      chatAvatar.src = currentChatUser.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
-
-      chatSection.classList.remove('hidden');
       messagesList.innerHTML = '';
       messageInput.value = '';
 
@@ -633,7 +615,7 @@
       const chatRef = query(
         collection(db, 'messages'),
         where('participants', 'array-contains', currentUser.uid),
-        where('participants', 'array-contains', selectedId)
+        where('participants', 'array-contains', user.id)
       );
 
       unsubscribeMessages = onSnapshot(chatRef, (snap) => {
@@ -647,7 +629,7 @@
           const div = document.createElement('div');
           div.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
           div.innerHTML = `
-            <div class="msg-header">${fromMe ? 'Вы' : currentChatUser.displayName}</div>
+            <div class="msg-header">${fromMe ? 'Вы' : user.displayName}</div>
             <div>${msg.text}</div>
             <div class="msg-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
           `;
@@ -657,6 +639,50 @@
       }, (error) => {
         console.error("Ошибка загрузки сообщений:", error);
       });
+    }
+
+    // Загрузка пользователей в "Сообщения"
+    function loadMessagesUsers() {
+      loading.messages.style.display = 'block';
+      grids.messages.innerHTML = '';
+      const q = query(collection(db, 'users'));
+      onSnapshot(q, (snap) => {
+        allUsers = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (data.displayName) {
+            allUsers.push({ id: doc.id, ...data });
+          }
+        });
+
+        grids.messages.innerHTML = '';
+        allUsers
+          .filter(u => u.id !== currentUser.uid)
+          .forEach(user => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+              <h3>${user.displayName}</h3>
+              <p>Баллы: ${user.points || 0}</p>
+            `;
+            card.addEventListener('click', () => showChatWith(user));
+            grids.messages.appendChild(card);
+          });
+        loading.messages.style.display = 'none';
+      }, (error) => {
+        console.error("Ошибка загрузки пользователей для чата:", error);
+        loading.messages.textContent = 'Ошибка';
+      });
+    }
+
+    // Кнопка "Назад"
+    backToUsersBtn.addEventListener('click', () => {
+      if (unsubscribeMessages) {
+        unsubscribeMessages();
+        unsubscribeMessages = null;
+      }
+      showMessagesUsers();
     });
 
     // Отправка сообщения
@@ -735,6 +761,7 @@
     function updateCurrentUser(data) {
       currentUser = data;
       if (!currentUser.friends) currentUser.friends = [];
+      loadMessagesUsers(); // Загрузить список для чата
     }
 
     // Наблюдение за авторизацией
