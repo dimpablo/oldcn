@@ -152,13 +152,12 @@
     }
 
     .hidden {
-      display: none;
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  position: absolute !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: absolute !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
     }
 
     .loading {
@@ -305,15 +304,15 @@
 
     <!-- Вкладки -->
     <div class="tabs">
-      <div class="tab active" data-tab="users">Пользователи</div>
+      <div class="tab" data-tab="users">Пользователи</div>
       <div class="tab" data-tab="leaderboard">Лига лидеров</div>
       <div class="tab" data-tab="friends">Друзья</div>
       <div class="tab" data-tab="reactions">Реакции</div>
-      <div class="tab" data-tab="messages">💬 Сообщения</div>
+      <div class="tab active" data-tab="messages">💬 Сообщения</div>
     </div>
 
     <!-- Пользователи -->
-    <div id="users-section">
+    <div id="users-section" class="hidden">
       <div class="loading">Загрузка пользователей...</div>
       <div class="grid" id="users-grid"></div>
     </div>
@@ -349,15 +348,15 @@
     </div>
 
     <!-- Сообщения -->
-    <div id="messages-section" class="hidden">
+    <div id="messages-section" class="">
       <!-- Список пользователей -->
-      <div id="messages-users">
+      <div id="messages-users" class="hidden">
         <div class="loading">Загрузка пользователей...</div>
         <div class="grid" id="messages-users-grid"></div>
       </div>
 
       <!-- Чат -->
-      <div id="chat-container" class="hidden">
+      <div id="chat-container" class="">
         <button class="btn-back" id="back-to-users">← Назад к списку</button>
 
         <div id="chat-header">
@@ -595,7 +594,6 @@
 
     // === 💬 ВКЛАДКА "СООБЩЕНИЯ" ===
 
-    // Показать список пользователей
     function showMessagesUsers() {
       messagesUsers.classList.remove('hidden');
       chatContainer.classList.add('hidden');
@@ -605,7 +603,6 @@
       }
     }
 
-    // Показать чат с пользователем
     function showChatWith(user) {
       currentChatUser = user;
       messagesUsers.classList.add('hidden');
@@ -617,17 +614,22 @@
       messagesList.innerHTML = '';
       messageInput.value = '';
 
-      // Загрузка сообщений
+      // ✅ Исправленный запрос: только один array-contains
       const chatRef = query(
         collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid),
-        where('participants', 'array-contains', user.id)
+        where('participants', 'array-contains', currentUser.uid)
       );
 
       unsubscribeMessages = onSnapshot(chatRef, (snap) => {
         messagesList.innerHTML = '';
         const messages = [];
-        snap.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
+        snap.forEach(doc => {
+          const data = doc.data();
+          // ✅ Фильтр на клиенте: оба участника в participants
+          if (data.participants.includes(currentUser.uid) && data.participants.includes(user.id)) {
+            messages.push({ id: doc.id, ...data });
+          }
+        });
         messages.sort((a, b) => a.timestamp - b.timestamp);
 
         messages.forEach(msg => {
@@ -647,7 +649,6 @@
       });
     }
 
-    // Загрузка пользователей в "Сообщения"
     function loadMessagesUsers() {
       loading.messages.style.display = 'block';
       grids.messages.innerHTML = '';
@@ -701,7 +702,7 @@
         to: currentChatUser.id,
         text: text,
         timestamp: Date.now(),
-        participants: [currentUser.uid, currentChatUser.id].sort()
+        participants: [currentUser.uid, currentChatUser.id].sort() // ✅ Сортировка
       };
 
       try {
