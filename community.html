@@ -505,11 +505,16 @@
       });
     });
 
-    // Восстановление вкладки при загрузке
-    window.addEventListener('load', () => {
-      const savedTab = localStorage.getItem('activeTab') || 'users';
-      setActiveTab(savedTab);
-    });
+// Восстанавливаем вкладку при загрузке
+window.addEventListener('load', () => {
+  const savedTab = localStorage.getItem('activeTab') || 'users';
+  setActiveTab(savedTab);
+
+  // Если вкладка "Сообщения" — покажем список пользователей
+  if (savedTab === 'messages') {
+    showMessagesUsers();
+  }
+});
 
     // Загрузка пользователей
     function loadUsers() {
@@ -645,14 +650,14 @@
     }
 
     // === 💬 ЧАТ ===
-    function showMessagesUsers() {
-      messagesUsers.classList.remove('hidden');
-      chatContainer.classList.add('hidden');
-      if (unsubscribeMessages) {
-        unsubscribeMessages();
-        unsubscribeMessages = null;
-      }
-    }
+function showMessagesUsers() {
+  messagesUsers.classList.remove('hidden');
+  chatContainer.classList.add('hidden');
+  if (unsubscribeMessages) {
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+}
 
     function showChatWith(user) {
       currentChatUser = user;
