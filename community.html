@@ -507,13 +507,30 @@
 
 // Восстанавливаем вкладку при загрузке
 window.addEventListener('load', () => {
+  const hash = window.location.hash.substring(1);
+  const validTabs = ['users', 'leaderboard', 'friends', 'reactions', 'messages'];
+  const tabName = validTabs.includes(hash) ? hash : null;
   const savedTab = localStorage.getItem('activeTab') || 'users';
-  setActiveTab(savedTab);
+  const activeTab = tabName || savedTab;
 
-  // Если вкладка "Сообщения" — покажем список пользователей
-  if (savedTab === 'messages') {
+  setActiveTab(activeTab);
+
+  if (activeTab === 'messages') {
     showMessagesUsers();
   }
+
+  if (!window.location.hash && activeTab) {
+    window.history.replaceState(null, null, `#${activeTab}`);
+  }
+});
+
+// Обновление хеша при клике на вкладку
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const tabName = tab.dataset.tab;
+    setActiveTab(tabName);
+    window.history.pushState(null, null, `#${tabName}`);
+  });
 });
 
     // Загрузка пользователей
