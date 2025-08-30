@@ -793,6 +793,71 @@
         location.href = 'index.html';
       }
     });
+
+    // === 🔁 ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ПОСЛЕ ПЕРЕЗАГРУЗКИ ===
+
+// Сохраняем активную вкладку
+function setActiveTab(tabName) {
+  tabs.forEach(t => t.classList.remove('active'));
+  const tab = Array.from(tabs).find(t => t.dataset.tab === tabName);
+  if (tab) tab.classList.add('active');
+  Object.values(sections).forEach(s => s.classList.add('hidden'));
+  sections[tabName]?.classList.remove('hidden');
+  localStorage.setItem('activeTab', tabName);
+}
+
+// При переключении вкладок — сохраняем
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    setActiveTab(tab.dataset.tab);
+  });
+});
+
+// Восстанавливаем вкладку при загрузке
+window.addEventListener('load', () => {
+  const savedTab = localStorage.getItem('activeTab');
+  const targetTab = savedTab && sections[savedTab] ? savedTab : 'messages';
+  setActiveTab(targetTab);
+
+  // Если вкладка "Сообщения" — показываем список пользователей
+  if (targetTab === 'messages') {
+    showMessagesUsers();
+  }
+});
+
+// === 💬 УЛУЧШЕНИЕ ЧАТА: запоминаем последнего собеседника ===
+
+function setChatTarget(userId) {
+  localStorage.setItem('currentChatUser', userId);
+}
+
+function getLastChatTarget() {
+  return localStorage.getItem('currentChatUser');
+}
+
+// При открытии чата — запоминаем
+function showChatWith(user) {
+  setChatTarget(user.id);
+  // ... остальной код открытия чата
+}
+
+// При загрузке — можно автоматически открыть последний чат
+// (опционально)
+/*
+window.addEventListener('load', () => {
+  const savedTab = localStorage.getItem('activeTab');
+  const lastChatId = getLastChatTarget();
+
+  if (savedTab === 'messages' && lastChatId) {
+    const user = allUsers.find(u => u.id === lastChatId);
+    if (user) {
+      showChatWith(user);
+      return;
+    }
+  }
+  showMessagesUsers();
+});
+*/
   </script>
 </body>
 </html>
