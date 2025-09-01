@@ -1,6 +1,6 @@
 const SentenceData = {
   "lesson": 5,
-  "text": "辛卯卜㱿貞帝其熯我\n貞帝不我熯戊申卜爭貞帝其降我熯\n貞帝不我降熯甲辰卜爭貞我伐馬方帝受我佑\n貞勿伐工方帝不我其受佑貞洹其作茲邑禍\n洹弗作茲邑禍\n貞帝其作王禍余受馬方佑乙亥卜㱿貞王曰侯虎\n余其得汝使余不其合以乃使\n甲辰卜王貞羌弗烖朕使其烖余不余烖",
+  "text": "辛卯卜㱿貞帝其熯我\n貞帝不我熯戊申卜爭貞帝其降我熯\n貞帝不我降熯甲辰卜爭貞我伐馬方帝受我佑\n貞勿伐工方帝不我其受佑貞洹其作茲邑禍\n洹弗作茲邑禥\n貞帝其作王禍余受馬方佑乙亥卜㱿貞王曰侯虎\n余其得汝使余不其合以乃使\n甲辰卜王貞羌弗烖朕使其烖余不余烖",
   "sentences": [
     {
       "number": 1,
@@ -12,7 +12,7 @@ const SentenceData = {
       "number": 2,
       "original": "貞帝不我熯",
       "transliteration": "zhēn dì bù wǒ hàn",
-      "translation": "Верховное божество не накажет нас засухой?"
+      "translation": "Вопрос: «Верховное божество не накажет нас засухой?»"
     },
     {
       "number": 3,
@@ -24,13 +24,13 @@ const SentenceData = {
       "number": 4,
       "original": "貞帝不我降熯",
       "transliteration": "zhēn dì bù wǒ jiàng hàn",
-      "translation": "Верховное божество не нашлет на нас засуху?"
+      "translation": "Вопрос: «Верховное божество не нашлет на нас засуху?»"
     },
     {
       "number": 5,
       "original": "甲辰卜爭貞我伐馬方",
       "transliteration": "jiǎ chén bǔ zhēng zhēn wǒ fá mǎ fāng",
-      "translation": "Мы пойдем походом на племя Ма-фан?"
+      "translation": "В день цзя-чэнь гадатель Чжэн задал вопрос: «Мы пойдем походом на племя Ма-фан?»"
     },
     {
       "number": 6,
@@ -42,31 +42,31 @@ const SentenceData = {
       "number": 7,
       "original": "貞勿伐工方",
       "transliteration": "zhēn wù fá gōng fāng",
-      "translation": "Нам не следует идти походом на племя Гун-фан?"
+      "translation": "Вопрос: «Нам не следует идти походом на племя Гун-фан?»"
     },
     {
       "number": 8,
       "original": "帝不我其受佑",
-      "transliteration": "dī shòu wǒ qí yòu",
+      "transliteration": "dī bù wǒ qí shòu yòu",
       "translation": "Верховное божество не ниспошлет нам помощи?"
     },
     {
       "number": 9,
-      "original": "貞洹其作茲邑禍",
+      "original": "貞洹其作茲邑禥",
       "transliteration": "zhēn huán qí zuò zī yì huò",
-      "translation": "Река Хуань причинит вред этому городу?"
+      "translation": "Вопрос: «Река Хуань причинит вред этому городу?»"
     },
     {
       "number": 10,
-      "original": "洹弗作茲邑禍",
+      "original": "洹弗作茲邑禥",
       "transliteration": "huán fú zuò zī yì huò",
       "translation": "Река Хуань не причинит вреда этому городу?"
     },
     {
       "number": 11,
-      "original": "貞帝其作王禍",
+      "original": "貞帝其作王禥",
       "transliteration": "zhēn dì qí zuò wáng huò",
-      "translation": "Верховное божество причинит вред вану?"
+      "translation": "Вопрос: «Верховное божество причинит вред вану?»"
     },
     {
       "number": 12,
