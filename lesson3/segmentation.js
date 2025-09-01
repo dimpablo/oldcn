@@ -12,7 +12,7 @@ const SentenceData = {
       "number": 2,
       "original": "貞來辛丑王入于商",
       "transliteration": "zhēn lái xīn chǒu wáng rù yú shāng",
-      "translation": "В следующий день синь-чоу правитель вступит в Шан?"
+      "translation": "Вопрос: «В следующий день синь-чоу правитель вступит в Шан?»"
     },
     {
       "number": 3,
@@ -42,13 +42,13 @@ const SentenceData = {
       "number": 7,
       "original": "貞勿求于妣庚",
       "transliteration": "zhēn wù qiú yú bǐ gēng",
-      "translation": "Не следует просить у прародительницы Гэн?"
+      "translation": "Вопрос: «Не следует просить у прародительницы Гэн?»"
     },
     {
       "number": 8,
       "original": "貞今日求于大庚",
       "transliteration": "zhēn jīn rì qiú yú dà gēng",
-      "translation": "Сегодня будем просить у Великого Гэна?"
+      "translation": "Вопрос: «Сегодня будем просить у Великого Гэна?»"
     },
     {
       "number": 9,
@@ -72,7 +72,7 @@ const SentenceData = {
       "number": 12,
       "original": "貞翌庚寅王告",
       "transliteration": "zhēn yì gēng yín wáng gào",
-      "translation": "В следующий день гэн-инь правитель сообщит?"
+      "translation": "Вопрос: «В следующий день гэн-инь правитель сообщит?»"
     },
     {
       "number": 13,
@@ -102,7 +102,7 @@ const SentenceData = {
       "number": 17,
       "original": "貞告工方于上甲",
       "transliteration": "zhēn gào gōng fāng yú shàng jiǎ",
-      "translation": "Сообщить Верхнему Цзя о племени Гун-фан?"
+      "translation": "Вопрос: «Сообщить Верхнему Цзя о племени Гун-фан?»"
     },
     {
       "number": 18,
@@ -120,13 +120,13 @@ const SentenceData = {
       "number": 20,
       "original": "貞于河告",
       "transliteration": "zhēn yú hé gào",
-      "translation": "Сообщить реке?"
+      "translation": "Вопрос: «Сообщить реке?»"
     },
     {
       "number": 21,
       "original": "貞于唐告",
       "transliteration": "zhēn yú táng gào",
-      "translation": "Сообщить Тану?"
+      "translation": "Вопрос: «Сообщить Тану?»"
     }
   ]
 }

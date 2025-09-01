@@ -6,7 +6,7 @@ const SentenceData = {
       "number": 1,
       "original": "壬寅卜㱿貞自今至于甲辰子商烖基方",
       "transliteration": "rén yín bǔ jué zhēn zì jīn zhì yú jiǎ chén zǐ shāng zāi jī fāng",
-      "translation": "В день жэнь-инь гадатель Цзюэ задал вопрос: «С сегодняшнего дня и до цзя-чзнь сын по имени Шан нанесет поражение племени Цзи-фан?»"
+      "translation": "В день жэнь-инь гадатель Цзюэ задал вопрос: «С сегодняшнего дня и до цзя-чзнь сын по имени Шан нанесет поражение племени Цзи-фан?»."
     },
     {
       "number": 2,
@@ -60,7 +60,7 @@ const SentenceData = {
       "number": 10,
       "original": "貞于示壬求年",
       "transliteration": "zhēn yú shì rén qiú nián",
-      "translation": "У предка Жэнь просить урожай?"
+      "translation": "Вопрос: «У предка Жэнь просить урожай?»"
     },
     {
       "number": 11,
