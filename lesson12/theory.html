@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8"/>
-    <title>Урок 11 — Древнекитайский язык по Крюкову</title>
+    <title>Урок 12 — Древнекитайский язык по Крюкову</title>
     <style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -165,450 +165,425 @@
             white-space: nowrap;
         }
     </style>
-<script src="./../dictionary.js"></script>
+    <script src="./../dictionary.js"></script>
 </head>
 <body>
 
-<h1>УРОК 11</h1>
+<h1>УРОК 12</h1>
 
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-<h2>Текст урока</h2>
-<table class="oracle-table" id="oracleTable"></table>
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
 </div>
-<div style="text-align: center; margin: 20px 0;">
-<label class="toggle-switch">
-<input id="fontToggle" type="checkbox"/>
-<span class="slider"></span>
-</label>
-<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
-    Обычный вид
-  </span>
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+    <label class="toggle-switch">
+        <input id="fontToggle" type="checkbox"/>
+        <span class="slider"></span>
+    </label>
+    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+        Обычный вид
+    </span>
 </div>
+
 <style>
-  .toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-  }
-  .toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 30px;
-  }
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-  }
-  input:checked + .slider {
-    background-color: #1a5fb4;
-  }
-  input:checked + .slider:before {
-    transform: translateX(30px);
-  }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #1a5fb4;
+    }
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
 </style>
 
-<style>/* Уменьшаем размер для номеров */
-/* Tooltip — без изменений */
-.char-tooltip {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 300px;
-    background: #1a4f72;
-    color: white;
-    padding: 12px 15px;
-    border-radius: 6px;
-    font-size: 0.9em;
-    text-align: left;
-    white-space: normal;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
-    line-height: 1.5;
-}
-td:hover .char-tooltip {
-    display: block;
-}
-.lesson-badge {
-    display: inline-block;
-    background: #e6f2ff;
-    color: #1a4f72;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    margin-left: 5px;
-}</style>
-<script>
+<style>
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+    td:hover .char-tooltip {
+        display: block;
+    }
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+</style>
 
-// Данные текста урока 10
+<script>
+    // Данные текста урока 12 (по строкам из PDF)
 const lessonText = [
-    "唯四月甲午王灌于嘗公東宮納饗于",
-    "王王賜公貝五十朋公賜厥順子效王",
-    "休貝二十朋效對公休用作寳尊彝效",
-    "其萬年夙夜奔走揚公休亦其子子孫",
-    "孫永寳用",
-    "唯十又二月王在周眛爽王格于大廟",
-    "井叔右免即位王受作冊尹書俾冊令",
-    "免曰令汝司林賜汝赤芾用事免對揚",
-    "王休用作尊簋免其萬年永寳用"
+    "唯王正月辰在庚寅王若曰录伯冬自",     
+    "乃祖考有勳于周邦佑闢四方惠弘天",      
+    "命汝肇不墜余賜汝秬鬯一卣金車录",       
+    "伯冬敢拜手稽首對揚天子丕顯休用",      
+    "作朕皇考釐王寳尊簋余其永萬年寳",       
+    "用子子孫孫其帥型受茲休",               
+    "己未王令仲致歸羌伯貂裘王若曰羌",       
+    "伯朕丕顯祖文武膺受天命乃祖克弼",       
+    "先王翼自他邦有席于大命我亦弗曠",       
+    "享邦賜汝貂裘"                          
 ];
 
-// Функция для создания таблицы
-function createOracleTable() {
-    const table = document.getElementById('oracleTable');
-    // Создаём строку с номерами колонок
-    const headerRow = document.createElement('tr');
-    // Пустая ячейка для выравнивания с номерами строк
-    const emptyCell = document.createElement('td');
-    emptyCell.className = 'line-num';
-    headerRow.appendChild(emptyCell);
-    // Номера колонок: от 1 до 15
-    for (let i = 1; i <= 15; i++) {
-        const th = document.createElement('td');
-        th.className = 'col-num';
-        th.textContent = i;
-        headerRow.appendChild(th);
-    }
-    table.appendChild(headerRow);
-    // Создаём строки с текстом
-    for (let i = 0; i < lessonText.length; i++) {
-        const row = document.createElement('tr');
-        // Номер строки
-        const lineNumCell = document.createElement('td');
-        lineNumCell.className = 'line-num';
-        lineNumCell.textContent = i + 1;
-        row.appendChild(lineNumCell);
-        // Разбиваем строку на символы
-        const chars = Array.from(lessonText[i]);
-        // Заполняем ячейки для позиций 1–15
-        for (let j = 0; j < 15; j++) {  // Ровно 15 ячеек
-            const td = document.createElement('td');
-            // Если есть символ на этой позиции — ставим его
-            if (j < chars.length && chars[j].trim() !== '') {
-                const char = chars[j];
-                td.textContent = char;
-                if (charData[char]) {
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'char-tooltip';
-                    tooltip.innerHTML = `
-                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
-                        ${charData[char].meaning}<br>
-                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
-                    `;
-                    td.appendChild(tooltip);
-                }
-            }
-            // Если символа нет — ячейка остаётся пустой (ничего не делаем)
-            row.appendChild(td);
+    // Функция для создания таблицы
+    function createOracleTable() {
+        const table = document.getElementById('oracleTable');
+        // Создаём строку с номерами колонок
+        const headerRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'line-num';
+        headerRow.appendChild(emptyCell);
+        for (let i = 1; i <= 15; i++) {
+            const th = document.createElement('td');
+            th.className = 'col-num';
+            th.textContent = i;
+            headerRow.appendChild(th);
         }
-        table.appendChild(row);
+        table.appendChild(headerRow);
+
+        // Создаём строки с текстом
+        for (let i = 0; i < lessonText.length; i++) {
+            const row = document.createElement('tr');
+            const lineNumCell = document.createElement('td');
+            lineNumCell.className = 'line-num';
+            lineNumCell.textContent = i + 1;
+            row.appendChild(lineNumCell);
+
+            const chars = Array.from(lessonText[i]);
+            for (let j = 0; j < 15; j++) {
+                const td = document.createElement('td');
+                if (j < chars.length && chars[j].trim() !== '') {
+                    const char = chars[j];
+                    td.textContent = char;
+                    if (charData[char]) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'char-tooltip';
+                        tooltip.innerHTML = `
+                            <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                            ${charData[char].meaning}<br>
+                            <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                        `;
+                        td.appendChild(tooltip);
+                    }
+                }
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
     }
-}
-// Инициализация таблицы при загрузке страницы
-document.addEventListener('DOMContentLoaded', createOracleTable);
+
+    // Инициализация таблицы при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
     <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
 
-    <h3>11.1. Приемы членения текста</h3>
+    <h3>12.1. Приемы членения текста (продолжение)</h3>
     <p class="original">
-        При чтении памятников доклассического языка нам постоянно приходится решать проблему, которая практически почти не вставала перед нами в процессе изучения иньских надписей. Речь идет о членении текста и определении границ предложения.
+        Один из специфических приемов членения чжоуской надписи на предложения связан с тем, что в такого рода текстах очень часто присутствуют рифмованные части. Определив, какие слова рифмуются между собой, можно тем самым найти границу между концом одного предложения и началом другого, поскольку предложение здесь совпадает со стихотворной строкой.
     </p>
     <p class="original">
-        Для этой цели применительно к чжоуским текстам можно использовать несколько конкретных приемов. Разумеется, не каждый из них может быть применен в каждом отдельном случае.
+        Разумеется, следует учитывать, что современное чтение знаков весьма существенно отличается от древнего.
     </p>
     <p class="original">
-        Основой членения текста на предложения является сумма наших знаний о структуре древнекитайского предложения. В доклассическом языке существуют те же члены предложения, что и в архаическом, и занимают они те же позиции, что и прежде. Поэтому можно утверждать, что, например, после сказуемого и прямого дополнения может следовать только косвенное дополнение с предлогом, а после него наличие какого-либо еще члена предложения уже невозможно. Таким образом, если мы определили наличие косвенного дополнения с предлогом в постпозиции по отношению к сказуемому, это дает нам указание на конец предложения.
-    </p>
-    <p class="original">
-        Далее, несмотря на то, что чжоуские надписи не столь стандартны по своему формуляру, как иньские, в них также встречаются некоторые привычные формулы, знание которых позволяет расчленять текст на более мелкие части.
-    </p>
-    <p class="original">
-        Например, почти в каждой надписи есть слова вана или другого высокопоставленного лица, обращенные к владельцу сосуда. Эти слова обычно даются в виде прямой речи, т. е. вводятся словом <span class="example">曰 yuē</span>, причем начинаются с обращения. Речь вана в таких случаях начинается словами: <span class="example">王若曰 wáng ruò yuē</span> «Ван так сказал: “...”».
-    </p>
-    <p class="original">
-        После речи вана в большинстве случаев следует фраза, в которой владелец сосуда выражает благодарность за награду, пожалование или иное признание его заслуг. Эта фраза может быть представлена различными вариантами, чаще всего в следующем виде:
-        <br/><br/>
-        <span class="example">...拜手稽首對揚...休... bài shǒu qǐ shǒu duì yáng... xiū</span>
-        «...сложил руки и поклонился до земли, сделал надпись [на сосуде и тем] вознес хвалу... за [его] милость».
-    </p>
-    <p class="original">
-        Далее следует сообщение о том, что владелец сосуда посвящает его памяти какого-то своего предка:
-        <br/><br/>
-        <span class="example">用作...尊彝 yòng zuò... zūn yí</span> «Использовал его в качестве сосуда для жертвоприношений...»
+        В нашем тексте рифмуются фразы <span class="example">有勳于周邦 yǒu xūn yú zhōu bāng</span>, <span class="example">佑闢四方 yòu pì sì fāng</span>, <span class="example">惠弘天命 huì hóng tiān mìng</span>.
     </p>
 
-    <h3>11.2. Личное местоимение <strong>厥 jué</strong></h3>
+    <h3>12.2. Модальные предикативы</h3>
     <p class="original">
-        Для системы личных местоимений архаического периода было характерно, как уже было сказано, четкое противопоставление одной группы личных местоимений, употреблявшихся в функции подлежащего и дополнения, другой группе — в функции определения к имени.
+        В доклассическом языке появляется группа знаменательных слов, употребляющихся исключительно в предикативной функции, — так называемые <strong>модальные предикативы</strong>. Как и все другие слова в предикативной функции, они могут принимать отрицания <strong>不 bù</strong>, <strong>弗 fú</strong> и др. Но специфика модальных предикативов состоит в том, что сами по себе они не могут выражать действия или состояния и поэтому требуют после себя другого предикатива.
     </p>
     <p class="original">
-        Это разграничение сохраняется и в раннем доклассическом языке.
+        Основной предикатив следует непосредственно за модальным.
     </p>
     <p class="original">
-        Местоимения первой группы:
-        <ol type="a">
-            <li><strong>余 yú</strong> для 1-го лица: <span class="example">余唯令 yú wéi lìng</span> «Я приказываю»; <span class="example">受余 shòu yú</span> «даровать мне».</li>
-            <li><strong>汝 rǔ</strong> для 2-го лица: <span class="example">汝勿不善 rǔ wù bù shàn</span> «Тебе не следует поступать дурно»; <span class="example">令汝 lìng rǔ</span> «приказать тебе».</li>
-        </ol>
-    </p>
-    <p class="original">
-        Местоимения второй группы:
-        <ol type="a">
-            <li><strong>朕 zhèn</strong> для 1-го лица: <span class="example">拼朕位 pīn zhèn wèi</span> «Поддерживай мой трон!»</li>
-            <li><strong>乃 nǎi</strong> для 2-го лица: <span class="example">乃祖既令乃父 nǎi zǔ jì lìng nǎi fù</span> «Твой дед приказал твоему отцу».</li>
-        </ol>
-    </p>
-    <p class="original">
-        Однако если в архаическом языке полностью отсутствовали какие бы то ни было местоимения 3-го лица, то в текстах раннего доклассического периода появляется <strong>厥 jué</strong> — новое личное местоимение, относящееся ко второй группе.
-    </p>
-    <p class="original">
-        Особенности употребления этого местоимения явствуют, например, из следующих двух отрывков, один из которых содержит прямую речь, а другой — нет:
+        Общее число модальных предикативов в раннем доклассическом языке невелико. В аутентичных текстах чжоуского времени встречаются практически лишь два из них: <strong>克 kè</strong> «мочь», «быть в состоянии» и <strong>敢 gǎn</strong> «осмеливаться», «решаться»:
         <br/><br/>
-        <span class="example">令曰更乃祖考 lìng yuē gēng nǎi zǔ kǎo</span> «Приказал: “Займи место своего деда и отца!”»
-        <br/>
-        <span class="example">令更厥祖考 lìng gèng jué zǔ kǎo</span> «Приказал занять место его деда и отца».
+        <span class="example">乃祖考克左右先王 nǎi zǔ kǎo kè zuǒ yòu xiān wáng</span> «Твои дед и отец смогли помочь покойным правителям».<br/>
+        <span class="example">汝勿敢不善 rǔ wù gǎn bù shàn</span> «Не смей поступать дурно!»
     </p>
     <p class="original">
-        <strong>厥 jué</strong> — личное местоимение 3-го лица, употребляемое <u>только в функции определения к имени</u>. Это значит, что в тексте после данного местоимения может стоять только имя:
+        От модальных предикативов в раннем доклассическом языке следует, по-видимому, отличать знаменательное слово <strong>欲 yù</strong> «хотеть». Оно может выступать как в предикативной, так и в именной функции. С другой стороны, к <strong>欲 yù</strong> может относиться не только предикатив, но и целое включенное предложение:
         <br/><br/>
-        <span class="example">厥絲束 jué sī shù</span> «его моток шелка»;<br/>
-        <span class="example">厥寶尊彝 jué bǎo zūn yí</span> «его драгоценный сосуд».
-    </p>
-    <p class="original">
-        <strong>厥 jué</strong> может переводиться словом <em>«свой»</em>:
-        <br/><br/>
-        <span class="example">公賜厥順子貝 gōng cì jué shùn zǐ bèi</span> «Гун подарил своему послушному сыну раковины».
+        <span class="example">欲弗作先王忧 yù fú zuò xiān wáng yōu</span> «Хочу, чтобы [мы] не причинили неприятностей покойным правителям».
     </p>
 
-    <h3>11.3. Удвоение знаменательных слов</h3>
+    <h3>12.3. Видо-временные показатели при предикативах</h3>
     <p class="original">
-        В доклассическом языке встречается несколько различных случаев удвоения знаменательных слов.
+        Характерной особенностью архаического древнекитайского языка является то, что в нем полностью отсутствуют какие-либо грамматические средства выражения вида и времени предикатива.
     </p>
     <p class="original">
-        Один из них — <strong>удвоение слова в именной функции</strong>. Оно употребляется для того, чтобы обозначить множественность предметов (лиц), выраженных этим именем:
+        Вспомним типичную в этом отношении иньскую надпись: <span class="example">翌甲子其雨, 甲子允雨 yì jiǎ zǐ qí yǔ, jiǎ zǐ yǔn yǔ</span> «Будет ли дождь в следующий день цзя-цзы? В день цзя-цзы действительно прошел дождь».
+    </p>
+    <p class="original">
+        В первом предложении говорится о действии, предполагаемом в будущем, во втором — об уже совершившемся факте, но эти различия между ними не имеют формального выражения и определяются исключительно по контексту.
+    </p>
+    <p class="original">
+        Специальные служебные слова, служащие показателями видо-временных значений, появляются впервые в раннем доклассическом языке. При этом для древнекитайского языка этого периода характерна факультативность видо-временных показателей. Они лишь уточняют характеристику действия, выраженного предикативом, и при определенных условиях вполне могут быть опущены.
+    </p>
+    <p class="original">
+        Видо-временные показатели ставятся непосредственно перед тем предикативом, к которому относятся.
+    </p>
+    <p class="original">
+        Один из показателей этого рода, свойственных доклассическому языку, — это <strong>肇 zhào</strong>. Он указывает на то, что действие или состояние, выраженное предикативом, только что началось и еще не закончено:
         <br/><br/>
-        <span class="example">子子孫孫 zǐ zǐ sūn sūn</span> «дети и внуки».
+        <span class="example">肇從父征 zhào cóng fù zhēng</span> «Только что отправился в поход вслед за отцом».<br/>
+        <span class="example">今余肇令汝 jīn yú zhào lìng rǔ</span> «Сейчас я начал отдавать тебе приказы».
     </p>
 
-    <h3>11.4. Обстоятельство длительности действия</h3>
+    <h3>12.4. Имена в функции местоимений</h3>
     <p class="original">
-        Указание на длительность действия или состояния выражается в доклассическом (как и в архаическом) языке посредством обстоятельства, стоящего перед соответствующим предикативом:
-        <br/><br/>
-        <span class="example">三年静東國 sān nián jìng dōng guó</span> «Три года усмирял восточные государства».
+        Личные местоимения, свойственные архаическому языку, продолжают, как мы видели, функционировать и в раннем доклассическом. Но в системе личных местоимений происходят некоторые сдвиги.
     </p>
     <p class="original">
-        В надписях на западночжоуских бронзовых сосудах часто используются стандартные формулы для обозначения продолжительности действия, включающие словосочетание <strong>萬年 wàn nián</strong> «десять тысяч лет»:
+        В частности, вместо местоимения 1-го лица говорящий нередко употребляет свое личное имя. Так, в заключительной части одной из надписей некто Ян говорит от первого лица:
         <br/><br/>
-        <span class="example">余其萬年寶用 yú qí wàn nián bǎo yòng</span> «Я буду пользоваться [этим сосудом] как драгоценностью на протяжении десяти тысяч лет».
-        <br/>
-        <span class="example">效其萬年奔走扬公休 xiào qí wàn nián bēn zǒu yáng gōng xiū</span> «Сяо десять тысяч лет будет стараться отблагодарить гуна за милость».
+        <span class="example">楊拜手稽首敢對揚天子丕顯休, 余用作朕烈考憲伯寶簋 yáng bài shǒu qǐ shǒu gǎn duì yáng tiān zǐ pī xiǎn xiū, yú yòng zuò zhèn liè kǎo xiàn bó bǎo guǐ</span> «[Я,] Ян, сложил руки и поклонился до земли, сделал надпись [на сосуде] и отблагодарил великолепную милость Сына Неба. Я использую [это] в качестве драгоценного сосуда для жертвоприношений моему достославному отцу Сянь-бо».
     </p>
     <p class="original">
-        На то, что данное словосочетание употреблено здесь именно как обстоятельство, указывает стоящее перед ним наречие <strong>其 qí</strong>.
+        Из контекста видно, что в первом случае владелец сосуда называет себя по имени, а во втором — использует местоимение <strong>余 yú</strong> «я».
+    </p>
+
+    <h3>12.5. Указательное местоимение <strong>他 tā</strong></h3>
+    <p class="original">
+        В доклассическом языке наряду с указательным местоимением <strong>兹 zī</strong> «этот» появляется еще одно — <strong>他 tā</strong>, соотносящееся с первым по принципу оппозиции «далекое» — «близкое». На русский язык это местоимение может переводиться как «иной», «другой»:
+        <br/><br/>
+        <span class="example">翼自他邦 yì zì tā bāng</span> «оказать помощь с [территории] другого государства».
     </p>
     <p class="original">
-        Наличие наречий <strong>亦 yì</strong> и <strong>其 qí</strong> перед именным словосочетанием <span class="example">子子孫孫 zǐ zǐ sūn sūn</span> позволяет определить, что оно также является обстоятельством в следующем предложении:
-        <br/><br/>
-        <span class="example">亦其子子孫孫永寳 yì qí zǐ zǐ sūn sūn yǒng bǎo</span> «Также будет вечно, на протяжении жизни всех сыновей и внуков, пользоваться [этим сосудом] как драгоценностью».
+        Как и <strong>兹 zī</strong>, местоимение <strong>他 tā</strong> может выступать в любой именной функции — быть подлежащим, дополнением, определением.
     </p>
 </div>
 
-<h2>СПИСОК СЛОВ УРОКА 11</h2>
+<h2>СПИСОК СЛОВ УРОКА 12</h2>
 <div class="char-list">
     <div class="char-item">
-        <span>夙<span class="inline-pinyin">sù</span></span>
-        <div class="char-tooltip">Ранний; утренний</div>
+        <span>正<span class="inline-pinyin">zhēng</span></span>
+        <div class="char-tooltip">Первый месяц года</div>
     </div>
     <div class="char-item">
-        <span>順<span class="inline-pinyin">shùn</span></span>
-        <div class="char-tooltip">Послушный; покорный</div>
+        <span>肇<span class="inline-pinyin">zhào</span></span>
+        <div class="char-tooltip">Начинать; только что</div>
     </div>
     <div class="char-item">
-        <span>井<span class="inline-pinyin">jǐng</span></span>
-        <div class="char-tooltip">Колодец; фамилия/титул</div>
+        <span>釐<span class="inline-pinyin">lí</span></span>
+        <div class="char-tooltip">Ли (имя вана)</div>
     </div>
     <div class="char-item">
-        <span>夜<span class="inline-pinyin">yè</span></span>
-        <div class="char-tooltip">Ночь</div>
+        <span>文<span class="inline-pinyin">wén</span></span>
+        <div class="char-tooltip">Вэнь (титул)</div>
     </div>
     <div class="char-item">
-        <span>效<span class="inline-pinyin">xiào</span></span>
-        <div class="char-tooltip">Сяо (имя); подражать</div>
+        <span>录<span class="inline-pinyin">lù</span></span>
+        <div class="char-tooltip">Лу (имя или титул)</div>
     </div>
     <div class="char-item">
-        <span>叔<span class="inline-pinyin">shū</span></span>
-        <div class="char-tooltip">Младший дядя</div>
+        <span>卣<span class="inline-pinyin">yǒu</span></span>
+        <div class="char-tooltip">Кувшин для вина</div>
     </div>
     <div class="char-item">
-        <span>奔<span class="inline-pinyin">bēn</span></span>
-        <div class="char-tooltip">Бежать; стараться</div>
+        <span>帥<span class="inline-pinyin">shuài</span></span>
+        <div class="char-tooltip">Следовать; руководить</div>
     </div>
     <div class="char-item">
-        <span>對<span class="inline-pinyin">duì</span></span>
-        <div class="char-tooltip">Отвечать; делать ответ</div>
+        <span>武<span class="inline-pinyin">wǔ</span></span>
+        <div class="char-tooltip">У (титул)</div>
     </div>
     <div class="char-item">
-        <span>右<span class="inline-pinyin">yòu</span></span>
-        <div class="char-tooltip">Правый; помогать</div>
+        <span>伯<span class="inline-pinyin">bó</span></span>
+        <div class="char-tooltip">Бо (титул)</div>
     </div>
     <div class="char-item">
-        <span>走<span class="inline-pinyin">zǒu</span></span>
-        <div class="char-tooltip">Идти; бежать</div>
+        <span>金<span class="inline-pinyin">jīn</span></span>
+        <div class="char-tooltip">Металл; бронза</div>
     </div>
     <div class="char-item">
-        <span>休<span class="inline-pinyin">xiū</span></span>
-        <div class="char-tooltip">Милость; отдых</div>
+        <span>型<span class="inline-pinyin">xíng</span></span>
+        <div class="char-tooltip">Форма; образец</div>
     </div>
     <div class="char-item">
-        <span>免<span class="inline-pinyin">miǎn</span></span>
-        <div class="char-tooltip">Мянь (имя); освобождать</div>
+        <span>膺<span class="inline-pinyin">yīng</span></span>
+        <div class="char-tooltip">Принимать; получать</div>
     </div>
     <div class="char-item">
-        <span>揚<span class="inline-pinyin">yáng</span></span>
-        <div class="char-tooltip">Возносить хвалу</div>
+        <span>冬<span class="inline-pinyin">dōng</span></span>
+        <div class="char-tooltip">Дун (имя)</div>
     </div>
     <div class="char-item">
-        <span>赤<span class="inline-pinyin">chì</span></span>
-        <div class="char-tooltip">Красный</div>
+        <span>敢<span class="inline-pinyin">gǎn</span></span>
+        <div class="char-tooltip">Осмеливаться</div>
     </div>
     <div class="char-item">
-        <span>即<span class="inline-pinyin">jí</span></span>
-        <div class="char-tooltip">Принимать должность</div>
+        <span>仲<span class="inline-pinyin">zhòng</span></span>
+        <div class="char-tooltip">Чжун (второй по старшинству)</div>
     </div>
     <div class="char-item">
-        <span>灌<span class="inline-pinyin">guàn</span></span>
-        <div class="char-tooltip">Жертвоприношение вином</div>
+        <span>克<span class="inline-pinyin">kè</span></span>
+        <div class="char-tooltip">Мочь; быть в состоянии</div>
     </div>
     <div class="char-item">
-        <span>芾<span class="inline-pinyin">fú</span></span>
-        <div class="char-tooltip">Набедренная повязка</div>
+        <span>考<span class="inline-pinyin">kǎo</span></span>
+        <div class="char-tooltip">Покойный отец</div>
     </div>
     <div class="char-item">
-        <span>命<span class="inline-pinyin">mìng</span></span>
-        <div class="char-tooltip">Приказывать</div>
+        <span>拜<span class="inline-pinyin">bài</span></span>
+        <div class="char-tooltip">Поклоняться</div>
     </div>
     <div class="char-item">
-        <span>嘗<span class="inline-pinyin">cháng</span></span>
-        <div class="char-tooltip">Осеннее жертвоприношение</div>
+        <span>致<span class="inline-pinyin">zhì</span></span>
+        <div class="char-tooltip">Доставлять; преподносить</div>
     </div>
     <div class="char-item">
-        <span>事<span class="inline-pinyin">shì</span></span>
-        <div class="char-tooltip">Служить</div>
+        <span>弼<span class="inline-pinyin">bì</span></span>
+        <div class="char-tooltip">Помогать; поддерживать</div>
     </div>
     <div class="char-item">
-        <span>冊<span class="inline-pinyin">cè</span></span>
-        <div class="char-tooltip">Скрижали; книга</div>
+        <span>勳<span class="inline-pinyin">xūn</span></span>
+        <div class="char-tooltip">Заслуга</div>
     </div>
     <div class="char-item">
-        <span>公<span class="inline-pinyin">gōng</span></span>
-        <div class="char-tooltip">Гун (титул)</div>
+        <span>手<span class="inline-pinyin">shǒu</span></span>
+        <div class="char-tooltip">Рука</div>
     </div>
     <div class="char-item">
-        <span>簋<span class="inline-pinyin">guǐ</span></span>
-        <div class="char-tooltip">Бронзовый сосуд для пищи</div>
+        <span>歸<span class="inline-pinyin">guī</span></span>
+        <div class="char-tooltip">Возвращать; преподносить</div>
     </div>
     <div class="char-item">
-        <span>書<span class="inline-pinyin">shū</span></span>
-        <div class="char-tooltip">Писать</div>
+        <span>先<span class="inline-pinyin">xiān</span></span>
+        <div class="char-tooltip">Прежний; покойный</div>
     </div>
     <div class="char-item">
-        <span>宮<span class="inline-pinyin">gōng</span></span>
-        <div class="char-tooltip">Дворец</div>
+        <span>邦<span class="inline-pinyin">bāng</span></span>
+        <div class="char-tooltip">Государство</div>
     </div>
     <div class="char-item">
-        <span>孫<span class="inline-pinyin">sūn</span></span>
-        <div class="char-tooltip">Внук</div>
+        <span>稽<span class="inline-pinyin">qǐ</span></span>
+        <div class="char-tooltip">Касаться (при поклоне)</div>
     </div>
     <div class="char-item">
-        <span>寶<span class="inline-pinyin">bǎo</span></span>
-        <div class="char-tooltip">Сокровище; драгоценность</div>
+        <span>貂<span class="inline-pinyin">diāo</span></span>
+        <div class="char-tooltip">Ласка; норка</div>
     </div>
     <div class="char-item">
-        <span>納<span class="inline-pinyin">nà</span></span>
-        <div class="char-tooltip">Вносить; приносить</div>
+        <span>他<span class="inline-pinyin">tā</span></span>
+        <div class="char-tooltip">Другой; иной</div>
     </div>
     <div class="char-item">
-        <span>又<span class="inline-pinyin">yòu</span></span>
-        <div class="char-tooltip">Еще; и</div>
+        <span>闢<span class="inline-pinyin">pì</span></span>
+        <div class="char-tooltip">Расширять; защищать</div>
     </div>
     <div class="char-item">
-        <span>尊<span class="inline-pinyin">zūn</span></span>
-        <div class="char-tooltip">Уважаемый сосуд</div>
+        <span>首<span class="inline-pinyin">shǒu</span></span>
+        <div class="char-tooltip">Голова</div>
     </div>
     <div class="char-item">
-        <span>饗<span class="inline-pinyin">xiǎng</span></span>
-        <div class="char-tooltip">Пиршество</div>
+        <span>翼<span class="inline-pinyin">yì</span></span>
+        <div class="char-tooltip">Помогать; поддерживать</div>
     </div>
     <div class="char-item">
-        <span>昧<span class="inline-pinyin">mèi</span></span>
-        <div class="char-tooltip">Тьма; предрассвет</div>
+        <span>席<span class="inline-pinyin">xí</span></span>
+        <div class="char-tooltip">Иметь место; участвовать</div>
     </div>
     <div class="char-item">
-        <span>彝<span class="inline-pinyin">yí</span></span>
-        <div class="char-tooltip">Ритуальный сосуд</div>
+        <span>惠<span class="inline-pinyin">huì</span></span>
+        <div class="char-tooltip">Милость; благосклонность</div>
     </div>
     <div class="char-item">
-        <span>賜<span class="inline-pinyin">cì</span></span>
-        <div class="char-tooltip">Дарить (снизу вверх)</div>
+        <span>丕<span class="inline-pinyin">pī</span></span>
+        <div class="char-tooltip">Великий; крупный</div>
     </div>
     <div class="char-item">
-        <span>爽<span class="inline-pinyin">shuǎng</span></span>
-        <div class="char-tooltip">Ясность; рассвет</div>
+        <span>秬<span class="inline-pinyin">jù</span></span>
+        <div class="char-tooltip">Черный просо (для ритуалов)</div>
     </div>
     <div class="char-item">
-        <span>俾<span class="inline-pinyin">bǐ</span></span>
-        <div class="char-tooltip">Поручать</div>
+        <span>曠<span class="inline-pinyin">kuàng</span></span>
+        <div class="char-tooltip">Пренебрегать; оставлять</div>
     </div>
     <div class="char-item">
-        <span>朋<span class="inline-pinyin">péng</span></span>
-        <div class="char-tooltip">Единица измерения раковин</div>
+        <span>弘<span class="inline-pinyin">hóng</span></span>
+        <div class="char-tooltip">Распространять; усиливать</div>
     </div>
     <div class="char-item">
-        <span>格<span class="inline-pinyin">gé</span></span>
-        <div class="char-tooltip">Прибыть; достичь</div>
+        <span>顯<span class="inline-pinyin">xiǎn</span></span>
+        <div class="char-tooltip">Явный; величественный</div>
     </div>
     <div class="char-item">
-        <span>司<span class="inline-pinyin">sī</span></span>
-        <div class="char-tooltip">Управлять</div>
+        <span>鬯<span class="inline-pinyin">chàng</span></span>
+        <div class="char-tooltip">Ароматическое вино</div>
     </div>
     <div class="char-item">
-        <span>厥<span class="inline-pinyin">jué</span></span>
-        <div class="char-tooltip">Его; её; свой (местоимение)</div>
+        <span>享<span class="inline-pinyin">xiǎng</span></span>
+        <div class="char-tooltip">Жертвоприношение</div>
     </div>
     <div class="char-item">
-        <span>廟<span class="inline-pinyin">miào</span></span>
-        <div class="char-tooltip">Храм предков</div>
+        <span>天<span class="inline-pinyin">tiān</span></span>
+        <div class="char-tooltip">Небо</div>
     </div>
     <div class="char-item">
-        <span>林<span class="inline-pinyin">lín</span></span>
-        <div class="char-tooltip">Лес</div>
+        <span>皇<span class="inline-pinyin">huáng</span></span>
+        <div class="char-tooltip">Великий; императорский</div>
+    </div>
+    <div class="char-item">
+        <span>裘<span class="inline-pinyin">qiú</span></span>
+        <div class="char-tooltip">Меховая одежда</div>
     </div>
 </div>
 
@@ -616,98 +591,40 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 <div class="lexicon">
     <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
 
-    <h3>11.А. Обозначение дат</h3>
+    <h3>12.А. Копирование образцов</h3>
     <p class="original">
-        Для обозначения дней в чжоуское время, как и в иньское, продолжает применяться система циклических знаков. Однако в целом даты записываются теперь несколько иначе.
+        Одним из важнейших социально-этических представлений эпохи Чжоу, которые в несколько трансформированном виде легли в основу возникшего несколькими веками позже конфуцианского учения, было восприятие традиции, следование уже существующему образцу. Не активное творчество, а копирование того, что уже сделано предками, — таков основной идеологический лозунг господствующего слоя западночжоуского общества.
     </p>
     <p class="original">
-        Прежде всего для обозначения года употребляется слово <strong>年 nián</strong>, ранее имевшее значение «урожай». Перед ним, как правило, стоит слово <strong>王 wáng</strong>, что указывает на систему летосчисления, принятую чжоуским правителем. Однако титул вана не указывается, и остается неизвестным, какой именно правитель имеется в виду (единой системы летосчисления в чжоуское время не существовало).
-    </p>
-    <p class="original">
-        После обозначения года обычно следует указание на соответствующий месяц. Первый месяц в году называется <strong>正月 zhēng yuè</strong>, а последующие обозначаются словосочетаниями <strong>二月 èr yuè</strong> «второй месяц», <strong>三月 sān yuè</strong> «третий месяц» и т. д.
-    </p>
-    <p class="original">
-        Перед обозначением дня иногда стоит выражение <strong>辰在 chén zài</strong> «созвездие находится в...», связанное с особенностями астрономических представлений чжоусцев.
-    </p>
-    <p class="original">
-        Дата в начале надписи всегда оформляется эмфатической частицей <strong>唯 wéi</strong>:
-        <br/><br/>
-        <span class="example">唯王二十又五年四月甲午 wéi wáng èr shí yòu wǔ nián sì yuè jiǎ wǔ</span>
-        «двадцать пятый год вана, четвертый месяц, день цзя-у».
+        Для правителя таким идеальным образцом была деятельность «прежних ванов». Каждый представитель знати в свою очередь считал высшей добродетелью подражание своим собственным прародителям, «не смея не брать за образец своих усопших предков».
     </p>
 
-    <h3>11.Б. Обозначение времени суток</h3>
+    <h3>12.Б. Термины родства</h3>
     <p class="original">
-        В иньских надписях встречается несколько специальных терминов для обозначения частей суток: <strong>明 míng</strong> «рассвет», <strong>旦 dàn</strong> «восход солнца», <strong>朝 zhāo</strong> «утро», <strong>中日 zhōng rì</strong> «полдень», <strong>昏 hūn</strong> «вечер», <strong>夕 xī</strong> «ночь». Практически так же делили сутки и чжоусцы.
+        Система терминов родства, зафиксированная в западночжоуских надписях, в целом совпадает с иньской. Единственным существенным отличием раннечжоуской системы от иньской является термин <strong>考 kǎo</strong>, соответствующий <strong>父 fù</strong> («отец», «брат отца»), но применяемый только по отношению к умершему родственнику.
     </p>
     <p class="original">
-        Единственным нововведением было, пожалуй, лишь выделение еще одного периода — <strong>предрассветного времени</strong>, когда ночь уже на исходе. Это время называлось <strong>昧爽 mèi shuǎng</strong> или <strong>昧旦 mèi dàn</strong>.
+        Словосочетание <strong>祖考 zǔ kǎo</strong> обычно имеет значение «усопшие предки».
     </p>
     <p class="original">
-        В «Шицзине» есть такая фраза:
-        <br/><br/>
-        <span class="example">女曰雞鳴, 士曰昧旦 nǚ yuē jī míng, shì yuē mèi dàn</span>
-        «Жена сказала: “Петух пропел”, супруг сказал: “Редеет мрак”».
-    </p>
-    <p class="original">
-        Обратим внимание на то, что все торжественные церемонии, связанные с назначением на должность высших сановников и т. д., начинались всегда очень рано, часто еще до рассвета, чтобы наиболее важная их часть приходилась на тот момент, когда вставало солнце.
+        Напомним, что <strong>祖 zǔ</strong>, как и <strong>孫 sūn</strong>, обозначали не только деда и внука, но и родственников более отдаленных поколений.
     </p>
 
-    <h3>11.В. Чжоуские ритуальные сосуды</h3>
+    <h3>12.В. Сын Неба <strong>天子 tiān zǐ</strong></h3>
     <p class="original">
-        До завоевания чжоусцы, по всей видимости, не владели бронзолитейной технологией. Покорив Инь, они привлекли к себе на службу иньских ремесленников, и поэтому раннечжоуские бронзовые изделия, в том числе ритуальные сосуды, в общем и целом схожи с иньскими прототипами.
-    </p>
-    <p class="original">
-        Для жертвоприношений в чжоуское время использовались сосуды нескольких типов, имевшие различное назначение:
-        <ul>
-            <li><strong>鼎 dǐng</strong> — трипод для варки мяса;</li>
-            <li><strong>鬲 lì</strong> — котел для зерна;</li>
-            <li><strong>簋 guǐ</strong> — круглый сосуд на поддоне для готовой пищи;</li>
-            <li><strong>卣 yǒu</strong> — кувшин с крышкой для вина;</li>
-            <li><strong>爵 jué</strong> — кубок для питья вина.</li>
-        </ul>
-    </p>
-    <p class="original">
-        У чжоусцев существовал также общий термин <strong>彝 yí</strong> «сосуд для жертвоприношений». В надписях он употребляется с определениями <strong>尊 zūn</strong> или <strong>宗 zōng</strong>, указывающими на его применение в связи с жертвоприношениями в храме предков.
+        Чжоуские ваны присвоили себе титул «Сын Неба», подчеркивающий священное происхождение власти правителя и его исключительное положение среди смертных. Этот титул упоминается в надписях начиная с середины X в. до н. э. Одновременно с этим чжоуские ваны по-прежнему использовали и прежний иньский титул правителя «Я, единственный среди людей».
     </p>
 
-    <h3>11.Г. Чжоуская одежда</h3>
+    <h3>12.Г. «Металлические колесницы»</h3>
     <p class="original">
-        В надписях нередко встречаются упоминания о дарах вана. Если в ранних текстах чаще всего говорится о пожалованиях раковин каури, то позднее аристократы удостаивались даров в виде оружия и одежды.
-    </p>
-    <p class="original">
-        Одежда чжоусцев состояла из халата <strong>衣 yī</strong> и набедренной повязки <strong>芾 fú</strong>. Это был кусок выделанной и окрашенной кожи, закреплявшийся на поясе и спускавшийся ниже колен.
-    </p>
-    <p class="original">
-        По-видимому, последним обстоятельством и объясняется ошибка А. А. Штукина, который перевел этот термин словом «наколенники» (*«наколенники ярким багрянцем сверкают и подвески бряцают нефритом зеленым»*).
-    </p>
-    <p class="original">
-        Действительно, чжоуская знать высшего ранга носила набедренные повязки алого цвета.
+        Чжоуские боевые колесницы по своей конструкции были полностью аналогичны иньским. Они, как и раньше, изготавливались из дерева, но ряд наиболее важных деталей требовал применения металла. Без бронзовых втулок, например, колесница была бы недолговечной.
     </p>
     <div style="text-align: center; margin: 20px 0;">
-        <img alt="Чжоуская набедренная повязка (芾)" class="original" src="./img/fu.jpg" style="border: none; padding: 0; max-width: 100%;"/>
-        <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Чжоуская набедренная повязка (芾)</p>
+        <img alt="Колесо чжоуской повозки с металлической втулкой" class="original" src="./img/20.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+        <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Колесо чжоуской повозки с металлической втулкой</p>
     </div>
-
-    <h3>11.Д. Титулы наследственных владетелей</h3>
     <p class="original">
-        Чжоуское завоевание не изменило политического статуса большинства племенных вождей, ранее подчинявшихся иньцам. Введение их в наследственное владение соответствующими территориями означало в действительности признание <em>de jure</em> их прежних прав.
-    </p>
-    <p class="original">
-        Сохранились в чжоуское время и старые титулы наследственных владетелей. К ним, правда, добавились еще два — <strong>гун</strong> (<strong>公 gōng</strong>) и <strong>нань</strong> (<strong>男 nán</strong>), в иньское время неизвестные.
-    </p>
-    <p class="original">
-        Титул определял положение и права владетеля. В древнем трактате «Чжоули» утверждается, что:
-        <ul>
-            <li><strong>гун</strong> имеет поля площадью 500 ли;</li>
-            <li><strong>хоу</strong> — 400 ли;</li>
-            <li><strong>бо</strong> — 300 ли;</li>
-            <li><strong>цзы</strong> — 200 ли;</li>
-            <li><strong>нань</strong> — 100 ли.</li>
-        </ul>
-    </p>
-    <p class="original">
-        Общим наименованием наследственных владетелей был в чжоуское время термин <strong>чжухоу</strong> (<strong>諸侯 zhū hóu</strong>).
+        Поэтому в чжоуских надписях часто упоминается о том, что правитель дарил своим подчиненным отлитые из бронзы детали колесниц, а сами эти боевые повозки нередко называются «металлическими».
     </p>
 </div>
 
@@ -715,19 +632,23 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 <div class="assignment">
     <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
     <ol>
-        <li>Перепишите текст, расставив знаки препинания.</li>
-        <li>Проделайте грамматический анализ текста.</li>
+        <li>Спишите текст и подчеркните в нем слова, которые могут рифмоваться. Определите, во всех ли случаях они стоят в конце предложения.</li>
         <li>Переведите текст на русский язык.</li>
+        <li>Переведите на древнекитайский следующие предложения:
+            <ol type="1">
+                <li>Я не осмеливаюсь принять этот драгоценный ритуальный сосуд.</li>
+                <li>Алую набедренную повязку ван пожалует тебе на следующий день.</li>
+                <li>Его сын только что начал управлять лесными угодьями.</li>
+                <li>Твой дед смог войти в его зал.</li>
+            </ol>
+        </li>
     </ol>
-    <p class="footer" style="margin-top: 20px; border-top: none; font-style: italic;">
-        * Шицзин. М., 1957. С. 226.
-    </p>
 </div>
 
 <div class="footer">
     Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
     Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
-    Все иероглифы — из текстов Уроков 1–11, либо из циклических знаков (甲子 – 癸亥).
+    Все иероглифы — из текстов Уроков 1–12, либо из циклических знаков (甲子 – 癸亥).
 </div>
 
 <script>
