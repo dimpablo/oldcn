@@ -219,7 +219,54 @@ const charData = {
     '馭': {pinyin: 'yù', meaning: 'управлять (лошадьми), править', lesson: 10},
     '央': {pinyin: 'yāng', meaning: 'имя собственное (цзы Ян)', lesson: 10},
     '墜': {pinyin: 'zhuì', meaning: 'падать, сваливаться', lesson: 10},
-    '硪': {pinyin: 'wò', meaning: 'имя собственное (возможно, имя возничего)', lesson: 10}
+    '硪': {pinyin: 'wò', meaning: 'имя собственное (возможно, имя возничего)', lesson: 10},
+
+    // Урок 11
+
+
+    "夙": {"pinyin": "sù", "meaning": "утро", "lesson": 11},
+    "順": {"pinyin": "shùn", "meaning": "покорный, подчиняться", "lesson": 11},
+    "井": {"pinyin": "jǐng", "meaning": "колодец; собств. Цзин", "lesson": 11},
+    "夜": {"pinyin": "yè", "meaning": "ночь", "lesson": 11},
+    "效": {"pinyin": "xiào", "meaning": "отдавать все силы; жертвовать собой; собств. Сяо", "lesson": 11},
+    "叔": {"pinyin": "shū", "meaning": "собств. Шу", "lesson": 11},
+    "奔": {"pinyin": "bēn", "meaning": "хлопотать, быть занятым", "lesson": 11},
+    "對": {"pinyin": "duì", "meaning": "отвечать; благодарить; пара; супруг", "lesson": 11},
+    "右": {"pinyin": "yòu", "meaning": "правый; помогать", "lesson": 11},
+    "走": {"pinyin": "zǒu", "meaning": "бежать, скакать верхом", "lesson": 11},
+    "休": {"pinyin": "xiū", "meaning": "дарить, подарок", "lesson": 11},
+    "免": {"pinyin": "miǎn", "meaning": "собств. Мянь", "lesson": 11},
+    "揚": {"pinyin": "yáng", "meaning": "возносить хвалу", "lesson": 11},
+    "赤": {"pinyin": "chì", "meaning": "красный", "lesson": 11},
+    "即": {"pinyin": "jí", "meaning": "подойти, приблизиться; служ. союз, вводящий главное предложение в сложноподчиненном с придаточным условным; слово, указывающее на последовательность действий", "lesson": 11},
+    "灌": {"pinyin": "guàn", "meaning": "угощать вином", "lesson": 11},
+    "芾": {"pinyin": "fú", "meaning": "набедренная повязка", "lesson": 11},
+    "命": {"pinyin": "mìng", "meaning": "приказ; судьба; собств. Мин", "lesson": 11},
+    "嘗": {"pinyin": "cháng", "meaning": "служ. показатель неопределенного прошедшего времени предикатива", "lesson": 11},
+    "事": {"pinyin": "shì", "meaning": "дело, занятие", "lesson": 11},
+    "冊": {"pinyin": "cè", "meaning": "дощечка для письма", "lesson": 11},
+    "公": {"pinyin": "gōng", "meaning": "название одного из рангов знатности; вы", "lesson": 11},
+    "簋": {"pinyin": "guǐ", "meaning": "дин (название одного из видов бронзовых сосудов)", "lesson": 11},
+    "書": {"pinyin": "shū", "meaning": "писать", "lesson": 11},
+    "宮": {"pinyin": "gōng", "meaning": "храм, жилище, зала", "lesson": 11},
+    "孫": {"pinyin": "sūn", "meaning": "внук, потомок", "lesson": 11},
+    "寶": {"pinyin": "bǎo", "meaning": "драгоценность", "lesson": 11},
+    "納": {"pinyin": "nà", "meaning": "вводить, впускать", "lesson": 11},
+    "又": {"pinyin": "yòu", "meaning": "служ. наречие снова, опять", "lesson": 11},
+    "尊": {"pinyin": "zūn", "meaning": "уважаемый, почитаемый", "lesson": 11},
+    "饗": {"pinyin": "xiǎng", "meaning": "устраивать угощение", "lesson": 11},
+    "昧": {"pinyin": "mèi", "meaning": "темный, сумрачный", "lesson": 11},
+    "彝": {"pinyin": "yí", "meaning": "ритуальный сосуд", "lesson": 11},
+    "賜": {"pinyin": "cì", "meaning": "дарить", "lesson": 11},
+    "爽": {"pinyin": "shuǎng", "meaning": "ясный, светлый", "lesson": 11},
+    "俾": {"pinyin": "bǐ", "meaning": "заставлять", "lesson": 11},
+    "朋": {"pinyin": "péng", "meaning": "связка раковин; друг", "lesson": 11},
+    "格": {"pinyin": "gé", "meaning": "достигать, прибывать", "lesson": 11},
+    "司": {"pinyin": "sī", "meaning": "управлять", "lesson": 11},
+    "厥": {"pinyin": "jué", "meaning": "его, её, свой (местоимение)", "lesson": 11},
+    "廟": {"pinyin": "miào", "meaning": "храм предков", "lesson": 11},
+    "林": {"pinyin": "lín", "meaning": "лес, роща", "lesson": 11}
+
 };
 
 // Для некоторых глючных скриптов:
