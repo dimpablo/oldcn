@@ -221,3 +221,8 @@ const charData = {
     '墜': {pinyin: 'zhuì', meaning: 'падать, сваливаться', lesson: 10},
     '硪': {pinyin: 'wò', meaning: 'имя собственное (возможно, имя возничего)', lesson: 10}
 };
+
+// Для некоторых глючных скриптов:
+if (typeof window !== 'undefined') {
+    window.charData = charData;
+}

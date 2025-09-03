@@ -313,6 +313,7 @@
 
     <!-- Подключаем данные -->
     <script src="segmentation.js"></script>
+    <script src="../dictionary.js"></script>
     <script type="module">
         // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
@@ -333,7 +334,64 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         let currentUser = null;
-        let totalEarned = 0;
+
+        // === 🔊 ОЗВУЧКА ИЕРОГЛИФА (с полной отладкой) ===
+        function playHanziSound(hanzi) {
+            console.log(`🔊 [playHanziSound] Вызван для: '${hanzi}'`);
+
+            if (typeof window.charData === 'undefined') {
+                console.error(`❌ [playHanziSound] window.charData НЕ загружен!`);
+                return;
+            }
+
+            const data = window.charData[hanzi];
+            if (!data) {
+                console.warn(`🟡 [playHanziSound] Нет данных в charData для иероглифа: '${hanzi}'`);
+                return;
+            }
+
+            if (!data.pinyin) {
+                console.warn(`🟡 [playHanziSound] У иероглифа '${hanzi}' нет pinyin`);
+                return;
+            }
+
+            let cleanPinyin = data.pinyin
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ü/g, 'u')
+                .replace(/v/g, 'u');
+
+            let tone = '1';
+            if (data.pinyin.includes('ā')) tone = '1';
+            else if (data.pinyin.includes('á')) tone = '2';
+            else if (data.pinyin.includes('ǎ')) tone = '3';
+            else if (data.pinyin.includes('à')) tone = '4';
+
+            const pinyinKey = cleanPinyin + tone;
+            const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+            console.log(`🎵 [playHanziSound] Формируем URL: ${url}`);
+
+            const audio = new Audio();
+            audio.src = url;
+
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log(`✅ [playHanziSound] Аудио для '${hanzi}' ВОСПРОИЗВОДИТСЯ`);
+                    })
+                    .catch(err => {
+                        console.error(`❌ [playHanziSound] Ошибка воспроизведения:`, err);
+                        if (err.name === 'NotAllowedError') {
+                            console.warn(`⚠️ [playHanziSound] Блокировка автовоспроизведения`);
+                        }
+                    });
+            } else {
+                console.warn(`🟡 [playHanziSound] audio.play() не возвращает Promise`);
+                audio.play().catch(e => console.error(`Ошибка:`, e));
+            }
+        }
 
         // === ✅ Функция начисления/списания баллов ===
         async function updatePoints(points, reason) {
@@ -344,8 +402,6 @@
                 const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
                 const newPoints = currentPoints + points;
                 await updateDoc(userRef, { points: newPoints });
-                totalEarned += points;
-                console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
             } catch (e) {
                 console.error("❌ Ошибка обновления баллов:", e);
             }
@@ -354,11 +410,11 @@
         // === 🛠 УЛУЧШЕННЫЕ ФУНКЦИИ ОЧИСТКИ ТЕКСТА ===
         function normalizeText(text) {
             return text
-                .replace(/\u00A0/g, ' ')           // Неразрывные пробелы → обычные
-                .replace(/[.,:;?!«»"()]/g, '')     // Удаляем пунктуацию
+                .replace(/\u00A0/g, ' ')
+                .replace(/[.,:;?!«»"()]/g, '')
                 .toLowerCase()
                 .trim()
-                .replace(/\s+/g, ' ');             // Один пробел между словами
+                .replace(/\s+/g, ' ');
         }
 
         function cleanChinese(text) {
@@ -367,6 +423,8 @@
 
         // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("📄 [Квиз] DOM загружен");
+
             const allOriginals = SentenceData.sentences.map(s => cleanChinese(s.original));
             const allTranslations = SentenceData.sentences.map(s => s.translation);
 
@@ -466,42 +524,107 @@
                 nextBtn.style.display = 'none';
             }
 
-            // --- 🔁 Удаление слова из ответа ---
-            answerList.addEventListener('click', function(e) {
-                if (e.target.classList.contains('word')) {
-                    const word = e.target.dataset.word;
-                    e.target.remove();
+            // --- ПРОВЕРКА ОТВЕТА ---
+            function checkAnswer() {
+                const task = tasks[currentTaskIndex];
+                const currentText = normalizeText(currentAnswer.join(' '));
 
-                    const wordEl = document.createElement('div');
-                    wordEl.className = 'word';
-                    wordEl.textContent = word;
-                    wordEl.dataset.word = word;
-                    wordsList.appendChild(wordEl);
-
-                    const index = currentAnswer.indexOf(word);
-                    if (index !== -1) currentAnswer.splice(index, 1);
-
-                    updatePoints(-5, `исправление перевода: ${tasks[currentTaskIndex]?.source || 'unknown'}`);
-
-                    wordEl.addEventListener('click', function() {
-                        const w = this.dataset.word;
-                        this.remove();
-                        const aEl = document.createElement('div');
-                        aEl.className = 'word selected';
-                        aEl.textContent = w;
-                        aEl.dataset.word = w;
-                        answerList.appendChild(aEl);
-                        currentAnswer.push(w);
-                        checkAnswer();
-                    });
-
-                    checkAnswer();
+                if (task.type === 'toTranslation') {
+                    if (currentText === task.correctAnswer) {
+                        resultMessage.className = 'success';
+                        resultMessage.textContent = '✅ Верно! Готово.';
+                        updatePoints(10, `успешный перевод: ${task.source}`);
+                        hideDontKnowButton();
+                        showNextButton();
+                    }
+                } else if (task.type === 'toOriginal') {
+                    const chineseAnswer = currentAnswer.join('');
+                    if (chineseAnswer === task.correctAnswer) {
+                        resultMessage.className = 'success';
+                        resultMessage.textContent = '✅ Верно! Готово.';
+                        updatePoints(10, `успешный перевод: ${task.source}`);
+                        hideDontKnowButton();
+                        showNextButton();
+                    }
                 }
+            }
+
+            // --- ЕДИНОЖДЫ НАВЕШИВАЕМ ОБРАБОТЧИКИ ЧЕРЕЗ ДЕЛЕГИРОВАНИЕ ---
+            wordsList.addEventListener('click', function(e) {
+                const wordEl = e.target.closest('.word');
+                if (!wordEl) return;
+
+                const word = wordEl.dataset.word;
+                console.log(`➡️ [Квиз] Перемещение в ответ: '${word}'`);
+
+                wordEl.remove();
+                currentAnswer.push(word);
+
+                const answerEl = document.createElement('div');
+                answerEl.className = 'word selected';
+                answerEl.textContent = word;
+                answerEl.dataset.word = word;
+                answerList.appendChild(answerEl);
+
+                // Озвучка иероглифа
+                if (tasks[currentTaskIndex]?.type === 'toOriginal' && word.length === 1 && /[\u4e00-\u9fff]/.test(word)) {
+                    playHanziSound(word);
+                }
+
+                checkAnswer();
             });
 
+            answerList.addEventListener('click', function(e) {
+                const wordEl = e.target.closest('.word');
+                if (!wordEl) return;
+
+                const word = wordEl.dataset.word;
+                console.log(`⬅️ [Квиз] Возврат в wordsList: '${word}'`);
+
+                wordEl.remove();
+                currentAnswer.splice(currentAnswer.indexOf(word), 1);
+
+                updatePoints(-5, `исправление перевода: ${tasks[currentTaskIndex]?.source}`);
+
+                const newWordEl = document.createElement('div');
+                newWordEl.className = 'word';
+                newWordEl.textContent = word;
+                newWordEl.dataset.word = word;
+                wordsList.appendChild(newWordEl);
+
+                // Озвучка при возврате
+                if (tasks[currentTaskIndex]?.type === 'toOriginal' && word.length === 1 && /[\u4e00-\u9fff]/.test(word)) {
+                    playHanziSound(word);
+                }
+
+                checkAnswer();
+            });
+
+            dontKnowBtn.addEventListener('click', function () {
+                const task = tasks[currentTaskIndex];
+                resultMessage.className = 'info';
+                resultMessage.textContent = `💡 Правильный ответ: "${task.correctAnswer}"`;
+                updatePoints(-10, `подсказка: ${task.source}`);
+                hideDontKnowButton();
+                showNextButton();
+            });
+
+            nextBtn.addEventListener('click', function () {
+                currentTaskIndex++;
+                renderTask();
+            });
+
+            returnBtn.addEventListener('click', () => {
+                window.location.href = '../index.html';
+            });
+
+            // --- РЕНДЕР ЗАДАНИЯ ---
             function renderTask() {
+                console.log(`🎯 [Квиз] Рендерим задание ${currentTaskIndex + 1}/${tasks.length}`);
                 if (currentTaskIndex >= tasks.length) {
-                    showCompletionScreen();
+                    mainContent.style.display = 'none';
+                    congratulations.style.display = 'block';
+                    updatePoints(30, 'завершение всего цикла переводов');
                     return;
                 }
 
@@ -511,9 +634,10 @@
                 tasksLeft.textContent = tasks.length - currentTaskIndex;
 
                 currentAnswer = [];
-                answerList.innerHTML = '';
                 wordsList.innerHTML = '';
+                answerList.innerHTML = '';
 
+                // Заполняем слова
                 task.words
                     .filter(word => word && word.trim())
                     .forEach(word => {
@@ -524,92 +648,18 @@
                         wordsList.appendChild(el);
                     });
 
-                // --- 🔁 Обработчик для слов ---
-                document.querySelectorAll('#wordsList .word').forEach(el => {
-                    el.addEventListener('click', function() {
-                        const word = this.dataset.word;
-                        this.remove();
-
-                        const answerEl = document.createElement('div');
-                        answerEl.className = 'word selected';
-                        answerEl.textContent = word;
-                        answerEl.dataset.word = word;
-                        answerList.appendChild(answerEl);
-
-                        currentAnswer.push(word);
-                        checkAnswer();
-                    });
-                });
-
                 resultMessage.className = 'info';
                 resultMessage.textContent = 'Соберите перевод.';
                 showDontKnowButton();
                 hideNextButton();
-
-                wordsList.style.pointerEvents = 'auto';
-                answerList.style.pointerEvents = 'auto';
             }
 
-            function checkAnswer() {
-                const task = tasks[currentTaskIndex];
-                const currentText = normalizeText(currentAnswer.join(' '));
-
-                if (task.type === 'toTranslation') {
-                    if (currentText === task.correctAnswer) {
-                        showSuccess();
-                    }
-                } else if (task.type === 'toOriginal') {
-                    const chineseAnswer = currentAnswer.join('');
-                    if (chineseAnswer === task.correctAnswer) {
-                        showSuccess();
-                    }
-                }
-            }
-
-            function showSuccess() {
-                resultMessage.className = 'success';
-                resultMessage.textContent = '✅ Верно! Готово.';
-                updatePoints(10, `успешный перевод: ${tasks[currentTaskIndex].source}`);
-
-                wordsList.style.pointerEvents = 'none';
-                answerList.style.pointerEvents = 'none';
-
-                hideDontKnowButton();
-                showNextButton();
-            }
-
-            dontKnowBtn.addEventListener('click', function () {
-                const task = tasks[currentTaskIndex];
-                const correctText = task.correctAnswer;
-
-                resultMessage.className = 'info';
-                resultMessage.textContent = `💡 Правильный ответ: "${correctText}"`;
-
-                updatePoints(-10, `подсказка: ${task.source}`);
-
-                wordsList.style.pointerEvents = 'none';
-                answerList.style.pointerEvents = 'none';
-
-                hideDontKnowButton();
-                showNextButton();
-            });
-
-            nextBtn.addEventListener('click', function () {
-                currentTaskIndex++;
+            // --- ИНИЦИАЛИЗАЦИЯ ---
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                console.log('🔐 [Квиз] Пользователь:', user ? user.displayName : 'не авторизован');
                 renderTask();
             });
-
-            function showCompletionScreen() {
-                mainContent.style.display = 'none';
-                congratulations.style.display = 'block';
-                updatePoints(30, 'завершение всего цикла переводов');
-            }
-
-            returnBtn.addEventListener('click', () => {
-                window.location.href = '../index.html';
-            });
-
-            renderTask();
         });
     </script>
 </body>
