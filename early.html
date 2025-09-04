@@ -1087,5 +1087,29 @@ statsContainer.innerHTML = `
     }
   });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_COMMENT,
+      null,
+      false
+    );
+
+    let comment;
+    while ((comment = walker.nextNode())) {
+      if (comment.textContent.trim() === 'Задания') {
+        let sibling = comment.nextSibling;
+        while (sibling) {
+          if (sibling.nodeType === 1 && sibling.tagName === 'TR') {
+            sibling.style.display = 'none';
+            break;
+          }
+          sibling = sibling.nextSibling;
+        }
+      }
+    }
+  });
+</script>
 </body>
 </html>

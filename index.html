@@ -450,7 +450,7 @@
     <!-- Подвал -->
     <footer>
       <p>© 2025 OLDCN.github.IO | <a href="https://t.me/oldcnio">Канал в Telegram</a></p>
-      <p>Учебник: В. А. Крюков, «Древнекитайский язык»</p>
+      <p>Учебник: В. А. Крюков, Хуан Шуин. «Древнекитайский язык»</p>
     </footer>
   </div>
 
@@ -568,4 +568,62 @@
     });
   </script>
 </body>
+<script>
+  // Функция для проверки, является ли устройство мобильным
+  function isMobile() {
+    return window.innerWidth <= 768 || 
+           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Функция для выравнивания ширины кнопок
+  function equalizeButtonWidths() {
+    // Выполняем только на мобильных
+    if (!isMobile()) return;
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    const communityBtn = document.querySelector('.auth-buttons .btn-secondary[href="./community.html#users"]');
+    const devBtn = document.querySelector('.auth-buttons .btn-secondary[href="https://t.me/oldcnio"]');
+
+    // Убираем лишние пробелы в href при поиске, если есть
+    const devBtnFallback = document.querySelector('.auth-buttons .btn-secondary[href*="t.me/oldcnio"]');
+
+    if (!logoutBtn || !communityBtn) return;
+
+    const isLogoutVisible = logoutBtn.offsetParent !== null;
+    if (!isLogoutVisible) return;
+
+    const logoutWidth = logoutBtn.offsetWidth;
+
+    // Назначаем ширину только если кнопка существует
+    communityBtn.style.width = `${logoutWidth}px`;
+    (devBtn || devBtnFallback)?.style.width = `${logoutWidth}px`;
+  }
+
+  // Запускаем при загрузке страницы и при изменении размера окна
+  document.addEventListener('DOMContentLoaded', () => {
+    // Ждём полной загрузки, чтобы все элементы были доступны
+    setTimeout(() => {
+      equalizeButtonWidths();
+    }, 100);
+
+    // Обновляем при ресайзе (актуально при повороте экрана и т.п.)
+    window.addEventListener('resize', equalizeButtonWidths);
+
+    // Отслеживаем появление панели пользователя (после входа)
+    const observer = new MutationObserver(() => {
+      const isLoggedIn = !document.getElementById('user-container')?.classList.contains('hidden');
+      if (isLoggedIn && isMobile()) {
+        // Даём время на рендер кнопок
+        setTimeout(equalizeButtonWidths, 100);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  });
+</script>
 </html>
