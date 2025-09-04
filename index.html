@@ -38,7 +38,7 @@
     }
 
     .subtitle {
-      font-size: 1.3em;
+      font-size: 1.2em;
       margin: 10px 0 0;
       opacity: 0.9;
       text-shadow: 0 1px 3px rgba(0,0,0,0.4);
@@ -102,9 +102,9 @@
 
     .user-stats {
       display: flex;
-      gap: 20px;
+      flex-direction: column;
+      gap: 8px;
       font-size: 14px;
-      margin-left: 20px;
     }
 
     .user-stats a {
@@ -113,6 +113,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      font-size: 0.95em;
     }
 
     .auth-buttons {
@@ -230,7 +231,7 @@
     }
 
     .period-title {
-      font-size: 1.3em;
+      font-size: 1.2em;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -244,6 +245,7 @@
       line-height: 1.5;
       text-shadow: 0 1px 3px rgba(0,0,0,0.7);
       overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .lesson-count {
@@ -274,29 +276,42 @@
         padding: 15px;
       }
 
-      /* Кнопки — в колонку, одинакового размера */
+      /* Контейнеры кнопок — в колонку */
       .login-container,
       .auth-buttons {
         flex-direction: column;
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
         margin: 0 auto;
       }
 
+      /* Уменьшаем кнопки — компактный стиль */
       .btn {
         width: 100%;
+        padding: 9px 12px;
+        font-size: 0.9em;
         text-align: center;
-        padding: 10px 15px;
-        font-size: 0.95em;
       }
 
-      /* Улучшаем перенос текста */
-      .period-desc {
-        overflow-wrap: break-word;
-        line-height: 1.45;
+      /* Информация о пользователе — в столбик */
+      .user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
       }
 
-      /* Адаптация контейнера */
+      /* Статистика — в столбик, не уезжает */
+      .user-stats {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 0;
+      }
+
+      .user-stats a {
+        font-size: 0.9em;
+      }
+
+      /* Контейнер */
       .container {
         padding: 10px;
       }
@@ -313,12 +328,18 @@
         font-size: 1.1em;
       }
 
+      /* Карточки */
       .period-card {
         height: 260px;
       }
 
       .period-title {
         font-size: 1.1em;
+      }
+
+      .period-desc {
+        font-size: 0.9em;
+        line-height: 1.45;
       }
 
       .lesson-count {
@@ -375,7 +396,7 @@
       <a href="./archaic.html" class="period-card bg-archaic">
         <div class="period-content">
           <div class="period-title">Архаический</div>
-          <div class="period-desc">Язык оракульных надписей на костях и&nbsp;бронзе династии Шан</div>
+          <div class="period-desc">Язык оракульных надписей<br>на костях и бронзе династии Шан</div>
           <div class="lesson-count">Уроки 1–10</div>
         </div>
       </a>
@@ -384,7 +405,7 @@
       <a href="./early.html" class="period-card bg-early">
         <div class="period-content">
           <div class="period-title">Ранний доклассический</div>
-          <div class="period-desc">Тексты Западного Чжоу, надписи на бронзовых сосудах</div>
+          <div class="period-desc">Тексты Западного Чжоу,<br>надписи на бронзовых сосудах</div>
           <div class="lesson-count">Уроки 11–20</div>
         </div>
       </a>
@@ -393,7 +414,7 @@
       <a href="./late.html" class="period-card bg-late">
         <div class="period-content">
           <div class="period-title">Поздний доклассический</div>
-          <div class="period-desc">Философия и политика эпохи Чунь&shy;цю</div>
+          <div class="period-desc">Философия и политика эпохи Чуньцю</div>
           <div class="lesson-count">Уроки 21–30</div>
         </div>
       </a>
@@ -402,7 +423,7 @@
       <a href="./classical.html" class="period-card bg-classical">
         <div class="period-content">
           <div class="period-title">Ранний классический</div>
-          <div class="period-desc">Мэн-цзы, Чжуан-цзы, Сунь-цзы — эпоха Чжаньго</div>
+          <div class="period-desc">Мэн-цзы, Чжуан-цзы, Сунь-цзы<br>— эпоха Чжаньго</div>
           <div class="lesson-count">Уроки 31–40</div>
         </div>
       </a>
