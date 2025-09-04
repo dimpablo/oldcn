@@ -1,60 +1,107 @@
 const SentenceData = {
-  "lesson": 11,
-  "text": "唯四月甲午王灌于嘗公東宮納饗于\n王王賜公貝五十朋公賜厥順子效王\n休貝二十朋效對公休用作寳尊彝效\n其萬年夙夜奔走揚公休亦其子子孫\n孫永寳用\n唯十又二月王在周眛爽王格于大廟\n井叔右免即位王受作冊尹書俾冊令\n免曰令汝司林賜汝赤芾用事免對揚\n王休用作尊簋免其萬年永寳用",
+  "lesson": 20,
+  "text": "周公拜手稽首曰予唯乙卯朝至于洛\n師我卜河朔黎水我乃卜澗水東瀍水\n西唯洛食我又卜瀍水東亦唯洛食王\n拜手稽首曰公不敢不敬天之休來相\n宅其作周匹休既定宅來視予卜休恒\n吉我二人共貞公其以予萬億年敬天\n之休周公曰王肇稱殷禮祀于新邑王\n若曰公明保予沖子公稱丕顯德以予\n小子揚文武烈",
   "sentences": [
     {
       "number": 1,
-      "original": "唯四月甲午王灌于嘗公東宮納饗于",
-      "transliteration": "wéi sì yuè jiǎ wǔ wáng guàn yú cháng gōng dōng gōng nà xiǎng yú",
-      "translation": "В четвертом месяце, в день цзя-у, правитель устроил винопитие в честь Чан-гуна. Наследник поднес правителю угощение."
+      "original": "周公拜手稽首曰",
+      "transliteration": "zhōu gōng bài shǒu qǐ shǒu yuē",
+      "translation": "Чжоу-гун почтительно сложил руки и, поклонившись до земли, сказал"
     },
     {
       "number": 2,
-      "original": "王王賜公貝五十朋公賜厥順子效王",
-      "transliteration": "wáng wáng cì gōng bèi wǔ shí péng gōng cì jué shùn zǐ xiào wáng",
-      "translation": "Правитель подарил гуну 50 связок раковин. Гун подарил своему почтительному сыну Сяо 20 связок раковин, пожалованных правителем."
+      "original": "予唯乙卯朝至于洛師",
+      "transliteration": "yú wéi yǐ mǎo zhāo zhì yú luò shī",
+      "translation": "В день и-мао, утром, я прибыл в военный лагерь Ло."
     },
     {
       "number": 3,
-      "original": "休貝二十朋效對公休用作寳尊彝效",
-      "transliteration": "xiū bèi èr shí péng xiào duì gōng xiū yòng zuò bǎo zūn yí xiào",
-      "translation": "Сяо восхвалил подарок гуна и воспользовался случаем, чтобы изготовить драгоценный жертвенный сосуд."
+      "original": "我卜河朔黎水",
+      "transliteration": "wǒ bǔ hé shuò lí shuǐ",
+      "translation": "Я совершил гадание по поводу реки Лишуй к северу от Хуанхэ."
     },
     {
       "number": 4,
-      "original": "其萬年夙夜奔走揚公休亦其子子孫",
-      "transliteration": "qí wàn nián sù yè bēn zǒu yáng gōng xiū yì qí zǐ zǐ sūn",
-      "translation": "На протяжении десяти тысяч лет я, Сяо, днем и ночью буду стараться отблагодарить гуна за подарок и на протяжении жизни сыновей и внуков вечно пользоваться сосудом как драгоценностью."
+      "original": "我乃卜澗水東瀍水西唯洛食",
+      "transliteration": "wǒ nǎi bǔ jiàn shuǐ dōng chán shuǐ xī wéi luò shí",
+      "translation": "После этого я гадал о местности к востоку от реки Цзяныпуй и к западу от реки Чаныпуй, но только Ло оказалось благоприятным местом."
     },
     {
       "number": 5,
-      "original": "孫永寳用",
-      "transliteration": "sūn yǒng bǎo yòng",
-      "translation": "(Продолжение) на протяжении жизни сыновей и внуков вечно пользоваться сосудом как драгоценностью."
+      "original": "我又卜瀍水東亦唯洛食",
+      "transliteration": "wǒ yòu bǔ chán shuǐ dōng yì wéi luò shí",
+      "translation": "Затем я гадал о местности к востоку от реки Чанынуй, но опять благоприятной оказалась местность Ло."
     },
     {
       "number": 6,
-      "original": "唯十又二月王在周眛爽王格于大廟",
-      "transliteration": "wéi shí yòu èr yuè wáng zài zhōu mèi shuǎng wáng gé yú dà miào",
-      "translation": "В двенадцатом месяце правитель находился в Чжоу. Перед рассветом правитель вошел в большой храм."
+      "original": "王拜手稽首曰",
+      "transliteration": "wáng bài shǒu qǐ shǒu yuē",
+      "translation": "Ван почтительно сложил руки и, поклонившись до земли, сказал"
     },
     {
       "number": 7,
-      "original": "井叔右免即位王受作冊尹書俾冊令",
-      "transliteration": "jǐng shū yòu miǎn jí wèi wáng shòu zuò cè yǐn shū bǐ cè lìng",
-      "translation": "Цзин-шу сопровождал Мяня. Все заняли свои места. Правитель передал скрибу грамоту и велел отдать Мяню приказ, записав его на скрижалях."
+      "original": "公不敢不敬天之休",
+      "transliteration": "gōng bù gǎn bù jìng tiān zhī xiū",
+      "translation": "Вы, гун, не можете осмелиться не быть почтительным к дару Неба."
     },
     {
       "number": 8,
-      "original": "免曰令汝司林賜汝赤芾用事免對揚",
-      "transliteration": "miǎn yuē lìng rǔ sī lín cì rǔ chì fú yòng shì miǎn duì yáng",
-      "translation": "«Приказываю тебе управлять лесными угодьями. Дарю тебе красную набедренную повязку. Пользуйся ею при исполнении служебных обязанностей»."
+      "original": "來相宅其作周匹休",
+      "transliteration": "lái xiāng zhái qí zuò zhōu pǐ xiū",
+      "translation": "Вы выбрали место, где наше царство Чжоу было бы достойно этого дара."
     },
     {
       "number": 9,
-      "original": "王休用作尊簋免其萬年永寳用",
-      "transliteration": "wáng xiū yòng zuò zūn guǐ miǎn qí wàn nián yǒng bǎo yòng",
-      "translation": "Мянь отблагодарил правителя за подарок и воспользовался случаем, чтобы изготовить жертвенный сосуд. Мянь на протяжении десяти тысяч лет вечно будет пользоваться им как драгоценностью."
+      "original": "既定宅來視予卜",
+      "transliteration": "jì dìng zhái lái shì yú bǔ",
+      "translation": "Вы, гун, уже выбрали место и прибыли, чтобы продемонстрировать мне результаты гадания."
+    },
+    {
+      "number": 10,
+      "original": "休恒吉",
+      "transliteration": "xiū héng jí",
+      "translation": "Хотелось бы, чтобы они постоянно были благоприятными."
+    },
+    {
+      "number": 11,
+      "original": "我二人共貞",
+      "transliteration": "wǒ èr rén gòng zhēn",
+      "translation": "Мы будем вместе задавать вопросы."
+    },    {
+      "number": 12,
+      "original": "公其以予萬億年敬天之休",
+      "transliteration": "gōng qí yǐ yú wàn yì nián jìng tiān zhī xiū",
+      "translation": "Благодаря этому гун на протяжении десятков и сотен тысяч лет будет выражать свое почтение к дару небес."
+    },
+    {
+      "number": 13,
+      "original": "周公曰",
+      "transliteration": "zhōu gōng yuē",
+      "translation": "Чжоу-гун сказал"
+    },
+    {
+      "number": 14,
+      "original": "王肇稱殷禮祀于新邑",
+      "transliteration": "wáng zhào chēng yīn lǐ sì yú xīn yì",
+      "translation": "Вы, правитель, впервые совершаете церемонии иньцев и приносите жертвы в новом городе."
+    },
+    {
+      "number": 15,
+      "original": "王若曰",
+      "transliteration": "wáng ruò yuē",
+      "translation": "Ван сказал"
+    },
+    {
+      "number": 16,
+      "original": "公明保予沖子",
+      "transliteration": "gōng míng bǎo yú chōng zǐ",
+      "translation": "Вы, гун, мудро охраняете меня, недостойного юнца,"
+    },
+    {
+      "number": 17,
+      "original": "公稱丕顯德以予小子揚文武烈",
+      "transliteration": "gōng chēng pī xiǎn dé yǐ yú xiǎo zǐ yáng wén wǔ liè",
+      "translation": "вы проявляете великую добродетель по отношению ко мне, малому ребенку, и восхваляете заслуги Вэнь-вана и У-вана."
     }
   ]
 }
