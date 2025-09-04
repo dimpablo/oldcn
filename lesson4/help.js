@@ -3,95 +3,56 @@ document.addEventListener('DOMContentLoaded', function () {
   // === НАСТРОЙКИ ===
   const helpPath = '../help';
   const glyphs = ['不', '亡', '其', '叀', '弗', '曰', '若', '于', '允', '占', '唯', '弜', '王', '貞', '奚'];
-  const debugDurationMs = 10000; // Показывать отладку 10 секунд
 
-  // === СОЗДАНИЕ ПОЛНОЭКРАННОГО ОКНА ОТЛАДКИ ===
-  const debugModal = document.createElement('div');
-  debugModal.id = 'glyph-debug-modal';
-  debugModal.style.cssText = `
+  // === СОЗДАНИЕ ПОЛНОЭКРАННОГО TEXTAREA ДЛЯ ОТЛАДКИ ===
+  const textarea = document.createElement('textarea');
+  textarea.id = 'glyph-debug-output';
+  textarea.readOnly = true; // Запрещаем редактирование
+  textarea.style.cssText = `
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: white;
-    color: #222;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    z-index: 99999;
+    border: none;
+    margin: 0;
     padding: 16px;
     box-sizing: border-box;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  `;
-
-  // Заголовок
-  const header = document.createElement('h2');
-  header.textContent = '🔍 Отладка: Иероглифы в тексте';
-  header.style.marginTop = '0';
-  debugModal.appendChild(header);
-
-  // Блок для логов
-  const log = document.createElement('div');
-  log.style.cssText = `
-    flex: 1;
-    background: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px;
     font-family: monospace;
-    white-space: pre-wrap;
-    overflow-y: auto;
-    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+    z-index: 99999;
+    resize: none;
+    outline: none;
+    white-space: pre;
   `;
-  debugModal.appendChild(log);
+  textarea.placeholder = 'Идёт анализ страницы...';
 
-  // Кнопка закрытия
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = '✅ Продолжить (закрыть)';
-  closeBtn.style.cssText = `
-    padding: 12px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-  `;
-  closeBtn.addEventListener('click', () => {
-    debugModal.remove();
-    document.body.style.visibility = 'visible'; // Возвращаем видимость
-  });
-  debugModal.appendChild(closeBtn);
+  // Добавляем в DOM
+  document.body.appendChild(textarea);
 
-  // Добавляем модалку в DOM
-  document.body.appendChild(debugModal);
-
-  // Скрываем основное содержимое на время отладки
+  // Скрываем основной контент
   document.body.style.visibility = 'hidden';
 
-  // === СБОР ИНФОРМАЦИИ ===
-  let debugLog = '';
+  // === СБОР ИНФОРМАЦИИ (самый простой и надёжный способ) ===
+  let log = '';
 
-  // Информация о странице
-  debugLog += `📱 Устройство: ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}\n`;
-  debugLog += `🌐 URL: ${window.location.href}\n`;
-  debugLog += `📂 helpPath: ${helpPath}\n`;
-  debugLog += `🔤 Целевые иероглифы: ${glyphs.join(', ')}\n\n`;
+  log += '🔍 АНАЛИЗ ИЕРОГЛИФОВ — ОТЛАДКА\n';
+  log += '================================\n\n';
 
-  // Функция для логирования стилей
-  function getStyleInfo(el, prop) {
-    const value = window.getComputedStyle(el)[prop];
-    return value || 'n/a';
-  }
+  log += `📱 Устройство: ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}\n`;
+  log += `🌐 URL: ${window.location.href}\n`;
+  log += `📂 helpPath: ${helpPath}\n`;
+  log += `🔤 Целевые иероглифы: ${glyphs.join(', ')}\n\n`;
 
-  // Счётчики
+  log += '🔍 ПОИСК В ТЕКСТОВЫХ УЗЛАХ...\n';
+
   let totalFound = 0;
-  let nodesProcessed = 0;
+  let processedNodes = 0;
 
-  // === ОБРАБОТКА ТЕКСТОВЫХ УЗЛОВ ===
+  // TreeWalker для текстовых узлов
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT,
@@ -109,20 +70,25 @@ document.addEventListener('DOMContentLoaded', function () {
   const nodesToReplace = [];
   let node;
 
-  debugLog += '🔍 Поиск в текстовых узлах:\n';
-
   while ((node = walker.nextNode())) {
     const text = node.textContent;
     const matches = [...text].filter(char => glyphs.includes(char));
+    
     if (matches.length > 0) {
-      debugLog += `  📄 Найдено в узле (${matches.join(',')}) → Родитель: <${node.parentNode.tagName.toLowerCase()}>`;
-      const fontSize = getStyleInfo(node.parentNode, 'fontSize');
-      const fontFamily = getStyleInfo(node.parentNode, 'fontFamily');
-      debugLog += ` | Шрифт: ${fontSize}, ${fontFamily}\n`;
+      const parentTag = node.parentNode.tagName.toLowerCase();
+      const computedStyle = window.getComputedStyle(node.parentNode);
+      const fontSize = computedStyle.fontSize;
+      const fontFamily = computedStyle.fontFamily;
+
+      log += `📄 В <${parentTag}> найдено: ${matches.join(', ')}\n`;
+      log += `   Шрифт: ${fontSize}, ${fontFamily}\n`;
+      log += `   Текст: "${text.trim()}"\n\n`;
+
       totalFound += matches.length;
-      nodesProcessed++;
+      processedNodes++;
     }
 
+    // Подготовка фрагмента для замены (без применения, пока)
     let fragment = document.createDocumentFragment();
     let lastIndex = 0;
     let modified = false;
@@ -133,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (i > lastIndex) {
           fragment.appendChild(document.createTextNode(text.slice(lastIndex, i)));
         }
-        // Создаём ссылку (с теми же стилями, что и в боевом скрипте)
         const link = document.createElement('a');
         link.href = `${helpPath}/${char}.html`;
         link.style.cssText = `
@@ -146,10 +111,8 @@ document.addEventListener('DOMContentLoaded', function () {
           font-size: inherit;
           line-height: inherit;
           font-family: inherit;
-          font-weight: inherit;
           color: inherit;
           text-size-adjust: none;
-          -webkit-text-size-adjust: none;
         `;
         link.appendChild(document.createTextNode(char));
         fragment.appendChild(link);
@@ -166,89 +129,116 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  debugLog += `\n📊 Найдено иероглифов: ${totalFound} в ${nodesProcessed} узлах\n\n`;
+  log += `📊 ВСЕГО: ${totalFound} иероглифов в ${processedNodes} узлах\n\n`;
 
-  // === ОБРАБОТКА ТАБЛИЦ ===
+  // === ТАБЛИЦА #oracleTable ===
   const tableCells = document.querySelectorAll('#oracleTable td');
-  debugLog += `🔍 Проверка #oracleTable: ${tableCells.length} ячеек\n`;
+  log += `🔍 ПРОВЕРКА #oracleTable: ${tableCells.length} ячеек\n`;
   tableCells.forEach((td, i) => {
     const child = td.firstChild;
     if (child && child.nodeType === Node.TEXT_NODE) {
       const char = child.textContent.trim();
       if (glyphs.includes(char)) {
-        debugLog += `  🟩 TD[${i}]: '${char}' → будет ссылкой\n`;
-        td.innerHTML = '';
-        const link = document.createElement('a');
-        link.href = `${helpPath}/${char}.html`;
-        link.style.cssText = `
-          background-color: #fdeced;
-          padding: 0 2px;
-          border-radius: 3px;
-          text-decoration: none;
-          display: inline-block;
-          vertical-align: middle;
-          font-size: inherit;
-          line-height: inherit;
-          font-family: inherit;
-          color: inherit;
-        `;
-        link.appendChild(document.createTextNode(char));
-        td.appendChild(link);
-        td.style.padding = '0';
+        const style = window.getComputedStyle(td);
+        log += `🟩 TD[${i}]: '${char}' → ссылка\n`;
+        log += `   Стили TD: font-size=${style.fontSize}, padding=${style.padding}\n\n`;
       }
     }
   });
 
-  // === ОБРАБОТКА .char-item ===
+  // === .char-item ===
   const charItems = document.querySelectorAll('.char-item > span:first-child');
-  debugLog += `\n🔍 Проверка .char-item: ${charItems.length} элементов\n`;
+  log += `🔍 ПРОВЕРКА .char-item: ${charItems.length} элементов\n`;
   charItems.forEach((span, i) => {
     const first = span.firstChild;
     if (first && first.nodeType === Node.TEXT_NODE) {
       const char = first.textContent.trim();
       if (glyphs.includes(char)) {
-        debugLog += `  🟦 char-item[${i}]: '${char}' → будет ссылкой\n`;
-        const pinyin = span.querySelector('.inline-pinyin');
-        span.innerHTML = '';
-        const link = document.createElement('a');
-        link.href = `${helpPath}/${char}.html`;
-        link.style.cssText = `
-          background-color: #fdeced;
-          padding: 0 2px;
-          border-radius: 3px;
-          text-decoration: none;
-          display: inline-block;
-          vertical-align: middle;
-          font-size: inherit;
-          line-height: inherit;
-          font-family: inherit;
-          color: inherit;
-        `;
-        link.appendChild(document.createTextNode(char));
-        span.appendChild(link);
-        if (pinyin) span.appendChild(pinyin);
+        log += `🟦 char-item[${i}]: '${char}' → будет ссылкой\n`;
       }
     }
   });
 
-  // === ЗАВЕРШЕНИЕ ===
-  debugLog += `\n✅ Обработка завершена. Ссылки созданы.\n`;
-  debugLog += `⏳ Окно закроется автоматически через 10 секунд.`;
+  log += '\n✅ Обработка завершена. Ссылки подготовлены.\n';
+  log += '📌 Нажмите и удерживайте текст, чтобы выделить и скопировать.\n';
+  log += '⏳ Страница появится через 8 секунд...';
 
-  log.textContent = debugLog;
+  // Записываем лог в textarea
+  textarea.value = log;
 
-  // Применяем изменения к DOM (уже в фоне)
-  nodesToReplace.forEach(({ node, fragment }) => {
-    if (node.parentNode) {
-      node.parentNode.replaceChild(fragment, node);
-    }
-  });
-
-  // Автоматическое закрытие
+  // Через 8 сек — убираем textarea и показываем страницу
   setTimeout(() => {
-    if (debugModal.parentNode) {
-      debugModal.remove();
-      document.body.style.visibility = 'visible';
+    if (textarea.parentNode) {
+      textarea.remove();
     }
-  }, debugDurationMs);
+    document.body.style.visibility = 'visible';
+
+    // Теперь применяем все изменения к DOM
+    nodesToReplace.forEach(({ node, fragment }) => {
+      try {
+        if (node.parentNode) {
+          node.parentNode.replaceChild(fragment, node);
+        }
+      } catch (e) {
+        console.warn('Не удалось заменить узел', e);
+      }
+    });
+
+    // Обработка таблицы
+    document.querySelectorAll('#oracleTable td').forEach(td => {
+      const child = td.firstChild;
+      if (child && child.nodeType === Node.TEXT_NODE) {
+        const char = child.textContent.trim();
+        if (glyphs.includes(char)) {
+          td.innerHTML = '';
+          const link = document.createElement('a');
+          link.href = `${helpPath}/${char}.html`;
+          link.style.cssText = `
+            background-color: #fdeced;
+            padding: 0 2px;
+            border-radius: 3px;
+            text-decoration: none;
+            display: inline-block;
+            vertical-align: middle;
+            font-size: inherit;
+            line-height: inherit;
+            font-family: inherit;
+            color: inherit;
+          `;
+          link.appendChild(document.createTextNode(char));
+          td.appendChild(link);
+          td.style.padding = '0';
+        }
+      }
+    });
+
+    // Обработка .char-item
+    document.querySelectorAll('.char-item > span:first-child').forEach(span => {
+      const first = span.firstChild;
+      if (first && first.nodeType === Node.TEXT_NODE) {
+        const char = first.textContent.trim();
+        if (glyphs.includes(char)) {
+          const pinyin = span.querySelector('.inline-pinyin');
+          span.innerHTML = '';
+          const link = document.createElement('a');
+          link.href = `${helpPath}/${char}.html`;
+          link.style.cssText = `
+            background-color: #fdeced;
+            padding: 0 2px;
+            border-radius: 3px;
+            text-decoration: none;
+            display: inline-block;
+            vertical-align: middle;
+            font-size: inherit;
+            line-height: inherit;
+            font-family: inherit;
+            color: inherit;
+          `;
+          link.appendChild(document.createTextNode(char));
+          span.appendChild(link);
+          if (pinyin) span.appendChild(pinyin);
+        }
+      }
+    });
+  }, 8000);
 });
