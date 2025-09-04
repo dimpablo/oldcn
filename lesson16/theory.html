@@ -462,128 +462,39 @@
 </div>
 
 <h2>СПИСОК СЛОВ УРОКА 16</h2>
-<div class="char-list">
-    <div class="char-item">
-        <span>鄂<span class="inline-pinyin">è</span></span>
-        <div class="char-tooltip">Э 0442</div>
-    </div>
-    <div class="char-item">
-        <span>坏<span class="inline-pinyin">péi</span></span>
-        <div class="char-tooltip">Пэй 1509</div>
-    </div>
-    <div class="char-item">
-        <span>醴<span class="inline-pinyin">lǐ</span></span>
-        <div class="char-tooltip">Сладкое вино 0123</div>
-    </div>
-    <div class="char-item">
-        <span>還<span class="inline-pinyin">huán</span></span>
-        <div class="char-tooltip">Возвращаться 1297</div>
-    </div>
-    <div class="char-item">
-        <span>祼<span class="inline-pinyin">guàn</span></span>
-        <div class="char-tooltip">Возлияние 1050</div>
-    </div>
-    <div class="char-item">
-        <span>康<span class="inline-pinyin">kāng</span></span>
-        <div class="char-tooltip">Покой 1086</div>
-    </div>
-    <div class="char-item">
-        <span>侑<span class="inline-pinyin">yòu</span></span>
-        <div class="char-tooltip">Подносить 0705</div>
-    </div>
-    <div class="char-item">
-        <span>樂<span class="inline-pinyin">lè</span></span>
-        <div class="char-tooltip">Радость 1029</div>
-    </div>
-    <div class="char-item">
-        <span>八<span class="inline-pinyin">bā</span></span>
-        <div class="char-tooltip">Восемь 1238</div>
-    </div>
-    <div class="char-item">
-        <span>純<span class="inline-pinyin">chún</span></span>
-        <div class="char-tooltip">Чистый 1412</div>
-    </div>
-    <div class="char-item">
-        <span>䵼<span class="inline-pinyin">shàng</span></span>
-        <div class="char-tooltip">Служить 0556</div>
-    </div>
-    <div class="char-item">
-        <span>眉<span class="inline-pinyin">méi</span></span>
-        <div class="char-tooltip">Брови 0349</div>
-    </div>
-    <div class="char-item">
-        <span>匄<span class="inline-pinyin">gài</span></span>
-        <div class="char-tooltip">Просить 0854</div>
-    </div>
-    <div class="char-item">
-        <span>壽<span class="inline-pinyin">shòu</span></span>
-        <div class="char-tooltip">Долголетие 0613</div>
-    </div>
-    <div class="char-item">
-        <span>宴<span class="inline-pinyin">yàn</span></span>
-        <div class="char-tooltip">Пир 1695</div>
-    </div>
-    <div class="char-item">
-        <span>靈<span class="inline-pinyin">líng</span></span>
-        <div class="char-tooltip">Дух 0031</div>
-    </div>
-    <div class="char-item">
-        <span>會<span class="inline-pinyin">huì</span></span>
-        <div class="char-tooltip">Собираться 0309</div>
-    </div>
-    <div class="char-item">
-        <span>終<span class="inline-pinyin">zhōng</span></span>
-        <div class="char-tooltip">Конец 1708</div>
-    </div>
-    <div class="char-item">
-        <span>咸<span class="inline-pinyin">xián</span></span>
-        <div class="char-tooltip">Все 1353</div>
-    </div>
-    <div class="char-item">
-        <span>無<span class="inline-pinyin">wú</span></span>
-        <div class="char-tooltip">Нет; без 1652</div>
-    </div>
-    <div class="char-item">
-        <span>飲<span class="inline-pinyin">yǐn</span></span>
-        <div class="char-tooltip">Пить 0950</div>
-    </div>
-    <div class="char-item">
-        <span>疆<span class="inline-pinyin">jiāng</span></span>
-        <div class="char-tooltip">Граница 0013</div>
-    </div>
-    <div class="char-item">
-        <span>親<span class="inline-pinyin">qīn</span></span>
-        <div class="char-tooltip">Лично 1450</div>
-    </div>
-    <div class="char-item">
-        <span>夫<span class="inline-pinyin">fū</span></span>
-        <div class="char-tooltip">Мужчина 0993</div>
-    </div>
-    <div class="char-item">
-        <span>玉<span class="inline-pinyin">yù</span></span>
-        <div class="char-tooltip">Нефрит 0075</div>
-    </div>
-    <div class="char-item">
-        <span>舍<span class="inline-pinyin">shè</span></span>
-        <div class="char-tooltip">Отдавать 0258</div>
-    </div>
-    <div class="char-item">
-        <span>贅<span class="inline-pinyin">zhuì</span></span>
-        <div class="char-tooltip">Дар 1550</div>
-    </div>
-    <div class="char-item">
-        <span>成<span class="inline-pinyin">chéng</span></span>
-        <div class="char-tooltip">Чэнчжоу 1355</div>
-    </div>
-    <div class="char-item">
-        <span>膳<span class="inline-pinyin">shàn</span></span>
-        <div class="char-tooltip">Стряпчий 0242</div>
-    </div>
-    <div class="char-item">
-        <span>遹<span class="inline-pinyin">yù</span></span>
-        <div class="char-tooltip">Идти 1284</div>
-    </div>
-</div>
+<div class="char-list"></div>
+
+<script>
+// Укажи номер урока здесь
+const LESSON = 16;
+
+// Находим все иероглифы этого урока из charData
+const lessonChars = Object.entries(charData)
+  .filter(([char, data]) => data.lesson === LESSON)
+  .sort(([charA, dataA], [charB, dataB]) => {
+    // Сортировка по пиньиню (опционально)
+    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+  });
+
+// Получаем контейнер
+const charList = document.querySelector('.char-list');
+
+// Очищаем (на всякий случай)
+charList.innerHTML = '';
+
+// Генерируем элементы
+lessonChars.forEach(([char, data]) => {
+  const item = document.createElement('div');
+  item.className = 'char-item';
+
+  item.innerHTML = `
+    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+    <div class="char-tooltip">${data.meaning}</div>
+  `;
+
+  charList.appendChild(item);
+});
+</script>
 
 <div class="lexicon">
     <h2>СЛОВОСОЧЕТАНИЯ</h2>

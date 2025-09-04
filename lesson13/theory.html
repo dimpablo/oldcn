@@ -386,113 +386,39 @@ const lessonText = [
 </div>
 
 <h2>СПИСОК СЛОВ УРОКА 13</h2>
-<div class="char-list">
-    <div class="char-item">
-        <span>既<span class="inline-pinyin">jì</span></span>
-        <div class="char-tooltip">Уже; показатель завершенности</div>
-    </div>
-    <div class="char-item">
-        <span>喪<span class="inline-pinyin">sāng</span></span>
-        <div class="char-tooltip">Потеря; похороны</div>
-    </div>
-    <div class="char-item">
-        <span>霸<span class="inline-pinyin">bà</span></span>
-        <div class="char-tooltip">Свет луны; период месяца</div>
-    </div>
-    <div class="char-item">
-        <span>非<span class="inline-pinyin">fēi</span></span>
-        <div class="char-tooltip">Не; отрицание</div>
-    </div>
-    <div class="char-item">
-        <span>榮<span class="inline-pinyin">róng</span></span>
-        <div class="char-tooltip">Рон (имя собственное)</div>
-    </div>
-    <div class="char-item">
-        <span>夢<span class="inline-pinyin">mèng</span></span>
-        <div class="char-tooltip">Сон; мечта</div>
-    </div>
-    <div class="char-item">
-        <span>季<span class="inline-pinyin">jì</span></span>
-        <div class="char-tooltip">Цзи (младший)</div>
-    </div>
-    <div class="char-item">
-        <span>進<span class="inline-pinyin">jìn</span></span>
-        <div class="char-tooltip">Движение вперед; продвижение</div>
-    </div>
-    <div class="char-item">
-        <span>立<span class="inline-pinyin">lì</span></span>
-        <div class="char-tooltip">Ставить; устанавливать</div>
-    </div>
-    <div class="char-item">
-        <span>退<span class="inline-pinyin">tuì</span></span>
-        <div class="char-tooltip">Отступать; уходить</div>
-    </div>
-    <div class="char-item">
-        <span>廷<span class="inline-pinyin">tíng</span></span>
-        <div class="char-tooltip">Двор; площадь</div>
-    </div>
-    <div class="char-item">
-        <span>懋<span class="inline-pinyin">mào</span></span>
-        <div class="char-tooltip">Стараться; прилагать усилия</div>
-    </div>
-    <div class="char-item">
-        <span>載<span class="inline-pinyin">zài</span></span>
-        <div class="char-tooltip">Некогда; в древности</div>
-    </div>
-    <div class="char-item">
-        <span>稱<span class="inline-pinyin">chēng</span></span>
-        <div class="char-tooltip">Называть; называться</div>
-    </div>
-    <div class="char-item">
-        <span>室<span class="inline-pinyin">shì</span></span>
-        <div class="char-tooltip">Комната; помещение</div>
-    </div>
-    <div class="char-item">
-        <span>官<span class="inline-pinyin">guān</span></span>
-        <div class="char-tooltip">Должность; чиновник</div>
-    </div>
-    <div class="char-item">
-        <span>豐<span class="inline-pinyin">fēng</span></span>
-        <div class="char-tooltip">Фэн (имя собственное)</div>
-    </div>
-    <div class="char-item">
-        <span>善<span class="inline-pinyin">shàn</span></span>
-        <div class="char-tooltip">Хорошо; благо</div>
-    </div>
-    <div class="char-item">
-        <span>弔<span class="inline-pinyin">diào</span></span>
-        <div class="char-tooltip">Сострадание; посещать похороны</div>
-    </div>
-    <div class="char-item">
-        <span>瓚<span class="inline-pinyin">zàn</span></span>
-        <div class="char-tooltip">Яшмовая ложка</div>
-    </div>
-    <div class="char-item">
-        <span>取<span class="inline-pinyin">qǔ</span></span>
-        <div class="char-tooltip">Брать; получать</div>
-    </div>
-    <div class="char-item">
-        <span>璋<span class="inline-pinyin">zhāng</span></span>
-        <div class="char-tooltip">Яшмовая пластинка</div>
-    </div>
-    <div class="char-item">
-        <span>家<span class="inline-pinyin">jiā</span></span>
-        <div class="char-tooltip">Дом; семья</div>
-    </div>
-    <div class="char-item">
-        <span>匹<span class="inline-pinyin">pǐ</span></span>
-        <div class="char-tooltip">Счетное слово для лошадей</div>
-    </div>
-    <div class="char-item">
-        <span>株<span class="inline-pinyin">zhū</span></span>
-        <div class="char-tooltip">Пень; остаток</div>
-    </div>
-    <div class="char-item">
-        <span>瑴<span class="inline-pinyin">jué</span></span>
-        <div class="char-tooltip">Пара яшмовых изделий</div>
-    </div>
-</div>
+<div class="char-list"></div>
 
+<script>
+// Укажи номер урока здесь
+const LESSON = 13;
+
+// Находим все иероглифы этого урока из charData
+const lessonChars = Object.entries(charData)
+  .filter(([char, data]) => data.lesson === LESSON)
+  .sort(([charA, dataA], [charB, dataB]) => {
+    // Сортировка по пиньиню (опционально)
+    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+  });
+
+// Получаем контейнер
+const charList = document.querySelector('.char-list');
+
+// Очищаем (на всякий случай)
+charList.innerHTML = '';
+
+// Генерируем элементы
+lessonChars.forEach(([char, data]) => {
+  const item = document.createElement('div');
+  item.className = 'char-item';
+
+  item.innerHTML = `
+    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+    <div class="char-tooltip">${data.meaning}</div>
+  `;
+
+  charList.appendChild(item);
+});
+</script>
 <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="lexicon">
     <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>

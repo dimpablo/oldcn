@@ -392,80 +392,39 @@
 </div>
 
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-    <div class="char-item">
-        <span>予<span class="inline-pinyin">yú</span></span>
-        <div class="char-tooltip">Я (0594)</div>
-    </div>
-    <div class="char-item">
-        <span>視<span class="inline-pinyin">shì</span></span>
-        <div class="char-tooltip">Смотреть (1451)</div>
-    </div>
-    <div class="char-item">
-        <span>朝<span class="inline-pinyin">zhāo</span></span>
-        <div class="char-tooltip">Утро (0696)</div>
-    </div>
-    <div class="char-item">
-        <span>恒<span class="inline-pinyin">héng</span></span>
-        <div class="char-tooltip">Постоянный (0010)</div>
-    </div>
-    <div class="char-item">
-        <span>朔<span class="inline-pinyin">shuò</span></span>
-        <div class="char-tooltip">Север (0700)</div>
-    </div>
-    <div class="char-item">
-        <span>共<span class="inline-pinyin">gòng</span></span>
-        <div class="char-tooltip">Совместно (1516)</div>
-    </div>
-    <div class="char-item">
-        <span>黎<span class="inline-pinyin">lí</span></span>
-        <div class="char-tooltip">Ли (1079)</div>
-    </div>
-    <div class="char-item">
-        <span>億<span class="inline-pinyin">yì</span></span>
-        <div class="char-tooltip">Сто миллионов (1619)</div>
-    </div>
-    <div class="char-item">
-        <span>澗<span class="inline-pinyin">jiàn</span></span>
-        <div class="char-tooltip">Цзяньшуй (0680)</div>
-    </div>
-    <div class="char-item">
-        <span>禮<span class="inline-pinyin">lǐ</span></span>
-        <div class="char-tooltip">Обряд (0125)</div>
-    </div>
-    <div class="char-item">
-        <span>瀍<span class="inline-pinyin">chán</span></span>
-        <div class="char-tooltip">Чаньшуй (0053)</div>
-    </div>
-    <div class="char-item">
-        <span>新<span class="inline-pinyin">xīn</span></span>
-        <div class="char-tooltip">Новый (0406)</div>
-    </div>
-    <div class="char-item">
-        <span>食<span class="inline-pinyin">shí</span></span>
-        <div class="char-tooltip">Указывать (1123)</div>
-    </div>
-    <div class="char-item">
-        <span>冲<span class="inline-pinyin">chōng</span></span>
-        <div class="char-tooltip">Малый (0521)</div>
-    </div>
-    <div class="char-item">
-        <span>敬<span class="inline-pinyin">jìng</span></span>
-        <div class="char-tooltip">Почитать (1211)</div>
-    </div>
-    <div class="char-item">
-        <span>烈<span class="inline-pinyin">liè</span></span>
-        <div class="char-tooltip">Подвиг (1657)</div>
-    </div>
-    <div class="char-item">
-        <span>宅<span class="inline-pinyin">zhái</span></span>
-        <div class="char-tooltip">Жилище (1408)</div>
-    </div>
-    <div class="char-item">
-        <span>相<span class="inline-pinyin">xiàng</span></span>
-        <div class="char-tooltip">Помогать (0346)</div>
-    </div>
-</div>
+<div class="char-list"></div>
+
+<script>
+// Укажи номер урока здесь
+const LESSON = 20;
+
+// Находим все иероглифы этого урока из charData
+const lessonChars = Object.entries(charData)
+  .filter(([char, data]) => data.lesson === LESSON)
+  .sort(([charA, dataA], [charB, dataB]) => {
+    // Сортировка по пиньиню (опционально)
+    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+  });
+
+// Получаем контейнер
+const charList = document.querySelector('.char-list');
+
+// Очищаем (на всякий случай)
+charList.innerHTML = '';
+
+// Генерируем элементы
+lessonChars.forEach(([char, data]) => {
+  const item = document.createElement('div');
+  item.className = 'char-item';
+
+  item.innerHTML = `
+    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+    <div class="char-tooltip">${data.meaning}</div>
+  `;
+
+  charList.appendChild(item);
+});
+</script>
 
 <h3>Словосочетания</h3>
 <p class="original">

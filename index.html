@@ -243,6 +243,7 @@
       margin: 0 0 8px;
       line-height: 1.5;
       text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      overflow-wrap: break-word;
     }
 
     .lesson-count {
@@ -266,14 +267,14 @@
 
     /* === Адаптивность для мобильных устройств === */
     @media (max-width: 768px) {
-      /* Отключаем прилипание панели на мобильных */
+      /* Отключаем прилипание панели */
       .user-panel {
         position: static;
         margin: 10px;
         padding: 15px;
       }
 
-      /* Кнопки входа и действий — вертикально, с полной шириной */
+      /* Кнопки — в колонку, одинакового размера */
       .login-container,
       .auth-buttons {
         flex-direction: column;
@@ -282,31 +283,24 @@
         margin: 0 auto;
       }
 
-      .login-container .btn,
-      .auth-buttons .btn {
+      .btn {
         width: 100%;
         text-align: center;
-        padding: 12px 16px;
-        font-size: 1em;
+        padding: 10px 15px;
+        font-size: 0.95em;
       }
 
-      /* Адаптация информации о пользователе */
-      .user-info,
-      .user-stats {
-        flex-direction: column;
-        align-items: flex-start;
+      /* Улучшаем перенос текста */
+      .period-desc {
+        overflow-wrap: break-word;
+        line-height: 1.45;
       }
 
-      .user-stats {
-        margin-left: 75px;
-      }
-
-      /* Уменьшаем отступы контейнера */
+      /* Адаптация контейнера */
       .container {
         padding: 10px;
       }
 
-      /* Уменьшаем заголовок */
       header {
         padding: 30px 10px;
       }
@@ -319,13 +313,16 @@
         font-size: 1.1em;
       }
 
-      /* Карточки — чуть меньше */
       .period-card {
-        height: 280px;
+        height: 260px;
       }
 
       .period-title {
         font-size: 1.1em;
+      }
+
+      .lesson-count {
+        font-size: 0.8em;
       }
     }
   </style>
@@ -378,7 +375,7 @@
       <a href="./archaic.html" class="period-card bg-archaic">
         <div class="period-content">
           <div class="period-title">Архаический</div>
-          <div class="period-desc">Язык оракульных надписей на костях и бронзе династии Шан</div>
+          <div class="period-desc">Язык оракульных надписей на костях и&nbsp;бронзе династии Шан</div>
           <div class="lesson-count">Уроки 1–10</div>
         </div>
       </a>
@@ -396,7 +393,7 @@
       <a href="./late.html" class="period-card bg-late">
         <div class="period-content">
           <div class="period-title">Поздний доклассический</div>
-          <div class="period-desc">Философия и политика эпохи Чуньцю</div>
+          <div class="period-desc">Философия и политика эпохи Чунь&shy;цю</div>
           <div class="lesson-count">Уроки 21–30</div>
         </div>
       </a>
