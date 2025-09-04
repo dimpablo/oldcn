@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <title>Урок 18 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+    <script src="./../dictionary.js"></script>
+</head>
+<body>
+
+<h1>УРОК 18</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+    <label class="toggle-switch">
+        <input id="fontToggle" type="checkbox"/>
+        <span class="slider"></span>
+    </label>
+    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+        Обычный вид
+    </span>
+</div>
+
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #1a5fb4;
+    }
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+</style>
+
+<style>
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+    td:hover .char-tooltip {
+        display: block;
+    }
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+
+    /* Стили для правой фигурной скобки, объединяющей строки справа */
+    .math-example {
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        font-size: 0.95em;
+    }
+    .math-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        margin-right: 12px; /* Отступ между текстом и скобкой */
+    }
+    .math-content .example {
+        margin: 2px 0;
+        white-space: pre; /* Сохраняем пробелы */
+    }
+    .math-brace {
+        font-size: 2em; /* Большая скобка */
+        line-height: 0.7;
+        color: #1a4f72;
+        font-family: monospace;
+        font-weight: bold;
+        margin: 0;
+    }
+    .math-caption {
+        margin-left: 15px;
+        font-style: italic;
+        color: #1a4f72;
+    }
+</style>
+
+<script>
+    // Данные текста урока 18 (в полном соответствии с PDF и вашим идеалом таблицы)
+    const lessonText = [
+        "王大耤農于諆田場王射有司眔師氏",
+        "小子合射王歸自諆田王馭溓仲僕令",
+        "眔奮先馬走王曰令眔奮乃克至余其",
+        "舍汝臣十家王至于溓宮陣令令拜稽",
+        "首曰小子迺學令對揚王休",
+        "昔饉歳匡衆厥臣二十夫寇舀禾十秭",
+        "以匡季告東宮東宮乃曰求乃人乃弗",
+        "得汝匡罰大匡乃稽首于舀用五田用",
+        "衆一夫舀又以匡季告東宮東宮乃曰",
+        "償舀十秭遺十秭為二十秭來歳弗償",
+        "則付四十秭"
+    ];
+
+    // Функция для создания таблицы
+    function createOracleTable() {
+        const table = document.getElementById('oracleTable');
+        // Создаём строку с номерами колонок
+        const headerRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'line-num';
+        headerRow.appendChild(emptyCell);
+        for (let i = 1; i <= 15; i++) {
+            const th = document.createElement('td');
+            th.className = 'col-num';
+            th.textContent = i;
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Создаём строки с текстом
+        for (let i = 0; i < lessonText.length; i++) {
+            const row = document.createElement('tr');
+            const lineNumCell = document.createElement('td');
+            lineNumCell.className = 'line-num';
+            lineNumCell.textContent = i + 1;
+            row.appendChild(lineNumCell);
+
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 15; j++) {
+                const td = document.createElement('td');
+                if (j < chars.length) {
+                    const char = chars[j];
+                    td.textContent = char;
+                    if (charData[char]) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'char-tooltip';
+                        tooltip.innerHTML = `
+                            <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                            ${charData[char].meaning}<br>
+                            <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                        `;
+                        td.appendChild(tooltip);
+                    }
+                }
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
+    }
+
+    // Инициализация таблицы при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>18.1. Приемы членения текста (продолжение)</h3>
+    <p class="original">
+        Выше (14.1) говорилось о том, что, если два одинаковых местоимения встречаются в тексте рядом, это указывает на границу двух предложений. Это объясняется тем, что местоимения не могут редуцироваться. Что же касается удвоения знаменательных слов (в частности, в именной функции), то само по себе оно не может являться указанием на границу предложений.
+        <br><br>
+        Однако в текстах встречается повтор имен, которые обозначают понятия, в принципе существующие только в единственном числе, например, <span class="example">王 wáng</span> «верховный правитель» (по чжоуским представлениям, в Поднебесной может быть только один ван). Такой повтор знаменательного слова может быть сигналом границы предложения: <span class="example">東宮納饗于王, 王賜公貝 dōng gōng nà xiǎng yú wáng, wáng cì gōng bèi</span> «Наследник престола поднес угощение вану. Ван подарил гуну раковины».
+        <br><br>
+        Так же как и местоимения, в древнекитайском языке не могут удваиваться и словосочетания, употребленные в качестве имен. Поэтому наличие в тексте двух одинаковых именных словосочетаний подряд говорит о том, что одно из них — дополнение первого предложения (после него мы можем поставить точку), а другое — подлежащее второго предложения: <span class="example">[...]告東宫, 東宫乃曰...[...] gào dōng gōng, dōng gōng nǎi yuē</span> «[...] сообщил наследнику. Наследник сказал...»
+    </p>
+
+    <h3>18.2. Служебное слово 眔 dà</h3>
+    <p class="original">
+        В архаическом языке служебное слово <span class="example">眔 dà</span> употребляется как сочинительный союз, соединяющий имена (6.3). В раннем доклассическом языке наряду с этим <span class="example">眔 dà</span> начинает употребляться в качестве предлога, выражающего идею совместности (соответствует русскому «с», «вместе с»). Поэтому словосочетание «А <span class="example">眔 dà</span> Б» может быть передано русским «А и Б» или «А вместе с Б», что на первый взгляд примерно одно и то же. В действительности же это не так.
+        <br><br>
+        Возьмем, например, следующее предложение: <span class="example">令眔奮克至 lìng dà fèn kè zhì</span>.
+        <br><br>
+        Оно может быть истолковано двояко.
+        <br><br>
+        Во-первых, <span class="example">令眔奮 lìng dà fèn</span> может быть интерпретировано как именное словосочетание («Лин и Фэнь»), являющееся подлежащим.
+        <br><br>
+        Во-вторых, <span class="example">眔奮 dà fèn</span> можно рассматривать как вынесенное вперед косвенное дополнение с предлогом («с Фэнем»).
+        <br><br>
+        В первом случае один из двух однородных компонентов подлежащего может быть опущен только вместе с другим (опущение подлежащего); во втором можно опустить подлежащее «Лин», и тогда предложение будет начинаться с инвертированного дополнения.
+        <br><br>
+        Если сказуемое оформлено служебным наречием <span class="example">其 qí</span> (его значение не изменилось в раннем доклассическом по сравнению с архаическим языком), то вынесенное косвенное дополнение с предлогом занимает позицию между <span class="example">其 qí</span> и сказуемым: <span class="example">汝其以成周師氏戍于古次 rǔ qí yǐ chéng zhōu shī shì xū yú gǔ cì</span> «С помощью должностных лиц из Чэнчжоу обороняйся в лагере Гу».
+        <br><br>
+        По этому правилу вынесенное вперед дополнение с предлогом <span class="example">眔 dà</span> также должно стоять между наречием и сказуемым: <span class="example">走其眔厥子子孫孫萬年用 zǒu qí dà jué zǐ zǐ sūn sūn wàn nián yòng</span> «Цзоу будет пользоваться [этим] в течение десяти тысяч лет вместе со своими сыновьями и внуками».
+        <br><br>
+        Наконец, следует отметить, что предлог <span class="example">眔 dà</span> по своим грамматическим свойствам относится к той же группе, что и <span class="example">以 yǐ</span>. Предлоги данной группы позволяют опускать косвенное дополнение в позиции перед сказуемым (об этой особенности предлога <span class="example">以 yǐ</span> см. ниже, 21.5). В силу этого обстоятельства за предлогом <span class="example">眔 dà</span> в тексте отнюдь не обязательно следует имя: если инвертированное косвенное дополнение, введенное посредством <span class="example">眔 dà</span>, опущено, за предлогом непосредственно следует сказуемое.
+        <br><br>
+        Рассмотрим с этой точки зрения следующий текст: <span class="example">王命赐次率征自五偶贝小臣速蔑曆眔賜貝 wáng mìng cì cì shuài zhēng zì wǔ ǒu bèi xiǎo chén sù miè lì dà cì bèi</span> «Правитель приказал пожаловать [людям в] лагере раковины, захваченные в походе на Уоу. Сяочэнь Цы удостоился вознаграждения за труды, вместе с [другими] получил в дар раковины».
+        <br><br>
+        В данном контексте <span class="example">眔 dà</span> не может рассматриваться как союз, потому что в качестве такового он соединяет только имена. Между тем в нашем тексте слово <span class="example">眔 dà</span> стоит между предикативным оборотом <span class="example">蔑曆 miè lì</span> «удостаиваться вознаграждения за прежние заслуги» и <span class="example">賜 cì</span> «дарить», «быть одаренным».
+    </p>
+
+    <h3>18.3. Служебное слово 乃 nǎi (продолжение)</h3>
+    <p class="original">
+        Еще одно значение служебного слова <span class="example">乃 nǎi</span>, зафиксированное в ранних доклассических текстах, сводится к следующему.
+        <br><br>
+        Связь между отдельными предложениями может быть не только сочинительной или причинно-следственной, но и, в частности, условной. В этом случае главное предложение фиксирует некую ситуацию, которая будет возможна при наличии обстоятельств, отмеченных в придаточном предложении. Эта зависимость главного предложения от придаточного выражается посредством специальных служебных слов, отсутствовавших в архаическом языке.
+        <br><br>
+        <span class="example">乃 nǎi</span> является подчинительным союзом в сложноподчиненном условном предложении. Он ставится перед сказуемым придаточного: <span class="example">乃不用我教辭唯余一人弗恤 nǎi bù yòng wǒ jiào cí wéi yǔ yī rén fú xù</span> «Если не последуешь моим поучениям, я буду безжалостен».
+        <br><br>
+        <span class="example">令眔奮乃克至余其舍汝臣十家 lìng dà fèn nǎi kè zhì yú qí shè rǔ chén shí jiā</span> «Если ты, Лин, или ты, Фэнь, сможешь прибыть [первым], я пожалую тебе 10 семей подданных».
+    </p>
+
+    <h3>18.4. Служебное слово 則 zé</h3>
+    <p class="original">
+        Другим средством выражения грамматической связи между главным предложением и придаточным условным является подчинительный союз <span class="example">則 zé</span>.
+        <br><br>
+        Но ставится он не в придаточном предложении, а после него, перед главным (так же как <span class="example">故 gù</span> в сложноподчиненном причинно-следственном): <span class="example">來歳弗償則付四十秭 lái suì fú cháng zé fù sì shí zǐ</span> «[Если] в будущем году не возместишь, то заплатишь 40 мер зерна».
+        <br><br>
+        Иногда <span class="example">則 zé</span> может дублироваться словом <span class="example">乃 nǎi</span>, но оба союза факультативны и могут опускаться. Наличие союза <span class="example">則 zé</span> перед главным предложением может служить дополнительным основанием для членения текста на предложения.
+    </p>
+
+    <h3>18.5. Двойные дополнения и их позиция</h3>
+    <p class="original">
+        Нормальной позицией дополнений при предикативах со значением «давание — отнимание» в архаическом языке было предшествование косвенного дополнения прямому. Этот же порядок слов сохраняется и в раннем доклассическом языке: <span class="example">賜汝鬯一卣 cì rǔ chàng yī yǒu</span> «Дарю тебе один кувшин вина».
+        <br><br>
+        Но с появлением предлога <span class="example">以 yǐ</span> возникает новая конструкция, в которой прямое дополнение становится предложным и поэтому может быть инвертировано: <span class="example">以匡季告東宫 yǐ kuāng jì gào dōng gōng</span> «сообщить наследнику о Куан Цзи».
+        <br><br>
+        Возможно, что здесь произошло переосмысление связей между предикативом и дополнениями: косвенное дополнение (адресат) стало прямым, а прямое (объект) — косвенным.
+        <br><br>
+        Другими словами, предложение <span class="example">贈之芍藥 zèng zhī sháo yào</span> следует переводить «Подарила ему пион», а <span class="example">贈之以芍藥 zèng zhī yǐ sháo yào</span> — «Одарила его пионом».
+    </p>
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА 18</h2>
+<div class="char-list">
+    <div class="char-item">
+        <span>耤<span class="inline-pinyin">jí</span></span>
+        <div class="char-tooltip">Церемония первой борозды</div>
+    </div>
+    <div class="char-item">
+        <span>農<span class="inline-pinyin">nóng</span></span>
+        <div class="char-tooltip">Пахать</div>
+    </div>
+    <div class="char-item">
+        <span>諆<span class="inline-pinyin">qī</span></span>
+        <div class="char-tooltip">Имя места</div>
+    </div>
+    <div class="char-item">
+        <span>場<span class="inline-pinyin">chǎng</span></span>
+        <div class="char-tooltip">Поле</div>
+    </div>
+    <div class="char-item">
+        <span>有<span class="inline-pinyin">yǒu</span></span>
+        <div class="char-tooltip">Иметь</div>
+    </div>
+    <div class="char-item">
+        <span>司<span class="inline-pinyin">sī</span></span>
+        <div class="char-tooltip">Чиновник</div>
+    </div>
+    <div class="char-item">
+        <span>師<span class="inline-pinyin">shī</span></span>
+        <div class="char-tooltip">Воин</div>
+    </div>
+    <div class="char-item">
+        <span>氏<span class="inline-pinyin">shì</span></span>
+        <div class="char-tooltip">Фамилия</div>
+    </div>
+    <div class="char-item">
+        <span>小<span class="inline-pinyin">xiǎo</span></span>
+        <div class="char-tooltip">Малый</div>
+    </div>
+    <div class="char-item">
+        <span>子<span class="inline-pinyin">zǐ</span></span>
+        <div class="char-tooltip">Сын</div>
+    </div>
+    <div class="char-item">
+        <span>合<span class="inline-pinyin">hé</span></span>
+        <div class="char-tooltip">Объединять</div>
+    </div>
+    <div class="char-item">
+        <span>歸<span class="inline-pinyin">guī</span></span>
+        <div class="char-tooltip">Возвращаться</div>
+    </div>
+    <div class="char-item">
+        <span>溓<span class="inline-pinyin">lián</span></span>
+        <div class="char-tooltip">Имя собственное</div>
+    </div>
+    <div class="char-item">
+        <span>仲<span class="inline-pinyin">zhòng</span></span>
+        <div class="char-tooltip">Второй</div>
+    </div>
+    <div class="char-item">
+        <span>僕<span class="inline-pinyin">pú</span></span>
+        <div class="char-tooltip">Слуга</div>
+    </div>
+    <div class="char-item">
+        <span>令<span class="inline-pinyin">lìng</span></span>
+        <div class="char-tooltip">Приказ</div>
+    </div>
+    <div class="char-item">
+        <span>奮<span class="inline-pinyin">fèn</span></span>
+        <div class="char-tooltip">Стремиться</div>
+    </div>
+    <div class="char-item">
+        <span>先<span class="inline-pinyin">xiān</span></span>
+        <div class="char-tooltip">Первый</div>
+    </div>
+    <div class="char-item">
+        <span>馬<span class="inline-pinyin">mǎ</span></span>
+        <div class="char-tooltip">Лошадь</div>
+    </div>
+    <div class="char-item">
+        <span>走<span class="inline-pinyin">zǒu</span></span>
+        <div class="char-tooltip">Бежать</div>
+    </div>
+    <div class="char-item">
+        <span>曰<span class="inline-pinyin">yuē</span></span>
+        <div class="char-tooltip">Говорить</div>
+    </div>
+    <div class="char-item">
+        <span>克<span class="inline-pinyin">kè</span></span>
+        <div class="char-tooltip">Смочь</div>
+    </div>
+    <div class="char-item">
+        <span>至<span class="inline-pinyin">zhì</span></span>
+        <div class="char-tooltip">Прибыть</div>
+    </div>
+    <div class="char-item">
+        <span>余<span class="inline-pinyin">yú</span></span>
+        <div class="char-tooltip">Я</div>
+    </div>
+    <div class="char-item">
+        <span>其<span class="inline-pinyin">qí</span></span>
+        <div class="char-tooltip">Он</div>
+    </div>
+    <div class="char-item">
+        <span>舍<span class="inline-pinyin">shě</span></span>
+        <div class="char-tooltip">Отдать</div>
+    </div>
+    <div class="char-item">
+        <span>汝<span class="inline-pinyin">rǔ</span></span>
+        <div class="char-tooltip">Ты</div>
+    </div>
+    <div class="char-item">
+        <span>臣<span class="inline-pinyin">chén</span></span>
+        <div class="char-tooltip">Подданный</div>
+    </div>
+    <div class="char-item">
+        <span>十<span class="inline-pinyin">shí</span></span>
+        <div class="char-tooltip">Десять</div>
+    </div>
+    <div class="char-item">
+        <span>家<span class="inline-pinyin">jiā</span></span>
+        <div class="char-tooltip">Дом</div>
+    </div>
+    <div class="char-item">
+        <span>宮<span class="inline-pinyin">gōng</span></span>
+        <div class="char-tooltip">Дворец</div>
+    </div>
+    <div class="char-item">
+        <span>陣<span class="inline-pinyin">zhèn</span></span>
+        <div class="char-tooltip">Строй</div>
+    </div>
+    <div class="char-item">
+        <span>拜<span class="inline-pinyin">bài</span></span>
+        <div class="char-tooltip">Поклоняться</div>
+    </div>
+    <div class="char-item">
+        <span>稽<span class="inline-pinyin">qǐ</span></span>
+        <div class="char-tooltip">Поклон</div>
+    </div>
+    <div class="char-item">
+        <span>首<span class="inline-pinyin">shǒu</span></span>
+        <div class="char-tooltip">Голова</div>
+    </div>
+    <div class="char-item">
+        <span>迺<span class="inline-pinyin">nǎi</span></span>
+        <div class="char-tooltip">Тогда</div>
+    </div>
+    <div class="char-item">
+        <span>學<span class="inline-pinyin">xué</span></span>
+        <div class="char-tooltip">Учиться</div>
+    </div>
+    <div class="char-item">
+        <span>對<span class="inline-pinyin">duì</span></span>
+        <div class="char-tooltip">Отвечать</div>
+    </div>
+    <div class="char-item">
+        <span>揚<span class="inline-pinyin">yáng</span></span>
+        <div class="char-tooltip">Прославлять</div>
+    </div>
+    <div class="char-item">
+        <span>昔<span class="inline-pinyin">xī</span></span>
+        <div class="char-tooltip">Когда-то</div>
+    </div>
+    <div class="char-item">
+        <span>饉<span class="inline-pinyin">jǐn</span></span>
+        <div class="char-tooltip">Голод</div>
+    </div>
+    <div class="char-item">
+        <span>歳<span class="inline-pinyin">suì</span></span>
+        <div class="char-tooltip">Год</div>
+    </div>
+    <div class="char-item">
+        <span>匡<span class="inline-pinyin">kuāng</span></span>
+        <div class="char-tooltip">Имя собственное</div>
+    </div>
+    <div class="char-item">
+        <span>衆<span class="inline-pinyin">zhòng</span></span>
+        <div class="char-tooltip">Народ</div>
+    </div>
+    <div class="char-item">
+        <span>厥<span class="inline-pinyin">jué</span></span>
+        <div class="char-tooltip">Его</div>
+    </div>
+    <div class="char-item">
+        <span>夫<span class="inline-pinyin">fū</span></span>
+        <div class="char-tooltip">Мужчина</div>
+    </div>
+    <div class="char-item">
+        <span>寇<span class="inline-pinyin">kòu</span></span>
+        <div class="char-tooltip">Грабить</div>
+    </div>
+    <div class="char-item">
+        <span>舀<span class="inline-pinyin">yǎo</span></span>
+        <div class="char-tooltip">Имя собственное</div>
+    </div>
+    <div class="char-item">
+        <span>禾<span class="inline-pinyin">hé</span></span>
+        <div class="char-tooltip">Зерно</div>
+    </div>
+    <div class="char-item">
+        <span>秭<span class="inline-pinyin">zǐ</span></span>
+        <div class="char-tooltip">Мера зерна</div>
+    </div>
+    <div class="char-item">
+        <span>以<span class="inline-pinyin">yǐ</span></span>
+        <div class="char-tooltip">С помощью</div>
+    </div>
+    <div class="char-item">
+        <span>東<span class="inline-pinyin">dōng</span></span>
+        <div class="char-tooltip">Восток</div>
+    </div>
+    <div class="char-item">
+        <span>得<span class="inline-pinyin">dé</span></span>
+        <div class="char-tooltip">Получить</div>
+    </div>
+    <div class="char-item">
+        <span>罰<span class="inline-pinyin">fá</span></span>
+        <div class="char-tooltip">Наказать</div>
+    </div>
+    <div class="char-item">
+        <span>大<span class="inline-pinyin">dà</span></span>
+        <div class="char-tooltip">Великий</div>
+    </div>
+    <div class="char-item">
+        <span>償<span class="inline-pinyin">cháng</span></span>
+        <div class="char-tooltip">Возместить</div>
+    </div>
+    <div class="char-item">
+        <span>遺<span class="inline-pinyin">wèi</span></span>
+        <div class="char-tooltip">Плюс</div>
+    </div>
+    <div class="char-item">
+        <span>為<span class="inline-pinyin">wéi</span></span>
+        <div class="char-tooltip">Равно</div>
+    </div>
+    <div class="char-item">
+        <span>來<span class="inline-pinyin">lái</span></span>
+        <div class="char-tooltip">Приходить</div>
+    </div>
+    <div class="char-item">
+        <span>弗<span class="inline-pinyin">fú</span></span>
+        <div class="char-tooltip">Не</div>
+    </div>
+    <div class="char-item">
+        <span>則<span class="inline-pinyin">zé</span></span>
+        <div class="char-tooltip">То</div>
+    </div>
+    <div class="char-item">
+        <span>付<span class="inline-pinyin">fù</span></span>
+        <div class="char-tooltip">Заплатить</div>
+    </div>
+</div>
+
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>18.А. Церемония первой борозды</h3>
+    <p class="original">
+        В системе религиозных представлений чжоусцев значительное место занимает культ земли, с которым связан ритуал «первой борозды». Ежегодно в определенный день весны Сын Неба во главе своих приближенных приезжал на специальное священное поле. Совершив обряд принесения жертв, правитель вскапывал борозду на поле, после чего его примеру следовали все остальные присутствующие на церемонии. Этот обряд, несомненно, в пережиточной форме отражал давно ушедшие в прошлое порядки, согласно которым верховный правитель участвовал в общественно полезном труде.
+    </p>
+
+    <h3>18.Б. «Подданный»</h3>
+    <p class="original">
+        Вопрос об интерпретации чжоуского термина <span class="example">臣 chén</span> имеет длительную историю. Ряд исследователей считают, что так обозначались рабы. С другой стороны, есть тексты, в которых такое значение термина не может считаться правомерным. Более вероятно, что словом <span class="example">臣 chén</span> в раннечжоуское время обозначались лица, связанные с представителем более высокого социального ранга отношениями подчинения в широком смысле. Подданным был по отношению к господину раб, а аристократ был в свою очередь подданным по отношению к чжухоу и в конечном счете — к вану.
+    </p>
+
+    <h3>18.В. Арифметические действия</h3>
+    <p class="original">
+        В тексте урока 18 мы встречаемся со своего рода примером арифметического действия, в данном случае сложения. Древние китайцы не выработали способа записи действий в виде формул. Примеры на сложение, вычитание и т. д. фиксировались ими описательно. В частности, слагаемые, одно из которых становилось подлежащим, а другое дополнением, соединялись предикативом <span class="example">遺 wèi</span>. Знак равенства передавался предикативом <span class="example">為 wéi</span> «делать», «составлять».
+    </p>
+</div>
+
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст, расставив знаки препинания.</li>
+        <li>Проделайте грамматический анализ текста.</li>
+        <li>Переведите текст на русский язык.</li>
+        <li>Переведите на древнекитайский следующие предложения:
+            <ol type="1">
+                <li>Пять кувшинов вина плюс три кувшина равняется восьми кувшинам.</li>
+                <li>Если ты начал учиться стрелять, то я подарю тебе пучок стрел.</li>
+                <li>Уведоми меня о его приказе.</li>
+                <li>Я уже просил прощения у этого человека.</li>
+            </ol>
+        </li>
+    </ol>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Все иероглифы — из текстов Уроков 1–18, либо из циклических знаков (甲子 – 癸亥).
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+<script id="help" src="../help.js"></script>
+
+</body>
+</html>

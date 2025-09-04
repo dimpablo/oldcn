@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы</script>
+    <meta charset="utf-8"/>
+    <title>Урок 20 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>УРОК 20</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+    <label class="toggle-switch">
+        <input id="fontToggle" type="checkbox"/>
+        <span class="slider"></span>
+    </label>
+    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+        Обычный вид
+    </span>
+</div>
+
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #1a5fb4;
+    }
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+</style>
+
+<style>
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+    td:hover .char-tooltip {
+        display: block;
+    }
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+
+    /* Стили для правой фигурной скобки, объединяющей строки справа */
+    .math-example {
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        font-size: 0.95em;
+    }
+    .math-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        margin-right: 12px;
+    }
+    .math-content .example {
+        margin: 2px 0;
+        white-space: pre;
+    }
+    .math-brace {
+        font-size: 2em;
+        line-height: 0.7;
+        color: #1a4f72;
+        font-family: monospace;
+        font-weight: bold;
+        margin: 0;
+    }
+    .math-caption {
+        margin-left: 15px;
+        font-style: italic;
+        color: #1a4f72;
+    }
+</style>
+
+<script>
+        const lessonText = [
+            "周公拜手稽首曰予唯乙卯朝至于洛師",
+            "我卜河朔黎水我乃卜澗水東瀍水",
+            "西唯洛食我又卜瀍水東亦唯洛食王",
+            "拜手稽首曰公不敢不敬天之休來相",
+            "宅其作周匹休既定宅來視予卜休恒",
+            "吉我二人共貞公其予以萬億年敬天",
+            "之休周公曰王肇稱殷禮祀于新邑王",
+            "若曰公明保予沖子公稱丕顯德以予",
+            "小子揚文武烈"
+        ];
+    // Функция для создания таблицы
+    function createOracleTable() {
+        const table = document.getElementById('oracleTable');
+        // Создаём строку с номерами колонок
+        const headerRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'line-num';
+        headerRow.appendChild(emptyCell);
+        for (let i = 1; i <= 15; i++) {
+            const th = document.createElement('td');
+            th.className = 'col-num';
+            th.textContent = i;
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Создаём строки с текстом
+        for (let i = 0; i < lessonText.length; i++) {
+            const row = document.createElement('tr');
+            const lineNumCell = document.createElement('td');
+            lineNumCell.className = 'line-num';
+            lineNumCell.textContent = i + 1;
+            row.appendChild(lineNumCell);
+
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 15; j++) {
+                const td = document.createElement('td');
+                if (j < chars.length) {
+                    const char = chars[j];
+                    td.textContent = char;
+                    if (charData[char]) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'char-tooltip';
+                        tooltip.innerHTML = `
+                            <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                            ${charData[char].meaning}<br>
+                            <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                        `;
+                        td.appendChild(tooltip);
+                    }
+                }
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
+    }
+
+    // Инициализация таблицы при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>20.1. Личное местоимение 1-го лица予 yú</h3>
+    <p class="original">
+        По своему грамматическому строю язык письменных памятников раннего доклассического периода (прежде всего «Шаншу») должен быть отнесен в целом к тому же этапу развития, что и язык западночжоуских надписей на бронзе. Однако некоторые служебные слова, будучи по существу идентичными, в надписях и в письменных памятниках записываются по-разному.
+        <br><br>
+        Так, в тексте «Шаншу» встречается местоимение 1-го лица予 yú, появляющееся в надписях только в позднее доклассическое время.
+    </p>
+
+    <h3>20.2. Инверсия дополнений</h3>
+    <p class="original">
+        Хотя в раннем доклассическом языке появляются новые эмфатические конструкции, в частности оборот с инверсией сказуемого, изменение позиции других членов предложения подчиняется в нем тем же правилам, что и в архаическом языке.
+        <br><br>
+        Так же как и в предшествующий период, дополнение со значением времени действия, обычно стоящее перед подлежащим, может быть инвертировано без предлога и стоять в препозиции к сказуемому, только будучи маркированным эмфатической частицей唯 wéi.
+        <br><br>
+        Сравним: <span class="example">旦王格廟 dàn wáng gé miào</span> «На восходе солнца правитель вошел в храм».
+        <br>
+        <span class="example">予唯乙卯朝至于洛師 yú wéi yǐ măo zhāo zhì yú luò shī</span> «Я прибыл в лагерь Ло утром в день и-мао».
+        <br><br>
+        Дополнение со значением прямого или косвенного объекта действия инвертируется, также будучи оформленным эмфатической частицей: <span class="example">唯洛食 wéi luò shí</span> «Указано именно на Ло».
+    </p>
+
+    <h3>20.3. Разряды числительных</h3>
+    <p class="original">
+        В раннем доклассическом языке употребляются те же разряды числительных, что и в архаическом, за исключением нового разряда億 yì. Конкретное значение этого слова остается не вполне ясным: в древности оно могло обозначать как «сто тысяч», так и «миллион». Позднее за этим разрядом закрепилось значение «сто миллионов».
+        <br><br>
+        Напомним, что при пропуске разряда знак нуля не ставился. Он появился в Китае вообще очень поздно, не ранее XII в.
+    </p>
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list">
+    <div class="char-item">
+        <span>予<span class="inline-pinyin">yú</span></span>
+        <div class="char-tooltip">Я (0594)</div>
+    </div>
+    <div class="char-item">
+        <span>視<span class="inline-pinyin">shì</span></span>
+        <div class="char-tooltip">Смотреть (1451)</div>
+    </div>
+    <div class="char-item">
+        <span>朝<span class="inline-pinyin">zhāo</span></span>
+        <div class="char-tooltip">Утро (0696)</div>
+    </div>
+    <div class="char-item">
+        <span>恒<span class="inline-pinyin">héng</span></span>
+        <div class="char-tooltip">Постоянный (0010)</div>
+    </div>
+    <div class="char-item">
+        <span>朔<span class="inline-pinyin">shuò</span></span>
+        <div class="char-tooltip">Север (0700)</div>
+    </div>
+    <div class="char-item">
+        <span>共<span class="inline-pinyin">gòng</span></span>
+        <div class="char-tooltip">Совместно (1516)</div>
+    </div>
+    <div class="char-item">
+        <span>黎<span class="inline-pinyin">lí</span></span>
+        <div class="char-tooltip">Ли (1079)</div>
+    </div>
+    <div class="char-item">
+        <span>億<span class="inline-pinyin">yì</span></span>
+        <div class="char-tooltip">Сто миллионов (1619)</div>
+    </div>
+    <div class="char-item">
+        <span>澗<span class="inline-pinyin">jiàn</span></span>
+        <div class="char-tooltip">Цзяньшуй (0680)</div>
+    </div>
+    <div class="char-item">
+        <span>禮<span class="inline-pinyin">lǐ</span></span>
+        <div class="char-tooltip">Обряд (0125)</div>
+    </div>
+    <div class="char-item">
+        <span>瀍<span class="inline-pinyin">chán</span></span>
+        <div class="char-tooltip">Чаньшуй (0053)</div>
+    </div>
+    <div class="char-item">
+        <span>新<span class="inline-pinyin">xīn</span></span>
+        <div class="char-tooltip">Новый (0406)</div>
+    </div>
+    <div class="char-item">
+        <span>食<span class="inline-pinyin">shí</span></span>
+        <div class="char-tooltip">Указывать (1123)</div>
+    </div>
+    <div class="char-item">
+        <span>冲<span class="inline-pinyin">chōng</span></span>
+        <div class="char-tooltip">Малый (0521)</div>
+    </div>
+    <div class="char-item">
+        <span>敬<span class="inline-pinyin">jìng</span></span>
+        <div class="char-tooltip">Почитать (1211)</div>
+    </div>
+    <div class="char-item">
+        <span>烈<span class="inline-pinyin">liè</span></span>
+        <div class="char-tooltip">Подвиг (1657)</div>
+    </div>
+    <div class="char-item">
+        <span>宅<span class="inline-pinyin">zhái</span></span>
+        <div class="char-tooltip">Жилище (1408)</div>
+    </div>
+    <div class="char-item">
+        <span>相<span class="inline-pinyin">xiàng</span></span>
+        <div class="char-tooltip">Помогать (0346)</div>
+    </div>
+</div>
+
+<h3>Словосочетания</h3>
+<p class="original">
+    <span class="example">周公 zhōu gōng</span> «Чжоу-гун»<br>
+    <span class="example">明辟 míng pì</span> «мудрый правитель»<br>
+    <span class="example">黎水 lí shuǐ</span> «Лишуй» (название реки)<br>
+    <span class="example">澗水 jiàn shuǐ</span> «Цзяньшуй» (название реки)<br>
+    <span class="example">瀍水 chán shuǐ</span> «Чаньшуй» (название реки)<br>
+    <span class="example">新邑 xīn yì</span> «Новый город»
+</p>
+
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>20.А. Новый Город</h3>
+    <p class="original">
+        Разгромив Инь и возвращаясь на восток, чжоусцы сочли необходимым основать на западе опорный пункт для контроля над вновь приобретенными территориями. Для города было выбрано удобное место на северном берегу реки Ло, между двумя ее притоками — Цзяньшуй и Чаньшуй. Этот город, заложенный в первые годы правления Чэн-вана, получил название «Нового» (新邑 xīn yì). Иногда он именовался также «Чэнчжоу» (成周 chéng zhōu).
+    </p>
+
+    <h3>20.Б. Чжоу-гун</h3>
+    <p class="original">
+        Покоритель Инь, У-ван, скончался вскоре после возвращения из похода на Великий Город Шан. Власть наследовал его малолетний сын, получивший титул Чэн-вана. Юного монарха опекал в этот период его дядя, младший брат его отца, Чжоу-гун. По свидетельству некоторых источников, Чжоу-гун будто бы даже официально занимал одно время престол вана. Смертью У-вана воспользовались покоренные иньцы, привлекшие на свою сторону ряд высокопоставленных чжоусцев. Чжоу-гун предпринял повторный поход на восток и окончательно разгромил бунтовщиков, а по возвращении в столицу передал Чэн-вану всю полноту власти, оставшись его советником. В конфуцианской традиции Чжоу-гун изображается как мудрец, заложивший основы чжоуской морали и важнейших государственных установлений.
+    </p>
+
+    <h3>20.В. Чжоуские гадания</h3>
+    <p class="original">
+        Чжоусцы восприняли от иньцев обычай гадать на костях животных и узнавать по форме трещин волю высшего божества. Мы не знаем, как конкретно гадали этим способом чжоусцы, но связанная с данным ритуалом специальная терминология несколько отличается у них от иньской. В частности, иньцы не употребляли слова 食 shí «указывать на результат гадания».
+    </p>
+</div>
+
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст, расставив знаки препинания.</li>
+        <li>Проделайте грамматический анализ текста.</li>
+        <li>Переведите текст на русский язык.</li>
+        <li>Выпишите все служебные слова, появляющиеся впервые в раннем доклассическом языке, и укажите на особенности, которые отличают его от архаического древнекитайского.</li>
+    </ol>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+    Страницы: Ранний доклассический язык 160, Урок 20 161.<br/>
+    Восстановлено по оригинальному тексту с сохранением авторского стиля и структуры.<br/>
+    Все иероглифы и данные — строго по источнику.
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

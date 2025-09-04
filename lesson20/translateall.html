@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Квиз по переводу текста</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            padding: 10px;
+            background-color: #f5f5f5;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .progress {
+            background-color: #e9f7fe;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #2980b9;
+            font-size: 13px;
+        }
+        
+        /* Сворачиваемые инструкции */
+        .collapsible-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .collapsible-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-size: 13px;
+        }
+        
+        .collapsible-header::after {
+            content: "+";
+            font-size: 18px;
+            color: #555;
+        }
+        
+        .collapsible-header.active::after {
+            content: "−";
+        }
+        
+        .collapsible-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #fff;
+        }
+        
+        .collapsible-content.show {
+            max-height: 400px;
+            padding: 10px;
+        }
+        
+        .collapsible-content ul {
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+        
+        .collapsible-content li {
+            margin-bottom: 5px;
+        }
+        
+        .task-container {
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+        }
+        
+        .source-text {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .task-type {
+            display: inline-block;
+            background-color: #e1f0fa;
+            color: #2980b9;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+        
+        .words-container, .answer-container {
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 50px;
+            margin-bottom: 12px;
+            background-color: #f9f9f9;
+            font-size: 13px;
+        }
+        
+        .words-container {
+            background-color: #f0f8ff;
+        }
+        
+        .answer-container {
+            background-color: #f0fff0;
+            border-color: #2ecc71;
+        }
+        
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .word {
+            padding: 6px 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .word:hover {
+            background-color: #e9ecef;
+            transform: translateY(-1px);
+        }
+        
+        .word.selected {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        #resultMessage {
+            min-height: 20px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .congratulations {
+            text-align: center;
+            padding: 20px 12px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .congratulations h2 {
+            color: #27ae60;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .congratulations p {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Квиз по переводу</h1>
+            <p>Сопоставьте текст с переводом</p>
+        </div>
+        
+        <div class="progress">
+            Осталось: <span id="tasksLeft">0</span>
+        </div>
+        
+        <!-- Сворачиваемые инструкции -->
+        <div class="collapsible-container">
+            <div class="collapsible-header" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
+                <span>ℹ️ Инструкция (нажмите, чтобы развернуть)</span>
+            </div>
+            <div class="collapsible-content">
+                <ul>
+                    <li>Нажмите на слово, чтобы добавить его в ответ</li>
+                    <li>Нажмите на слово в ответе, чтобы вернуть его</li>
+                    <li>Соберите правильный перевод</li>
+                    <li>Знаки препинания и пробелы игнорируются</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="mainContent">
+            <div class="task-container">
+                <div class="task-type" id="taskType">Перевод с китайского</div>
+                <div class="source-text" id="sourceText">Загрузка...</div>
+                
+                <div class="words-container">
+                    <div class="word-list" id="wordsList"></div>
+                </div>
+                
+                <div class="answer-container">
+                    <div class="word-list" id="answerList"></div>
+                </div>
+                
+                <!-- Кнопки: "Я не знаю" и "Следующий вопрос" -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div id="resultMessage"></div>
+                    <button id="dontKnowBtn" class="btn" style="padding: 8px; font-size: 13px;">Я не знаю</button>
+                    <button id="nextBtn" class="btn" style="padding: 8px; font-size: 13px; display: none;">Следующий вопрос</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="congratulations" class="congratulations" style="display: none;">
+            <h2>🎉 Поздравляем!</h2>
+            <p>Вы прошли все задания!</p>
+            <button class="btn btn-success" id="returnBtn">На главную</button>
+        </div>
+    </div>
+
+    <!-- Подключаем данные -->
+    <script src="segmentation.js"></script>
+    <script src="../dictionary.js"></script>
+    <script type="module">
+        // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+            authDomain: "antient-9bff0.firebaseapp.com",
+            projectId: "antient-9bff0",
+            storageBucket: "antient-9bff0.firebasestorage.app",
+            messagingSenderId: "311792589414",
+            appId: "1:311792589414:web:5fff3154735007c2006ba7",
+            measurementId: "G-W4ZQXWRTKK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+
+        // === 🔊 ОЗВУЧКА ИЕРОГЛИФА (с полной отладкой) ===
+        function playHanziSound(hanzi) {
+            console.log(`🔊 [playHanziSound] Вызван для: '${hanzi}'`);
+
+            if (typeof window.charData === 'undefined') {
+                console.error(`❌ [playHanziSound] window.charData НЕ загружен!`);
+                return;
+            }
+
+            const data = window.charData[hanzi];
+            if (!data) {
+                console.warn(`🟡 [playHanziSound] Нет данных в charData для иероглифа: '${hanzi}'`);
+                return;
+            }
+
+            if (!data.pinyin) {
+                console.warn(`🟡 [playHanziSound] У иероглифа '${hanzi}' нет pinyin`);
+                return;
+            }
+
+            let cleanPinyin = data.pinyin
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ü/g, 'u')
+                .replace(/v/g, 'u');
+
+            let tone = '1';
+            if (data.pinyin.includes('ā')) tone = '1';
+            else if (data.pinyin.includes('á')) tone = '2';
+            else if (data.pinyin.includes('ǎ')) tone = '3';
+            else if (data.pinyin.includes('à')) tone = '4';
+
+            const pinyinKey = cleanPinyin + tone;
+            const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+            console.log(`🎵 [playHanziSound] Формируем URL: ${url}`);
+
+            const audio = new Audio();
+            audio.src = url;
+
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log(`✅ [playHanziSound] Аудио для '${hanzi}' ВОСПРОИЗВОДИТСЯ`);
+                    })
+                    .catch(err => {
+                        console.error(`❌ [playHanziSound] Ошибка воспроизведения:`, err);
+                        if (err.name === 'NotAllowedError') {
+                            console.warn(`⚠️ [playHanziSound] Блокировка автовоспроизведения`);
+                        }
+                    });
+            } else {
+                console.warn(`🟡 [playHanziSound] audio.play() не возвращает Promise`);
+                audio.play().catch(e => console.error(`Ошибка:`, e));
+            }
+        }
+
+        // === ✅ Функция начисления/списания баллов ===
+        async function updatePoints(points, reason) {
+            if (!currentUser) return;
+            try {
+                const userRef = doc(db, 'users', currentUser.uid);
+                const userSnap = await getDoc(userRef);
+                const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+                const newPoints = currentPoints + points;
+                await updateDoc(userRef, { points: newPoints });
+            } catch (e) {
+                console.error("❌ Ошибка обновления баллов:", e);
+            }
+        }
+
+        // === 🛠 УЛУЧШЕННЫЕ ФУНКЦИИ ОЧИСТКИ ТЕКСТА ===
+        function normalizeText(text) {
+            return text
+                .replace(/\u00A0/g, ' ')
+                .replace(/[.,:;?!«»"()]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        function cleanChinese(text) {
+            return text.replace(/[，,：:；;。.？?！!、\s]/g, '');
+        }
+
+        // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("📄 [Квиз] DOM загружен");
+
+            const allOriginals = SentenceData.sentences.map(s => cleanChinese(s.original));
+            const allTranslations = SentenceData.sentences.map(s => s.translation);
+
+            const allRussianWords = [];
+            allTranslations.forEach(trans => {
+                allRussianWords.push(...normalizeText(trans).split(' ').filter(word => word));
+            });
+
+            const allChineseChars = [];
+            allOriginals.forEach(orig => {
+                allChineseChars.push(...orig.split(''));
+            });
+
+            function shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function generateTranslationTask(original, correctTranslation) {
+                const cleanedTranslation = normalizeText(correctTranslation);
+                const correctWords = cleanedTranslation.split(' ');
+                const numExtra = Math.max(3, Math.floor(correctWords.length * 0.4));
+                const extraWords = shuffleArray(allRussianWords)
+                    .filter(word => !correctWords.includes(word))
+                    .slice(0, numExtra);
+                const words = shuffleArray([...correctWords, ...extraWords]);
+
+                return {
+                    type: 'toTranslation',
+                    source: original,
+                    correctAnswer: cleanedTranslation,
+                    words: words,
+                    direction: 'с китайского на русский'
+                };
+            }
+
+            function generateOriginalTask(translation, correctOriginal) {
+                const correctChars = correctOriginal.split('');
+                const numExtra = Math.max(2, Math.floor(correctChars.length * 0.25));
+                const extraChars = shuffleArray(allChineseChars)
+                    .filter(char => !correctChars.includes(char))
+                    .slice(0, numExtra);
+                const chars = shuffleArray([...correctChars, ...extraChars]);
+
+                return {
+                    type: 'toOriginal',
+                    source: translation,
+                    correctAnswer: correctOriginal,
+                    words: chars,
+                    direction: 'с русского на китайский'
+                };
+            }
+
+            let tasks = [];
+            SentenceData.sentences.forEach(sentence => {
+                const cleanOrig = cleanChinese(sentence.original);
+                tasks.push(generateTranslationTask(cleanOrig, sentence.translation));
+                tasks.push(generateOriginalTask(sentence.translation, cleanOrig));
+            });
+
+            tasks = shuffleArray(tasks);
+
+            let currentTaskIndex = 0;
+            let currentAnswer = [];
+
+            const sourceText = document.getElementById('sourceText');
+            const wordsList = document.getElementById('wordsList');
+            const answerList = document.getElementById('answerList');
+            const resultMessage = document.getElementById('resultMessage');
+            const tasksLeft = document.getElementById('tasksLeft');
+            const taskType = document.getElementById('taskType');
+            const mainContent = document.getElementById('mainContent');
+            const congratulations = document.getElementById('congratulations');
+            const returnBtn = document.getElementById('returnBtn');
+            const dontKnowBtn = document.getElementById('dontKnowBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            function showDontKnowButton() {
+                dontKnowBtn.style.display = 'block';
+                nextBtn.style.display = 'none';
+            }
+
+            function hideDontKnowButton() {
+                dontKnowBtn.style.display = 'none';
+            }
+
+            function showNextButton() {
+                nextBtn.style.display = 'block';
+                dontKnowBtn.style.display = 'none';
+            }
+
+            function hideNextButton() {
+                nextBtn.style.display = 'none';
+            }
+
+            // --- ПРОВЕРКА ОТВЕТА ---
+            function checkAnswer() {
+                const task = tasks[currentTaskIndex];
+                const currentText = normalizeText(currentAnswer.join(' '));
+
+                if (task.type === 'toTranslation') {
+                    if (currentText === task.correctAnswer) {
+                        resultMessage.className = 'success';
+                        resultMessage.textContent = '✅ Верно! Готово.';
+                        updatePoints(10, `успешный перевод: ${task.source}`);
+                        hideDontKnowButton();
+                        showNextButton();
+                    }
+                } else if (task.type === 'toOriginal') {
+                    const chineseAnswer = currentAnswer.join('');
+                    if (chineseAnswer === task.correctAnswer) {
+                        resultMessage.className = 'success';
+                        resultMessage.textContent = '✅ Верно! Готово.';
+                        updatePoints(10, `успешный перевод: ${task.source}`);
+                        hideDontKnowButton();
+                        showNextButton();
+                    }
+                }
+            }
+
+            // --- ЕДИНОЖДЫ НАВЕШИВАЕМ ОБРАБОТЧИКИ ЧЕРЕЗ ДЕЛЕГИРОВАНИЕ ---
+            wordsList.addEventListener('click', function(e) {
+                const wordEl = e.target.closest('.word');
+                if (!wordEl) return;
+
+                const word = wordEl.dataset.word;
+                console.log(`➡️ [Квиз] Перемещение в ответ: '${word}'`);
+
+                wordEl.remove();
+                currentAnswer.push(word);
+
+                const answerEl = document.createElement('div');
+                answerEl.className = 'word selected';
+                answerEl.textContent = word;
+                answerEl.dataset.word = word;
+                answerList.appendChild(answerEl);
+
+                // Озвучка иероглифа
+                if (tasks[currentTaskIndex]?.type === 'toOriginal' && word.length === 1 && /[\u4e00-\u9fff]/.test(word)) {
+                    playHanziSound(word);
+                }
+
+                checkAnswer();
+            });
+
+            answerList.addEventListener('click', function(e) {
+                const wordEl = e.target.closest('.word');
+                if (!wordEl) return;
+
+                const word = wordEl.dataset.word;
+                console.log(`⬅️ [Квиз] Возврат в wordsList: '${word}'`);
+
+                wordEl.remove();
+                currentAnswer.splice(currentAnswer.indexOf(word), 1);
+
+                updatePoints(-5, `исправление перевода: ${tasks[currentTaskIndex]?.source}`);
+
+                const newWordEl = document.createElement('div');
+                newWordEl.className = 'word';
+                newWordEl.textContent = word;
+                newWordEl.dataset.word = word;
+                wordsList.appendChild(newWordEl);
+
+                // Озвучка при возврате
+                if (tasks[currentTaskIndex]?.type === 'toOriginal' && word.length === 1 && /[\u4e00-\u9fff]/.test(word)) {
+                    playHanziSound(word);
+                }
+
+                checkAnswer();
+            });
+
+            dontKnowBtn.addEventListener('click', function () {
+                const task = tasks[currentTaskIndex];
+                resultMessage.className = 'info';
+                resultMessage.textContent = `💡 Правильный ответ: "${task.correctAnswer}"`;
+                updatePoints(-10, `подсказка: ${task.source}`);
+                hideDontKnowButton();
+                showNextButton();
+            });
+
+            nextBtn.addEventListener('click', function () {
+                currentTaskIndex++;
+                renderTask();
+            });
+
+            returnBtn.addEventListener('click', () => {
+                window.location.href = '../index.html';
+            });
+
+            // --- РЕНДЕР ЗАДАНИЯ ---
+            function renderTask() {
+                console.log(`🎯 [Квиз] Рендерим задание ${currentTaskIndex + 1}/${tasks.length}`);
+                if (currentTaskIndex >= tasks.length) {
+                    mainContent.style.display = 'none';
+                    congratulations.style.display = 'block';
+                    updatePoints(30, 'завершение всего цикла переводов');
+                    return;
+                }
+
+                const task = tasks[currentTaskIndex];
+                taskType.textContent = `Перевод ${task.direction}`;
+                sourceText.textContent = task.source;
+                tasksLeft.textContent = tasks.length - currentTaskIndex;
+
+                currentAnswer = [];
+                wordsList.innerHTML = '';
+                answerList.innerHTML = '';
+
+                // Заполняем слова
+                task.words
+                    .filter(word => word && word.trim())
+                    .forEach(word => {
+                        const el = document.createElement('div');
+                        el.className = 'word';
+                        el.textContent = word;
+                        el.dataset.word = word;
+                        wordsList.appendChild(el);
+                    });
+
+                resultMessage.className = 'info';
+                resultMessage.textContent = 'Соберите перевод.';
+                showDontKnowButton();
+                hideNextButton();
+            }
+
+            // --- ИНИЦИАЛИЗАЦИЯ ---
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                console.log('🔐 [Квиз] Пользователь:', user ? user.displayName : 'не авторизован');
+                renderTask();
+            });
+        });
+    </script>
+</body>
+</html>

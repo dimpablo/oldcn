@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <title>Урок 14 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+    <script src="./../dictionary.js"></script>
+</head>
+<body>
+
+<h1>УРОК 14</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+    <label class="toggle-switch">
+        <input id="fontToggle" type="checkbox"/>
+        <span class="slider"></span>
+    </label>
+    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+        Обычный вид
+    </span>
+</div>
+
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #1a5fb4;
+    }
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+</style>
+
+<style>
+    .char-tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 300px;
+        background: #1a4f72;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        text-align: left;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+        line-height: 1.5;
+    }
+    td:hover .char-tooltip {
+        display: block;
+    }
+    .lesson-badge {
+        display: inline-block;
+        background: #e6f2ff;
+        color: #1a4f72;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+</style>
+
+<script>
+    // Данные текста урока 14 (по строкам из PDF)
+const lessonText = [
+    "唯九月初吉戊申白氏曰不其馭方玁",
+    "狁廣伐西俞王令我羞追于西余來歸",
+    "獻禽余命汝御追于洛汝以我車宕伐",
+    "玁狁于高陵汝多折首執訊戎大同永",
+    "追汝汝及戎大敦伐汝休弗以我車陷",
+    "于艱汝多禽折首執訊白氏曰不其汝",
+    "小子女肇誨于戎工賜汝弓一矢束臣",
+    "五家田十田用永乃事不其拜稽首休",
+    "用作朕皇祖公白孟姬尊簋"
+];
+    // Функция для создания таблицы
+    function createOracleTable() {
+        const table = document.getElementById('oracleTable');
+        // Создаём строку с номерами колонок
+        const headerRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'line-num';
+        headerRow.appendChild(emptyCell);
+        for (let i = 1; i <= 15; i++) {
+            const th = document.createElement('td');
+            th.className = 'col-num';
+            th.textContent = i;
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Создаём строки с текстом
+        for (let i = 0; i < lessonText.length; i++) {
+            const row = document.createElement('tr');
+            const lineNumCell = document.createElement('td');
+            lineNumCell.className = 'line-num';
+            lineNumCell.textContent = i + 1;
+            row.appendChild(lineNumCell);
+
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 15; j++) {
+                const td = document.createElement('td');
+                if (j < chars.length) {
+                    const char = chars[j];
+                    td.textContent = char;
+                    if (charData[char]) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'char-tooltip';
+                        tooltip.innerHTML = `
+                            <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                            ${charData[char].meaning}<br>
+                            <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                        `;
+                        td.appendChild(tooltip);
+                    }
+                }
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
+    }
+
+    // Инициализация таблицы при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>14.1. Приемы членения текста (продолжение)</h3>
+    <p class="original">
+        Указанием на конец одного предложения и начало другого может помимо всего прочего быть сочетание двух местоимений: первое из них в таком случае обязательно является дополнением, а второе подлежащим следующего предложения:
+        <br><br>
+        <span class="example">戎追汝,汝及戎 róng zhuī rǔ, rǔ jí róng</span> «Жуны будут преследовать тебя, ты столкнешься с жунами».
+    </p>
+
+    <h3>14.2. Предлог 以 yǐ</h3>
+    <p class="original">
+        В доклассическом языке продолжают использоваться все наиболее употребительные предлоги и предложные конструкции архаического языка: а) 于 yú
+        <br><br>
+        <span class="example">王格于成宫 wáng gé yú chéng gōng</span> «Ван вошел в храм Чэн-вана»; б) 自 zì
+        <br><br>
+        <span class="example">乃祖翼自他邦 năi zǔ yì zì tā bāng</span> «Твой предок оказывал [нам] помощь [с территории] другого государства»;
+        <br><br>
+        в) 自...至于... zì... zhì yú...
+        <br><br>
+        <span class="example">自淲東至于河 zì hǔ dōng zhì yú hé</span> «От района к востоку от Ху до [Желтой] реки».
+        <br><br>
+        Наряду с этими предлогами в доклассическом языке появляются некоторые новые. К их числу относится предлог 以 yǐ.
+        <br><br>
+        Основное значение этого предлога — обозначение орудия (в широком смысле слова), посредством которого совершается действие:
+        <br><br>
+        <span class="example">以乃族從父征 yǐ năi zú cóng fù zhēng</span> «Своим кланом помогай отцу в походе».
+        <br><br>
+        Предлог 以 yǐ исторически восходит к знаменательному слову, встречавшемуся в текстах архаического времени, — «вести», «возглавлять». Этот предлог отчасти сохранил еще свои предикативные свойства, что отличает его от предлогов 于 yú, 自 zì и др.
+    </p>
+
+    <h3>14.3. Именное сказуемое</h3>
+    <p class="original">
+        В архаическом языке встречается только один вид сказуемого — предикативное. В доклассическом же зафиксированы также и предложения с именным сказуемым.
+        <br><br>
+        Особенностью именного сказуемого является то, что оно, будучи выражено именем или именным оборотом, не может принимать дополнения. Связь между подлежащим и сказуемым в таких предложениях не имеет в доклассическом языке формального выражения (связка отсутствует):
+        <br><br>
+        <span class="example">余小子 yú xiăo zǐ</span> «Я — малое дитя».
+    </p>
+
+    <h3>14.4. Отрицательный предикатив 無 wú</h3>
+    <p class="original">
+        Предикатив 有 yǒu «иметь», как мы помним, не принимает отрицаний. В тех случаях, когда необходимо передать отрицательное значение, его заменяют специальным отрицательным предикативом 亡 wú. Это правило сохраняется и в доклассическом языке, например: <span class="example">亡尤 wú yóu</span> «не иметь неприятностей».
+        <br><br>
+        Другим отрицательным предикативом, соответствующим 亡 wú, в доклассическом языке является 無 wú, который постепенно вытесняет прежний 亡 wú: <span class="example">無疆 wú jiāng</span> «не иметь границ», «быть безграничным».
+    </p>
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА 14</h2>
+<div class="char-list">
+    <div class="char-item">
+        <span>玁<span class="inline-pinyin">xiǎn</span></span>
+        <div class="char-tooltip">Сян (в составе 玁狁)</div>
+    </div>
+    <div class="char-item">
+        <span>狁<span class="inline-pinyin">yǔn</span></span>
+        <div class="char-tooltip">Юнь (в составе 玁狁)</div>
+    </div>
+    <div class="char-item">
+        <span>獻<span class="inline-pinyin">xiàn</span></span>
+        <div class="char-tooltip">Представить; принести</div>
+    </div>
+    <div class="char-item">
+        <span>追<span class="inline-pinyin">zhuī</span></span>
+        <div class="char-tooltip">Преследовать</div>
+    </div>
+    <div class="char-item">
+        <span>于<span class="inline-pinyin">yú</span></span>
+        <div class="char-tooltip">При, в; предлог</div>
+    </div>
+    <div class="char-item">
+        <span>小<span class="inline-pinyin">xiǎo</span></span>
+        <div class="char-tooltip">Малый</div>
+    </div>
+    <div class="char-item">
+        <span>五<span class="inline-pinyin">wǔ</span></span>
+        <div class="char-tooltip">Пять</div>
+    </div>
+    <div class="char-item">
+        <span>用<span class="inline-pinyin">yòng</span></span>
+        <div class="char-tooltip">Использовать; использовать для</div>
+    </div>
+    <div class="char-item">
+        <span>廣<span class="inline-pinyin">guǎng</span></span>
+        <div class="char-tooltip">Широкий; широко</div>
+    </div>
+    <div class="char-item">
+        <span>西<span class="inline-pinyin">xī</span></span>
+        <div class="char-tooltip">Запад</div>
+    </div>
+    <div class="char-item">
+        <span>俞<span class="inline-pinyin">yú</span></span>
+        <div class="char-tooltip">Юй (географическое название)</div>
+    </div>
+    <div class="char-item">
+        <span>王<span class="inline-pinyin">wáng</span></span>
+        <div class="char-tooltip">Ван; правитель</div>
+    </div>
+    <div class="char-item">
+        <span>令<span class="inline-pinyin">lìng</span></span>
+        <div class="char-tooltip">Приказывать</div>
+    </div>
+    <div class="char-item">
+        <span>我<span class="inline-pinyin">wǒ</span></span>
+        <div class="char-tooltip">Я, мы</div>
+    </div>
+    <div class="char-item">
+        <span>羞<span class="inline-pinyin">xiū</span></span>
+        <div class="char-tooltip">Стыдиться; здесь: преследовать</div>
+    </div>
+    <div class="char-item">
+        <span>禽<span class="inline-pinyin">qín</span></span>
+        <div class="char-tooltip">Ловить; брать живым</div>
+    </div>
+    <div class="char-item">
+        <span>余<span class="inline-pinyin">yú</span></span>
+        <div class="char-tooltip">Я; остаток</div>
+    </div>
+    <div class="char-item">
+        <span>命<span class="inline-pinyin">mìng</span></span>
+        <div class="char-tooltip">Приказ, судьба</div>
+    </div>
+    <div class="char-item">
+        <span>汝<span class="inline-pinyin">rǔ</span></span>
+        <div class="char-tooltip">Ты</div>
+    </div>
+    <div class="char-item">
+        <span>御<span class="inline-pinyin">yù</span></span>
+        <div class="char-tooltip">Править (колесницей); защищать</div>
+    </div>
+    <div class="char-item">
+        <span>洛<span class="inline-pinyin">luò</span></span>
+        <div class="char-tooltip">Ло (река)</div>
+    </div>
+    <div class="char-item">
+        <span>車<span class="inline-pinyin">chē</span></span>
+        <div class="char-tooltip">Колесница, транспорт</div>
+    </div>
+    <div class="char-item">
+        <span>宕<span class="inline-pinyin">dàng</span></span>
+        <div class="char-tooltip">Настойчиво; решительно</div>
+    </div>
+    <div class="char-item">
+        <span>高<span class="inline-pinyin">gāo</span></span>
+        <div class="char-tooltip">Высокий</div>
+    </div>
+    <div class="char-item">
+        <span>陵<span class="inline-pinyin">líng</span></span>
+        <div class="char-tooltip">Холм; возвышенность</div>
+    </div>
+    <div class="char-item">
+        <span>折<span class="inline-pinyin">zhé</span></span>
+        <div class="char-tooltip">Ломать; рубить</div>
+    </div>
+    <div class="char-item">
+        <span>首<span class="inline-pinyin">shǒu</span></span>
+        <div class="char-tooltip">Голова</div>
+    </div>
+    <div class="char-item">
+        <span>執<span class="inline-pinyin">zhí</span></span>
+        <div class="char-tooltip">Держать; брать пленного</div>
+    </div>
+    <div class="char-item">
+        <span>訊<span class="inline-pinyin">xùn</span></span>
+        <div class="char-tooltip">Опрос; допрос пленного</div>
+    </div>
+    <div class="char-item">
+        <span>戎<span class="inline-pinyin">róng</span></span>
+        <div class="char-tooltip">Военный; война</div>
+    </div>
+    <div class="char-item">
+        <span>大<span class="inline-pinyin">dà</span></span>
+        <div class="char-tooltip">Большой</div>
+    </div>
+    <div class="char-item">
+        <span>同<span class="inline-pinyin">tóng</span></span>
+        <div class="char-tooltip">Тот же; вместе</div>
+    </div>
+    <div class="char-item">
+        <span>永<span class="inline-pinyin">yǒng</span></span>
+        <div class="char-tooltip">Вечный; навсегда</div>
+    </div>
+    <div class="char-item">
+        <span>敦<span class="inline-pinyin">dūn</span></span>
+        <div class="char-tooltip">Сражаться; усердно</div>
+    </div>
+    <div class="char-item">
+        <span>休<span class="inline-pinyin">xiū</span></span>
+        <div class="char-tooltip">Отдых; благо</div>
+    </div>
+    <div class="char-item">
+        <span>弗<span class="inline-pinyin">fú</span></span>
+        <div class="char-tooltip">Не; отрицание</div>
+    </div>
+    <div class="char-item">
+        <span>陷<span class="inline-pinyin">xiàn</span></span>
+        <div class="char-tooltip">Попасть в беду; увязнуть</div>
+    </div>
+    <div class="char-item">
+        <span>艱<span class="inline-pinyin">jiān</span></span>
+        <div class="char-tooltip">Трудность; беда</div>
+    </div>
+    <div class="char-item">
+        <span>子<span class="inline-pinyin">zǐ</span></span>
+        <div class="char-tooltip">Сын</div>
+    </div>
+    <div class="char-item">
+        <span>肇<span class="inline-pinyin">zhào</span></span>
+        <div class="char-tooltip">Начинать</div>
+    </div>
+    <div class="char-item">
+        <span>誨<span class="inline-pinyin">huì</span></span>
+        <div class="char-tooltip">Наставлять; учить</div>
+    </div>
+    <div class="char-item">
+        <span>工<span class="inline-pinyin">gōng</span></span>
+        <div class="char-tooltip">Искусство; мастерство</div>
+    </div>
+    <div class="char-item">
+        <span>賜<span class="inline-pinyin">cì</span></span>
+        <div class="char-tooltip">Дарить; жаловать</div>
+    </div>
+    <div class="char-item">
+        <span>弓<span class="inline-pinyin">gōng</span></span>
+        <div class="char-tooltip">Лук</div>
+    </div>
+    <div class="char-item">
+        <span>一<span class="inline-pinyin">yī</span></span>
+        <div class="char-tooltip">Один</div>
+    </div>
+    <div class="char-item">
+        <span>矢<span class="inline-pinyin">shǐ</span></span>
+        <div class="char-tooltip">Стрела</div>
+    </div>
+    <div class="char-item">
+        <span>束<span class="inline-pinyin">shù</span></span>
+        <div class="char-tooltip">Связка; пучок</div>
+    </div>
+    <div class="char-item">
+        <span>家<span class="inline-pinyin">jiā</span></span>
+        <div class="char-tooltip">Дом; семья</div>
+    </div>
+    <div class="char-item">
+        <span>田<span class="inline-pinyin">tián</span></span>
+        <div class="char-tooltip">Поле; земля</div>
+    </div>
+    <div class="char-item">
+        <span>乃<span class="inline-pinyin">nǎi</span></span>
+        <div class="char-tooltip">Твой; тогда</div>
+    </div>
+    <div class="char-item">
+        <span>事<span class="inline-pinyin">shì</span></span>
+        <div class="char-tooltip">Дело; служба</div>
+    </div>
+    <div class="char-item">
+        <span>拜<span class="inline-pinyin">bài</span></span>
+        <div class="char-tooltip">Поклоняться</div>
+    </div>
+    <div class="char-item">
+        <span>稽<span class="inline-pinyin">jī</span></span>
+        <div class="char-tooltip">Касаться (в поклоне)</div>
+    </div>
+    <div class="char-item">
+        <span>首<span class="inline-pinyin">shǒu</span></span>
+        <div class="char-tooltip">Голова</div>
+    </div>
+    <div class="char-item">
+        <span>作<span class="inline-pinyin">zuò</span></span>
+        <div class="char-tooltip">Создавать; делать</div>
+    </div>
+    <div class="char-item">
+        <span>朕<span class="inline-pinyin">zhèn</span></span>
+        <div class="char-tooltip">Я (царское «я»)</div>
+    </div>
+    <div class="char-item">
+        <span>皇<span class="inline-pinyin">huáng</span></span>
+        <div class="char-tooltip">Великий; императорский</div>
+    </div>
+    <div class="char-item">
+        <span>祖<span class="inline-pinyin">zǔ</span></span>
+        <div class="char-tooltip">Предок</div>
+    </div>
+    <div class="char-item">
+        <span>公<span class="inline-pinyin">gōng</span></span>
+        <div class="char-tooltip">Гун (титул)</div>
+    </div>
+    <div class="char-item">
+        <span>孟<span class="inline-pinyin">mèng</span></span>
+        <div class="char-tooltip">Первый; старший (в семье)</div>
+    </div>
+    <div class="char-item">
+        <span>姬<span class="inline-pinyin">jī</span></span>
+        <div class="char-tooltip">Цзи (родовое имя)</div>
+    </div>
+    <div class="char-item">
+        <span>尊<span class="inline-pinyin">zūn</span></span>
+        <div class="char-tooltip">Чтимый; сосуд</div>
+    </div>
+    <div class="char-item">
+        <span>簋<span class="inline-pinyin">guǐ</span></span>
+        <div class="char-tooltip">Бронзовый сосуд</div>
+    </div>
+</div>
+
+<!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>14.А. Племена сяньюнь</h3>
+    <p class="original">
+        Первые сведения о появлении сяньюнь на северо-западных границах Чжоу относятся к периоду правления Сюань-вана (827–782 до н. э.). Есть основания полагать, что упоминаемые древнекитайскими источниками племена сяньюнь — это одна из групп кочевников, расселившихся в IX–VIII вв. до н. э. на огромных территориях Евразии и вошедших в литературу под собирательным названием «скифы». Основу «скифского мира» составляли племена, говорившие на иранских языках.
+        <br><br>
+        Внезапное вторжение кочевников совершенно очевидно имело своей целью нанести удар прямо в сердце чжоуского государства. Опасность была настолько велика, что вану пришлось мобилизовать почти все наличные силы для отпора врагу. В одной из песен «Шицзина», посвященной подвигам некоего Фан Шу на поле брани с племенами сяньюнь, говорится о 300 боевых колесницах, находившихся под его началом. Бу Ци, упоминаемый в тексте данной надписи, был среди полководцев, принимавших участие в сражениях с племенами сяньюнь. Он командовал отрядом колесниц.
+        <br><br>
+        Однако, будучи эффективным средством наступления на равнине, колесницы утрачивали свое преимущество на пересеченной местности, характерной для тех районов, где происходили сражения. Возможно, этим объясняется напутствие Бу Ци «не попасть в трудное положение из-за наших колесниц». Одно из сражений происходило в среднем течении р. Ло, впадающей в Хуанхэ в том месте, где она поворачивает на восток. Местность Гаолин, где Бу Ци удалось остановить врага, находится на северном берегу р. Вэй, другого притока Хуанхэ, в нескольких километрах от чжоуской столицы.
+        <br><br>
+        К этому следует добавить, что сяньюнь, как и чжоусцы, сражались на колесницах, и поэтому их называли 馭方 yù fāng «колесничное племя».
+    </p>
+
+    <h3>14.Б. 姓 xìng и 氏 shì</h3>
+    <p class="original">
+        В чжоуском Китае существовало два типа наследственных имен.
+        <br><br>
+        Первое, 姓 xìng, было родовым именем, общим наименованием всех членов одного рода, т. е. коллектива кровных родственников, ведущих свое происхождение по отцовской линии. Род был экзогамен, поэтому женщина всегда выходила замуж за мужчину из другого рода. Однако она сохраняла принадлежность к своему роду и продолжала носить свое родовое имя.
+        <br><br>
+        Второе наследственное имя, 氏 shì, было признаком принадлежности к клану — группе родственных семей. Замужняя женщина переходила в клан своего мужа и поэтому получала его клановое имя.
+        <br><br>
+        У чжоусцев существовал обычай, согласно которому полное имя мужчины включало его личное и клановое имя. У правителей наследственных владений (чжухоу) вместо 氏 shì фигурировал их титул. Так, в надписи на сосуде «Буци гуй» говорится, что он сделан для принесения жертв некоему Гун-бо, под которым имеется в виду один из правителей царства Цинь.
+        <br><br>
+        В отличие от мужских имен, полное имя женщины обычно состояло из ее личного и родового имени. Чжоуские ваны были из рода Цзи (姬 jī), то же родовое имя носила и супруга Гун-бо, названная в надписи Мэн-цзи (孟姬 mèng jī).
+    </p>
+</div>
+
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст и расставьте знаки препинания.</li>
+        <li>Переведите текст на русский язык.</li>
+        <li>Перепишите текст, заменив в нем прямую речь косвенной.</li>
+    </ol>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Все иероглифы — из текстов Уроков 1–14, либо из циклических знаков (甲子 – 癸亥).
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+<script id="help" src="../help.js"></script>
+
+</body>
+</html>

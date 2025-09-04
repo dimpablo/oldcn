@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Квиз по сегментации текста</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .instruction {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        
+        .instruction h2 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .instruction p {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .instruction ul {
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+        
+        .instruction li {
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .color-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            align-items: center;
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .color-picker label {
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+        }
+        
+        input[type="color"] {
+            width: 36px;
+            height: 28px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .random-color-btn {
+            background-color: #a8dadc;
+            color: #1d3557;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .random-color-btn:hover {
+            background-color: #81b29a;
+            color: white;
+        }
+        
+        .color-info {
+            background-color: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #555;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        tr {
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
+        
+        td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 6px 4px;
+            font-size: 16px;
+            min-width: 20px;
+            height: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        td:hover {
+            transform: scale(1.05);
+            z-index: 1;
+            position: relative;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        #resetBtn {
+            background-color: #e74c3c;
+        }
+        
+        #resetBtn:hover {
+            background-color: #c0392b;
+        }
+        
+        #checkBtn {
+            background-color: #2ecc71;
+        }
+        
+        #checkBtn:hover {
+            background-color: #27ae60;
+        }
+        
+        #result {
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 8px;
+            min-height: 20px;
+            font-size: 13px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        
+        /* === КРИТИЧЕСКИ ВАЖНЫЕ ИЗМЕНЕНИЯ ДЛЯ МЕРЦАНИЯ === */
+        @keyframes rainbowBlink {
+            0% { background-color: #ff0000; }
+            20% { background-color: #ff9900; }
+            40% { background-color: #ffff00; }
+            60% { background-color: #00cc00; }
+            80% { background-color: #0066ff; }
+            100% { background-color: #cc00ff; }
+        }
+        
+        .error-blink {
+            animation: rainbowBlink 0.6s linear infinite;
+            position: relative !important;
+            z-index: 10 !important;
+            border: 2px solid white !important;
+        }
+        
+        @media (max-width: 480px) {
+            .color-tools, .controls, .legend {
+                flex-direction: column;
+            }
+            
+            button {
+                padding: 9px;
+                font-size: 14px;
+            }
+            
+            td {
+                font-size: 15px;
+                padding: 5px 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instruction">
+            <h2>Задание по сегментации текста</h2>
+            <p>Закрасьте символы, чтобы выделить предложения. Каждое предложение — своим цветом.</p>
+            <ul>
+                <li>Всего <span id="sentenceCount">0</span> предложений</li>
+                <li>Разные предложения — разными цветами</li>
+                <li>Все символы должны быть закрашены</li>
+            </ul>
+        </div>
+        
+        <div class="color-tools">
+            <div class="color-picker">
+                <label for="colorSelect">Цвет:</label>
+                <input type="color" id="colorSelect" value="#a8dadc">
+            </div>
+            <button class="random-color-btn" id="randomColorBtn">Любой случайный цвет</button>
+            <div class="color-info">
+                Текущий цвет: <span id="currentColor">#a8dadc</span>
+            </div>
+        </div>
+        
+        <table id="textTable"></table>
+        
+        <div class="controls">
+            <button id="checkBtn">Проверить</button>
+            <button id="resetBtn">Сбросить</button>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="legend" id="colorLegend"></div>
+    </div>
+
+    <!-- Подключаем данные -->
+    <script src="segmentation.js"></script>
+
+<script type="module">
+  // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+  import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+    authDomain: "antient-9bff0.firebaseapp.com",
+    projectId: "antient-9bff0",
+    storageBucket: "antient-9bff0.firebasestorage.app",
+    messagingSenderId: "311792589414",
+    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+    measurementId: "G-W4ZQXWRTKK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null;
+
+  auth.onAuthStateChanged(user => {
+    currentUser = user;
+  });
+
+  async function updatePoints(points, reason) {
+    if (!currentUser) return;
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+      const newPoints = currentPoints + points;
+
+      await updateDoc(userRef, { points: newPoints });
+      console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
+    } catch (e) {
+      console.error("❌ Ошибка обновления баллов:", e);
+    }
+  }
+
+  // === ✅ ГЛАВНЫЙ КОД КВИЗА (ОБНОВЛЁННЫЙ) ===
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
+
+    const table = document.getElementById('textTable');
+    const lines = SentenceData.text.split('\n').filter(line => line.trim() !== '');
+
+    lines.forEach(line => {
+      const tr = document.createElement('tr');
+      for (let char of line) {
+        const td = document.createElement('td');
+        td.textContent = char;
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    });
+
+    let currentColor = '#a8dadc';
+    const colorInput = document.getElementById('colorSelect');
+    const currentColorDisplay = document.getElementById('currentColor');
+
+    function updateColorDisplay() {
+      currentColorDisplay.textContent = currentColor;
+      const r = parseInt(currentColor.slice(1, 3), 16);
+      const g = parseInt(currentColor.slice(3, 5), 16);
+      const b = parseInt(currentColor.slice(5, 7), 16);
+      currentColorDisplay.style.color = (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? '#000' : '#fff';
+    }
+
+    colorInput.addEventListener('input', function(e) {
+      currentColor = e.target.value;
+      updateColorDisplay();
+    });
+
+    function getRandomPastelColor() {
+      const hue = Math.floor(Math.random() * 360);
+      const saturation = 50 + Math.random() * 20;
+      const lightness = 70 + Math.random() * 15;
+      return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
+
+    function hslToHex(hsl) {
+      const div = document.createElement('div');
+      div.style.color = hsl;
+      document.body.appendChild(div);
+      const rgb = window.getComputedStyle(div).color;
+      document.body.removeChild(div);
+
+      const rgbMatch = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
+      if (rgbMatch) {
+        return "#" +
+          parseInt(rgbMatch[1]).toString(16).padStart(2, '0') +
+          parseInt(rgbMatch[2]).toString(16).padStart(2, '0') +
+          parseInt(rgbMatch[3]).toString(16).padStart(2, '0');
+      }
+      return '#a8dadc';
+    }
+
+    document.getElementById('randomColorBtn').addEventListener('click', function() {
+      const randomHsl = getRandomPastelColor();
+      const randomHex = hslToHex(randomHsl);
+      colorInput.value = randomHex;
+      currentColor = randomHex;
+      updateColorDisplay();
+    });
+
+    updateColorDisplay();
+
+    // === 🔧 Клик по ячейке: закрашивает и убирает мерцание ===
+    table.addEventListener('click', function(e) {
+      if (e.target.tagName === 'TD') {
+        const cell = e.target;
+        if (cell.classList.contains('error-blink')) {
+          cell.classList.remove('error-blink');
+        }
+        cell.style.backgroundColor = currentColor;
+        cell.setAttribute('data-color', currentColor);
+        updateColorLegend();
+      }
+    });
+
+    // === 🔧 Легенда: клик по цвету устанавливает его как текущий ===
+    function makeLegendInteractive() {
+      document.querySelectorAll('.legend-color').forEach(box => {
+        box.style.cursor = 'pointer';
+        box.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const color = this.style.backgroundColor;
+          if (!color || color === 'transparent') return;
+
+          const hexColor = rgbToHex(color);
+          if (hexColor) {
+            colorInput.value = hexColor;
+            currentColor = hexColor;
+            currentColorDisplay.textContent = hexColor;
+            updateColorDisplay();
+            console.log('🎨 Цвет кисти изменён на:', hexColor);
+          }
+        });
+      });
+    }
+
+    // Вспомогательная: RGB → HEX
+    function rgbToHex(rgb) {
+      if (rgb.startsWith('#')) return rgb;
+      const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      if (!match) return '#a8dadc';
+      const toHex = (n) => parseInt(n).toString(16).padStart(2, '0');
+      return '#' + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+    }
+
+    // === 🔧 Обновление легенды с интерактивностью ===
+    const colorLegend = document.getElementById('colorLegend');
+    function updateColorLegend() {
+      const cells = document.querySelectorAll('#textTable td');
+      const usedColors = new Set();
+      cells.forEach(cell => {
+        const color = cell.getAttribute('data-color');
+        if (color) usedColors.add(color);
+      });
+
+      colorLegend.innerHTML = '';
+      let idx = 1;
+      usedColors.forEach(color => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        const box = document.createElement('div');
+        box.className = 'legend-color';
+        box.style.backgroundColor = color;
+        const label = document.createElement('span');
+        label.textContent = `Цв.${idx}`;
+        item.appendChild(box);
+        item.appendChild(label);
+        colorLegend.appendChild(item);
+        idx++;
+      });
+
+      if (usedColors.size === 0) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        const box = document.createElement('div');
+        box.className = 'legend-color';
+        box.style.backgroundColor = currentColor;
+        const label = document.createElement('span');
+        label.textContent = 'Цв.1 (выбран)';
+        item.appendChild(box);
+        item.appendChild(label);
+        colorLegend.appendChild(item);
+      }
+
+      makeLegendInteractive(); // Активируем клик по цветам
+    }
+
+    // === 🔧 Кнопка "Сбросить" ===
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      document.querySelectorAll('#textTable td').forEach(cell => {
+        cell.style.backgroundColor = '';
+        cell.removeAttribute('data-color');
+        cell.classList.remove('error-blink');
+      });
+      document.getElementById('result').className = '';
+      document.getElementById('result').textContent = '';
+      updateColorLegend();
+    });
+
+    // === ✅ ПРОВЕРКА: ТОЛЬКО ПО СОВПАДЕНИЮ СЕГМЕНТОВ (без жёсткой проверки цветов) ===
+    document.getElementById('checkBtn').addEventListener('click', function() {
+      const cells = Array.from(document.querySelectorAll('#textTable td'));
+      const result = document.getElementById('result');
+
+      // Удаляем предыдущие ошибки
+      document.querySelectorAll('.error-blink').forEach(cell => {
+        cell.classList.remove('error-blink');
+      });
+
+      // Проверка: все ли закрашены?
+      const unpainted = cells.filter(c => !c.hasAttribute('data-color'));
+      if (unpainted.length > 0) {
+        result.className = 'error';
+        result.textContent = `Не закрашено: ${unpainted.length} символов`;
+        updatePoints(-2, 'незакрашенные символы');
+        unpainted.forEach(cell => cell.classList.add('error-blink'));
+        return;
+      }
+
+      // Полный текст
+      const fullText = cells.map(c => c.textContent).join('');
+
+      // Правильные сегменты
+      const correctSegments = [];
+      let pos = 0;
+      SentenceData.sentences.forEach(sentence => {
+        correctSegments.push({
+          start: pos,
+          end: pos + sentence.original.length,
+          text: sentence.original
+        });
+        pos += sentence.original.length;
+      });
+
+      // Группируем ячейки по цветам
+      const colorGroups = {};
+      cells.forEach((cell, index) => {
+        const color = cell.getAttribute('data-color');
+        if (!colorGroups[color]) colorGroups[color] = [];
+        colorGroups[color].push({ index, cell });
+      });
+
+      // === 🔍 Поиск ошибок: только где нарушаются границы ===
+      const correctCells = new Set(); // Ячейки, входящие в правильно выделенные сегменты
+      const errorCells = new Set();
+
+      // Проверяем каждую цветовую группу
+      Object.values(colorGroups).forEach(group => {
+        const firstIndex = group[0].index;
+        const lastIndex = group[group.length - 1].index;
+        const segmentText = group.map(g => g.cell.textContent).join('');
+
+        const matches = correctSegments.some(seg =>
+          segmentText === seg.text &&
+          firstIndex === seg.start &&
+          lastIndex === seg.end - 1
+        );
+
+        if (matches) {
+          group.forEach(g => correctCells.add(g.cell));
+        } else {
+          group.forEach(g => errorCells.add(g.cell));
+        }
+      });
+
+      // Проверяем, не разбиты ли правильные сегменты
+      correctSegments.forEach(seg => {
+        for (let i = seg.start; i < seg.end; i++) {
+          if (i < cells.length && !correctCells.has(cells[i])) {
+            errorCells.add(cells[i]);
+          }
+        }
+      });
+
+      // === 🎯 Финал ===
+      if (errorCells.size === 0) {
+        result.className = 'success';
+        result.innerHTML = '✅ Все предложения выделены правильно!';
+        updatePoints(5, 'успешная сегментация');
+      } else {
+        result.className = 'error';
+        result.innerHTML = '❌ Проверьте границы предложений.';
+        updatePoints(-2, 'неверные границы');
+        errorCells.forEach(cell => cell.classList.add('error-blink'));
+      }
+    });
+
+    // Инициализация легенды
+    updateColorLegend();
+  });
+</script>
+
+</body>
+</html>
