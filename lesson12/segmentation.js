@@ -1,60 +1,102 @@
 const SentenceData = {
-  "lesson": 11,
-  "text": "唯四月甲午王灌于嘗公東宮納饗于\n王王賜公貝五十朋公賜厥順子效王\n休貝二十朋效對公休用作寳尊彝效\n其萬年夙夜奔走揚公休亦其子子孫\n孫永寳用\n唯十又二月王在周眛爽王格于大廟\n井叔右免即位王受作冊尹書俾冊令\n免曰令汝司林賜汝赤芾用事免對揚\n王休用作尊簋免其萬年永寳用",
+  "lesson": 12,
+  "text": "唯王正月辰在庚寅王若曰錄伯冬自\n乃祖考有勳于周邦佑闢四方惠弘天\n命汝肇不墜余賜汝秬鬯一卣金車錄\n伯冬敢拜手稽首對揚天子丕顯休用\n作朕皇考釐王寳尊簋余其永萬年寳\n用子子孫孫其帥型受茲休\n己未王令仲致歸羌伯貂裘王若曰羌\n伯朕丕顯祖文武膺受天命乃祖克弼先王翼自他邦有席于大命\n我亦弗曠享邦賜汝貂裘",
   "sentences": [
     {
       "number": 1,
-      "original": "唯四月甲午王灌于嘗公東宮納饗于",
-      "transliteration": "wéi sì yuè jiǎ wǔ wáng guàn yú cháng gōng dōng gōng nà xiǎng yú",
-      "translation": "В четвертом месяце, в день цзя-у, правитель устроил винопитие в честь Чан-гуна. Наследник поднес правителю угощение."
+      "original": "唯王正月辰在庚寅王若曰",
+      "transliteration": "wéi wáng zhēng yuè chén zài gēng yín wáng ruò yuē",
+      "translation": "В первом месяце вана, когда созвездие соответствовало дню гэнь-инь, ван сказал:"
     },
     {
       "number": 2,
-      "original": "王王賜公貝五十朋公賜厥順子效王",
-      "transliteration": "wáng wáng cì gōng bèi wǔ shí péng gōng cì jué shùn zǐ xiào wáng",
-      "translation": "Правитель подарил гуну 50 связок раковин. Гун подарил своему почтительному сыну Сяо 20 связок раковин, пожалованных правителем."
+      "original": "錄伯冬自乃祖考有勳于周邦",
+      "transliteration": "lù bó dōng zì nǎi zǔ kǎo yǒu xūn yú zhōu bāng",
+      "translation": "Лу-бо Дун, твои предки, начиная с твоих дедов и твоего отца, имели заслуги перед царством Чжоу."
     },
     {
       "number": 3,
-      "original": "休貝二十朋效對公休用作寳尊彝效",
-      "transliteration": "xiū bèi èr shí péng xiào duì gōng xiū yòng zuò bǎo zūn yí xiào",
-      "translation": "Сяо восхвалил подарок гуна и воспользовался случаем, чтобы изготовить драгоценный жертвенный сосуд."
+      "original": "佑闢四方惠弘天",
+      "transliteration": "yòu pì sì fāng huì hóng tiān",
+      "translation": "Они помогали расширять его границы во все четыре стороны света,"
     },
     {
       "number": 4,
-      "original": "其萬年夙夜奔走揚公休亦其子子孫",
-      "transliteration": "qí wàn nián sù yè bēn zǒu yáng gōng xiū yì qí zǐ zǐ sūn",
-      "translation": "На протяжении десяти тысяч лет я, Сяо, днем и ночью буду стараться отблагодарить гуна за подарок и на протяжении жизни сыновей и внуков вечно пользоваться сосудом как драгоценностью."
+      "original": "命汝肇不墜",
+      "transliteration": "mìng rǔ zhào bù zhuì",
+      "translation": "считали небесную волю милостивой и великой. Ты начинаешь, не ошибаясь."
     },
     {
       "number": 5,
-      "original": "孫永寳用",
-      "transliteration": "sūn yǒng bǎo yòng",
-      "translation": "(Продолжение) на протяжении жизни сыновей и внуков вечно пользоваться сосудом как драгоценностью."
+      "original": "余賜汝秬鬯一卣金車",
+      "transliteration": "yú cì rǔ jù chàng yī yǒu jīn chē",
+      "translation": "Я дарю тебе кувшин вина из черного проса и металлическую колесницу."
     },
     {
       "number": 6,
-      "original": "唯十又二月王在周眛爽王格于大廟",
-      "transliteration": "wéi shí yòu èr yuè wáng zài zhōu mèi shuǎng wáng gé yú dà miào",
-      "translation": "В двенадцатом месяце правитель находился в Чжоу. Перед рассветом правитель вошел в большой храм."
+      "original": "錄伯冬敢拜手稽首",
+      "transliteration": "lù bó dōng gǎn bài shǒu qǐ shǒu",
+      "translation": "Лу-бо Дун осмелился почтительно сложить руки и отдать земные поклоны,"
     },
     {
       "number": 7,
-      "original": "井叔右免即位王受作冊尹書俾冊令",
-      "transliteration": "jǐng shū yòu miǎn jí wèi wáng shòu zuò cè yǐn shū bǐ cè lìng",
-      "translation": "Цзин-шу сопровождал Мяня. Все заняли свои места. Правитель передал скрибу грамоту и велел отдать Мяню приказ, записав его на скрижалях."
+      "original": "對揚天子丕顯休用",
+      "transliteration": "duì yáng tiān zǐ pī xiǎn xiū yòng",
+      "translation": "отблагодарить Сына Неба за его великий подарок и воспользоваться случаем,"
     },
     {
       "number": 8,
-      "original": "免曰令汝司林賜汝赤芾用事免對揚",
-      "transliteration": "miǎn yuē lìng rǔ sī lín cì rǔ chì fú yòng shì miǎn duì yáng",
-      "translation": "«Приказываю тебе управлять лесными угодьями. Дарю тебе красную набедренную повязку. Пользуйся ею при исполнении служебных обязанностей»."
+      "original": "作朕皇考釐王寳尊簋",
+      "transliteration": "zuò zhèn huáng kǎo lí wáng bǎo zūn guǐ",
+      "translation": "чтобы изготовить драгоценный сосуд для принесения жертв моему величественному покойному родителю Ли-вану."
     },
     {
       "number": 9,
-      "original": "王休用作尊簋免其萬年永寳用",
-      "transliteration": "wáng xiū yòng zuò zūn guǐ miǎn qí wàn nián yǒng bǎo yòng",
-      "translation": "Мянь отблагодарил правителя за подарок и воспользовался случаем, чтобы изготовить жертвенный сосуд. Мянь на протяжении десяти тысяч лет вечно будет пользоваться им как драгоценностью."
+      "original": "余其永萬年寳用",
+      "transliteration": "yú qí yǒng wàn nián bǎo yòng",
+      "translation": "Я вечно, на протяжении десяти тысяч лет, буду пользоваться этим сосудом как драгоценностью."
+    },
+    {
+      "number": 10,
+      "original": "子子孫孫其帥型受茲休",
+      "transliteration": "zǐ zǐ sūn sūn qí shuài xíng shòu zī xiū",
+      "translation": "Для моих детей и внуков будет всегда примером то, что я получил этот подарок."
+    },
+    {
+      "number": 11,
+      "original": "己未王令仲致歸羌伯貂裘",
+      "transliteration": "jǐ wèi wáng lìng zhòng zhì guī qiāng bó diāo qiú",
+      "translation": "В день цзи-вэй правитель приказал Чжун Чжи преподнести Цян-бо соболью шубу."
+    },
+    {
+      "number": 12,
+      "original": "王若曰羌伯",
+      "transliteration": "wáng ruò yuē qiāng bó",
+      "translation": "Ван сказал: «Цян-бо!"
+    },
+    {
+      "number": 13,
+      "original": "朕丕顯祖文武膺受天命",
+      "transliteration": "zhèn pī xiǎn zǔ wén wǔ yīng shòu tiān mìng",
+      "translation": "Мои достославные предки, Вэнь-ван и У-ван, получили Небесный мандат."
+    },
+    {
+      "number": 14,
+      "original": "乃祖克弼先王翼自他邦有席于大命",
+      "transliteration": "nǎi zǔ kè bì xiān wáng yì zì tā bāng yǒu xí yú dà mìng",
+      "translation": "Твои предки смогли помочь покойным ванам, оказать им содействие с территории другого государства и приобщиться к великому мандату."
+    },
+    {
+      "number": 15,
+      "original": "我亦弗曠享邦",
+      "transliteration": "wǒ yì fú kuàng xiǎng bāng",
+      "translation": "Мы также не зря пользуемся властью в нашем царстве."
+    },
+    {
+      "number": 16,
+      "original": "賜汝貂裘",
+      "transliteration": "cì rǔ diāo qiú",
+      "translation": "Дарю тебе соболью шубу!"
     }
   ]
 }

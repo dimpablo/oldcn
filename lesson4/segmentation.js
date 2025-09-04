@@ -10,20 +10,20 @@ const SentenceData = {
     },
     {
       "number": 2,
-      "original": "方自今至于甲辰子商弗其烖基方",
-      "transliteration": "fāng zì jīn zhì yú jiǎ chén zǐ shāng fú qí zāi jī fāng",
-      "translation": "Сегодняшнего дня и до цзя-чэнь сын по имени Шан не нанесет поражения племени Цзи-фан?"
+      "original": "自今至于甲辰子商弗其烖基方",
+      "transliteration": "zì jīn zhì yú jiǎ chén zǐ shāng fú qí zāi jī fāng",
+      "translation": "С сегодняшнего дня и до цзя-чэнь сын по имени Шан не нанесет поражения племени Цзи-фан?"
     },
     {
       "number": 3,
-      "original": "方自今壬寅至于甲辰子商烖基方",
-      "transliteration": "fāng zì jīn rén yín zhì yú jiǎ chén zǐ shāng zāi jī fāng",
+      "original": "自今壬寅至于甲辰子商烖基方",
+      "transliteration": "zì jīn rén yín zhì yú jiǎ chén zǐ shāng zāi jī fāng",
       "translation": "С нынешнего дня жэнь-инь и до цзя-чэнь сын по имени Шан нанесет поражение племени Цзи-фан?"
     },
     {
       "number": 4,
-      "original": "方自今至于丁巳我烖賽",
-      "transliteration": "fāng zì jīn zhì yú dīng sì wǒ zāi sài",
+      "original": "自今至于丁巳我烖賽",
+      "transliteration": "zì jīn zhì yú dīng sì wǒ zāi sài",
       "translation": "С сегодняшнего дня и до дин-сы мы нанесем поражение Сай?"
     },
     {
