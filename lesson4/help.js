@@ -1,150 +1,295 @@
-// === DEBUG MODE: ЗАМЕНА ТАБЛИЦЫ НА ОТЛАДОЧНЫЙ ЛОГ ===
+// Ждём полной загрузки DOM
 document.addEventListener('DOMContentLoaded', function () {
-  // Путь к папке help (относительно текущей страницы)
-  const helpPath = '../help';
+  // === ОТЛАДКА: СОБИРАЕМ ИНФОРМАЦИЮ ===
+  let debugLog = '';
 
-  // Целевые иероглифы (из твоего предыдущего скрипта)
+  debugLog += '🔍 ОТЛАДКА: АНАЛИЗ ВЫДЕЛЕННЫХ ИЕРОГЛИФОВ\n';
+  debugLog += '========================================\n\n';
+  debugLog += `📱 Устройство: ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}\n`;
+  debugLog += `🌐 URL: ${window.location.href}\n\n`;
+
+  // === НАСТРОЙКИ (как в оригинале) ===
+  const helpPath = '../help';
   const glyphs = ['不', '亡', '其', '叀', '弗', '曰', '若', '于', '允', '占', '唯', '弜', '王', '貞', '奚'];
 
-  // Получаем таблицу
-  const table = document.getElementById('oracleTable');
-  if (!table) {
-    console.warn('Таблица #oracleTable не найдена');
-    return;
-  }
+  // Переменная для сбора данных о каждом найденном иероглифе
+  const glyphInfo = [];
 
-  // === СОЗДАЁМ TEXTAREA ДЛЯ ОТЛАДКИ ===
-  const textarea = document.createElement('textarea');
-  textarea.id = 'debug-log-replacement';
-  textarea.readOnly = true;
-  textarea.style.cssText = `
-    width: 100%;
-    height: 80vh;
-    min-height: 400px;
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 3px solid #ff69b4;
-    border-radius: 10px;
-    font-family: monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #000;
-    background: #fff0f5;
-    resize: vertical;
-    display: block;
-    white-space: pre;
-    box-sizing: border-box;
-    outline: none;
-  `;
-  textarea.placeholder = 'Здесь будет отладочная информация...';
+  // Функция для создания ссылки с сохранением стилей
+  function createLink(char, context = {}) {
+    const link = document.createElement('a');
+    link.href = `${helpPath}/${char}.html`;
+    link.target = '_blank';
+    link.rel = 'noopener';
 
-  // === СБОР ДАННЫХ ===
-  let log = '';
+    // КРИТИЧЕСКИЕ СТИЛИ: сохраняем внешний вид как у обычного текста
+    link.style.fontSize = 'inherit';
+    link.style.lineHeight = 'inherit';
+    link.style.fontFamily = 'inherit';
+    link.style.fontWeight = 'inherit';
+    link.style.letterSpacing = 'inherit';
+    link.style.color = 'inherit';
+    link.style.textDecoration = 'none';
 
-  log += '🔍 ОТЛАДКА: АНАЛИЗ ИЕРОГЛИФОВ В УРОКЕ 4\n';
-  log += '========================================\n\n';
+    // Визуальные стили выделения
+    link.style.backgroundColor = '#fdeced'; // Пастельно-розовый
+    link.style.padding = '0 2px';
+    link.style.borderRadius = '3px';
+    link.style.display = 'inline-block';
+    link.style.verticalAlign = 'middle';
+    link.style.textAlign = 'center';
 
-  log += `📱 Устройство: ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}\n`;
-  log += `🌐 URL: ${window.location.href}\n`;
-  log += `📂 Путь к /help/: ${helpPath}\n`;
-  log += `🔤 Целевые иероглифы: ${glyphs.join(', ')}\n\n`;
+    // Защита от мобильной авто-подстройки шрифта
+    link.style.textSizeAdjust = 'none';
+    link.style.WebkitTextSizeAdjust = 'none';
 
-  // === ПОЛУЧАЕМ ТЕКСТ ИЗ lessonText (из глобальной переменной, если доступна) ===
-  if (typeof lessonText === 'undefined') {
-    log += '❌ Переменная lessonText не найдена!\n';
-    log += '   Убедись, что скрипт выполняется ПОСЛЕ её объявления.\n\n';
-  } else {
-    log += `✅ Найден массив lessonText: ${lessonText.length} строк\n\n`;
+    link.appendChild(document.createTextNode(char));
 
-    // Проходим по каждой строке
-    lessonText.forEach((line, lineIndex) => {
-      const chars = Array.from(line);
-      const matches = chars.filter(char => glyphs.includes(char));
-      if (matches.length > 0) {
-        log += `📄 Строка ${lineIndex + 1}:\n`;
-        log += `   Текст: "${line}"\n`;
-        log += `   🎯 Найдено: ${[...new Set(matches)].join(', ')} (${matches.length} вхождений)\n\n`;
+    // === СОБИРАЕМ ИНФОРМАЦИЮ О ССЫЛКЕ ПОСЛЕ СОЗДАНИЯ ===
+    setTimeout(() => {
+      try {
+        const computed = window.getComputedStyle(link);
+        glyphInfo.push({
+          char,
+          context,
+          href: link.href,
+          fontSize: computed.fontSize,
+          fontFamily: computed.fontFamily,
+          lineHeight: computed.lineHeight,
+          color: computed.color,
+          backgroundColor: computed.backgroundColor,
+          display: computed.display,
+          verticalAlign: computed.verticalAlign,
+          padding: computed.padding,
+          offsetHeight: link.offsetHeight,
+          offsetWidth: link.offsetWidth,
+          tagName: link.tagName,
+        });
+      } catch (e) {
+        glyphInfo.push({ char, error: 'Не удалось прочитать стили', context });
       }
-    });
+    }, 0);
+
+    return link;
   }
 
-  // === ПРОВЕРКА СТИЛЕЙ ТАБЛИЦЫ ===
-  log += `🔍 ПРОВЕРКА СТИЛЕЙ .oracle-table\n`;
-  const computedTable = window.getComputedStyle(table);
-  log += `   width: ${computedTable.width}\n`;
-  log += `   font-size: ${computedTable.fontSize}\n`;
-  log += `   font-family: ${computedTable.fontFamily}\n`;
-  log += `   line-height: ${computedTable.lineHeight}\n\n`;
-
-  const firstTd = table.querySelector('td');
-  if (firstTd) {
-    const tdStyle = window.getComputedStyle(firstTd);
-    log += `🔍 ПРОВЕРКА ЯЧЕЙКИ TD\n`;
-    log += `   padding: ${tdStyle.padding}\n`;
-    log += `   font-size: ${tdStyle.fontSize}\n`;
-    log += `   font-family: ${tdStyle.fontFamily}\n`;
-    log += `   display: ${tdStyle.display}\n`;
-    log += `   text-align: ${tdStyle.textAlign}\n\n`;
-  }
-
-  // === ПРОВЕРКА charData (словарь) ===
-  if (typeof charData !== 'undefined') {
-    log += `✅ Словарь charData загружен: ${Object.keys(charData).length} иероглифов\n`;
-    const missing = glyphs.filter(g => !charData[g]);
-    if (missing.length > 0) {
-      log += `⚠️  Нет данных в charData: ${missing.join(', ')}\n\n`;
-    } else {
-      log += `✅ Все целевые иероглифы есть в charData\n\n`;
+  // Создаём TreeWalker для обхода текстовых узлов
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: function (node) {
+        const parent = node.parentNode;
+        const excludedTags = ['SCRIPT', 'STYLE', 'TEXTAREA', 'CODE', 'PRE'];
+        if (excludedTags.includes(parent.tagName)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        if (parent.hasAttribute && parent.hasAttribute('data-no-glyph-links')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return node.textContent.trim().length > 0
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      }
     }
-  } else {
-    log += `❌ charData не загружен! Подключи dictionary.js\n\n`;
+  );
+
+  const nodesToReplace = [];
+  let node;
+
+  debugLog += '🔍 ПОИСК В ТЕКСТОВЫХ УЗЛАХ...\n';
+
+  while ((node = walker.nextNode())) {
+    const text = node.textContent;
+    let fragment = document.createDocumentFragment();
+    let lastIndex = 0;
+    let modified = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (glyphs.includes(char)) {
+        if (i > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex, i)));
+        }
+
+        // Собираем контекст
+        const parent = node.parentNode;
+        const parentStyle = window.getComputedStyle(parent);
+        fragment.appendChild(
+          createLink(char, {
+            type: 'text-node',
+            parentTag: parent.tagName,
+            parentFontSize: parentStyle.fontSize,
+            parentFontFamily: parentStyle.fontFamily,
+            parentLineHeight: parentStyle.lineHeight,
+            textBefore: text.slice(Math.max(0, i - 3), i),
+            textAfter: text.slice(i + 1, i + 4),
+            nodeLength: text.length,
+          })
+        );
+        lastIndex = i + 1;
+        modified = true;
+      }
+    }
+
+    if (modified) {
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+      nodesToReplace.push({ node, fragment });
+    }
   }
 
-  // === ПРОВЕРКА РАЗМЕРА ШРИФТА В РАЗНЫХ КОНТЕКСТАХ ===
-  log += `🔍 ТЕСТ НАСЛЕДОВАНИЯ ШРИФТА\n`;
-  const bodyStyle = window.getComputedStyle(document.body);
-  const h1Style = window.getComputedStyle(document.querySelector('h1') || document.body);
-  log += `   body font-size: ${bodyStyle.fontSize} (${bodyStyle.fontSize.includes('px') ? parseFloat(bodyStyle.fontSize) : '??'} px)\n`;
-  log += `   h1 font-size: ${h1Style.fontSize}\n`;
+  debugLog += `✅ Обработано текстовых узлов: ${nodesToReplace.length}\n\n`;
 
-  // === ПОПЫТКА ПРОЧИТАТЬ СТИЛИ ТАБЛИЦЫ ИЗ CSS ===
-  log += `\n🔍 CSS .oracle-table (из стилей страницы)\n`;
-  const styleSheet = Array.from(document.styleSheets).find(sheet => {
-    try {
-      return sheet.cssRules;
-    } catch (e) {
-      return false;
+  // === Обработка таблицы #oracleTable ===
+  const tableCells = document.querySelectorAll('#oracleTable td');
+  debugLog += `🔍 Обработка #oracleTable: ${tableCells.length} ячеек\n`;
+
+  tableCells.forEach((td, i) => {
+    const child = td.firstChild;
+    if (
+      child &&
+      child.nodeType === Node.TEXT_NODE &&
+      child.textContent.trim().length === 1
+    ) {
+      const char = child.textContent.trim();
+      if (glyphs.includes(char)) {
+        const style = window.getComputedStyle(td);
+        td.innerHTML = '';
+        const link = createLink(char, {
+          type: 'table-cell',
+          cellIndex: i,
+          parentTag: 'TD',
+          tdFontSize: style.fontSize,
+          tdFontFamily: style.fontFamily,
+          tdPadding: style.padding,
+        });
+        td.appendChild(link);
+        td.style.padding = '0';
+      }
     }
   });
 
-  if (styleSheet) {
-    const rule = Array.from(styleSheet.cssRules).find(r => r.selectorText === '.oracle-table');
-    if (rule) {
-      log += `   Найдено правило: ${rule.cssText.substring(0, 100)}...\n`;
-    } else {
-      log += `   ❌ Правило .oracle-table не найдено в CSS\n`;
+  // === Обработка .char-item ===
+  document.querySelectorAll('.char-item > span:first-child').forEach((span, i) => {
+    const firstChild = span.firstChild;
+    if (
+      firstChild &&
+      firstChild.nodeType === Node.TEXT_NODE &&
+      firstChild.textContent.trim().length === 1
+    ) {
+      const char = firstChild.textContent.trim();
+      if (glyphs.includes(char)) {
+        const pinyin = span.querySelector('.inline-pinyin');
+        const parentStyle = window.getComputedStyle(span);
+        span.innerHTML = '';
+        const link = createLink(char, {
+          type: 'char-item',
+          index: i,
+          spanFontSize: parentStyle.fontSize,
+          spanFontFamily: parentStyle.fontFamily,
+        });
+        span.appendChild(link);
+        if (pinyin) span.appendChild(pinyin);
+      }
     }
-  } else {
-    log += `   ❌ Не удалось прочитать CSS-правила (возможно, из-за CORS)\n`;
+  });
+
+  // === ПРИМЕНЯЕМ ИЗМЕНЕНИЯ ===
+  nodesToReplace.forEach(({ node, fragment }) => {
+    if (node.parentNode) {
+      node.parentNode.replaceChild(fragment, node);
+    }
+  });
+
+  // === ЖДЁМ, ЧТОБЫ ВСЕ СТИЛИ ПРИМЕНИЛИСЬ ===
+  setTimeout(() => {
+    // === ФОРМИРУЕМ ОКОНЧАТЕЛЬНЫЙ ЛОГ ===
+    debugLog += `📊 Найдено и обработано иероглифов: ${glyphInfo.length}\n\n`;
+
+    glyphInfo.forEach((info, i) => {
+      debugLog += `📌 Иероглиф #${i + 1}: '${info.char}'\n`;
+      debugLog += `   📍 Контекст: ${info.context.type}\n`;
+      debugLog += `   📏 font-size: ${info.fontSize}\n`;
+      debugLog += `   🖋️ font-family: ${info.fontFamily}\n`;
+      debugLog += `   🎨 color: ${info.color}\n`;
+      debugLog += `   🟨 background: ${info.backgroundColor}\n`;
+      debugLog += `   📏 height: ${info.offsetHeight}px, width: ${info.offsetWidth}px\n`;
+      debugLog += `   📏 padding: ${info.padding}\n`;
+      debugLog += `   📏 line-height: ${info.lineHeight}\n`;
+      debugLog += `   🔝 vertical-align: ${info.verticalAlign}\n`;
+
+      if (info.context.parentTag) {
+        debugLog += `   🧬 Родитель: <${info.context.parentTag.toLowerCase()}>\n`;
+        debugLog += `   🧬 Род. шрифт: ${info.context.parentFontFamily}\n`;
+        debugLog += `   🧬 Род. размер: ${info.context.parentFontSize}\n`;
+      }
+      debugLog += '\n';
+    });
+
+    // === ДОБАВЛЯЕМ ГЛОБАЛЬНЫЕ СТИЛИ ===
+    const bodyStyle = window.getComputedStyle(document.body);
+    const originalStyle = window.getComputedStyle(document.querySelector('.original') || document.body);
+
+    debugLog += '🔍 ГЛОБАЛЬНЫЕ СТИЛИ\n';
+    debugLog += `   body font-size: ${bodyStyle.fontSize}\n`;
+    debugLog += `   .original font-size: ${originalStyle.fontSize}\n`;
+    debugLog += `   .original font-family: ${originalStyle.fontFamily}\n\n`;
+
+    debugLog += '📌 Нажми и удержи → «Выделить всё» → «Копировать»\n';
+    debugLog += '⏳ Страница появится через 12 секунд...';
+
+    // === ВЫВОДИМ В TEXTAREA ===
+    const textarea = document.createElement('textarea');
+    textarea.readOnly = true;
+    textarea.value = debugLog;
+    textarea.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #000;
+      background: #fff;
+      z-index: 999999;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    `;
+
+    document.body.appendChild(textarea);
+    document.body.style.visibility = 'hidden';
+
+    // Через 12 сек — убираем лог и возвращаем страницу
+    setTimeout(() => {
+      if (textarea.parentNode) textarea.remove();
+      document.body.style.visibility = 'visible';
+    }, 12000);
+  }, 100); // Даем время стилям примениться
+
+  // === ДОПОЛНИТЕЛЬНЫЙ СТИЛЬ (как в оригинале) ===
+  if (!document.getElementById('glyph-link-styles')) {
+    const style = document.createElement('style');
+    style.id = 'glyph-link-styles';
+    style.textContent = `
+      a[href*="/help/"] {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+      @media (max-width: 768px) {
+        a[href*="/help/"] {
+          font-size: inherit !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
   }
-
-  // === ФИНАЛ ===
-  log += `\n📌 ИНСТРУКЦИЯ:\n`;
-  log += `   1. Нажми и удержи текст\n`;
-  log += `   2. Выбери «Выделить всё» → «Копировать»\n`;
-  log += `   3. Вставь сюда — и я скажу, почему иероглифы кажутся мелкими.\n\n`;
-  log += `💡 Совет: сравни font-size таблицы и .char-item\n`;
-  log += `   .char-item: font-size: 1.1em → ~17px\n`;
-  log += `   .oracle-table: font-size: 1.3em → должно быть ~21px\n`;
-  log += `   Если меньше — значит, шрифт не наследуется или перебивается!\n`;
-
-  // Устанавливаем текст
-  textarea.value = log;
-
-  // === ЗАМЕНЯЕМ ТАБЛИЦУ ===
-  table.replaceWith(textarea);
-
-  // Дополнительно: если нужно, можно оставить кнопку для возврата таблицы
-  // (для тестирования)
 });
