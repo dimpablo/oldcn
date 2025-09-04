@@ -1,224 +1,150 @@
-// Ждём полной загрузки DOM
+// === DEBUG MODE: ЗАМЕНА ТАБЛИЦЫ НА ОТЛАДОЧНЫЙ ЛОГ ===
 document.addEventListener('DOMContentLoaded', function () {
-  // === НАСТРОЙКИ ===
+  // Путь к папке help (относительно текущей страницы)
   const helpPath = '../help';
+
+  // Целевые иероглифы (из твоего предыдущего скрипта)
   const glyphs = ['不', '亡', '其', '叀', '弗', '曰', '若', '于', '允', '占', '唯', '弜', '王', '貞', '奚'];
 
-  // === ПОЛУЧАЕМ ТАБЛИЦУ ===
+  // Получаем таблицу
   const table = document.getElementById('oracleTable');
-
-  // Если таблицы нет — создаём placeholder
-  const targetContainer = table || document.body;
+  if (!table) {
+    console.warn('Таблица #oracleTable не найдена');
+    return;
+  }
 
   // === СОЗДАЁМ TEXTAREA ДЛЯ ОТЛАДКИ ===
   const textarea = document.createElement('textarea');
-  textarea.id = 'glyph-debug-replacement';
+  textarea.id = 'debug-log-replacement';
   textarea.readOnly = true;
   textarea.style.cssText = `
     width: 100%;
     height: 80vh;
-    min-height: 300px;
-    border: 2px solid #ff69b4;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 10px 0;
-    box-sizing: border-box;
+    min-height: 400px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 3px solid #ff69b4;
+    border-radius: 10px;
     font-family: monospace;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     color: #000;
     background: #fff0f5;
     resize: vertical;
+    display: block;
     white-space: pre;
+    box-sizing: border-box;
     outline: none;
   `;
-  textarea.placeholder = 'Отладочная информация будет здесь...';
+  textarea.placeholder = 'Здесь будет отладочная информация...';
 
   // === СБОР ДАННЫХ ===
   let log = '';
 
-  log += '🔍 ОТЛАДКА: ЗАМЕНА #oracleTable НА ЛОГ\n';
-  log += '====================================\n\n';
+  log += '🔍 ОТЛАДКА: АНАЛИЗ ИЕРОГЛИФОВ В УРОКЕ 4\n';
+  log += '========================================\n\n';
 
   log += `📱 Устройство: ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}\n`;
-  log += `🌐 Страница: ${window.location.href}\n`;
+  log += `🌐 URL: ${window.location.href}\n`;
   log += `📂 Путь к /help/: ${helpPath}\n`;
   log += `🔤 Целевые иероглифы: ${glyphs.join(', ')}\n\n`;
 
-  // Информация о таблице
-  if (table) {
-    log += `✅ Найдена таблица: #oracleTable\n`;
-    log += `   Строк: ${table.rows?.length || 'n/a'}, Ячеек: ${table.querySelectorAll('td').length}\n\n';
+  // === ПОЛУЧАЕМ ТЕКСТ ИЗ lessonText (из глобальной переменной, если доступна) ===
+  if (typeof lessonText === 'undefined') {
+    log += '❌ Переменная lessonText не найдена!\n';
+    log += '   Убедись, что скрипт выполняется ПОСЛЕ её объявления.\n\n';
   } else {
-    log += `❌ #oracleTable НЕ найдена. Лог вставлен в <body>.\n\n`;
-  }
+    log += `✅ Найден массив lessonText: ${lessonText.length} строк\n\n`;
 
-  // Проверка видимости и стилей
-  const testDiv = document.createElement('div');
-  testDiv.textContent = 'Тест видимости';
-  document.body.appendChild(testDiv);
-  log += `👁‍🗨 Тест: элементы видны? → ${testDiv.offsetParent !== null ? 'Да' : 'Нет'}\n`;
-  document.body.removeChild(testDiv);
-
-  // === СБОР ТЕКСТОВЫХ УЗЛОВ ===
-  log += '🔍 ПОИСК ИЕРОГЛИФОВ В ТЕКСТЕ...\n';
-  const walker = document.createTreeWalker(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: function (node) {
-        const parent = node.parentNode;
-        const excluded = ['SCRIPT', 'STYLE', 'TEXTAREA', 'CODE', 'PRE'];
-        if (excluded.includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
-        if (parent.hasAttribute?.('data-no-glyph-links')) return NodeFilter.FILTER_REJECT;
-        return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      }
-    }
-  );
-
-  let totalFound = 0;
-  let contextCounter = 0;
-
-  let node;
-  while ((node = walker.nextNode())) {
-    const text = node.textContent;
-    const matches = [...text].filter(char => glyphs.includes(char));
-    if (matches.length > 0) {
-      contextCounter++;
-      const parent = node.parentNode;
-      const parentStyle = window.getComputedStyle(parent);
-      log += `📄 #${contextCounter} В <${parent.tagName.toLowerCase()}> (шрифт: ${parentStyle.fontSize}, ${parentStyle.fontFamily})\n`;
-      log += `   🎯 Найдено: ${matches.join(', ')}\n`;
-      log += `   📜 Контекст: "${text.trim()}"\n\n`;
-      totalFound += matches.length;
-    }
-  }
-
-  log += `📊 ИТОГО: ${totalFound} иероглифов найдено в ${contextCounter} местах.\n\n`;
-
-  // === ПРОВЕРКА ЯЧЕЕК ТАБЛИЦЫ (если была) ===
-  if (table) {
-    const tds = table.querySelectorAll('td');
-    log += `🔍 АНАЛИЗ ЯЧЕЕК #oracleTable: ${tds.length} шт.\n`;
-    tds.forEach((td, i) => {
-      const text = td.textContent.trim();
-      const child = td.firstChild;
-      if (child && child.nodeType === Node.TEXT_NODE && text.length === 1 && glyphs.includes(text)) {
-        const style = window.getComputedStyle(td);
-        log += `🟩 TD[${i}]: '${text}' → подходит\n`;
-        log += `   📏 font-size: ${style.fontSize}, padding: ${style.padding}, display: ${style.display}\n`;
-      } else if (text.length > 0) {
-        log += `⬜ TD[${i}]: "${text}" → не иероглиф или не в списке\n`;
+    // Проходим по каждой строке
+    lessonText.forEach((line, lineIndex) => {
+      const chars = Array.from(line);
+      const matches = chars.filter(char => glyphs.includes(char));
+      if (matches.length > 0) {
+        log += `📄 Строка ${lineIndex + 1}:\n`;
+        log += `   Текст: "${line}"\n`;
+        log += `   🎯 Найдено: ${[...new Set(matches)].join(', ')} (${matches.length} вхождений)\n\n`;
       }
     });
-    log += '\n';
   }
 
-  // === ПРОВЕРКА .char-item ===
-  const charItems = document.querySelectorAll('.char-item > span:first-child');
-  log += `🔍 .char-item элементов: ${charItems.length}\n`;
-  charItems.forEach((span, i) => {
-    const text = span.textContent.trim();
-    if (text.length === 1 && glyphs.includes(text)) {
-      log += `🟦 char-item[${i}]: '${text}' → будет ссылкой\n`;
+  // === ПРОВЕРКА СТИЛЕЙ ТАБЛИЦЫ ===
+  log += `🔍 ПРОВЕРКА СТИЛЕЙ .oracle-table\n`;
+  const computedTable = window.getComputedStyle(table);
+  log += `   width: ${computedTable.width}\n`;
+  log += `   font-size: ${computedTable.fontSize}\n`;
+  log += `   font-family: ${computedTable.fontFamily}\n`;
+  log += `   line-height: ${computedTable.lineHeight}\n\n`;
+
+  const firstTd = table.querySelector('td');
+  if (firstTd) {
+    const tdStyle = window.getComputedStyle(firstTd);
+    log += `🔍 ПРОВЕРКА ЯЧЕЙКИ TD\n`;
+    log += `   padding: ${tdStyle.padding}\n`;
+    log += `   font-size: ${tdStyle.fontSize}\n`;
+    log += `   font-family: ${tdStyle.fontFamily}\n`;
+    log += `   display: ${tdStyle.display}\n`;
+    log += `   text-align: ${tdStyle.textAlign}\n\n`;
+  }
+
+  // === ПРОВЕРКА charData (словарь) ===
+  if (typeof charData !== 'undefined') {
+    log += `✅ Словарь charData загружен: ${Object.keys(charData).length} иероглифов\n`;
+    const missing = glyphs.filter(g => !charData[g]);
+    if (missing.length > 0) {
+      log += `⚠️  Нет данных в charData: ${missing.join(', ')}\n\n`;
     } else {
-      log += `⬜ char-item[${i}]: "${text}" → нет\n`;
+      log += `✅ Все целевые иероглифы есть в charData\n\n`;
+    }
+  } else {
+    log += `❌ charData не загружен! Подключи dictionary.js\n\n`;
+  }
+
+  // === ПРОВЕРКА РАЗМЕРА ШРИФТА В РАЗНЫХ КОНТЕКСТАХ ===
+  log += `🔍 ТЕСТ НАСЛЕДОВАНИЯ ШРИФТА\n`;
+  const bodyStyle = window.getComputedStyle(document.body);
+  const h1Style = window.getComputedStyle(document.querySelector('h1') || document.body);
+  log += `   body font-size: ${bodyStyle.fontSize} (${bodyStyle.fontSize.includes('px') ? parseFloat(bodyStyle.fontSize) : '??'} px)\n`;
+  log += `   h1 font-size: ${h1Style.fontSize}\n`;
+
+  // === ПОПЫТКА ПРОЧИТАТЬ СТИЛИ ТАБЛИЦЫ ИЗ CSS ===
+  log += `\n🔍 CSS .oracle-table (из стилей страницы)\n`;
+  const styleSheet = Array.from(document.styleSheets).find(sheet => {
+    try {
+      return sheet.cssRules;
+    } catch (e) {
+      return false;
     }
   });
 
-  // === ДОБАВЛЯЕМ ИНФУ О ШРИФТАХ ДЛЯ ПРОВЕРКИ ===
-  log += `\n🔍 ТЕСТ НАСЛЕДОВАНИЯ ШРИФТА (на примере body)\n`;
-  const bodyStyle = window.getComputedStyle(document.body);
-  log += `📏 font-size body: ${bodyStyle.fontSize}\n`;
-  log += `🔤 font-family body: ${bodyStyle.fontFamily}\n`;
+  if (styleSheet) {
+    const rule = Array.from(styleSheet.cssRules).find(r => r.selectorText === '.oracle-table');
+    if (rule) {
+      log += `   Найдено правило: ${rule.cssText.substring(0, 100)}...\n`;
+    } else {
+      log += `   ❌ Правило .oracle-table не найдено в CSS\n`;
+    }
+  } else {
+    log += `   ❌ Не удалось прочитать CSS-правила (возможно, из-за CORS)\n`;
+  }
 
   // === ФИНАЛ ===
-  log += `\n✅ Этот лог заменил таблицу.\n`;
-  log += `📌 Нажми и удержи → "Выделить всё" → "Копировать".\n`;
-  log += `💡 Данные помогут понять, почему иероглифы кажутся мелкими.`;
+  log += `\n📌 ИНСТРУКЦИЯ:\n`;
+  log += `   1. Нажми и удержи текст\n`;
+  log += `   2. Выбери «Выделить всё» → «Копировать»\n`;
+  log += `   3. Вставь сюда — и я скажу, почему иероглифы кажутся мелкими.\n\n`;
+  log += `💡 Совет: сравни font-size таблицы и .char-item\n`;
+  log += `   .char-item: font-size: 1.1em → ~17px\n`;
+  log += `   .oracle-table: font-size: 1.3em → должно быть ~21px\n`;
+  log += `   Если меньше — значит, шрифт не наследуется или перебивается!\n`;
 
   // Устанавливаем текст
   textarea.value = log;
 
-  // === ЗАМЕНЯЕМ ТАБЛИЦУ ИЛИ ВСТАВЛЯЕМ В BODY ===
-  if (table) {
-    table.replaceWith(textarea);
-  } else {
-    // Если таблицы нет — вставляем в начало контента
-    const firstContent = document.body.firstElementChild;
-    if (firstContent) {
-      document.body.insertBefore(textarea, firstContent);
-    } else {
-      document.body.appendChild(textarea);
-    }
-  }
+  // === ЗАМЕНЯЕМ ТАБЛИЦУ ===
+  table.replaceWith(textarea);
 
-  // === ВАЖНО: продолжаем работать с DOM (создаём ссылки, как в боевом режиме) ===
-  // (Ты можешь временно закомментировать, если нужен только лог)
-  processGlyphs();
-  
-  function processGlyphs() {
-    // TreeWalker — замена текстовых узлов
-    const walker2 = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: function (node) {
-          const parent = node.parentNode;
-          const excluded = ['SCRIPT', 'STYLE', 'TEXTAREA', 'CODE', 'PRE'];
-          if (excluded.includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
-          if (parent === textarea || parent.closest('#glyph-debug-replacement')) return NodeFilter.FILTER_REJECT;
-          if (parent.hasAttribute?.('data-no-glyph-links')) return NodeFilter.FILTER_REJECT;
-          return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        }
-      }
-    );
-
-    const nodesToReplace = [];
-    let n;
-    while (n = walker2.nextNode()) {
-      const text = n.textContent;
-      let fragment = document.createDocumentFragment();
-      let lastIndex = 0;
-      let modified = false;
-
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        if (glyphs.includes(char)) {
-          if (i > lastIndex) {
-            fragment.appendChild(document.createTextNode(text.slice(lastIndex, i)));
-          }
-          const link = document.createElement('a');
-          link.href = `${helpPath}/${char}.html`;
-          link.style.cssText = `
-            background-color: #fdeced;
-            padding: 0 2px;
-            border-radius: 3px;
-            text-decoration: none;
-            display: inline-block;
-            vertical-align: middle;
-            font-size: inherit;
-            line-height: inherit;
-            font-family: inherit;
-            color: inherit;
-          `;
-          link.appendChild(document.createTextNode(char));
-          fragment.appendChild(link);
-          lastIndex = i + 1;
-          modified = true;
-        }
-      }
-
-      if (modified) {
-        if (lastIndex < text.length) {
-          fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
-        }
-        nodesToReplace.push({ node: n, fragment });
-      }
-    }
-
-    nodesToReplace.forEach(({ node, fragment }) => {
-      if (node.parentNode) node.parentNode.replaceChild(fragment, node);
-    });
-  }
+  // Дополнительно: если нужно, можно оставить кнопку для возврата таблицы
+  // (для тестирования)
 });
