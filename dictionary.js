@@ -17,7 +17,7 @@ const charData = {
     '丑': {pinyin: 'chǒu', meaning: 'название 2-го знака 12-ричного цикла', lesson: 1},
     '己': {pinyin: 'jǐ', meaning: 'название 6-го знака 10-ричного цикла', lesson: 1},
     '卯': {pinyin: 'mǎo', meaning: 'название 4-го знака 12-ричного цикла', lesson: 1},
-    '㱿': {pinyin: 'jué', meaning: 'собств. Цюэ', lesson: 1},
+    '㱿': {pinyin: 'què', meaning: 'собств. Цюэ', lesson: 1},
     '壬': {pinyin: 'rén', meaning: 'название 9-го знака 10-ричного цикла', lesson: 1},
     '午': {pinyin: 'wǔ', meaning: 'название 7-го знака 12-ричного цикла', lesson: 1},
     
@@ -41,12 +41,12 @@ const charData = {
     '受': {pinyin: 'shòu', meaning: 'давать; получать', lesson: 2},
     '年': {pinyin: 'nián', meaning: 'урожай; год; возраст', lesson: 2},
     '來': {pinyin: 'lái', meaning: 'приходить; присылать; будущий', lesson: 2},
-    '冓': {pinyin: 'gōu', meaning: 'постройка; собств. Гоу', lesson: 2},
+    '冓': {pinyin: 'gòu', meaning: 'постройка; собств. Гоу', lesson: 2},
     '亘': {pinyin: 'gèn', meaning: 'собств. Гэнь', lesson: 2},
     '我': {pinyin: 'wǒ', meaning: 'служ. личное местоимение первого лица — я', lesson: 2},
     '黍': {pinyin: 'shǔ', meaning: 'чумиза (древнее зерно)', lesson: 2},
     '巳': {pinyin: 'sì', meaning: 'название 6-го знака 12-ричного цикла', lesson: 2},
-    '稲': {pinyin: 'dào', meaning: 'рис', lesson: 2},
+    '稻': {pinyin: 'dào', meaning: 'рис', lesson: 2},
     '戔': {pinyin: 'jiān', meaning: 'собств. Цзянь', lesson: 2},
     '甫': {pinyin: 'fǔ', meaning: 'собств. Фу', lesson: 2},
     
@@ -113,6 +113,8 @@ const charData = {
     '以': {pinyin: 'yǐ', meaning: 'с помощью, привести', lesson: 5},
     '羌': {pinyin: 'qiāng', meaning: 'племя Цянь', lesson: 5},
     '朕': {pinyin: 'zhèn', meaning: 'мой (местоимение)', lesson: 5},
+    '侯': {pinyin: 'hóu', meaning: 'хоу (название одного из рангов наследственных правителей); собств. Хоу', lesson: 5},
+    '虎': {pinyin: 'hǔ', meaning: 'тигр', lesson: 5},
 
     // Урок 6
     '身': {pinyin: 'shēn', meaning: 'тело, человек', lesson: 6},
@@ -166,6 +168,7 @@ const charData = {
     '寇': {pinyin: 'kòu', meaning: 'грабить, нападать', lesson: 7},
     '萬': {pinyin: 'wàn', meaning: 'десять тысяч', lesson: 7},
     '倉': {pinyin: 'cāng', meaning: 'Цан (имя)', lesson: 7},
+    '好': {pinyin: 'hǎo', meaning: 'хороший; собств. Хао', lesson: 7},
 
     // Урок 8
     '戌': {pinyin: 'xū', meaning: 'название 11-го знака 12-ричного цикла', lesson: 8},
@@ -217,6 +220,7 @@ const charData = {
     '央': {pinyin: 'yāng', meaning: 'имя собственное (цзы Ян)', lesson: 10},
     '墜': {pinyin: 'zhuì', meaning: 'падать, сваливаться', lesson: 10},
     '硪': {pinyin: 'wò', meaning: 'имя собственное (возможно, имя возничего)', lesson: 10},
+    '偁': {pinyin: 'chēng', meaning: 'служ. указательное местоимение то, тот', lesson: 10},
 
     // Урок 11
 
