@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script src="./../dictionary.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
@@ -276,6 +277,7 @@
                 <ul>
                     <li>Нажмите на слово, чтобы добавить его в ответ</li>
                     <li>Нажмите на слово в ответе, чтобы вернуть его</li>
+                    <li>Нажмите и удерживайте иероглиф, чтобы услышать его произношение</li>
                     <li>Соберите правильный перевод</li>
                     <li>Знаки препинания не важны</li>
                 </ul>
@@ -308,18 +310,115 @@
 
     <!-- Подключаем данные -->
     <script src="segmentation.js"></script>
-    <script>
+
+<script>
+        // Кэш для аудиофайлов
+        const audioCache = new Map();
+        
+        // Функция для предзагрузки аудио
+        function preloadAudioForCharacters(characters) {
+            characters.forEach(hanzi => {
+                const isChineseChar = /[\u4e00-\u9fff]/.test(hanzi);
+                if (!isChineseChar) return;
+                if (typeof charData === 'undefined') return;
+                
+                const charInfo = charData[hanzi];
+                if (!charInfo || !charInfo.pinyin) return;
+
+                const pinyin = charInfo.pinyin;
+                
+                let cleanPinyin = pinyin
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/ü/g, 'u')
+                    .replace(/v/g, 'u');
+
+                let tone = '1';
+                if (pinyin.includes('ā') || pinyin.includes('ō') || pinyin.includes('ē') || pinyin.includes('ī') || pinyin.includes('ū') || pinyin.includes('ǖ')) tone = '1';
+                else if (pinyin.includes('á') || pinyin.includes('ó') || pinyin.includes('é') || pinyin.includes('í') || pinyin.includes('ú') || pinyin.includes('ǘ')) tone = '2';
+                else if (pinyin.includes('ǎ') || pinyin.includes('ǒ') || pinyin.includes('ě') || pinyin.includes('ǐ') || pinyin.includes('ǔ') || pinyin.includes('ǚ')) tone = '3';
+                else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
+
+                const pinyinKey = cleanPinyin + tone;
+                const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+                
+                if (!audioCache.has(hanzi)) {
+                    const audio = new Audio();
+                    audio.src = url;
+                    audio.preload = 'auto';
+                    audioCache.set(hanzi, audio);
+                    
+                    audio.addEventListener('error', (e) => {
+                        console.warn(`Не удалось предзагрузить аудио для ${hanzi}`);
+                    });
+                    
+                    audio.src = url;
+                }
+            });
+        }
+
+        // Функция для озвучивания иероглифов с визуальной обратной связью
+        function playHanziSound(hanzi, element) {
+            const isChineseChar = /[\u4e00-\u9fff]/.test(hanzi);
+            if (!isChineseChar) return;
+            
+            // Визуальная обратная связь - подсветка желтым
+            if (element) {
+                element.style.backgroundColor = '#ffeb3b';
+                setTimeout(() => {
+                    if (element.classList.contains('selected')) {
+                        element.style.backgroundColor = '#2ecc71';
+                    } else {
+                        element.style.backgroundColor = '#fff';
+                    }
+                }, 300);
+            }
+            
+            if (audioCache.has(hanzi)) {
+                const audio = audioCache.get(hanzi);
+                const audioClone = audio.cloneNode();
+                audioClone.play().catch(e => {
+                    console.warn(`Не удалось воспроизвести кэшированное аудио для ${hanzi}`);
+                });
+            } else {
+                if (typeof charData === 'undefined') return;
+                
+                const charInfo = charData[hanzi];
+                if (!charInfo || !charInfo.pinyin) return;
+
+                const pinyin = charInfo.pinyin;
+                
+                let cleanPinyin = pinyin
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/ü/g, 'u')
+                    .replace(/v/g, 'u');
+
+                let tone = '1';
+                if (pinyin.includes('ā') || pinyin.includes('ō') || pinyin.includes('ē') || pinyin.includes('ī') || pinyin.includes('ū') || pinyin.includes('ǖ')) tone = '1';
+                else if (pinyin.includes('á') || pinyin.includes('ó') || pinyin.includes('é') || pinyin.includes('í') || pinyin.includes('ú') || pinyin.includes('ǘ')) tone = '2';
+                else if (pinyin.includes('ǎ') || pinyin.includes('ǒ') || pinyin.includes('ě') || pinyin.includes('ǐ') || pinyin.includes('ǔ') || pinyin.includes('ǚ')) tone = '3';
+                else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
+
+                const pinyinKey = cleanPinyin + tone;
+                const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+                
+                const audio = new Audio(url);
+                audio.play().catch(e => {
+                    console.warn(`Не удалось воспроизвести звук для ${hanzi}`);
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Подготовка данных
             const allOriginals = SentenceData.sentences.map(s => s.original);
             const allTranslations = SentenceData.sentences.map(s => s.translation);
             
-            // Функция очистки русского текста
             function cleanRussian(text) {
                 return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
             }
             
-            // Сбор всех слов
             const allRussianWords = [];
             allTranslations.forEach(trans => {
                 const cleaned = cleanRussian(trans);
@@ -331,7 +430,6 @@
                 allChineseChars.push(...orig.split(''));
             });
             
-            // Перемешивание
             function shuffleArray(array) {
                 const arr = [...array];
                 for (let i = arr.length - 1; i > 0; i--) {
@@ -341,7 +439,6 @@
                 return arr;
             }
             
-            // Генерация заданий
             let tasks = [];
             SentenceData.sentences.forEach(sentence => {
                 tasks.push({
@@ -369,11 +466,9 @@
             
             tasks = shuffleArray(tasks);
             
-            // Состояние
             let currentTaskIndex = 0;
             let currentAnswer = [];
-            
-            // Элементы
+
             const sourceText = document.getElementById('sourceText');
             const wordsList = document.getElementById('wordsList');
             const answerList = document.getElementById('answerList');
@@ -384,7 +479,6 @@
             const congratulations = document.getElementById('congratulations');
             const returnBtn = document.getElementById('returnBtn');
             
-            // Отображение задания
             function renderTask() {
                 if (currentTaskIndex >= tasks.length) {
                     showCompletionScreen();
@@ -400,6 +494,11 @@
                 answerList.innerHTML = '';
                 wordsList.innerHTML = '';
                 
+                if (task.type === 'toOriginal') {
+                    const chineseCharacters = task.words.filter(word => /[\u4e00-\u9fff]/.test(word));
+                    preloadAudioForCharacters(chineseCharacters);
+                }
+                
                 task.words.forEach(word => {
                     const el = document.createElement('div');
                     el.className = 'word';
@@ -408,10 +507,13 @@
                     wordsList.appendChild(el);
                 });
                 
-                // Обработчики для слов
                 document.querySelectorAll('#wordsList .word').forEach(el => {
                     el.addEventListener('click', function() {
                         const word = this.dataset.word;
+                        
+                        // Озвучиваем с визуальной обратной связью
+                        playHanziSound(word, this);
+                        
                         this.remove();
                         
                         const answerEl = document.createElement('div');
@@ -426,10 +528,9 @@
                 });
                 
                 resultMessage.className = 'info';
-                resultMessage.textContent = 'Соберите перевод.';
+                resultMessage.textContent = 'Соберите перевод. Клик по иероглифу озвучивает его.';
             }
             
-            // Проверка
             function checkAnswer() {
                 const task = tasks[currentTaskIndex];
                 const currentText = currentAnswer.join(' ').trim();
@@ -441,7 +542,6 @@
                 }
             }
             
-            // Успешно
             function showSuccess() {
                 resultMessage.className = 'success';
                 resultMessage.textContent = '✅ Верно! Следующее задание...';
@@ -452,10 +552,13 @@
                 }, 1200);
             }
             
-            // Клик по ответу — возврат слова
             answerList.addEventListener('click', function(e) {
                 if (e.target.classList.contains('word')) {
                     const word = e.target.dataset.word;
+                    
+                    // Озвучиваем с визуальной обратной связью
+                    playHanziSound(word, e.target);
+                    
                     e.target.remove();
                     
                     const wordEl = document.createElement('div');
@@ -467,9 +570,12 @@
                     const index = currentAnswer.indexOf(word);
                     if (index !== -1) currentAnswer.splice(index, 1);
                     
-                    // Восстанавливаем обработчик
                     wordEl.addEventListener('click', function() {
                         const w = this.dataset.word;
+                        
+                        // Озвучиваем с визуальной обратной связью
+                        playHanziSound(w, this);
+                        
                         this.remove();
                         const aEl = document.createElement('div');
                         aEl.className = 'word selected';
@@ -484,7 +590,6 @@
                 }
             });
             
-            // Завершение
             function showCompletionScreen() {
                 mainContent.style.display = 'none';
                 congratulations.style.display = 'block';
