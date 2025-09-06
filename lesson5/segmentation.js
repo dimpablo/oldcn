@@ -96,7 +96,7 @@ const SentenceData = {
       "number": 16,
       "original": "甲辰卜王貞羌弗烖朕使",
       "transliteration": "jiǎ chén bǔ wáng zhēn qiāng fú zāi zhèn shǐ",
-      "translation": "Цяны не нанесут поражения моему послу?"
+      "translation": "В день цзя-чэнь гадали, правитель задал вопрос: «Цяны не нанесут поражения моему послу?»"
     },
     {
       "number": 17,
