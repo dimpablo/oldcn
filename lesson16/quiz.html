@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по сегментации текста</title>
+    <script src="../dictionary.js"></script>
+    <script src="segmentation.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -259,6 +261,88 @@
             border: 2px solid white !important;
         }
         
+        /* === МОДАЛЬНОЕ ОКНО ДЛЯ СПРАВКИ ПО ИЕРОГЛИФУ === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 300px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .modal p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .modal-close {
+            margin-top: 15px;
+            padding: 6px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .modal-close:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Визуальный индикатор режима справки */
+        #helpBtn.help-active {
+            background-color: #e67e22 !important;
+            box-shadow: 0 0 0 2px #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+        }
+
+        /* Курсор в режиме справки */
+        body.help-mode {
+            cursor: help;
+        }
+        
         @media (max-width: 480px) {
             .color-tools, .controls, .legend {
                 flex-direction: column;
@@ -297,6 +381,7 @@
             <div class="color-info">
                 Текущий цвет: <span id="currentColor">#a8dadc</span>
             </div>
+            <button class="random-color-btn" id="helpBtn">?</button>
         </div>
         
         <table id="textTable"></table>
@@ -311,306 +396,460 @@
         <div class="legend" id="colorLegend"></div>
     </div>
 
-    <!-- Подключаем данные -->
-    <script src="segmentation.js"></script>
+    <!-- Модальное окно для справки -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <h3 id="modalChar">?</h3>
+            <p><strong>Пиньинь:</strong> <span id="modalPinyin">-</span></p>
+            <p><strong>Значение:</strong> <span id="modalMeaning">-</span></p>
+            <p><small>Урок: <span id="modalLesson">-</span></small></p>
+            <button class="modal-close" id="closeModal">Закрыть</button>
+        </div>
+    </div>
 
-<script type="module">
-  // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-  import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    <script type="module">
+      // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+      import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+      import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-    authDomain: "antient-9bff0.firebaseapp.com",
-    projectId: "antient-9bff0",
-    storageBucket: "antient-9bff0.firebasestorage.app",
-    messagingSenderId: "311792589414",
-    appId: "1:311792589414:web:5fff3154735007c2006ba7",
-    measurementId: "G-W4ZQXWRTKK"
-  };
+      const firebaseConfig = {
+        apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+        authDomain: "antient-9bff0.firebaseapp.com",
+        projectId: "antient-9bff0",
+        storageBucket: "antient-9bff0.firebasestorage.app",
+        messagingSenderId: "311792589414",
+        appId: "1:311792589414:web:5fff3154735007c2006ba7",
+        measurementId: "G-W4ZQXWRTKK"
+      };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  let currentUser = null;
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      let currentUser = null;
 
-  auth.onAuthStateChanged(user => {
-    currentUser = user;
-  });
+      auth.onAuthStateChanged(user => {
+        currentUser = user;
+      });
 
-  async function updatePoints(points, reason) {
-    if (!currentUser) return;
-    try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      const userSnap = await getDoc(userRef);
-      const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
-      const newPoints = currentPoints + points;
+      async function updatePoints(points, reason) {
+        if (!currentUser) return;
+        try {
+          const userRef = doc(db, 'users', currentUser.uid);
+          const userSnap = await getDoc(userRef);
+          const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+          const newPoints = currentPoints + points;
 
-      await updateDoc(userRef, { points: newPoints });
-      console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
-    } catch (e) {
-      console.error("❌ Ошибка обновления баллов:", e);
-    }
-  }
-
-  // === ✅ ГЛАВНЫЙ КОД КВИЗА (ОБНОВЛЁННЫЙ) ===
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
-
-    const table = document.getElementById('textTable');
-    const lines = SentenceData.text.split('\n').filter(line => line.trim() !== '');
-
-    lines.forEach(line => {
-      const tr = document.createElement('tr');
-      for (let char of line) {
-        const td = document.createElement('td');
-        td.textContent = char;
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    });
-
-    let currentColor = '#a8dadc';
-    const colorInput = document.getElementById('colorSelect');
-    const currentColorDisplay = document.getElementById('currentColor');
-
-    function updateColorDisplay() {
-      currentColorDisplay.textContent = currentColor;
-      const r = parseInt(currentColor.slice(1, 3), 16);
-      const g = parseInt(currentColor.slice(3, 5), 16);
-      const b = parseInt(currentColor.slice(5, 7), 16);
-      currentColorDisplay.style.color = (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? '#000' : '#fff';
-    }
-
-    colorInput.addEventListener('input', function(e) {
-      currentColor = e.target.value;
-      updateColorDisplay();
-    });
-
-    function getRandomPastelColor() {
-      const hue = Math.floor(Math.random() * 360);
-      const saturation = 50 + Math.random() * 20;
-      const lightness = 70 + Math.random() * 15;
-      return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    }
-
-    function hslToHex(hsl) {
-      const div = document.createElement('div');
-      div.style.color = hsl;
-      document.body.appendChild(div);
-      const rgb = window.getComputedStyle(div).color;
-      document.body.removeChild(div);
-
-      const rgbMatch = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
-      if (rgbMatch) {
-        return "#" +
-          parseInt(rgbMatch[1]).toString(16).padStart(2, '0') +
-          parseInt(rgbMatch[2]).toString(16).padStart(2, '0') +
-          parseInt(rgbMatch[3]).toString(16).padStart(2, '0');
-      }
-      return '#a8dadc';
-    }
-
-    document.getElementById('randomColorBtn').addEventListener('click', function() {
-      const randomHsl = getRandomPastelColor();
-      const randomHex = hslToHex(randomHsl);
-      colorInput.value = randomHex;
-      currentColor = randomHex;
-      updateColorDisplay();
-    });
-
-    updateColorDisplay();
-
-    // === 🔧 Клик по ячейке: закрашивает и убирает мерцание ===
-    table.addEventListener('click', function(e) {
-      if (e.target.tagName === 'TD') {
-        const cell = e.target;
-        if (cell.classList.contains('error-blink')) {
-          cell.classList.remove('error-blink');
+          await updateDoc(userRef, { points: newPoints });
+          console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
+        } catch (e) {
+          console.error("❌ Ошибка обновления баллов:", e);
         }
-        cell.style.backgroundColor = currentColor;
-        cell.setAttribute('data-color', currentColor);
+      }
+
+      // === ✅ ГЛАВНЫЙ КОД КВИЗА (ОБНОВЛЁННЫЙ) ===
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
+
+        const table = document.getElementById('textTable');
+        const lines = SentenceData.text.split('\n').filter(line => line.trim() !== '');
+
+        lines.forEach(line => {
+          const tr = document.createElement('tr');
+          for (let char of line) {
+            const td = document.createElement('td');
+            td.textContent = char;
+            tr.appendChild(td);
+          }
+          table.appendChild(tr);
+        });
+
+        let currentColor = '#a8dadc';
+        const colorInput = document.getElementById('colorSelect');
+        const currentColorDisplay = document.getElementById('currentColor');
+
+        function updateColorDisplay() {
+          currentColorDisplay.textContent = currentColor;
+          const r = parseInt(currentColor.slice(1, 3), 16);
+          const g = parseInt(currentColor.slice(3, 5), 16);
+          const b = parseInt(currentColor.slice(5, 7), 16);
+          currentColorDisplay.style.color = (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? '#000' : '#fff';
+        }
+
+        colorInput.addEventListener('input', function(e) {
+          currentColor = e.target.value;
+          updateColorDisplay();
+        });
+
+        function getRandomPastelColor() {
+          const hue = Math.floor(Math.random() * 360);
+          const saturation = 50 + Math.random() * 20;
+          const lightness = 70 + Math.random() * 15;
+          return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        function hslToHex(hsl) {
+          const div = document.createElement('div');
+          div.style.color = hsl;
+          document.body.appendChild(div);
+          const rgb = window.getComputedStyle(div).color;
+          document.body.removeChild(div);
+
+          const rgbMatch = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
+          if (rgbMatch) {
+            return "#" +
+              parseInt(rgbMatch[1]).toString(16).padStart(2, '0') +
+              parseInt(rgbMatch[2]).toString(16).padStart(2, '0') +
+              parseInt(rgbMatch[3]).toString(16).padStart(2, '0');
+          }
+          return '#a8dadc';
+        }
+
+        document.getElementById('randomColorBtn').addEventListener('click', function() {
+          const randomHsl = getRandomPastelColor();
+          const randomHex = hslToHex(randomHsl);
+          colorInput.value = randomHex;
+          currentColor = randomHex;
+          updateColorDisplay();
+        });
+
+        updateColorDisplay();
+
+        // === 🔍 РЕЖИМ СПРАВКИ ПО ИЕРОГЛИФАМ ===
+        let helpMode = false;
+        const helpBtn = document.getElementById('helpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalChar = document.getElementById('modalChar');
+        const modalPinyin = document.getElementById('modalPinyin');
+        const modalMeaning = document.getElementById('modalMeaning');
+        const modalLesson = document.getElementById('modalLesson');
+
+        function updateHelpButton() {
+          helpBtn.classList.toggle('help-active', helpMode);
+          document.body.classList.toggle('help-mode', helpMode);
+          helpBtn.style.fontWeight = helpMode ? 'bold' : 'normal';
+          helpBtn.title = helpMode 
+            ? 'Режим справки: ВКЛ (нажмите на иероглиф)' 
+            : 'Режим справки: ВЫКЛ';
+        }
+
+        helpBtn.addEventListener('click', function () {
+          helpMode = !helpMode;
+          updateHelpButton();
+          if (helpMode) {
+            document.getElementById('result').className = 'info';
+            document.getElementById('result').textContent = '👉 Нажмите на иероглиф, чтобы увидеть значение';
+          } else {
+            document.getElementById('result').textContent = '';
+          }
+        });
+
+        // === 🧩 ЦЕНТРАЛИЗОВАННАЯ ОБРАБОТКА КЛИКОВ ===
+        table.addEventListener('click', function(e) {
+          const target = e.target;
+          if (target.tagName !== 'TD') return;
+
+          // Приоритет 1: Модальное окно открыто → блокируем всё
+          if (helpModal.classList.contains('show')) {
+            e.stopPropagation();
+            return;
+          }
+
+          // Приоритет 2: Режим справки активен
+          if (helpMode) {
+            const char = target.textContent.trim();
+            if (!char || /[.,?!;:\s]/.test(char)) {
+              document.getElementById('result').className = 'info';
+              document.getElementById('result').textContent = '👉 Нажмите на иероглиф';
+              return;
+            }
+            
+            const entry = charData[char];
+            modalChar.textContent = char;
+            modalPinyin.textContent = entry?.pinyin || '—';
+            modalMeaning.textContent = entry?.meaning || 'Нет в словаре';
+            modalLesson.textContent = entry?.lesson || '—';
+            
+            helpModal.classList.add('show');
+            table.style.pointerEvents = 'none'; // Блокируем клики
+            
+            helpMode = false;
+            updateHelpButton();
+            document.getElementById('result').textContent = '';
+            return;
+          }
+
+          // Приоритет 3: Ошибка мерцает → сначала убираем мерцание
+          if (target.classList.contains('error-blink')) {
+            target.classList.remove('error-blink');
+          }
+
+          // Приоритет 4: Обычный режим закрашивания
+          target.style.backgroundColor = currentColor;
+          target.setAttribute('data-color', currentColor);
+          updateColorLegend();
+        });
+
+        // Закрытие модалки
+        closeModal.addEventListener('click', function() {
+          helpModal.classList.remove('show');
+          table.style.pointerEvents = 'auto';
+        });
+
+        helpModal.addEventListener('click', function(e) {
+          if (e.target === helpModal) {
+            helpModal.classList.remove('show');
+            table.style.pointerEvents = 'auto';
+          }
+        });
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && helpModal.classList.contains('show')) {
+            helpModal.classList.remove('show');
+            table.style.pointerEvents = 'auto';
+          }
+        });
+
+        // === 🔧 Легенда: клик по цвету устанавливает его как текущий ===
+        function makeLegendInteractive() {
+          document.querySelectorAll('.legend-color').forEach(box => {
+            box.style.cursor = 'pointer';
+            box.addEventListener('click', function(e) {
+              e.stopPropagation();
+              const color = this.style.backgroundColor;
+              if (!color || color === 'transparent') return;
+
+              const hexColor = rgbToHex(color);
+              if (hexColor) {
+                colorInput.value = hexColor;
+                currentColor = hexColor;
+                currentColorDisplay.textContent = hexColor;
+                updateColorDisplay();
+              }
+            });
+          });
+        }
+
+        function rgbToHex(rgb) {
+          if (rgb.startsWith('#')) return rgb;
+          const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+          if (!match) return '#a8dadc';
+          const toHex = (n) => parseInt(n).toString(16).padStart(2, '0');
+          return '#' + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+        }
+
+        const colorLegend = document.getElementById('colorLegend');
+        function updateColorLegend() {
+          const cells = document.querySelectorAll('#textTable td');
+          const usedColors = new Set();
+          cells.forEach(cell => {
+            const color = cell.getAttribute('data-color');
+            if (color) usedColors.add(color);
+          });
+
+          colorLegend.innerHTML = '';
+          let idx = 1;
+          usedColors.forEach(color => {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            const box = document.createElement('div');
+            box.className = 'legend-color';
+            box.style.backgroundColor = color;
+            const label = document.createElement('span');
+            label.textContent = `Цв.${idx}`;
+            item.appendChild(box);
+            item.appendChild(label);
+            colorLegend.appendChild(item);
+            idx++;
+          });
+
+          if (usedColors.size === 0) {
+            const item = document.createElement('div');
+            item.className = 'legend-item';
+            const box = document.createElement('div');
+            box.className = 'legend-color';
+            box.style.backgroundColor = currentColor;
+            const label = document.createElement('span');
+            label.textContent = 'Цв.1 (выбран)';
+            item.appendChild(box);
+            item.appendChild(label);
+            colorLegend.appendChild(item);
+          }
+
+          makeLegendInteractive();
+        }
+
+        // === 🔧 Кнопка "Сбросить" ===
+        document.getElementById('resetBtn').addEventListener('click', function() {
+          helpMode = false;
+          updateHelpButton();
+          document.getElementById('result').textContent = '';
+          
+          document.querySelectorAll('#textTable td').forEach(cell => {
+            cell.style.backgroundColor = '';
+            cell.removeAttribute('data-color');
+            cell.classList.remove('error-blink');
+          });
+          document.getElementById('result').className = '';
+          updateColorLegend();
+        });
+
+        // === ✅ УЛУЧШЕННАЯ ПРОВЕРКА СЕГМЕНТАЦИИ ===
+        document.getElementById('checkBtn').addEventListener('click', function() {
+          helpMode = false;
+          updateHelpButton();
+          document.getElementById('result').textContent = '';
+
+          const cells = Array.from(document.querySelectorAll('#textTable td'));
+          const result = document.getElementById('result');
+
+          // Удаляем предыдущие ошибки
+          document.querySelectorAll('.error-blink').forEach(cell => {
+            cell.classList.remove('error-blink');
+          });
+
+          // === 1. СОБИРАЕМ ДАННЫЕ ===
+          const unpainted = new Set();
+          const painted = new Set();
+          const colorGroups = {};
+
+          cells.forEach((cell, index) => {
+            if (cell.hasAttribute('data-color')) {
+              painted.add(cell);
+              const color = cell.getAttribute('data-color');
+              if (!colorGroups[color]) colorGroups[color] = [];
+              colorGroups[color].push({ index, cell });
+            } else {
+              unpainted.add(cell);
+            }
+          });
+
+          // === 2. АНАЛИЗ КОЛЛИЗИЙ (ТОЛЬКО ДЛЯ ЗАКРАШЕННЫХ) ===
+          const errorCells = new Set();
+
+          // Создаем карту: позиция -> сегмент
+          const positionToSegment = new Array(cells.length).fill(null);
+          SentenceData.sentences.forEach((sentence, segIndex) => {
+            let pos = 0;
+            SentenceData.sentences.slice(0, segIndex).forEach(s => pos += s.original.length);
+            for (let i = pos; i < pos + sentence.original.length; i++) {
+              if (i < positionToSegment.length) {
+                positionToSegment[i] = segIndex;
+              }
+            }
+          });
+
+          // Проверяем каждую закрашенную группу
+          Object.values(colorGroups).forEach(group => {
+            const firstIndex = group[0].index;
+            const lastIndex = group[group.length - 1].index;
+
+            // Определяем, сколько сегментов затронуты
+            const segmentsInGroup = new Set();
+            for (let i = firstIndex; i <= lastIndex; i++) {
+              if (i < positionToSegment.length && positionToSegment[i] !== null) {
+                segmentsInGroup.add(positionToSegment[i]);
+              }
+            }
+
+            // Случай 1: Группа пересекает несколько сегментов
+            if (segmentsInGroup.size > 1) {
+              let currentSegment = null;
+              for (let i = 0; i < group.length; i++) {
+                const pos = group[i].index;
+                const segmentIndex = positionToSegment[pos];
+                
+                if (segmentIndex !== currentSegment && currentSegment !== null) {
+                  errorCells.add(group[i-1].cell);
+                }
+                currentSegment = segmentIndex;
+              }
+              errorCells.add(group[group.length - 1].cell);
+            } 
+            // Случай 2: Группа вне сегментов
+            else if (segmentsInGroup.size === 0) {
+              group.forEach(g => errorCells.add(g.cell));
+            }
+            // Случай 3: Группа внутри одного сегмента
+            else {
+              const segIndex = [...segmentsInGroup][0];
+              const sentence = SentenceData.sentences[segIndex];
+              const expectedStart = positionToSegment.indexOf(segIndex);
+              const expectedEnd = expectedStart + sentence.original.length - 1;
+
+              // Проверяем, выходит ли за границы
+              if (firstIndex < expectedStart || lastIndex > expectedEnd) {
+                group.forEach(g => {
+                  const pos = g.index;
+                  if (pos < expectedStart || pos > expectedEnd) {
+                    errorCells.add(g.cell);
+                  }
+                });
+              }
+            }
+          });
+
+          // Проверка уникальности цветов по сегментам
+          const segmentColors = new Array(SentenceData.sentences.length).fill(null);
+          SentenceData.sentences.forEach((_, segIndex) => {
+            const segCells = [];
+            let pos = 0;
+            SentenceData.sentences.slice(0, segIndex).forEach(s => pos += s.original.length);
+            const segStart = pos;
+            const segEnd = pos + SentenceData.sentences[segIndex].original.length;
+            
+            for (let i = segStart; i < segEnd && i < cells.length; i++) {
+              segCells.push(cells[i]);
+            }
+            
+            const colorsInSegment = new Set();
+            segCells.forEach(cell => {
+              if (cell.hasAttribute('data-color')) {
+                colorsInSegment.add(cell.getAttribute('data-color'));
+              }
+            });
+            
+            if (colorsInSegment.size > 1) {
+              segCells.forEach(cell => errorCells.add(cell));
+            } else if (colorsInSegment.size === 1) {
+              const color = [...colorsInSegment][0];
+              if (segmentColors[segIndex] === null) {
+                segmentColors[segIndex] = color;
+              } else if (segmentColors[segIndex] !== color) {
+                segCells.forEach(cell => errorCells.add(cell));
+              }
+            }
+          });
+
+          // === 3. ФИНАЛЬНЫЙ АНАЛИЗ ===
+          if (errorCells.size > 0) {
+            result.className = 'error';
+            result.innerHTML = '❌ Проверьте границы предложений.';
+            updatePoints(-2, 'неверные границы');
+            
+            // Мерцание ТОЛЬКО на конфликтующих ячейках (и только если они закрашены)
+            errorCells.forEach(cell => {
+              if (cell.hasAttribute('data-color')) {
+                cell.classList.add('error-blink');
+              }
+            });
+          }
+          else if (unpainted.size > 0) {
+            result.className = 'info';
+            result.textContent = `⚠️ Не закрашено: ${unpainted.size} символов`;
+            // НЕ вешаем error-blink, просто информируем
+          }
+          else {
+            result.className = 'success';
+            result.innerHTML = '✅ Все предложения выделены правильно!';
+            updatePoints(5, 'успешная сегментация');
+          }
+        });
+
+        // Инициализация легенды
         updateColorLegend();
-      }
-    });
-
-    // === 🔧 Легенда: клик по цвету устанавливает его как текущий ===
-    function makeLegendInteractive() {
-      document.querySelectorAll('.legend-color').forEach(box => {
-        box.style.cursor = 'pointer';
-        box.addEventListener('click', function(e) {
-          e.stopPropagation();
-          const color = this.style.backgroundColor;
-          if (!color || color === 'transparent') return;
-
-          const hexColor = rgbToHex(color);
-          if (hexColor) {
-            colorInput.value = hexColor;
-            currentColor = hexColor;
-            currentColorDisplay.textContent = hexColor;
-            updateColorDisplay();
-            console.log('🎨 Цвет кисти изменён на:', hexColor);
-          }
-        });
       });
-    }
-
-    // Вспомогательная: RGB → HEX
-    function rgbToHex(rgb) {
-      if (rgb.startsWith('#')) return rgb;
-      const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-      if (!match) return '#a8dadc';
-      const toHex = (n) => parseInt(n).toString(16).padStart(2, '0');
-      return '#' + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
-    }
-
-    // === 🔧 Обновление легенды с интерактивностью ===
-    const colorLegend = document.getElementById('colorLegend');
-    function updateColorLegend() {
-      const cells = document.querySelectorAll('#textTable td');
-      const usedColors = new Set();
-      cells.forEach(cell => {
-        const color = cell.getAttribute('data-color');
-        if (color) usedColors.add(color);
-      });
-
-      colorLegend.innerHTML = '';
-      let idx = 1;
-      usedColors.forEach(color => {
-        const item = document.createElement('div');
-        item.className = 'legend-item';
-        const box = document.createElement('div');
-        box.className = 'legend-color';
-        box.style.backgroundColor = color;
-        const label = document.createElement('span');
-        label.textContent = `Цв.${idx}`;
-        item.appendChild(box);
-        item.appendChild(label);
-        colorLegend.appendChild(item);
-        idx++;
-      });
-
-      if (usedColors.size === 0) {
-        const item = document.createElement('div');
-        item.className = 'legend-item';
-        const box = document.createElement('div');
-        box.className = 'legend-color';
-        box.style.backgroundColor = currentColor;
-        const label = document.createElement('span');
-        label.textContent = 'Цв.1 (выбран)';
-        item.appendChild(box);
-        item.appendChild(label);
-        colorLegend.appendChild(item);
-      }
-
-      makeLegendInteractive(); // Активируем клик по цветам
-    }
-
-    // === 🔧 Кнопка "Сбросить" ===
-    document.getElementById('resetBtn').addEventListener('click', function() {
-      document.querySelectorAll('#textTable td').forEach(cell => {
-        cell.style.backgroundColor = '';
-        cell.removeAttribute('data-color');
-        cell.classList.remove('error-blink');
-      });
-      document.getElementById('result').className = '';
-      document.getElementById('result').textContent = '';
-      updateColorLegend();
-    });
-
-    // === ✅ ПРОВЕРКА: ТОЛЬКО ПО СОВПАДЕНИЮ СЕГМЕНТОВ (без жёсткой проверки цветов) ===
-    document.getElementById('checkBtn').addEventListener('click', function() {
-      const cells = Array.from(document.querySelectorAll('#textTable td'));
-      const result = document.getElementById('result');
-
-      // Удаляем предыдущие ошибки
-      document.querySelectorAll('.error-blink').forEach(cell => {
-        cell.classList.remove('error-blink');
-      });
-
-      // Проверка: все ли закрашены?
-      const unpainted = cells.filter(c => !c.hasAttribute('data-color'));
-      if (unpainted.length > 0) {
-        result.className = 'error';
-        result.textContent = `Не закрашено: ${unpainted.length} символов`;
-        updatePoints(-2, 'незакрашенные символы');
-        unpainted.forEach(cell => cell.classList.add('error-blink'));
-        return;
-      }
-
-      // Полный текст
-      const fullText = cells.map(c => c.textContent).join('');
-
-      // Правильные сегменты
-      const correctSegments = [];
-      let pos = 0;
-      SentenceData.sentences.forEach(sentence => {
-        correctSegments.push({
-          start: pos,
-          end: pos + sentence.original.length,
-          text: sentence.original
-        });
-        pos += sentence.original.length;
-      });
-
-      // Группируем ячейки по цветам
-      const colorGroups = {};
-      cells.forEach((cell, index) => {
-        const color = cell.getAttribute('data-color');
-        if (!colorGroups[color]) colorGroups[color] = [];
-        colorGroups[color].push({ index, cell });
-      });
-
-      // === 🔍 Поиск ошибок: только где нарушаются границы ===
-      const correctCells = new Set(); // Ячейки, входящие в правильно выделенные сегменты
-      const errorCells = new Set();
-
-      // Проверяем каждую цветовую группу
-      Object.values(colorGroups).forEach(group => {
-        const firstIndex = group[0].index;
-        const lastIndex = group[group.length - 1].index;
-        const segmentText = group.map(g => g.cell.textContent).join('');
-
-        const matches = correctSegments.some(seg =>
-          segmentText === seg.text &&
-          firstIndex === seg.start &&
-          lastIndex === seg.end - 1
-        );
-
-        if (matches) {
-          group.forEach(g => correctCells.add(g.cell));
-        } else {
-          group.forEach(g => errorCells.add(g.cell));
-        }
-      });
-
-      // Проверяем, не разбиты ли правильные сегменты
-      correctSegments.forEach(seg => {
-        for (let i = seg.start; i < seg.end; i++) {
-          if (i < cells.length && !correctCells.has(cells[i])) {
-            errorCells.add(cells[i]);
-          }
-        }
-      });
-
-      // === 🎯 Финал ===
-      if (errorCells.size === 0) {
-        result.className = 'success';
-        result.innerHTML = '✅ Все предложения выделены правильно!';
-        updatePoints(5, 'успешная сегментация');
-      } else {
-        result.className = 'error';
-        result.innerHTML = '❌ Проверьте границы предложений.';
-        updatePoints(-2, 'неверные границы');
-        errorCells.forEach(cell => cell.classList.add('error-blink'));
-      }
-    });
-
-    // Инициализация легенды
-    updateColorLegend();
-  });
-</script>
-
+    </script>
 </body>
 </html>
