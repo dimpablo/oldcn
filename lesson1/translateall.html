@@ -294,6 +294,7 @@
         .dict-item.glow {
             animation: glow 0.3s ease-in-out;
         }
+        
     </style>
 </head>
 <body>
@@ -351,9 +352,8 @@
         // Функция для предзагрузки аудио
         function preloadAudioForCharacters(characters) {
             characters.forEach(hanzi => {
-                const isChineseChar = /[\u4e00-\u9fff]/.test(hanzi);
-                if (!isChineseChar) return;
-                if (typeof charData === 'undefined') return;
+                // Проверяем, есть ли иероглиф в словаре charData
+                if (!charData || !charData.hasOwnProperty(hanzi)) return;
                 
                 const charInfo = charData[hanzi];
                 if (!charInfo || !charInfo.pinyin) return;
@@ -390,8 +390,8 @@
 
         // Функция для озвучивания иероглифов с визуальной обратной связью
         function playHanziSound(hanzi, element) {
-            const isChineseChar = /[\u4e00-\u9fff]/.test(hanzi);
-            if (!isChineseChar) return;
+            // Проверяем, есть ли иероглиф в словаре charData
+            if (!charData || !charData.hasOwnProperty(hanzi)) return;
             
             // Визуальная обратная связь - подсветка перламутром
             if (element) {
@@ -409,8 +409,6 @@
                     console.warn(`Не удалось воспроизвести кэшированное аудио для ${hanzi}`);
                 });
             } else {
-                if (typeof charData === 'undefined') return;
-                
                 const charInfo = charData[hanzi];
                 if (!charInfo || !charInfo.pinyin) return;
 
@@ -457,33 +455,34 @@
             const dictionaryContent = document.getElementById('dictionaryContent');
             dictionaryContent.innerHTML = '';
             
-            // Извлекаем все китайские иероглифы из контейнера
-            const taskContainer = document.querySelector('.task-container');
-            const containerText = taskContainer.innerText || taskContainer.textContent;
-            const chineseChars = containerText.match(/[\u4e00-\u9fff]/g) || [];
-            
-            // Получаем уникальные иероглифы
-            const uniqueChars = [...new Set(chineseChars)];
-            
+            // Извлекаем текст из всех нужных мест
+            const sourceText = document.getElementById('sourceText').textContent;
+            const wordsList = document.getElementById('wordsList').textContent;
+            const answerList = document.getElementById('answerList').textContent;
+
+            const allText = sourceText + wordsList + answerList;
+            const chars = [...allText]; // разбиваем на символы
+
+            // Получаем уникальные символы, которые есть в charData
+            const uniqueChars = [...new Set(chars)]
+                .filter(char => charData && charData.hasOwnProperty(char));
+
             uniqueChars.forEach(char => {
-                if (typeof charData !== 'undefined' && charData[char]) {
-                    const charInfo = charData[char];
-                    const dictItem = document.createElement('div');
-                    dictItem.className = 'dict-item';
-                    dictItem.dataset.hanzi = char;
-                    dictItem.innerHTML = `
-                        <div class="dict-char">${char}</div>
-                        <div class="dict-pinyin">${charInfo.pinyin}</div>
-                        <div class="dict-meaning">${charInfo.meaning}</div>
-                    `;
-                    
-                    // Добавляем обработчик клика
-                    dictItem.addEventListener('click', function() {
-                        playDictionaryHanziSound(char, this);
-                    });
-                    
-                    dictionaryContent.appendChild(dictItem);
-                }
+                const charInfo = charData[char];
+                const dictItem = document.createElement('div');
+                dictItem.className = 'dict-item';
+                dictItem.dataset.hanzi = char;
+                dictItem.innerHTML = `
+                    <div class="dict-char">${char}</div>
+                    <div class="dict-pinyin">${charInfo.pinyin}</div>
+                    <div class="dict-meaning">${charInfo.meaning}</div>
+                `;
+
+                dictItem.addEventListener('click', function() {
+                    playDictionaryHanziSound(char, this);
+                });
+
+                dictionaryContent.appendChild(dictItem);
             });
         }
 
@@ -572,7 +571,8 @@
                 wordsList.innerHTML = '';
                 
                 if (task.type === 'toOriginal') {
-                    const chineseCharacters = task.words.filter(word => /[\u4e00-\u9fff]/.test(word));
+                    // Берём только те символы, которые есть в charData
+                    const chineseCharacters = task.words.filter(word => charData && charData.hasOwnProperty(word));
                     preloadAudioForCharacters(chineseCharacters);
                 }
                 
