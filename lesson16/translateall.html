@@ -5,297 +5,360 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.5;
-            color: #333;
-            padding: 10px;
-            background-color: #f5f5f5;
-            font-size: 14px;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            color: #2c3e50;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        
-        .header p {
-            font-size: 12px;
-            color: #555;
-        }
-        
-        .progress {
-            background-color: #e9f7fe;
-            padding: 8px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            text-align: center;
-            font-weight: bold;
-            color: #2980b9;
-            font-size: 13px;
-        }
-        
-        /* Сворачиваемый словарь */
-        .collapsible-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .collapsible-header {
-            background-color: #f8f9fa;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #2c3e50;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            font-size: 13px;
-        }
-        
-        .collapsible-header::after {
-            content: "+";
-            font-size: 18px;
-            color: #555;
-        }
-        
-        .collapsible-header.active::after {
-            content: "−";
-        }
-        
-        .collapsible-content {
-            padding: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background-color: #fff;
-        }
-        
-        .collapsible-content.show {
-            max-height: 400px;
-            padding: 10px;
-        }
-        
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.5;
+        color: #5a5a5a; /* Нежно-серый текст */
+        padding: 10px;
+        background-color: #fdf6f0; /* Пастельный персиковый фон */
+        font-size: 14px;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .header {
+        background-color: #fffaf7; /* Светлый персик */
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        margin-bottom: 10px;
+        text-align: center;
+        border: 1px solid #f5e1da; /* Пастельный коралл */
+    }
+
+    .header h1 {
+        color: #7c6b96; /* Пастельный фиолетовый */
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        font-size: 12px;
+        color: #a0a0a0;
+    }
+
+    .progress {
+        background-color: #e6f4f1; /* Пастельный мятный */
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: #5a9a8f; /* Приглушённый сине-зелёный */
+        font-size: 13px;
+        border: 1px solid #c2e3dd;
+    }
+
+    /* Collapsible Dictionary */
+    .collapsible-container {
+        border: 1px solid #d9d4e7; /* Пастельная лаванда */
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .collapsible-header {
+        background-color: #f8f6fb; /* Очень светлая лаванда */
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #7c6b96;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        font-size: 13px;
+        border-bottom: 1px solid #eae5f3;
+    }
+
+    .collapsible-header::after {
+        content: "+";
+        font-size: 18px;
+        color: #9b9b9b;
+    }
+
+    .collapsible-header.active::after {
+        content: "−";
+    }
+
+    .collapsible-content {
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: #fffdfb;
+    }
+
+    .collapsible-content.show {
+        max-height: 400px;
+        padding: 10px;
+    }
+
+    .dictionary-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+    }
+
+    .dict-item {
+        padding: 6px;
+        background-color: #f9f7fc; /* Очень светлая лаванда */
+        border-radius: 6px;
+        border: 1px solid #ece8f3;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-height: 55px;
+    }
+
+    .dict-item:hover {
+        background-color: #f0eaf9; /* Светло-фиолетовый ховер */
+        border-color: #d9d4e7;
+    }
+
+    .dict-char {
+        font-size: 16px;
+        font-weight: bold;
+        color: #7c6b96;
+        margin-bottom: 4px;
+    }
+
+    .dict-pinyin {
+        font-size: 11px;
+        color: #999999;
+        margin-bottom: 2px;
+    }
+
+    .dict-meaning {
+        font-size: 10px;
+        color: #777777;
+    }
+
+    .task-container {
+        background-color: #fffdfb;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        margin-bottom: 12px;
+    }
+
+    .source-text {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 12px;
+        background-color: #f8f6fb;
+        border-radius: 6px;
+        min-height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #eae5f3;
+    }
+
+    .task-type {
+        display: inline-block;
+        background-color: #e6f4f1;
+        color: #5a9a8f;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        margin-bottom: 8px;
+        border: 1px solid #c2e3dd;
+    }
+
+    .words-container, .answer-container {
+        border: 1px dashed #d9d4e7;
+        border-radius: 6px;
+        padding: 10px;
+        min-height: 50px;
+        margin-bottom: 12px;
+        background-color: #f9f7fc;
+        font-size: 13px;
+    }
+
+    .words-container {
+        background-color: #f9f7fc;
+    }
+
+    .answer-container {
+        background-color: #f0faf8; /* Мятно-кремовый */
+        border-color: #a8d8ce;
+    }
+
+    .word-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .word {
+        padding: 6px 10px;
+        background-color: #fff;
+        border: 1px solid #e0d8e9;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 13px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .word:hover {
+        background-color: #f0eaf9;
+        transform: translateY(-1px);
+        border-color: #d9d4e7;
+    }
+
+.word.selected {
+    background-color: #ffb6c1; /* Светло-розовый (пастельный) */
+    color: #ffffff;
+    border-color: #ff99ab; /* Немного более насыщенный розовый */
+    box-shadow: 0 2px 4px rgba(255, 182, 193, 0.4); /* Лёгкая тень для лучшей видимости */
+}
+
+    #resultMessage {
+        min-height: 20px;
+        text-align: center;
+        font-weight: bold;
+        margin: 10px 0;
+        padding: 8px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+
+    .success {
+        background-color: #e8f4f1;
+        color: #3c766f;
+        border: 1px solid #c2e3dd;
+    }
+
+    .info {
+        background-color: #f0f4fb;
+        color: #4a6fa5;
+        border: 1px solid #d0ddf0;
+    }
+
+    .congratulations {
+        text-align: center;
+        padding: 20px 12px;
+        background-color: #fffdfb;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid #f5e1da;
+    }
+
+    .congratulations h2 {
+        color: #c28e8e; /* Пастельный розово-коричневый */
+        margin-bottom: 12px;
+        font-size: 18px;
+    }
+
+    .congratulations p {
+        font-size: 14px;
+        margin-bottom: 15px;
+        color: #777;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #a8c8d8; /* Пастельный синевато-голубой */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 8px;
+        border: 1px solid #8fb8cc;
+    }
+
+    .btn:hover {
+        background-color: #8fb8cc;
+    }
+
+    .btn-success {
+        background-color: #c2e3dd; /* Пастельный мятный */
+        border: 1px solid #a8d8ce;
+    }
+
+    .btn-success:hover {
+        background-color: #a8d8ce;
+    }
+
+    /* Glow Animation */
+    @keyframes glow {
+        0% { box-shadow: 0 0 5px #c2e3dd, 0 0 10px #c2e3dd; }
+        50% { box-shadow: 0 0 15px #c2e3dd, 0 0 25px #c2e3dd; }
+        100% { box-shadow: 0 0 5px #c2e3dd, 0 0 10px #c2e3dd; }
+    }
+
+    .dict-item.glow {
+        animation: glow 0.3s ease-in-out;
+    }
+
+    /* Hint styles */
+    .hint-container {
+        margin-top: 10px;
+        padding: 8px;
+        background-color: #fff9e6; /* Пастельный жёлто-кремовый */
+        border: 1px solid #f5e6c8;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #9a8c5a;
+        display: none;
+    }
+    .hint-container.show {
+        display: block;
+    }
+    #hintBtn {
+        background-color: #f5e6c8;
+        color: #5a5a5a;
+        border: 1px solid #f5e6c8;
+    }
+    #hintBtn:hover:not(:disabled) {
+        background-color: #e6d4b0;
+        border-color: #d9c69e;
+    }
+    #hintBtn:disabled {
+        background-color: #c0c0c0;
+        border-color: #a0a0a0;
+        cursor: not-allowed;
+    }
+
+    /* Adaptation for very small screens */
+    @media (max-width: 360px) {
         .dictionary-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 6px;
         }
-        
         .dict-item {
-            padding: 8px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border: 1px solid #e9ecef;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .dict-item:hover {
-            background-color: #e9ecef;
-        }
-        
-        .dict-char {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 4px;
-        }
-        
-        .dict-pinyin {
-            font-size: 12px;
-            color: #6c757d;
-            margin-bottom: 2px;
-        }
-        
-        .dict-meaning {
-            font-size: 11px;
-            color: #495057;
-        }
-        
-        .task-container {
-            background-color: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 12px;
-        }
-        
-        .source-text {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 12px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            min-height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .task-type {
-            display: inline-block;
-            background-color: #e1f0fa;
-            color: #2980b9;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-bottom: 8px;
-        }
-        
-        .words-container, .answer-container {
-            border: 1px dashed #ccc;
-            border-radius: 6px;
-            padding: 10px;
+            padding: 5px;
             min-height: 50px;
-            margin-bottom: 12px;
-            background-color: #f9f9f9;
-            font-size: 13px;
         }
-        
-        .words-container {
-            background-color: #f0f8ff;
-        }
-        
-        .answer-container {
-            background-color: #f0fff0;
-            border-color: #2ecc71;
-        }
-        
-        .word-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        
-        .word {
-            padding: 6px 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .word:hover {
-            background-color: #e9ecef;
-            transform: translateY(-1px);
-        }
-        
-        .word.selected {
-            background-color: #2ecc71;
-            color: white;
-            border-color: #27ae60;
-        }
-        
-        #resultMessage {
-            min-height: 20px;
-            text-align: center;
-            font-weight: bold;
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .congratulations {
-            text-align: center;
-            padding: 20px 12px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .congratulations h2 {
-            color: #27ae60;
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-        
-        .congratulations p {
-            font-size: 14px;
-            margin-bottom: 15px;
-            color: #555;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
+        .dict-char {
             font-size: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 8px;
         }
-        
-        .btn:hover {
-            background-color: #2980b9;
+        .dict-pinyin {
+            font-size: 10px;
         }
-        
-        .btn-success {
-            background-color: #2ecc71;
+        .dict-meaning {
+            font-size: 9px;
         }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
-        /* Анимация свечения */
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #e0f7fa, 0 0 10px #e0f7fa; }
-            50% { box-shadow: 0 0 15px #e0f7fa, 0 0 25px #e0f7fa; }
-            100% { box-shadow: 0 0 5px #e0f7fa, 0 0 10px #e0f7fa; }
-        }
-        
-        .dict-item.glow {
-            animation: glow 0.3s ease-in-out;
-        }
-        
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -303,38 +366,46 @@
             <h1>Квиз по переводу</h1>
             <p>Сопоставьте текст с переводом</p>
         </div>
-        
+
         <div class="progress">
             Осталось: <span id="tasksLeft">0</span>
         </div>
-        
+
         <!-- Сворачиваемый словарь -->
         <div class="collapsible-container">
-            <div class="collapsible-header" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
+            <div class="collapsible-header" id="collapsibleHeader"> <!-- ID для JS -->
                 <span>📚 Словарь (нажмите, чтобы развернуть)</span>
             </div>
-            <div class="collapsible-content">
+            <div class="collapsible-content" id="collapsibleContent"> <!-- ID для JS -->
                 <div class="dictionary-content" id="dictionaryContent"></div>
             </div>
         </div>
-        
+
         <div id="mainContent">
             <div class="task-container">
                 <div class="task-type" id="taskType">Перевод с китайского</div>
                 <div class="source-text" id="sourceText">Загрузка...</div>
-                
+
                 <div class="words-container">
                     <div class="word-list" id="wordsList"></div>
                 </div>
-                
+
                 <div class="answer-container">
                     <div class="word-list" id="answerList"></div>
                 </div>
-                
+
+                <!-- Контейнер для подсказки -->
+                <div class="hint-container" id="hintContainer">
+                    Правильный ответ: <span id="hintText"></span>
+                </div>
+
+                <!-- Кнопка подсказки -->
+                <button id="hintBtn" class="btn">Подсмотреть правильный ответ (-7 баллов)</button>
+
                 <div id="resultMessage"></div>
             </div>
         </div>
-        
+
         <div id="congratulations" class="congratulations" style="display: none;">
             <h2>🎉 Поздравляем!</h2>
             <p>Вы прошли все задания!</p>
@@ -346,20 +417,166 @@
     <script src="segmentation.js"></script>
 
 <script>
+        // ==================== FIREBASE INIT ====================
+        // Определяем глобальные переменные для Firebase
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+        let docRef = null;
+        let getDocRef = null;
+        let updateDocRef = null;
+
+        // Функция инициализации Firebase
+        async function initFirebase() {
+            try {
+                // Динамически импортируем модули Firebase
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
+                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
+                const { getFirestore, doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+                    authDomain: "antient-9bff0.firebaseapp.com",
+                    projectId: "antient-9bff0",
+                    storageBucket: "antient-9bff0.firebasestorage.app",
+                    messagingSenderId: "311792589414",
+                    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+                    measurementId: "G-W4ZQXWRTKK"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                // Присваиваем функции Firebase глобальным переменным
+                docRef = doc;
+                getDocRef = getDoc;
+                updateDocRef = updateDoc;
+
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    if (user) {
+                        console.log('🔐 Пользователь авторизован:', user.displayName);
+                    } else {
+                        console.log('🔐 Пользователь не авторизован');
+                    }
+                });
+                console.log("Firebase инициализирован");
+            } catch (e) {
+                console.error("❌ Ошибка инициализации Firebase:", e);
+                // Даже если Firebase не инициализирован, приложение продолжит работу
+            }
+        }
+
+
+        // ==================== СИСТЕМА БАЛЛОВ ====================
+        async function updateUserPoints(pointsChange) {
+            // Если Firebase не инициализирован или пользователь не авторизован
+            if (!auth || !db || !currentUser || !docRef || !getDocRef || !updateDocRef) {
+                const message = pointsChange !== 0 ?
+                    `Изменение баллов: ${pointsChange} (не сохранено - Firebase не готов)` :
+                    '';
+                if(message) console.log(message);
+                return;
+            }
+
+            try {
+                const userRef = docRef(db, 'users', currentUser.uid);
+
+                // Получаем текущие баллы пользователя
+                const userDoc = await getDocRef(userRef);
+                let currentPoints = 0;
+
+                if (userDoc.exists()) {
+                    currentPoints = userDoc.data().points || 0;
+                }
+
+                // Обновляем баллы с учетом текущих
+                const newPoints = currentPoints + pointsChange;
+
+                await updateDocRef(userRef, {
+                    points: newPoints
+                });
+
+                currentUser.points = newPoints;
+                console.log(`[Баллы] Изменение: ${pointsChange}. Теперь: ${newPoints}`);
+                // Опционально: обновить отображение баллов на странице, если есть
+            } catch (e) {
+                console.error("❌ Не удалось сохранить баллы в Firestore:", e);
+            }
+        }
+
+
+        // ==================== ЗВУКИ ИНТЕРФЕЙСА ====================
+        const uiSounds = {
+            click: null,
+            hover: null,
+            success: null,
+            expand: null,
+            collapse: null,
+            hint: null // Новый звук для подсказки
+        };
+
+        // Функция для предзагрузки одного звука
+        function preloadSound(path) {
+            return new Promise((resolve, reject) => {
+                const audio = new Audio();
+                audio.src = path;
+                audio.preload = 'auto';
+                audio.addEventListener('canplaythrough', () => resolve(audio));
+                audio.addEventListener('error', reject);
+            });
+        }
+
+        // Функция для предзагрузки всех звуков интерфейса
+        async function preloadUISounds() {
+            try {
+                // Относительный путь от translateall.html к папке Wav
+                const basePath = '../Wav/';
+
+                // Предзагружаем звуки
+                uiSounds.click = await preloadSound(basePath + 'Click_Standard_00.wav');
+                uiSounds.hover = await preloadSound(basePath + 'Click_Soft_00.wav');
+                uiSounds.success = await preloadSound(basePath + 'Click_Electronic/Click_Electronic_05.wav');
+                uiSounds.expand = await preloadSound(basePath + 'Slide_Electronic_00.wav');
+                uiSounds.collapse = await preloadSound(basePath + 'Slide_Electronic_01.wav');
+                // Звук для подсказки
+                uiSounds.hint = await preloadSound(basePath + 'Click_Mechanical_00.wav');
+
+                console.log('Все звуки интерфейса успешно загружены');
+            } catch (error) {
+                console.warn('Не удалось загрузить некоторые звуки интерфейса:', error);
+            }
+        }
+
+        // Функция для воспроизведения звука
+        function playSound(sound) {
+            if (sound) {
+                // Создаем клон для возможности многократного воспроизведения
+                const soundClone = sound.cloneNode();
+                soundClone.volume = 0.3; // Уменьшаем громкость
+                soundClone.play().catch(e => {
+                    console.warn('Не удалось воспроизвести звук:', e);
+                });
+            }
+        }
+
+        // ==================== СУЩЕСТВУЮЩИЙ КОД ====================
+
         // Кэш для аудиофайлов
         const audioCache = new Map();
-        
+        let hintUsedForCurrentTask = false; // Флаг использования подсказки
+
         // Функция для предзагрузки аудио
         function preloadAudioForCharacters(characters) {
             characters.forEach(hanzi => {
                 // Проверяем, есть ли иероглиф в словаре charData
                 if (!charData || !charData.hasOwnProperty(hanzi)) return;
-                
+
                 const charInfo = charData[hanzi];
                 if (!charInfo || !charInfo.pinyin) return;
 
                 const pinyin = charInfo.pinyin;
-                
+
                 let cleanPinyin = pinyin
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
@@ -373,14 +590,15 @@
                 else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
 
                 const pinyinKey = cleanPinyin + tone;
+                // Исправляем URL - убираем лишние пробелы
                 const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
-                
+
                 if (!audioCache.has(hanzi)) {
                     const audio = new Audio();
                     audio.src = url;
                     audio.preload = 'auto';
                     audioCache.set(hanzi, audio);
-                    
+
                     audio.addEventListener('error', (e) => {
                         console.warn(`Не удалось предзагрузить аудио для ${hanzi}`);
                     });
@@ -392,7 +610,7 @@
         function playHanziSound(hanzi, element) {
             // Проверяем, есть ли иероглиф в словаре charData
             if (!charData || !charData.hasOwnProperty(hanzi)) return;
-            
+
             // Визуальная обратная связь - подсветка перламутром
             if (element) {
                 const originalBg = element.style.backgroundColor || (element.classList.contains('selected') ? '#2ecc71' : '#fff');
@@ -401,7 +619,7 @@
                     element.style.backgroundColor = originalBg;
                 }, 300);
             }
-            
+
             if (audioCache.has(hanzi)) {
                 const audio = audioCache.get(hanzi);
                 const audioClone = audio.cloneNode();
@@ -413,7 +631,7 @@
                 if (!charInfo || !charInfo.pinyin) return;
 
                 const pinyin = charInfo.pinyin;
-                
+
                 let cleanPinyin = pinyin
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
@@ -427,8 +645,9 @@
                 else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
 
                 const pinyinKey = cleanPinyin + tone;
+                // Исправляем URL - убираем лишние пробелы
                 const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
-                
+
                 const audio = new Audio(url);
                 audio.play().catch(e => {
                     console.warn(`Не удалось воспроизвести звук для ${hanzi}: ${url}`);
@@ -440,12 +659,12 @@
         function playDictionaryHanziSound(hanzi, element) {
             // Добавляем класс свечения
             element.classList.add('glow');
-            
+
             // Удаляем класс через 300мс
             setTimeout(() => {
                 element.classList.remove('glow');
             }, 300);
-            
+
             // Воспроизводим звук
             playHanziSound(hanzi, element);
         }
@@ -454,7 +673,7 @@
         function renderDictionary() {
             const dictionaryContent = document.getElementById('dictionaryContent');
             dictionaryContent.innerHTML = '';
-            
+
             // Извлекаем текст из всех нужных мест
             const sourceText = document.getElementById('sourceText').textContent;
             const wordsList = document.getElementById('wordsList').textContent;
@@ -478,7 +697,9 @@
                     <div class="dict-meaning">${charInfo.meaning}</div>
                 `;
 
+                // Добавляем звук при клике на элемент словаря
                 dictItem.addEventListener('click', function() {
+                    playSound(uiSounds.click); // Воспроизводим звук интерфейса
                     playDictionaryHanziSound(char, this);
                 });
 
@@ -486,26 +707,93 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() { // async
+            // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+            await initFirebase(); // Дожидаемся инициализации Firebase
+            await preloadUISounds(); // Дожидаемся загрузки звуков
+
+            // ==================== СОБЫТИЯ ИНТЕРФЕЙСА ====================
+            // Сворачиваемый словарь
+            const collapsibleHeader = document.getElementById('collapsibleHeader');
+            const collapsibleContent = document.getElementById('collapsibleContent');
+
+            collapsibleHeader.addEventListener('click', function() {
+                this.classList.toggle('active');
+                collapsibleContent.classList.toggle('show');
+
+                // Воспроизводим звук в зависимости от состояния
+                if (collapsibleContent.classList.contains('show')) {
+                    playSound(uiSounds.expand);
+                } else {
+                    playSound(uiSounds.collapse);
+                }
+            });
+
+            // Кнопка "На главную"
+            const returnBtn = document.getElementById('returnBtn');
+            returnBtn.addEventListener('click', function() {
+                playSound(uiSounds.click);
+                window.location.href = '../index.html';
+            });
+
+            // Hover эффекты для кнопок (кроме hintBtn)
+            document.querySelectorAll('.btn:not(#hintBtn), .word, .dict-item').forEach(el => {
+                el.addEventListener('mouseenter', () => playSound(uiSounds.hover));
+            });
+
+            // ==================== ЛОГИКА ПОДСКАЗКИ ====================
+            const hintBtn = document.getElementById('hintBtn');
+            const hintContainer = document.getElementById('hintContainer');
+            const hintText = document.getElementById('hintText');
+
+            hintBtn.addEventListener('click', async function() {
+                if (hintUsedForCurrentTask) return; // Защита от повторного использования
+
+                playSound(uiSounds.hint); // Воспроизводим звук подсказки
+                hintUsedForCurrentTask = true;
+                this.disabled = true;
+
+                // Снимаем баллы
+                await updateUserPoints(-7);
+
+                // Показываем подсказку
+                const currentTask = tasks[currentTaskIndex];
+                if (currentTask.type === 'toTranslation') {
+                    hintText.textContent = currentTask.correctAnswer;
+                } else {
+                    // Для перевода с русского на китайский показываем символы раздельно
+                    hintText.textContent = currentTask.correctAnswer.split('').join(' ');
+                }
+                hintContainer.classList.add('show');
+            });
+
+            // ==================== ОСНОВНАЯ ЛОГИКА ====================
             // Подготовка данных
+            // Проверка SentenceData теперь внутри DOMContentLoaded, где она гарантированно загружена
+            if (typeof SentenceData === 'undefined' || !SentenceData.sentences) {
+                console.error("SentenceData не загружена или имеет неверный формат!");
+                document.getElementById('sourceText').textContent = "Ошибка загрузки данных!";
+                return;
+            }
+
             const allOriginals = SentenceData.sentences.map(s => s.original);
             const allTranslations = SentenceData.sentences.map(s => s.translation);
-            
+
             function cleanRussian(text) {
                 return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
             }
-            
+
             const allRussianWords = [];
             allTranslations.forEach(trans => {
                 const cleaned = cleanRussian(trans);
                 allRussianWords.push(...cleaned.split(' ').filter(word => word));
             });
-            
+
             const allChineseChars = [];
             allOriginals.forEach(orig => {
                 allChineseChars.push(...orig.split(''));
             });
-            
+
             function shuffleArray(array) {
                 const arr = [...array];
                 for (let i = arr.length - 1; i > 0; i--) {
@@ -514,7 +802,7 @@
                 }
                 return arr;
             }
-            
+
             let tasks = [];
             SentenceData.sentences.forEach(sentence => {
                 tasks.push({
@@ -527,7 +815,7 @@
                     ]),
                     direction: 'с китайского на русский'
                 });
-                
+
                 tasks.push({
                     type: 'toOriginal',
                     source: sentence.translation,
@@ -539,9 +827,9 @@
                     direction: 'с русского на китайский'
                 });
             });
-            
+
             tasks = shuffleArray(tasks);
-            
+
             let currentTaskIndex = 0;
             let currentAnswer = [];
 
@@ -553,29 +841,34 @@
             const taskType = document.getElementById('taskType');
             const mainContent = document.getElementById('mainContent');
             const congratulations = document.getElementById('congratulations');
-            const returnBtn = document.getElementById('returnBtn');
-            
+            const returnBtnCongrats = document.getElementById('returnBtn'); // Уже есть, переиспользуем
+
             function renderTask() {
                 if (currentTaskIndex >= tasks.length) {
                     showCompletionScreen();
                     return;
                 }
-                
+
+                // Сброс состояния подсказки для нового задания
+                hintUsedForCurrentTask = false;
+                hintBtn.disabled = false;
+                hintContainer.classList.remove('show');
+
                 const task = tasks[currentTaskIndex];
                 taskType.textContent = `Перевод ${task.direction}`;
                 sourceText.textContent = task.source;
                 tasksLeft.textContent = tasks.length - currentTaskIndex;
-                
+
                 currentAnswer = [];
                 answerList.innerHTML = '';
                 wordsList.innerHTML = '';
-                
+
                 if (task.type === 'toOriginal') {
-                    // Берём только те символы, которые есть в charData
+                    // Предзагружаем аудио для китайских символов
                     const chineseCharacters = task.words.filter(word => charData && charData.hasOwnProperty(word));
                     preloadAudioForCharacters(chineseCharacters);
                 }
-                
+
                 task.words.forEach(word => {
                     const el = document.createElement('div');
                     el.className = 'word';
@@ -583,79 +876,96 @@
                     el.dataset.word = word;
                     wordsList.appendChild(el);
                 });
-                
+
                 document.querySelectorAll('#wordsList .word').forEach(el => {
-                    el.addEventListener('click', function() {
+                    el.addEventListener('click', async function() { // async
+                        playSound(uiSounds.click); // Воспроизводим звук интерфейса
                         const word = this.dataset.word;
-                        
+
                         // Озвучиваем с визуальной обратной связью
                         playHanziSound(word, this);
-                        
+
                         this.remove();
-                        
+
                         const answerEl = document.createElement('div');
                         answerEl.className = 'word selected';
                         answerEl.textContent = word;
                         answerEl.dataset.word = word;
                         answerList.appendChild(answerEl);
-                        
+
                         currentAnswer.push(word);
-                        checkAnswer();
+                        await checkAnswer(); // Проверяем сразу после добавления
                     });
                 });
-                
+
                 // Отображаем словарь после рендеринга задачи
                 setTimeout(renderDictionary, 100);
-                
+
                 resultMessage.className = 'info';
                 resultMessage.textContent = 'Соберите перевод. Клик по иероглифу озвучивает его.';
             }
-            
-            function checkAnswer() {
+
+            // ========== ИЗМЕНЕНА ЛОГИКА ПРОВЕРКИ ==========
+            async function checkAnswer() {
                 const task = tasks[currentTaskIndex];
                 const currentText = currentAnswer.join(' ').trim();
-                
+
                 if (task.type === 'toTranslation') {
-                    if (currentText === task.correctAnswer) showSuccess();
-                } else {
-                    if (currentAnswer.join('') === task.correctAnswer) showSuccess();
+                    if (currentText === task.correctAnswer) {
+                        playSound(uiSounds.success); // Воспроизводим звук успеха
+                        await updateUserPoints(5); // Начисляем 5 баллов
+                        showSuccess();
+                    }
+                } else { 
+                    const currentTextOriginal = currentAnswer.join(''); // Для китайского склеиваем без пробелов
+                    if (currentTextOriginal === task.correctAnswer) {
+                        playSound(uiSounds.success); // Воспроизводим звук успеха
+                        await updateUserPoints(5); // Начисляем 5 баллов
+                        showSuccess();
+                    }
+                    // Аналогично для перевода с русского на китайский
+                    // else if (currentAnswer.length >= task.correctAnswer.length) {
+                    //    // терпим - Никакой реакции
+                    // }
                 }
             }
-            
+
             function showSuccess() {
                 resultMessage.className = 'success';
-                resultMessage.textContent = '✅ Верно! Следующее задание...';
-                
+                resultMessage.textContent = '✅ Верно! +5 баллов. Следующее задание...';
+
                 setTimeout(() => {
                     currentTaskIndex++;
                     renderTask();
                 }, 1200);
             }
-            
-            answerList.addEventListener('click', function(e) {
+
+            answerList.addEventListener('click', async function(e) { // async
                 if (e.target.classList.contains('word')) {
+                    playSound(uiSounds.click); // Воспроизводим звук интерфейса
                     const word = e.target.dataset.word;
-                    
+
                     // Озвучиваем с визуальной обратной связью
                     playHanziSound(word, e.target);
-                    
+
                     e.target.remove();
-                    
+
                     const wordEl = document.createElement('div');
                     wordEl.className = 'word';
                     wordEl.textContent = word;
                     wordEl.dataset.word = word;
                     wordsList.appendChild(wordEl);
-                    
+
                     const index = currentAnswer.indexOf(word);
                     if (index !== -1) currentAnswer.splice(index, 1);
-                    
-                    wordEl.addEventListener('click', function() {
+
+                    wordEl.addEventListener('click', async function() { // async
+                        playSound(uiSounds.click); // Воспроизводим звук интерфейса
                         const w = this.dataset.word;
-                        
+
                         // Озвучиваем с визуальной обратной связью
                         playHanziSound(w, this);
-                        
+
                         this.remove();
                         const aEl = document.createElement('div');
                         aEl.className = 'word selected';
@@ -663,22 +973,18 @@
                         aEl.dataset.word = w;
                         answerList.appendChild(aEl);
                         currentAnswer.push(w);
-                        checkAnswer();
+                        await checkAnswer(); // Проверяем после добавления
                     });
-                    
-                    checkAnswer();
+
                 }
             });
-            
+
             function showCompletionScreen() {
                 mainContent.style.display = 'none';
                 congratulations.style.display = 'block';
             }
-            
-            returnBtn.addEventListener('click', () => {
-                window.location.href = '../index.html';
-            });
-            
+
+            // Инициализируем первую задачу
             renderTask();
         });
     </script>
