@@ -32,8 +32,61 @@
 
     <script>
         // === НАСТРОЙКА УРОКА ===
-        const LESSON = 7;
+        const LESSON = 1;
         
+        // === СИСТЕМА ЗВУКОВ ИНТЕРФЕЙСА ===
+        const uiSounds = {
+            click: null,
+            hover: null,
+            success: null,
+            error: null,
+            next: null,
+            complete: null
+        };
+
+        // Функция для предзагрузки одного звука
+        function preloadSound(path) {
+            return new Promise((resolve, reject) => {
+                const audio = new Audio();
+                audio.src = path;
+                audio.preload = 'auto';
+                audio.addEventListener('canplaythrough', () => resolve(audio));
+                audio.addEventListener('error', reject);
+            });
+        }
+
+        // Функция для предзагрузки всех звуков интерфейса
+        async function preloadUISounds() {
+            try {
+                // Относительный путь к папке Wav
+                const basePath = '../Wav/';
+
+                // Предзагружаем звуки
+                uiSounds.click = await preloadSound(basePath + 'Click_Standard_00.wav');
+                uiSounds.hover = await preloadSound(basePath + 'Click_Soft_00.wav');
+                uiSounds.success = await preloadSound(basePath + 'Click_Electronic/Click_Electronic_05.wav');
+                uiSounds.error = await preloadSound(basePath + 'Click_Heavy_00.wav');
+                uiSounds.next = await preloadSound(basePath + 'Slide_Sharp_00.wav');
+                uiSounds.complete = await preloadSound(basePath + 'Click_Mechanical_01.wav');
+
+                console.log('Все звуки интерфейса успешно загружены');
+            } catch (error) {
+                console.warn('Не удалось загрузить некоторые звуки интерфейса:', error);
+            }
+        }
+
+        // Функция для воспроизведения звука
+        function playSound(sound, volume = 0.3) {
+            if (sound) {
+                // Создаем клон для возможности многократного воспроизведения
+                const soundClone = sound.cloneNode();
+                soundClone.volume = volume;
+                soundClone.play().catch(e => {
+                    console.warn('Не удалось воспроизвести звук:', e);
+                });
+            }
+        }
+
         // === FIREBASE INIT ===
         let db = null;
         let auth = null;
@@ -45,10 +98,10 @@
         async function initFirebase() {
             try {
                 const [{ initializeApp }, { getAuth, onAuthStateChanged }, { getFirestore }, { updateDoc, doc, getDoc }] = await Promise.all([
-                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js'),
-                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js'),
-                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js'),
-                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js')
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  '),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  '),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  '),
+                    import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ')
                 ]);
 
                 const firebaseConfig = {
@@ -95,7 +148,7 @@
             else if (data.pinyin.includes('à')) tone = '4';
 
             const pinyinKey = cleanPinyin + tone;
-            const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+            const url = `https://data.dong-chinese.com/pinyin/b/  ${pinyinKey}.mp3`;
             const audio = new Audio(url);
 
             audio.play().catch(e => {
@@ -152,6 +205,7 @@
         // Инициализация
         document.addEventListener('DOMContentLoaded', async function() {
             await initFirebase();
+            await preloadUISounds(); // Дожидаемся загрузки звуков
             
             // Получаем все иероглифы урока
             allLessonChars = Object.keys(charData).filter(char => 
@@ -170,7 +224,17 @@
             
             loadTask();
             
-            document.getElementById('nextBtn').addEventListener('click', loadTask);
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                playSound(uiSounds.next); // Звук при переходе к следующему заданию
+                loadTask();
+            });
+            
+            // Добавляем hover-эффекты для кнопок
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    playSound(uiSounds.hover); // Звук при наведении на кнопку
+                });
+            });
         });
         
         // Загрузка задания
@@ -185,6 +249,7 @@
             
             if (remainingPinyin.length === 0 && remainingMeaning.length === 0) {
                 // Все иероглифы полностью изучены
+                playSound(uiSounds.complete); // Звук завершения урока
                 document.getElementById('status').textContent = 'Все иероглифы урока полностью изучены!';
                 document.getElementById('leftColumn').innerHTML = '';
                 document.getElementById('rightColumn').innerHTML = '';
@@ -260,11 +325,16 @@
                 item.dataset.char = charData.char;
                 item.dataset.matched = 'false';
                 item.addEventListener('click', () => {
+                    playSound(uiSounds.click); // Звук при клике на элемент
                     selectItem(item, 'left');
                     // Озвучка при клике на иероглиф работает ТОЛЬКО для заданий на перевод
                     if (currentTaskType === 'meaning') {
                         playHanziSound(charData.char);
                     }
+                });
+                // Добавляем hover-эффект
+                item.addEventListener('mouseenter', () => {
+                    playSound(uiSounds.hover); // Звук при наведении на элемент
                 });
                 leftColumn.appendChild(item);
                 leftItems.push(item);
@@ -290,7 +360,14 @@
                 
                 item.dataset.char = charData.char;
                 item.dataset.matched = 'false';
-                item.addEventListener('click', () => selectItem(item, 'right'));
+                item.addEventListener('click', () => {
+                    playSound(uiSounds.click); // Звук при клике на элемент
+                    selectItem(item, 'right');
+                });
+                // Добавляем hover-эффект
+                item.addEventListener('mouseenter', () => {
+                    playSound(uiSounds.hover); // Звук при наведении на элемент
+                });
                 rightColumn.appendChild(item);
                 rightItems.push(item);
             });
@@ -335,6 +412,7 @@
             }
             
             if (isMatch) {
+                playSound(uiSounds.success); // Звук успеха
                 showFeedback(true);
                 updateUserPoints(1); // +1 балл за правильный ответ
                 
@@ -366,6 +444,7 @@
                     document.getElementById('nextBtn').disabled = false;
                 }
             } else {
+                playSound(uiSounds.error); // Звук ошибки
                 showFeedback(false);
                 updateUserPoints(-1); // -1 балл за ошибку
                 

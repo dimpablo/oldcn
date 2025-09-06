@@ -408,10 +408,69 @@
     </div>
 
     <script type="module">
+      // === 🔊 СИСТЕМА ЗВУКОВ ИНТЕРФЕЙСА ===
+      const uiSounds = {
+        click: null,
+        hover: null,
+        success: null,
+        error: null,
+        reset: null,
+        help: null,
+        check: null,
+        modalOpen: null,
+        modalClose: null
+      };
+
+      // Функция для предзагрузки одного звука
+      function preloadSound(path) {
+        return new Promise((resolve, reject) => {
+          const audio = new Audio();
+          audio.src = path;
+          audio.preload = 'auto';
+          audio.addEventListener('canplaythrough', () => resolve(audio));
+          audio.addEventListener('error', reject);
+        });
+      }
+
+      // Функция для предзагрузки всех звуков интерфейса
+      async function preloadUISounds() {
+        try {
+          // Относительный путь к папке Wav (такой же как в translateall.html)
+          const basePath = '../Wav/';
+
+          // Предзагружаем звуки
+          uiSounds.click = await preloadSound(basePath + 'Click_Standard_00.wav');
+          uiSounds.hover = await preloadSound(basePath + 'Click_Soft_00.wav');
+          uiSounds.success = await preloadSound(basePath + 'Click_Electronic/Click_Electronic_05.wav');
+          uiSounds.error = await preloadSound(basePath + 'Click_Heavy_00.wav');
+          uiSounds.reset = await preloadSound(basePath + 'Slide_Electronic_01.wav');
+          uiSounds.help = await preloadSound(basePath + 'Mouth/Mouth_Special_00.wav');
+          uiSounds.check = await preloadSound(basePath + 'Click_Sharp_00.wav');
+          uiSounds.modalOpen = await preloadSound(basePath + 'Slide_Sharp_00.wav');
+          uiSounds.modalClose = await preloadSound(basePath + 'Slide_Sharp_01.wav');
+
+          console.log('Все звуки интерфейса успешно загружены');
+        } catch (error) {
+          console.warn('Не удалось загрузить некоторые звуки интерфейса:', error);
+        }
+      }
+
+      // Функция для воспроизведения звука
+      function playSound(sound, volume = 0.3) {
+        if (sound) {
+          // Создаем клон для возможности многократного воспроизведения
+          const soundClone = sound.cloneNode();
+          soundClone.volume = volume;
+          soundClone.play().catch(e => {
+            console.warn('Не удалось воспроизвести звук:', e);
+          });
+        }
+      }
+
       // === 🔥 ПОДКЛЮЧЕНИЕ К FIREBASE ===
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-      import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-      import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  ';
+      import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  ';
+      import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ';
 
       const firebaseConfig = {
         apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
@@ -448,7 +507,10 @@
       }
 
       // === ✅ ГЛАВНЫЙ КОД КВИЗА (ОБНОВЛЁННЫЙ) ===
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', async function() { // async
+        // === 🔊 ИНИЦИАЛИЗАЦИЯ ЗВУКОВ ===
+        await preloadUISounds(); // Дожидаемся загрузки звуков
+
         document.getElementById('sentenceCount').textContent = SentenceData.sentences.length;
 
         const table = document.getElementById('textTable');
@@ -477,6 +539,7 @@
         }
 
         colorInput.addEventListener('input', function(e) {
+          playSound(uiSounds.click); // Воспроизводим звук при изменении цвета
           currentColor = e.target.value;
           updateColorDisplay();
         });
@@ -506,6 +569,7 @@
         }
 
         document.getElementById('randomColorBtn').addEventListener('click', function() {
+          playSound(uiSounds.click); // Воспроизводим звук при нажатии
           const randomHsl = getRandomPastelColor();
           const randomHex = hslToHex(randomHsl);
           colorInput.value = randomHex;
@@ -535,6 +599,7 @@
         }
 
         helpBtn.addEventListener('click', function () {
+          playSound(uiSounds.help); // Воспроизводим звук при активации справки
           helpMode = !helpMode;
           updateHelpButton();
           if (helpMode) {
@@ -558,6 +623,7 @@
 
           // Приоритет 2: Режим справки активен
           if (helpMode) {
+            playSound(uiSounds.click); // Воспроизводим звук при клике в режиме справки
             const char = target.textContent.trim();
             if (!char || /[.,?!;:\s]/.test(char)) {
               document.getElementById('result').className = 'info';
@@ -572,6 +638,7 @@
             modalLesson.textContent = entry?.lesson || '—';
             
             helpModal.classList.add('show');
+            playSound(uiSounds.modalOpen); // Воспроизводим звук открытия модального окна
             table.style.pointerEvents = 'none'; // Блокируем клики
             
             helpMode = false;
@@ -586,6 +653,7 @@
           }
 
           // Приоритет 4: Обычный режим закрашивания
+          playSound(uiSounds.click); // Воспроизводим звук при закрашивании ячейки
           target.style.backgroundColor = currentColor;
           target.setAttribute('data-color', currentColor);
           updateColorLegend();
@@ -593,12 +661,14 @@
 
         // Закрытие модалки
         closeModal.addEventListener('click', function() {
+          playSound(uiSounds.modalClose); // Воспроизводим звук закрытия модального окна
           helpModal.classList.remove('show');
           table.style.pointerEvents = 'auto';
         });
 
         helpModal.addEventListener('click', function(e) {
           if (e.target === helpModal) {
+            playSound(uiSounds.modalClose); // Воспроизводим звук закрытия модального окна
             helpModal.classList.remove('show');
             table.style.pointerEvents = 'auto';
           }
@@ -606,6 +676,7 @@
 
         document.addEventListener('keydown', function(e) {
           if (e.key === 'Escape' && helpModal.classList.contains('show')) {
+            playSound(uiSounds.modalClose); // Воспроизводим звук закрытия модального окна
             helpModal.classList.remove('show');
             table.style.pointerEvents = 'auto';
           }
@@ -616,6 +687,7 @@
           document.querySelectorAll('.legend-color').forEach(box => {
             box.style.cursor = 'pointer';
             box.addEventListener('click', function(e) {
+              playSound(uiSounds.click); // Воспроизводим звук при выборе цвета из легенды
               e.stopPropagation();
               const color = this.style.backgroundColor;
               if (!color || color === 'transparent') return;
@@ -682,6 +754,7 @@
 
         // === 🔧 Кнопка "Сбросить" ===
         document.getElementById('resetBtn').addEventListener('click', function() {
+          playSound(uiSounds.reset); // Воспроизводим звук сброса
           helpMode = false;
           updateHelpButton();
           document.getElementById('result').textContent = '';
@@ -697,6 +770,7 @@
 
         // === ✅ УЛУЧШЕННАЯ ПРОВЕРКА СЕГМЕНТАЦИИ ===
         document.getElementById('checkBtn').addEventListener('click', function() {
+          playSound(uiSounds.check); // Воспроизводим звук проверки
           helpMode = false;
           updateHelpButton();
           document.getElementById('result').textContent = '';
@@ -826,6 +900,7 @@
           if (errorCells.size > 0) {
             result.className = 'error';
             result.innerHTML = '❌ Проверьте границы предложений.';
+            playSound(uiSounds.error); // Воспроизводим звук ошибки
             updatePoints(-2, 'неверные границы');
             
             // Мерцание ТОЛЬКО на конфликтующих ячейках (и только если они закрашены)
@@ -843,8 +918,16 @@
           else {
             result.className = 'success';
             result.innerHTML = '✅ Все предложения выделены правильно!';
+            playSound(uiSounds.success); // Воспроизводим звук успеха
             updatePoints(5, 'успешная сегментация');
           }
+        });
+
+        // === 🔊 Добавляем hover-эффекты для кнопок ===
+        document.querySelectorAll('button:not(#closeModal)').forEach(button => {
+          button.addEventListener('mouseenter', () => {
+            playSound(uiSounds.hover); // Воспроизводим звук при наведении
+          });
         });
 
         // Инициализация легенды
