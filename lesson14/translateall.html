@@ -57,7 +57,7 @@
             font-size: 13px;
         }
         
-        /* Сворачиваемые инструкции */
+        /* Сворачиваемый словарь */
         .collapsible-container {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -102,13 +102,41 @@
             padding: 10px;
         }
         
-        .collapsible-content ul {
-            padding-left: 15px;
-            margin-top: 5px;
+        .dictionary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
         }
         
-        .collapsible-content li {
-            margin-bottom: 5px;
+        .dict-item {
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dict-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        .dict-char {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .dict-pinyin {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 2px;
+        }
+        
+        .dict-meaning {
+            font-size: 11px;
+            color: #495057;
         }
         
         .task-container {
@@ -255,6 +283,17 @@
         .btn-success:hover {
             background-color: #27ae60;
         }
+        
+        /* Анимация свечения */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #e0f7fa, 0 0 10px #e0f7fa; }
+            50% { box-shadow: 0 0 15px #e0f7fa, 0 0 25px #e0f7fa; }
+            100% { box-shadow: 0 0 5px #e0f7fa, 0 0 10px #e0f7fa; }
+        }
+        
+        .dict-item.glow {
+            animation: glow 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -268,19 +307,13 @@
             Осталось: <span id="tasksLeft">0</span>
         </div>
         
-        <!-- Сворачиваемые инструкции -->
+        <!-- Сворачиваемый словарь -->
         <div class="collapsible-container">
             <div class="collapsible-header" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
-                <span>ℹ️ Инструкция (нажмите, чтобы развернуть)</span>
+                <span>📚 Словарь (нажмите, чтобы развернуть)</span>
             </div>
             <div class="collapsible-content">
-                <ul>
-                    <li>Нажмите на слово, чтобы добавить его в ответ</li>
-                    <li>Нажмите на слово в ответе, чтобы вернуть его</li>
-                    <li>Нажмите и удерживайте иероглиф, чтобы услышать его произношение</li>
-                    <li>Соберите правильный перевод</li>
-                    <li>Знаки препинания не важны</li>
-                </ul>
+                <div class="dictionary-content" id="dictionaryContent"></div>
             </div>
         </div>
         
@@ -351,8 +384,6 @@
                     audio.addEventListener('error', (e) => {
                         console.warn(`Не удалось предзагрузить аудио для ${hanzi}`);
                     });
-                    
-                    audio.src = url;
                 }
             });
         }
@@ -362,15 +393,12 @@
             const isChineseChar = /[\u4e00-\u9fff]/.test(hanzi);
             if (!isChineseChar) return;
             
-            // Визуальная обратная связь - подсветка желтым
+            // Визуальная обратная связь - подсветка перламутром
             if (element) {
-                element.style.backgroundColor = '#ffeb3b';
+                const originalBg = element.style.backgroundColor || (element.classList.contains('selected') ? '#2ecc71' : '#fff');
+                element.style.backgroundColor = '#e0f7fa';
                 setTimeout(() => {
-                    if (element.classList.contains('selected')) {
-                        element.style.backgroundColor = '#2ecc71';
-                    } else {
-                        element.style.backgroundColor = '#fff';
-                    }
+                    element.style.backgroundColor = originalBg;
                 }, 300);
             }
             
@@ -405,9 +433,58 @@
                 
                 const audio = new Audio(url);
                 audio.play().catch(e => {
-                    console.warn(`Не удалось воспроизвести звук для ${hanzi}`);
+                    console.warn(`Не удалось воспроизвести звук для ${hanzi}: ${url}`);
                 });
             }
+        }
+
+        // Функция для озвучивания иероглифа из словаря с эффектом свечения
+        function playDictionaryHanziSound(hanzi, element) {
+            // Добавляем класс свечения
+            element.classList.add('glow');
+            
+            // Удаляем класс через 300мс
+            setTimeout(() => {
+                element.classList.remove('glow');
+            }, 300);
+            
+            // Воспроизводим звук
+            playHanziSound(hanzi, element);
+        }
+
+        // Функция для отображения словаря
+        function renderDictionary() {
+            const dictionaryContent = document.getElementById('dictionaryContent');
+            dictionaryContent.innerHTML = '';
+            
+            // Извлекаем все китайские иероглифы из контейнера
+            const taskContainer = document.querySelector('.task-container');
+            const containerText = taskContainer.innerText || taskContainer.textContent;
+            const chineseChars = containerText.match(/[\u4e00-\u9fff]/g) || [];
+            
+            // Получаем уникальные иероглифы
+            const uniqueChars = [...new Set(chineseChars)];
+            
+            uniqueChars.forEach(char => {
+                if (typeof charData !== 'undefined' && charData[char]) {
+                    const charInfo = charData[char];
+                    const dictItem = document.createElement('div');
+                    dictItem.className = 'dict-item';
+                    dictItem.dataset.hanzi = char;
+                    dictItem.innerHTML = `
+                        <div class="dict-char">${char}</div>
+                        <div class="dict-pinyin">${charInfo.pinyin}</div>
+                        <div class="dict-meaning">${charInfo.meaning}</div>
+                    `;
+                    
+                    // Добавляем обработчик клика
+                    dictItem.addEventListener('click', function() {
+                        playDictionaryHanziSound(char, this);
+                    });
+                    
+                    dictionaryContent.appendChild(dictItem);
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -526,6 +603,9 @@
                         checkAnswer();
                     });
                 });
+                
+                // Отображаем словарь после рендеринга задачи
+                setTimeout(renderDictionary, 100);
                 
                 resultMessage.className = 'info';
                 resultMessage.textContent = 'Соберите перевод. Клик по иероглифу озвучивает его.';
