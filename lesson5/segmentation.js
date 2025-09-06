@@ -1,6 +1,6 @@
 const SentenceData = {
   "lesson": 5,
-  "text": "辛卯卜㱿貞帝其熯我\n貞帝不我熯戊申卜爭貞帝其降我熯\n貞帝不我降熯甲辰卜爭貞我伐馬方帝受我佑\n貞勿伐工方帝不我其受佑貞洹其作茲邑禍\n洹弗作茲邑禥\n貞帝其作王禍余受馬方佑乙亥卜㱿貞王曰侯虎\n余其得汝使余不其合以乃使\n甲辰卜王貞羌弗烖朕使其烖余不余烖",
+  "text": "辛卯卜㱿貞帝其熯我\n貞帝不我熯戊申卜爭貞帝其降我熯\n貞帝不我降熯甲辰卜爭貞我伐馬方帝受我佑\n貞勿伐工方帝不我其受佑貞洹其作茲邑禍\n洹弗作茲邑禍\n貞帝其作王禍余受馬方佑乙亥卜㱿貞王曰侯虎\n余其得汝使余不其合以乃使\n甲辰卜王貞羌弗烖朕使其烖余不余烖",
   "sentences": [
     {
       "number": 1,
@@ -52,19 +52,19 @@ const SentenceData = {
     },
     {
       "number": 9,
-      "original": "貞洹其作茲邑禥",
+      "original": "貞洹其作茲邑禍",
       "transliteration": "zhēn huán qí zuò zī yì huò",
       "translation": "Вопрос: «Река Хуань причинит вред этому городу?»"
     },
     {
       "number": 10,
-      "original": "洹弗作茲邑禥",
+      "original": "洹弗作茲邑禍",
       "transliteration": "huán fú zuò zī yì huò",
       "translation": "Река Хуань не причинит вреда этому городу?"
     },
     {
       "number": 11,
-      "original": "貞帝其作王禥",
+      "original": "貞帝其作王禍",
       "transliteration": "zhēn dì qí zuò wáng huò",
       "translation": "Вопрос: «Верховное божество причинит вред вану?»"
     },
@@ -94,20 +94,20 @@ const SentenceData = {
     },
     {
       "number": 16,
-      "original": "甲辰卜王貞羌弗烖朕",
-      "transliteration": "jiǎ chén bǔ wáng zhēn qiāng fú zāi zhèn",
+      "original": "甲辰卜王貞羌弗烖朕使",
+      "transliteration": "jiǎ chén bǔ wáng zhēn qiāng fú zāi zhèn shǐ",
       "translation": "Цяны не нанесут поражения моему послу?"
     },
     {
       "number": 17,
-      "original": "使其烖",
-      "transliteration": "shǐ qí zāi",
+      "original": "其烖余",
+      "transliteration": "qí zāi yú",
       "translation": "Он подведет меня?"
     },
     {
       "number": 18,
-      "original": "余不余烖",
-      "transliteration": "yú bù yú zāi",
+      "original": "不余烖",
+      "transliteration": "bù yú zāi",
       "translation": "Не подведет меня?"
     }
   ]
