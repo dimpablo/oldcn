@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+    <meta charset="utf-8"/>
+    <title>Урок 23 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+
+    <style>
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #1a5fb4;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+
+    <style>
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 300px;
+            background: #1a4f72;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            text-align: left;
+            white-space: normal;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+        }
+        td:hover .char-tooltip {
+            display: block;
+        }
+        .lesson-badge {
+            display: inline-block;
+            background: #e6f2ff;
+            color: #1a4f72;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        /* Стили для правой фигурной скобки, объединяющей строки справа */
+        .math-example {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+        }
+        .math-content {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            margin-right: 12px; /* Отступ между текстом и скобкой */
+        }
+        .math-content .example {
+            margin: 2px 0;
+            white-space: pre; /* Сохраняем пробелы */
+        }
+        .math-brace {
+            font-size: 2em; /* Большая скобка */
+            line-height: 0.7;
+            color: #1a4f72;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 0;
+        }
+        .math-caption {
+            margin-left: 15px;
+            font-style: italic;
+            color: #1a4f72;
+        }
+        .image-container-inline {
+            float: right;
+            margin: 10px 0 10px 15px;
+            text-align: center;
+            max-width: 40%;
+        }
+        .lesson-image-inline {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .image-caption-inline {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+
+<h1>УРОК 23</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+    <h2>Текст урока</h2>
+    <table class="oracle-table" id="oracleTable"></table>
+</div>
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+    <label class="toggle-switch">
+        <input id="fontToggle" type="checkbox"/>
+        <span class="slider"></span>
+    </label>
+    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+        Обычный вид
+    </span>
+</div>
+
+<script>
+    // Данные текста урока 23 (по строкам из предоставленного массива)
+    const lessonText = [
+        "唯王五月辰在戊寅公曰汝夷余經乃",
+        "先祖余既專乃心汝小心畏忌汝不墜",
+        "夙夜官執而政事余弘厭乃心余命汝",
+        "政于朕三軍㟶㟶成湯有嚴在帝所專",
+        "受天命伐夏祀遹厥靈師伊小臣唯輔",
+        "咸有九州處禹之堵丕顯穆公之孫其",
+        "配襄公之出而成公之女生叔夷是辟",
+        "于齊侯之所是小心恭忌靈力若虎勤",
+        "勞其政事有供于宣武靈公之所宣武",
+        "靈公賜夷吉金鑄鎬玄鏐鋁夷用作鑄",
+        "其寶鐘用享于其皇祖皇妣皇母皇考"
+    ];
+
+    // Функция для создания таблицы
+    function createOracleTable() {
+        const table = document.getElementById('oracleTable');
+        table.innerHTML = ''; // Очистка таблицы перед заполнением
+        // Создаём строку с номерами колонок
+        const headerRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'line-num';
+        headerRow.appendChild(emptyCell);
+        for (let i = 1; i <= 15; i++) {
+            const th = document.createElement('td');
+            th.className = 'col-num';
+            th.textContent = i;
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Создаём строки с текстом
+        for (let i = 0; i < lessonText.length; i++) {
+            const row = document.createElement('tr');
+            const lineNumCell = document.createElement('td');
+            lineNumCell.className = 'line-num';
+            lineNumCell.textContent = i + 1;
+            row.appendChild(lineNumCell);
+
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 15; j++) {
+                const td = document.createElement('td');
+                if (j < chars.length) {
+                    const char = chars[j];
+                    td.textContent = char;
+                    if (charData[char]) {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'char-tooltip';
+                        tooltip.innerHTML = `
+                            <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                            ${charData[char].meaning}<br>
+                            <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                        `;
+                        td.appendChild(tooltip);
+                    }
+                }
+                row.appendChild(td);
+            }
+            table.appendChild(row);
+        }
+    }
+
+    // Инициализация таблицы при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>23.1. Личное местоимение 而 ér</h3>
+    <p class="original">
+        Изменения в системе личных местоимений, происходившие в поздний доклассический период, затронули и местоимения 2-го лица. Здесь на смену 乃 năi, которое употреблялось в функции определения к имени, приходит новое местоимение 而 ér. Это изменение не было внезапным, поэтому в текстах VI в. до н. э. мы наблюдаем сосуществование двух явлений, одно из которых уже фактически отжило свой век, другое же только входит в силу.
+        <br><br>
+        В данном тексте мы, в частности, встретим и 乃 năi, и 而 ér в одном и том же значении и даже в одном и том же отрывке: <span class="example">官 執 而 政 事，余 弘 厭 乃 心 guān zhí ér zhèng shì, yú hóng yàn năi xīn</span> «Занимайся своими делами, связанными с управлением; я в высшей степени удовлетворен твоими помыслами».
+    </p>
+
+    <h3>23.2. Дистрибуция элементов приложения</h3>
+    <p class="original">
+        В архаическом и раннем доклассическом языке личное имя всегда следует за обозначением статуса лица: <span class="example">膳 夫 克 shàn fū kè</span> «стряпчий Кэ»; <span class="example">史 毛 shǐ máo</span> «историограф Мао»; <span class="example">作 册 大 zuò cè dà</span> «архивариус Да».
+        <br><br>
+        Однако начиная с позднего доклассического периода эта дистрибуция меняется. Теперь имя ставится на первом месте, а слово, обозначающее статус, — на втором. Пример этого находим в тексте урока 23: <span class="example">伊 小 臣 yī xiăo chén</span> «сяочэнь И» (ср. в архаическом языке: <span class="example">小 臣 葉 xiăo chén yè</span> «сяочэнь Е»).
+        <br><br>
+        Дистрибуция элементов приложения, появляющаяся в VI в. до н. э., характерна для всей последующей истории китайского языка, вплоть до современного.
+    </p>
+
+    <h3>23.3. Служебное слово 是 shì</h3>
+    <p class="original">
+        Служебное слово 是 shì, отмеченное нами в эмфатической конструкции (21.3), употребляется и в ином значении. В позднем доклассическом языке оно близко к наречию 其 qí архаического периода: это слово фактически лишь указывает, что за ним следует сказуемое. Такое употребление служебного слова 是 shì характерно исключительно для позднего доклассического языка; в классическое время оно изменяет свое значение.
+    </p>
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА 23</h2>
+<div class="char-list"></div>
+
+<script>
+// Укажи номер урока здесь
+const LESSON = 23;
+
+// Находим все иероглифы этого урока из charData
+const lessonChars = Object.entries(charData)
+  .filter(([char, data]) => data.lesson === LESSON)
+  .sort(([charA, dataA], [charB, dataB]) => {
+    // Сортировка по пиньиню (опционально)
+    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+  });
+
+// Получаем контейнер
+const charList = document.querySelector('.char-list');
+
+// Очищаем (на всякий случай)
+charList.innerHTML = '';
+
+// Генерируем элементы
+lessonChars.forEach(([char, data]) => {
+  const item = document.createElement('div');
+  item.className = 'char-item';
+
+  item.innerHTML = `
+    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+    <div class="char-tooltip">${data.meaning}</div>
+  `;
+
+  charList.appendChild(item);
+});
+</script>
+
+<div class="lexicon">
+    <h2>СЛОВОСОЧЕТАНИЯ</h2>
+    <p class="original">
+        <span class="example">成 湯 chéng tāng</span> «Чэн Тан»<br>
+        <span class="example">專 受 fù shòu</span> «получать»<br>
+        <span class="example">九 州 jiǔ zhōu</span> «девять областей»<br>
+        <span class="example">穆 公 mù gōng</span> «Му-гун»<br>
+        <span class="example">襄 公 xiāng gōng</span> «Сян-гун»<br>
+        <span class="example">成 公 chéng gōng</span> «Чэн-гун»<br>
+        <span class="example">靈 公 líng gōng</span> «Лин-гун»<br>
+        <span class="example">叔 夷 shū yí</span> «Шу-и» (имя собств.)
+    </p>
+</div>
+
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>23.А. Великий Юй</h3>
+    <p class="original">
+        Согласно легенде, некогда Поднебесная страдала от потопа. Многие герои пытались спасти ее, но их усилия были тщетными. Тогда за дело взялся некий Юй. Он углубил русла рек и прорыл ущелья на месте гор. Вода ушла, и люди были спасены. Юй стал правителем Поднебесной, а после его смерти ему наследовал его сын. Так возникла династия Ся.
+        <!-- ИЗОБРАЖЕНИЕ ВСТАВЛЕНО ВНУТРЬ ПАРАГРАФА -->
+        <div class="image-container-inline">
+            <img src="img/lesson23_yu.jpg" alt="Великий Юй" class="lesson-image-inline">
+            <div class="image-caption-inline">Великий Юй</div>
+        </div>
+        <div class="clearfix"></div> <!-- Очищаем float -->
+    </p>
+
+    <h3>23.Б. Чэн Тан</h3>
+    <p class="original">
+        Последний правитель династии Ся, Цзе, был жестоким человеком, и Небо отвернулось от него. Предводитель племени Инь, которого звали Тан, оказался новым избранником Неба. В соответствии с его повелением Тан объединил вокруг себя вождей других племен и пошел походом на столицу Ся. Одержав победу, Тан занял место Сына Неба. Поэтому он получил титул Чэн Тан, что означает «Тан Завершитель».
+        <br><br>
+        Так традиционная историография рисует обстоятельства, при которых иньцы создали в бассейне Хуанхэ свою коалицию.
+    </p>
+
+    <h3>23.В. Мудрый И Инь</h3>
+    <p class="original">
+        Преуспеть в исполнении миссии Неба Тану удалось в значительной мере благодаря тому, что он имел мудрого советника по имени И Инь. По преданию, он призывал Чэн Тана прислушиваться к голосу народа и относиться к подданным по-отечески. И Инь принимал деятельное участие в покорении Ся. После смерти Чэн Тана И Инь был советником его преемников. В надписи «Шу-и чжун» И Инь фигурирует как «сяочэнь И».
+    </p>
+
+    <h3>23.Г. Царство Ци</h3>
+    <p class="original">
+        Наследственное владение Ци было создано вскоре после чжоуского завоевания. Территория северо-западной части полуострова Шаньдун была пожалована одному из полководцев, участвовавших в походе на Инь, — Люй Шану. Его потомок в одиннадцатом поколении Хуань-гун (685–642 до н. э.) прославился своей успешной борьбой против северных кочевых племен и был признан «гегемоном» среди всех чжухоу. Правнук Хуаньгуна, Лин-гун, правил царством Ци с 581 по 554 г. до н. э. Этот Лин-гун и упоминается в надписи на колоколе «Шу-и чжун».
+    </p>
+
+    <h3>23.Д. Шу-и</h3>
+    <p class="original">
+        Главное действующее лицо данной надписи — Шу-и. Его матерью была «дочь Чэн-гуна», а отцом — «внук Му-гуна». Но в царстве Ци, где раскрылись таланты Шу-и, не было правителя с титулом Му-гун. Изучение генеалогий правителей древнекитайских царств VII–VI вв. до н. э. позволяет предположить, что отец Шу-и был потомком правителя царства Сун. Этим объясняется, между прочим, тот факт, что в своей надписи Шу-и уделяет столь значительное внимание заслугам Чэн Тана, основателя иньской династии: царство Сун было наследственным владением, пожалованным после чжоуского завоевания потомкам иньских ванов. Предок Шу-и, Му-гун, правил в Сун в 728–719 гг. до н. э.
+    </p>
+
+    <h3>23.Е. Термин родства 出 chū</h3>
+    <p class="original">
+        Этот термин не имеет соответствующего эквивалента в русском языке. Объясняется это тем, что древнекитайская система терминов родства отличалась от современной китайской и тем более от русской. В чжоуском Китае, в частности, терминологически не различались сыновья и сыновья брата — все они обозначались термином 子 zǐ. Но дети сестры принадлежали к другому клану и назывались отдельным термином — 出 chū.
+        <br><br>
+        Мать Шу-и была дочерью Чэн-гуна (Чэн-гун правил в царстве Цзи) и одновременно дочерью сестры сунского Сян-гуна. Но отец Шу-и также был потомком правителей Сун. Это значит, что, вероятнее всего, отец Шу-и женился на своей двоюродной сестре (дочери своей тетки по отцу). Такие кросскузенные браки часто практиковались в Древнем Китае.
+    </p>
+</div>
+
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст, расставив знаки препинания.</li>
+        <li>Проанализируйте текст грамматически.</li>
+        <li>Переведите текст на русский язык.</li>
+        <li>Переведите на древнекитайский следующие предложения:
+            <ol>
+                <li>Твой отец — сын историографа Да, внук архивариуса Лина.</li>
+                <li>О, как велики заслуги Юя!</li>
+                <li>Хотя колокол и мал, он может быть использован для принесения жертв нашим достославным предкам.</li>
+                <li>Ты помогал другим!</li>
+            </ol>
+        </li>
+    </ol>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Все иероглифы — из текстов Уроков 1–23, либо из циклических знаков (甲子 – 癸亥).
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
