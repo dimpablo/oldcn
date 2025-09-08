@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Утилита проверки уроков</title>
+</head>
+<body>
+    <h1>Проверка доступных уроков</h1>
+    <div id="output">
+        <p>Начинаю проверку...</p>
+    </div>
+
+    <script>
+        // Глобальная переменная для отслеживания текущего скрипта
+        let currentScript = null;
+        // Массив для хранения номеров валидных уроков
+        const validLessons = [];
+
+        /**
+         * Основная функция проверки уроков.
+         * Проверяет уроки последовательно, начиная с 1.
+         * Останавливается, когда встречает первый невалидный урок.
+         */
+        async function checkLessons() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<p>Проверка уроков...</p>';
+
+            console.log("🚀 Начинаю проверку уроков...");
+
+            let lessonNumber = 1;
+            let isValid = true;
+
+            while (isValid) {
+                isValid = await checkSingleLesson(lessonNumber);
+                if (isValid) {
+                    validLessons.push(lessonNumber);
+                    console.log(`✅ Урок ${lessonNumber} валиден.`);
+                    appendToOutput(`✅ Урок ${lessonNumber} валиден.`);
+                } else {
+                    console.log(`🛑 Урок ${lessonNumber} не найден или невалиден.`);
+                    appendToOutput(`🛑 Урок ${lessonNumber} не найден или невалиден.`);
+                }
+                lessonNumber++;
+            }
+
+            console.log("🏁 Проверка завершена.");
+            console.log("Найдено валидных уроков:", validLessons.length);
+            appendToOutput(`<h2>🏁 Проверка завершена.</h2>`);
+            appendToOutput(`<p><strong>Найдено валидных уроков: ${validLessons.length}</strong></p>`);
+            if (validLessons.length > 0) {
+                appendToOutput(`<p>Список: ${validLessons.join(', ')}</p>`);
+            }
+        }
+
+        /**
+         * Проверяет один урок.
+         * @param {number} n - Номер урока.
+         * @returns {Promise<boolean>} - true, если урок валиден, иначе false.
+         */
+        function checkSingleLesson(n) {
+            return new Promise((resolve) => {
+                // --- ШАГ 1: Удаляем предыдущий скрипт ---
+                if (currentScript) {
+                    // Сохраняем ссылку на старую переменную SentenceData
+                    const oldSentenceData = window.SentenceData;
+                    // Удаляем тег из DOM
+                    document.head.removeChild(currentScript);
+                    currentScript = null;
+                    // Явно удаляем переменную из глобальной области видимости
+                    delete window.SentenceData;
+                    console.log(`🗑️ Скрипт для урока ${n-1} удален. SentenceData:`, window.SentenceData);
+                }
+
+                // --- ШАГ 2: Создаем новый тег скрипта ---
+                const script = document.createElement('script');
+                script.src = `./lesson${n}/segmentation.js`;
+                script.type = 'text/javascript';
+
+                // Таймаут на случай, если файл не существует
+                const timeoutId = setTimeout(() => {
+                    console.warn(`⏳ Таймаут для урока ${n}`);
+                    cleanupAndResolve(false);
+                }, 3000); // 3 секунды
+
+                // --- ШАГ 3: Обработчик успешной загрузки ---
+                script.onload = function () {
+                    clearTimeout(timeoutId);
+                    console.log(`📥 Скрипт для урока ${n} загружен.`);
+
+                    // Проверяем, появилась ли переменная SentenceData
+                    if (typeof window.SentenceData === 'undefined') {
+                        console.error(`❌ Для урока ${n}: переменная SentenceData не определена!`);
+                        cleanupAndResolve(false);
+                        return;
+                    }
+
+                    // Проверяем структуру объекта
+                    if (window.SentenceData && window.SentenceData.lesson === n) {
+                        console.log(`🌟 Урок ${n} прошел проверку структуры.`);
+                        cleanupAndResolve(true);
+                    } else {
+                        console.error(`❌ Для урока ${n}: поле 'lesson' не совпадает с номером папки. Ожидалось: ${n}, получено: ${window.SentenceData.lesson}`);
+                        cleanupAndResolve(false);
+                    }
+                };
+
+                // --- ШАГ 4: Обработчик ошибки загрузки ---
+                script.onerror = function () {
+                    clearTimeout(timeoutId);
+                    console.error(`❌ Ошибка загрузки файла для урока ${n}: ./lesson${n}/segmentation.js`);
+                    cleanupAndResolve(false);
+                };
+
+                // Добавляем скрипт в DOM
+                document.head.appendChild(script);
+                currentScript = script;
+
+                // Вспомогательная функция для очистки и разрешения промиса
+                function cleanupAndResolve(result) {
+                    // Удаляем текущий скрипт, если он еще есть
+                    if (currentScript && currentScript.parentNode) {
+                        document.head.removeChild(currentScript);
+                    }
+                    currentScript = null;
+                    // Удаляем переменную, чтобы не мешать следующей итерации
+                    delete window.SentenceData;
+                    resolve(result);
+                }
+            });
+        }
+
+        /**
+         * Вспомогательная функция для вывода сообщений на страницу.
+         * @param {string} message - Сообщение для вывода.
+         */
+        function appendToOutput(message) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML += `<p>${message}</p>`;
+        }
+
+        // --- ЗАПУСК ПРОВЕРКИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ---
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLessons();
+        });
+    </script>
+</body>
+</html>
