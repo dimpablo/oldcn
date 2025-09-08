@@ -76,15 +76,9 @@ const SentenceData = {
     },
     {
       "number": 13,
-      "original": "乙亥卜㱿貞王曰侯虎",
+      "original": "乙亥卜㱿貞王曰侯虎余其得汝使",
       "transliteration": "yǐ hài bǔ jué zhēn wáng yuē hóu hǔ",
-      "translation": "В день и-хай гадатель Цзюэ задал вопрос: «Скажет ли ван: „Хоу Ху, я сохраняю тебе посла?“»"
-    },
-    {
-      "number": 14,
-      "original": "余其得汝使",
-      "transliteration": "yú qí dé rǔ shǐ",
-      "translation": "Я сохраняю тебе посла?"
+      "translation": "В день и-хай гадатель Цзюэ задал вопрос: «Скажет ли ван: „Хоу Ху, я сохраняю тебе посла“»?"
     },
     {
       "number": 15,
