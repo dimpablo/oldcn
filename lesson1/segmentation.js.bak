@@ -1,4 +1,4 @@
-var SentenceData = {
+const SentenceData = {
   "lesson": 1,
   "text": "丙寅卜爭貞雨貞曰其雨貞癸亥不其\n雨允不雨貞不雨王占曰癸其雨癸丑\n允其雨己卯卜㱿貞雨王占曰雨壬午\n允雨",
   "sentences": [

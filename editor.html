@@ -1,74 +1,724 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Утилита проверки уроков</title>
+    <title>Segmentation Editor</title>
+    <!-- Подключаем словарь -->
+    <script src="./dictionary.js"></script>
+    <!-- Diff (jsdiff) - ДОЛЖЕН БЫТЬ ПОДКЛЮЧЕН ПЕРВЫМ -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff@5.1.0/dist/diff.min.js"></script>
+    <!-- Diff2Html UI -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html-ui.min.js"></script>
+    <style>
+        /* --- ГЛОБАЛЬНЫЕ СТИЛИ --- */
+        :root {
+            --primary-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --card-border: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+            --error-bg: #ffebee;
+            --error-border: #f44336;
+            --error-text: #c62828;
+            --success-bg: #e8f5e9;
+            --success-border: #4caf50;
+            --success-text: #2e7d32;
+            --info-bg: #e3f2fd;
+            --info-border: #2196f3;
+            --warning-bg: #fff3e0;
+            --warning-border: #ffb74d;
+            --warning-text: #ef6c00;
+            --font-size-base: 16px; /* Увеличенный базовый шрифт */
+            --font-size-large: 18px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--primary-bg);
+            color: #333;
+            font-size: var(--font-size-base);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        /* --- СТИЛИ ДЛЯ ВКЛАДОК --- */
+        .edition-tabs {
+            display: flex;
+            background-color: white;
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background-color: #f5f5f5;
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tab-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .tab-button.active {
+            background-color: white;
+            font-weight: 700;
+            border-bottom: 4px solid #2196f3;
+        }
+
+        /* --- КОНТЕЙНЕРЫ ДЛЯ ВИДОВ --- */
+        .view-container {
+            display: none; /* Скрыты по умолчанию */
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        /* --- СТИЛИ ДЛЯ DIFF VIEW (GitHub-like) --- */
+        .diff-view-container {
+            background-color: #0d1117; /* Темный фон как на GitHub */
+            color: #c9d1d9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Стили, которые мы переопределим для diff2html, чтобы они соответствовали темной теме */
+        .d2h-wrapper {
+            background-color: #0d1117 !important;
+            color: #c9d1d9 !important;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+            font-size: 14px !important;
+        }
+
+        .d2h-file-header {
+            background-color: #161b22 !important;
+            border-color: #30363d !important;
+        }
+
+        .d2h-file-name {
+            color: #c9d1d9 !important;
+        }
+
+        .d2h-code-line {
+            background-color: #0d1117 !important;
+            border-color: #30363d !important;
+            color: #c9d1d9 !important;
+        }
+
+        .d2h-code-line-ctn {
+            color: #c9d1d9 !important;
+        }
+
+        .d2h-ins {
+            background-color: rgba(46, 160, 67, 0.15) !important;
+            border-color: rgba(46, 160, 67, 0.4) !important;
+            color: #f2fffa !important;
+        }
+
+        .d2h-del {
+            background-color: rgba(248, 81, 73, 0.15) !important;
+            border-color: rgba(248, 81, 73, 0.4) !important;
+            color: #ffebe9 !important;
+        }
+
+        .d2h-code-linenumber {
+            background-color: #161b22 !important;
+            border-color: #30363d !important;
+            color: #8b949e !important;
+        }
+
+        /* --- ПАНЕЛЬ УПРАВЛЕНИЯ (для вида "Карточки") --- */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .controls label {
+            font-weight: 600;
+            font-size: var(--font-size-large);
+        }
+
+        .controls select,
+        .controls button {
+            padding: 12px 16px;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            background-color: white;
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .controls select:focus,
+        .controls button:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+        }
+
+        .controls button:hover {
+            background-color: #f5f5f5;
+        }
+
+        #save-btn {
+            background-color: #4caf50;
+            color: white;
+            border-color: #43a047;
+        }
+
+        #save-btn:hover {
+            background-color: #43a047;
+        }
+
+        #clear-punctuation {
+            background-color: #9c27b0;
+            color: white;
+            border-color: #7b1fa2;
+        }
+
+        #clear-punctuation:hover {
+            background-color: #7b1fa2;
+        }
+
+        #open-file-btn {
+            background-color: #ff9800;
+            color: white;
+            border-color: #f57c00;
+        }
+
+        #open-file-btn:hover {
+            background-color: #f57c00;
+        }
+
+        #fix-transliteration {
+            background-color: #2196f3;
+            color: white;
+            border-color: #1976d2;
+        }
+
+        #fix-transliteration:hover {
+            background-color: #1976d2;
+        }
+
+        /* --- СТАТУСНЫЕ СООБЩЕНИЯ --- */
+        #status, #validation-message {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: var(--font-size-large);
+            font-weight: 500;
+        }
+
+        #status {
+            background-color: var(--info-bg);
+            border: 2px solid var(--info-border);
+            color: #1565c0;
+        }
+
+        #validation-message.error {
+            background-color: var(--error-bg);
+            border: 2px solid var(--error-border);
+            color: var(--error-text);
+        }
+
+        #validation-message.success {
+            background-color: var(--success-bg);
+            border: 2px solid var(--success-border);
+            color: var(--success-text);
+        }
+
+        /* Стиль для подсветки ошибок в тексте */
+        .text-error {
+            background-color: #ffe0e0;
+            color: #c62828;
+            font-weight: bold;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
+        /* --- КОНТЕЙНЕР КАРТОЧЕК --- */
+        #cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* --- СТИЛИ КАРТОЧЕК --- */
+        .card {
+            position: relative;
+            border: 2px solid var(--card-border);
+            margin: 0;
+            padding: 25px;
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            cursor: move; /* Для drag-and-drop */
+        }
+
+        .card:hover:not(.dragging) {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        /* Стиль для карточки с отсутствующим иероглифом (оранжевый) */
+        .card.error-missing {
+            background-color: var(--warning-bg); /* Светло-оранжевый фон */
+            border-color: var(--warning-border); /* Оранжевая рамка */
+            animation: none; /* Отключаем мерцание для этого типа */
+        }
+
+        /* Стиль для карточки с неверной транскрипцией (красный, мерцающий) */
+        .card.error-wrong {
+            background-color: var(--error-bg); /* Светло-красный фон */
+            border-color: var(--error-border); /* Красная рамка */
+            animation: pulseError 1s infinite; /* Мерцающий эффект */
+        }
+
+        /* Стиль для карточки с ошибкой несоответствия текста */
+        .card.error-text-mismatch {
+            background-color: var(--error-bg); /* Светло-красный фон */
+            border-color: var(--error-border); /* Красная рамка */
+            animation: pulseError 1s infinite; /* Мерцающий эффект */
+        }
+
+        @keyframes pulseError {
+            0%, 100% { background-color: var(--error-bg); }
+            50% { background-color: #ffcdd2; }
+        }
+
+        /* Заголовок карточки */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .card-number {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .card-number.mismatch {
+            color: var(--error-text);
+        }
+
+        /* Кнопка удаления */
+        .btn-remove {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background-color: #f44336;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-remove:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Поля ввода */
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 10px 0 20px 0;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: var(--font-size-large); /* Увеличенный шрифт */
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+        }
+
+        /* Кнопка добавления карточки */
+        .btn-add-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border: 2px dashed #90caf9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            color: #1565c0;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-section:hover {
+            background-color: #bbdefb;
+            border-color: #64b5f6;
+        }
+
+        /* Состояния Drag-and-Drop */
+        .card.dragging {
+            opacity: 0.7;
+            transform: rotate(3deg);
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- СТИЛИ ДЛЯ ЛОКАЛЬНЫХ СООБЩЕНИЙ ОБ ОШИБКАХ --- */
+        .error-message-local {
+            color: var(--error-text);
+            font-size: 0.9em;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 3px solid var(--error-border);
+            border-radius: 0 4px 4px 0;
+            display: none; /* Скрыты по умолчанию */
+        }
+
+        .error-message-local.missing-char {
+            color: var(--warning-text);
+            background-color: rgba(255, 187, 0, 0.1);
+            border-left-color: var(--warning-border);
+        }
+
+        .error-message-local.punctuation-original-error,
+        .error-message-local.punctuation-translation-error {
+             color: var(--warning-text);
+             background-color: rgba(156, 39, 176, 0.1); /* Фиолетовый */
+             border-left-color: #9c27b0;
+        }
+
+        /* --- СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ОТКРЫТИЯ ФАЙЛА --- */
+        #open-file-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #open-file-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #open-file-modal {
+            position: relative;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #open-file-modal .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        #open-file-modal .close-btn:hover {
+            color: #333;
+        }
+
+        #drop-zone {
+            border: 2px dashed #90caf9;
+            border-radius: 8px;
+            padding: 40px 20px;
+            margin: 20px 0;
+            background-color: #f5f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #drop-zone:hover,
+        #drop-zone.dragover {
+            background-color: #e3f2fd;
+            border-color: #64b5f6;
+            transform: translateY(-2px);
+        }
+
+        #drop-zone p {
+            margin: 0;
+            color: #555;
+            font-size: var(--font-size-large);
+        }
+
+        #select-file-btn {
+            padding: 12px 24px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        #select-file-btn:hover {
+            background-color: #1976d2;
+        }
+
+        /* Скрытый input для выбора файла */
+        #file-input {
+            display: none;
+        }
+
+        /* Сообщение об ошибке в модальном окне */
+        #open-file-error {
+            color: var(--error-text);
+            margin-top: 15px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        /* --- СТИЛИ ДЛЯ ВКЛАДКИ ДИАГНОСТИКИ --- */
+        #diagnostics-output {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Проверка доступных уроков</h1>
-    <div id="output">
-        <p>Начинаю проверку...</p>
+    <h1>Segmentation Editor</h1>
+
+    <!-- Панель вкладок -->
+    <div class="edition-tabs">
+        <button class="tab-button active" data-view="cards">Вид карточек</button>
+        <button class="tab-button" data-view="diff">Текстовый вид</button>
+        <button class="tab-button" data-view="diagnostics">Общая диагностика</button>
+    </div>
+
+    <!-- Контейнер для вида "Карточки" -->
+    <div id="cards-view" class="view-container active">
+        <div class="controls">
+            <label for="lesson-select">Выберите урок:</label>
+            <select id="lesson-select">
+                <option value="">-- Поиск уроков... --</option>
+            </select>
+            <button id="clear-punctuation" disabled>Очистить оригинал от пунктуации</button>
+            <button id="open-file-btn">Открыть из файла</button>
+            <button id="fix-transliteration" style="display:none;">Исправить транскрипцию</button>
+            <button id="save-btn" disabled>Сохранить</button>
+        </div>
+
+        <div id="status">Инициализация...</div>
+        <div id="validation-message"></div>
+
+        <div id="cards-container"></div>
+    </div>
+
+    <!-- Контейнер для вида "Diff" -->
+    <div id="diff-view" class="view-container diff-view-container">
+        <div id="diff-container">
+            <!-- Diff2Html будет рендерить сюда -->
+            <p style="text-align: center; color: #8b949e;">Выберите урок и внесите изменения, чтобы увидеть diff.</p>
+        </div>
+    </div>
+
+    <!-- Контейнер для вида "Диагностика" -->
+    <div id="diagnostics-view" class="view-container">
+        <div class="controls">
+            <button id="run-diagnostics-btn">Запустить диагностику</button>
+        </div>
+        <div id="diagnostics-output">
+            <p>Нажмите кнопку "Запустить диагностику", чтобы проверить все уроки.</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно для открытия файла -->
+    <div id="open-file-modal-overlay">
+        <div id="open-file-modal">
+            <button class="close-btn">&times;</button>
+            <h3>Открыть файл segmentation.js</h3>
+            <div id="drop-zone">
+                <p>Перетащите файл segmentation.js сюда</p>
+                <p>или</p>
+                <button id="select-file-btn">Выбрать файл</button>
+                <input type="file" id="file-input" accept=".js">
+            </div>
+            <div id="open-file-error"></div>
+        </div>
     </div>
 
     <script>
-        // Глобальная переменная для отслеживания текущего скрипта
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentScript = null;
-        // Массив для хранения номеров валидных уроков
-        const validLessons = [];
+        let availableLessons = [];
+        let currentLessonData = null;
+        let originalLessonData = null; // Для хранения исходного состояния
+        let cards = [];
+        let isEditing = false; // Флаг редактирования
+        let originalLessonNumber = null; // Номер оригинального урока
+        let currentView = 'cards'; // Текущая активная вкладка
 
-        /**
-         * Основная функция проверки уроков.
-         * Проверяет уроки последовательно, начиная с 1.
-         * Останавливается, когда встречает первый невалидный урок.
-         */
-        async function checkLessons() {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = '<p>Проверка уроков...</p>';
+        // --- ФУНКЦИИ ДЛЯ УЛУЧШЕННОЙ ВАЛИДАЦИИ ---
+        function findMismatchedSegments(originalText, cardTexts) {
+            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
 
-            console.log("🚀 Начинаю проверку уроков...");
+            const cleanOriginal = originalText.replace(/\n/g, '').replace(punctuationRegex, '').replace(/\s+/g, '');
+            const cleanReconstructed = cardTexts.map(text => text.replace(punctuationRegex, '')).join('').replace(/\s+/g, '');
 
-            let lessonNumber = 1;
-            let isValid = true;
+            const mismatches = [];
 
-            while (isValid) {
-                isValid = await checkSingleLesson(lessonNumber);
-                if (isValid) {
-                    validLessons.push(lessonNumber);
-                    console.log(`✅ Урок ${lessonNumber} валиден.`);
-                    appendToOutput(`✅ Урок ${lessonNumber} валиден.`);
-                } else {
-                    console.log(`🛑 Урок ${lessonNumber} не найден или невалиден.`);
-                    appendToOutput(`🛑 Урок ${lessonNumber} не найден или невалиден.`);
+            if (cleanOriginal === cleanReconstructed) {
+                return mismatches; // Нет несоответствий
+            }
+
+            let origIndex = 0;
+            let cardStartIndex = 0;
+
+            for (let i = 0; i < cardTexts.length; i++) {
+                const cardText = cardTexts[i];
+                const cleanCardText = cardText.replace(punctuationRegex, '').replace(/\s+/g, '');
+                const cardEndIndex = cardStartIndex + cardText.length;
+
+                const origSegment = cleanOriginal.substring(origIndex, origIndex + cleanCardText.length);
+                if (origSegment !== cleanCardText) {
+                    mismatches.push({
+                        cardIndex: i,
+                        originalSegment: origSegment,
+                        cardSegment: cleanCardText,
+                        origStartPos: findOriginalPosition(originalText, origIndex),
+                        origEndPos: findOriginalPosition(originalText, origIndex + cleanCardText.length)
+                    });
                 }
-                lessonNumber++;
+
+                origIndex += cleanCardText.length;
+                cardStartIndex = cardEndIndex;
             }
 
-            console.log("🏁 Проверка завершена.");
-            console.log("Найдено валидных уроков:", validLessons.length);
-            appendToOutput(`<h2>🏁 Проверка завершена.</h2>`);
-            appendToOutput(`<p><strong>Найдено валидных уроков: ${validLessons.length}</strong></p>`);
-            if (validLessons.length > 0) {
-                appendToOutput(`<p>Список: ${validLessons.join(', ')}</p>`);
-            }
+            return mismatches;
         }
 
-        /**
-         * Проверяет один урок.
-         * @param {number} n - Номер урока.
-         * @returns {Promise<boolean>} - true, если урок валиден, иначе false.
-         */
+        // Вспомогательная функция: находит реальную позицию в originalText по индексу в очищенной строке
+        function findOriginalPosition(originalText, cleanIndex) {
+            let count = 0;
+            for (let i = 0; i < originalText.length; i++) {
+                if (!/\s/.test(originalText[i]) && !/[.,;:!?—–\(\)\[\]"]/.test(originalText[i])) {
+                    if (count === cleanIndex) {
+                        return i;
+                    }
+                    count++;
+                }
+            }
+            return originalText.length;
+        }
+
+        // --- АВТООПРЕДЕЛЕНИЕ УРОКОВ ---
+        async function detectAvailableLessons(max = 50) {
+            const select = document.getElementById('lesson-select');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">-- Поиск уроков... --</option>';
+            select.disabled = true;
+            document.getElementById('status').textContent = 'Поиск доступных уроков...';
+            availableLessons = [];
+            console.log(`🚀 Начинаю поиск уроков от 1 до ${max}...`);
+
+            for (let i = 1; i <= max; i++) {
+                const isValid = await checkSingleLesson(i);
+                if (!isValid) {
+                    console.log(`🛑 Остановка на уроке ${i}: файл не найден или данные некорректны.`);
+                    break;
+                }
+                availableLessons.push(i);
+                console.log(`✅ Урок ${i} найден и проверен.`);
+            }
+
+            populateLessonSelect(availableLessons);
+            select.disabled = false;
+            document.getElementById('status').textContent = `Найдено уроков: ${availableLessons.length}`;
+            console.log(`🏁 Поиск уроков завершён. Найдено: ${availableLessons.length}`);
+        }
+
         function checkSingleLesson(n) {
             return new Promise((resolve) => {
                 // --- ШАГ 1: Удаляем предыдущий скрипт ---
                 if (currentScript) {
-                    // Сохраняем ссылку на старую переменную SentenceData
-                    const oldSentenceData = window.SentenceData;
-                    // Удаляем тег из DOM
                     document.head.removeChild(currentScript);
                     currentScript = null;
-                    // Явно удаляем переменную из глобальной области видимости
                     delete window.SentenceData;
-                    console.log(`🗑️ Скрипт для урока ${n-1} удален. SentenceData:`, window.SentenceData);
                 }
 
                 // --- ШАГ 2: Создаем новый тег скрипта ---
@@ -76,42 +726,35 @@
                 script.src = `./lesson${n}/segmentation.js`;
                 script.type = 'text/javascript';
 
-                // Таймаут на случай, если файл не существует
-                const timeoutId = setTimeout(() => {
+                let timeoutId = setTimeout(() => {
                     console.warn(`⏳ Таймаут для урока ${n}`);
                     cleanupAndResolve(false);
-                }, 3000); // 3 секунды
+                }, 5000); // 5 секунд
 
                 // --- ШАГ 3: Обработчик успешной загрузки ---
                 script.onload = function () {
                     clearTimeout(timeoutId);
                     console.log(`📥 Скрипт для урока ${n} загружен.`);
 
-                    // Проверяем, появилась ли переменная SentenceData
-                    if (typeof window.SentenceData === 'undefined') {
-                        console.error(`❌ Для урока ${n}: переменная SentenceData не определена!`);
-                        cleanupAndResolve(false);
-                        return;
-                    }
-
-                    // Проверяем структуру объекта
-                    if (window.SentenceData && window.SentenceData.lesson === n) {
-                        console.log(`🌟 Урок ${n} прошел проверку структуры.`);
-                        cleanupAndResolve(true);
-                    } else {
-                        console.error(`❌ Для урока ${n}: поле 'lesson' не совпадает с номером папки. Ожидалось: ${n}, получено: ${window.SentenceData.lesson}`);
-                        cleanupAndResolve(false);
-                    }
+                    // Даем браузеру немного времени на выполнение кода скрипта
+                    setTimeout(() => {
+                        if (typeof window.SentenceData !== 'undefined' && window.SentenceData.lesson === n) {
+                            console.log(`🌟 Урок ${n} прошел проверку структуры.`);
+                            cleanupAndResolve(true);
+                        } else {
+                            console.error(`❌ Для урока ${n}: переменная SentenceData не определена или номер не совпадает.`);
+                            cleanupAndResolve(false);
+                        }
+                    }, 100); // Небольшая задержка
                 };
 
                 // --- ШАГ 4: Обработчик ошибки загрузки ---
-                script.onerror = function () {
+                script.onerror = function (err) {
                     clearTimeout(timeoutId);
-                    console.error(`❌ Ошибка загрузки файла для урока ${n}: ./lesson${n}/segmentation.js`);
+                    console.error(`❌ Ошибка загрузки файла для урока ${n}:`, err);
                     cleanupAndResolve(false);
                 };
 
-                // Добавляем скрипт в DOM
                 document.head.appendChild(script);
                 currentScript = script;
 
@@ -129,18 +772,953 @@
             });
         }
 
-        /**
-         * Вспомогательная функция для вывода сообщений на страницу.
-         * @param {string} message - Сообщение для вывода.
-         */
-        function appendToOutput(message) {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML += `<p>${message}</p>`;
+        function populateLessonSelect(lessons) {
+            const select = document.getElementById('lesson-select');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">-- Выберите урок --</option>';
+
+            if (lessons.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Уроки не найдены';
+                option.disabled = true;
+                select.appendChild(option);
+                return;
+            }
+
+            lessons.forEach(n => {
+                const option = document.createElement('option');
+                option.value = n;
+                option.textContent = `Урок ${n}`;
+                select.appendChild(option);
+            });
         }
 
-        // --- ЗАПУСК ПРОВЕРКИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ---
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLessons();
+        // --- ЗАГРУЗКА ВЫБРАННОГО УРОКА ---
+        function loadLesson(lessonNumber) {
+            lessonNumber = Number(lessonNumber);
+            if (!availableLessons.includes(lessonNumber)) {
+                console.error("Попытка загрузить недоступный урок:", lessonNumber);
+                return;
+            }
+
+            // Удаляем предыдущий скрипт
+            if (currentScript) {
+                document.head.removeChild(currentScript);
+                currentScript = null;
+                delete window.SentenceData;
+            }
+
+            const script = document.createElement('script');
+            script.src = `./lesson${lessonNumber}/segmentation.js`;
+            script.type = 'text/javascript';
+
+            script.onload = function () {
+                if (typeof window.SentenceData !== 'undefined') {
+                    // Сохраняем оригинальный номер урока
+                    originalLessonNumber = window.SentenceData.lesson;
+                    // Клонируем объект, чтобы не мутировать оригинальные данные
+                    currentLessonData = JSON.parse(JSON.stringify(window.SentenceData));
+                    originalLessonData = JSON.parse(JSON.stringify(window.SentenceData)); // Сохраняем копию оригинала
+                    renderCards(currentLessonData.sentences);
+                    document.getElementById('status').textContent = `Загружен урок ${lessonNumber}`;
+                    console.log(`Урок ${lessonNumber} успешно загружен.`);
+                    validateAll(); // Запускаем валидацию после загрузки
+                     // Активируем кнопки сохранения
+                    document.getElementById('save-btn').disabled = false;
+                    document.getElementById('clear-punctuation').disabled = false;
+
+                    // Обновляем diff view, если он активен
+                    if (currentView === 'diff') {
+                        renderDiffView();
+                    }
+                } else {
+                    document.getElementById('status').textContent = `Ошибка: SentenceData не найден в уроке ${lessonNumber}`;
+                    renderCards([]);
+                    document.getElementById('save-btn').disabled = true;
+                    document.getElementById('clear-punctuation').disabled = true;
+                    document.getElementById('fix-transliteration').style.display = 'none';
+                }
+            };
+
+            script.onerror = function () {
+                document.getElementById('status').textContent = `Ошибка загрузки файла для урока ${lessonNumber}`;
+                renderCards([]);
+                document.getElementById('save-btn').disabled = true;
+                document.getElementById('clear-punctuation').disabled = true;
+                document.getElementById('fix-transliteration').style.display = 'none';
+            };
+
+            document.head.appendChild(script);
+            currentScript = script;
+        }
+
+        // --- РЕНДЕРИНГ КАРТОЧЕК ---
+        function renderCards(sentences) {
+            const container = document.getElementById('cards-container');
+            if (!container) {
+                console.error("Элемент с id 'cards-container' не найден в DOM.");
+                return;
+            }
+            container.innerHTML = '';
+            cards = [];
+
+            if (!sentences || sentences.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color: #777; font-size: 1.2rem;">Нет данных для отображения.</p>';
+                return;
+            }
+
+            sentences.forEach((sentence, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.draggable = !isEditing; // Drag-and-drop отключен во время редактирования
+
+                // Создаем HTML-структуру карточки с динамическим отображением номера
+                const originalNumber = sentence.number;
+                const currentIndex = index + 1;
+                const numberDisplay = originalNumber === currentIndex
+                    ? `Номер: ${originalNumber}`
+                    : `Номер: было ${originalNumber}, стало ${currentIndex}`;
+
+                card.innerHTML = `
+                    <button class="btn-remove" title="Удалить карточку">−</button>
+                    <div class="card-header">
+                        <span class="card-number ${originalNumber !== currentIndex ? 'mismatch' : ''}">
+                            ${numberDisplay}
+                        </span>
+                    </div>
+                    <label>Оригинал:</label>
+                    <textarea class="original" placeholder="Оригинал">${sentence.original}</textarea>
+
+                    <label>Транскрипция:</label>
+                    <textarea class="transliteration" placeholder="Транскрипция">${sentence.transliteration}</textarea>
+
+                    <label>Перевод:</label>
+                    <textarea class="translation" placeholder="Перевод">${sentence.translation}</textarea>
+                `;
+
+                // Добавляем обработчики изменений
+                const textareas = card.querySelectorAll('textarea');
+                textareas.forEach(ta => {
+                    ta.addEventListener('focus', () => {
+                        isEditing = true;
+                        // Отключаем drag-and-drop для всех карточек
+                        cards.forEach(c => c.draggable = false);
+                    });
+                    ta.addEventListener('blur', () => {
+                        isEditing = false;
+                        // Включаем drag-and-drop для всех карточек
+                        cards.forEach(c => c.draggable = true);
+                        // Запускаем валидацию после завершения редактирования
+                        onCardChange(card);
+                    });
+                    // Также запускаем валидацию при каждом изменении
+                    ta.addEventListener('input', () => onCardChange(card));
+                });
+
+                // Добавляем обработчик удаления
+                card.querySelector('.btn-remove').addEventListener('click', () => {
+                    removeCard(index);
+                });
+
+                container.appendChild(card);
+                cards.push(card);
+
+                // --- ДОБАВЛЯЕМ КНОПКУ ПОСЛЕ КАЖДОЙ КАРТОЧКИ ---
+                const addSection = document.createElement('div');
+                addSection.className = 'btn-add-section';
+                addSection.innerHTML = '+ Вставить карточку';
+                addSection.addEventListener('click', () => {
+                    insertNewCardAfter(index);
+                });
+                container.appendChild(addSection);
+            });
+
+            initDragAndDrop();
+        }
+
+        function onCardChange(card) {
+            const index = parseInt(card.dataset.index);
+            if (isNaN(index) || !currentLessonData || !currentLessonData.sentences[index]) {
+                console.error("Ошибка при обновлении данных карточки: неверный индекс или отсутствуют данные урока.");
+                return;
+            }
+
+            const sentence = currentLessonData.sentences[index];
+            const originalTextarea = card.querySelector('.original');
+            const translitTextarea = card.querySelector('.transliteration');
+            const translationTextarea = card.querySelector('.translation');
+
+            sentence.original = originalTextarea.value;
+            sentence.transliteration = translitTextarea.value;
+            sentence.translation = translationTextarea.value;
+
+            // Очищаем старые локальные сообщения для пунктуации в original
+            const existingOrigPunctError = card.querySelector('.error-message-local.punctuation-original-error');
+            if (existingOrigPunctError) existingOrigPunctError.remove();
+
+            // Проверка пунктуации в original
+            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
+            if (punctuationRegex.test(sentence.original)) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message-local punctuation-original-error';
+                errorMsg.textContent = `⚠️ Запрещённая пунктуация в оригинале.`;
+                errorMsg.style.display = 'block';
+                originalTextarea.parentNode.insertBefore(errorMsg, originalTextarea.nextSibling);
+            }
+
+            // Очищаем старые локальные сообщения для пунктуации в translation
+            const existingTransPunctError = card.querySelector('.error-message-local.punctuation-translation-error');
+            if (existingTransPunctError) existingTransPunctError.remove();
+
+            // Проверка пунктуации в translation
+            if (punctuationRegex.test(sentence.translation)) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message-local punctuation-translation-error';
+                errorMsg.textContent = `⚠️ Запрещённая пунктуация в переводе.`;
+                errorMsg.style.display = 'block';
+                translationTextarea.parentNode.insertBefore(errorMsg, translationTextarea.nextSibling);
+            }
+
+            // Проверяем транскрипцию и подсвечиваем карточку
+            checkTransliterationForCard(sentence, card);
+            // Запускаем полную валидацию
+            validateAll();
+        }
+
+        // --- DRAG-AND-DROP ---
+        let draggedCard = null;
+
+        function initDragAndDrop() {
+            cards.forEach(card => {
+                // Удаляем старые обработчики
+                card.removeEventListener('dragstart', handleDragStart);
+                card.removeEventListener('dragover', handleDragOver);
+                card.removeEventListener('drop', handleDrop);
+                card.removeEventListener('dragend', handleDragEnd);
+
+                // Добавляем новые, только если не в режиме редактирования
+                if (!isEditing) {
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragover', handleDragOver);
+                    card.addEventListener('drop', handleDrop);
+                    card.addEventListener('dragend', handleDragEnd);
+                }
+            });
+        }
+
+        function handleDragStart(e) {
+            if (isEditing) return; // Блокируем, если идет редактирование
+            draggedCard = this;
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+
+        function handleDragOver(e) {
+            if (isEditing) {
+                e.preventDefault();
+                return false;
+            }
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (isEditing || !draggedCard) return;
+            e.preventDefault();
+            if (draggedCard !== this) {
+                const draggedIndex = parseInt(draggedCard.dataset.index);
+                const targetIndex = parseInt(this.dataset.index);
+
+                if (isNaN(draggedIndex) || isNaN(targetIndex) || !currentLessonData) {
+                    console.error("Ошибка перетаскивания: неверные индексы или отсутствуют данные.");
+                    return;
+                }
+
+                // Меняем порядок в массиве данных
+                const temp = currentLessonData.sentences[draggedIndex];
+                currentLessonData.sentences.splice(draggedIndex, 1);
+                currentLessonData.sentences.splice(targetIndex, 0, temp);
+
+                // Пересчитываем номера
+                currentLessonData.sentences.forEach((s, i) => s.number = i + 1);
+
+                // Перерендериваем все карточки
+                renderCards(currentLessonData.sentences);
+                validateAll();
+            }
+            return false;
+        }
+
+        function handleDragEnd() {
+            if (this.classList.contains('dragging')) {
+                this.classList.remove('dragging');
+            }
+            draggedCard = null;
+            validateAll();
+        }
+
+
+        // --- ВАЛИДАЦИЯ ---
+        function validateAll() {
+            const msgDiv = document.getElementById('validation-message');
+            if (!msgDiv) return;
+
+            msgDiv.innerHTML = '';
+            msgDiv.className = '';
+
+            if (!currentLessonData) {
+                msgDiv.textContent = 'Нет данных для валидации.';
+                return;
+            }
+
+            const cardTexts = currentLessonData.sentences.map(s => s.original);
+            const originalText = currentLessonData.text;
+
+            // 1. Проверка: составляют ли original полный текст? (игнорируя пунктуацию)
+            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
+            const cleanOriginal = currentLessonData.text.replace(/\n/g, '').replace(punctuationRegex, '').replace(/\s+/g, '');
+            const cleanReconstructed = currentLessonData.sentences.map(s => s.original.replace(punctuationRegex, '')).join('').replace(/\s+/g, '');
+
+            // Снимаем подсветку со всех карточек перед новой проверкой
+            cards.forEach(card => {
+                card.classList.remove('error-missing', 'error-wrong', 'error-text-mismatch');
+            });
+
+            if (cleanOriginal !== cleanReconstructed) {
+                msgDiv.textContent = '❌ ОШИБКА: строки original не составляют исходный текст!\n';
+                msgDiv.className = 'error';
+
+                // --- НОВОЕ: Находим и подсвечиваем проблемные карточки ---
+                let origIndex = 0;
+                currentLessonData.sentences.forEach((sentence, index) => {
+                    const cardElement = cards[index];
+                    if (!cardElement) return;
+
+                    const cleanCardText = sentence.original.replace(punctuationRegex, '').replace(/\s+/g, '');
+                    const expectedSegment = cleanOriginal.substring(origIndex, origIndex + cleanCardText.length);
+
+                    if (cleanCardText !== expectedSegment) {
+                        // Добавляем специальный класс для ошибки несоответствия текста
+                        cardElement.classList.add('error-text-mismatch');
+                    }
+
+                    origIndex += cleanCardText.length;
+                });
+                // --- КОНЕЦ НОВОГО БЛОКА ---
+
+                return;
+            }
+
+            // 2. Проверка пунктуации ТОЛЬКО в original
+            const badOriginal = currentLessonData.sentences.find(s => /[.,;:!?—–\(\)\[\]"]/g.test(s.original));
+            if (badOriginal) {
+                msgDiv.textContent = '❌ ОШИБКА: в оригинале обнаружена запрещённая пунктуация (.,;:!?—–()[]")!';
+                msgDiv.className = 'error';
+                return;
+            }
+
+            // 3. Проверка пунктуации в translation
+            const badTranslation = currentLessonData.sentences.find(s => /[.,;:!?—–\(\)\[\]"]/g.test(s.translation));
+            if (badTranslation) {
+                msgDiv.textContent = '❌ ОШИБКА: в переводе обнаружена запрещённая пунктуация (.,;:!?—–()[]")!';
+                msgDiv.className = 'error';
+                return;
+            }
+
+            // 4. Проверка транскрипции по словарю с различением типов ошибок
+            let allErrors = [];
+            let hasMissingCharErrors = false;
+            let hasWrongTransErrors = false;
+
+            currentLessonData.sentences.forEach((sentence, index) => {
+                const cardElement = cards[index];
+                if (!cardElement) return;
+
+                const errors = checkTransliterationForCard(sentence, cardElement);
+                allErrors.push(...errors);
+
+                // Агрегируем флаги
+                if (errors.some(e => e.type === 'missing_char')) {
+                    hasMissingCharErrors = true;
+                }
+                if (errors.some(e => e.type === 'wrong_trans')) {
+                    hasWrongTransErrors = true;
+                }
+            });
+
+            // Определяем, какое сообщение показать
+            if (hasMissingCharErrors) {
+                // ПРИОРИТЕТ: Ошибка отсутствия иероглифа
+                msgDiv.textContent = '⚠️ КРИТИЧЕСКАЯ ОШИБКА: Обнаружены иероглифы, отсутствующие в словаре!';
+                msgDiv.className = 'error';
+            } else if (hasWrongTransErrors) {
+                // Вторичная ошибка: Неверная транскрипция
+                document.getElementById('fix-transliteration').style.display = 'inline-block';
+                msgDiv.textContent = '⚠️ Обнаружены ошибки в транскрипции.';
+                msgDiv.className = 'error';
+            } else {
+                // Ошибок нет
+                document.getElementById('fix-transliteration').style.display = 'none';
+                msgDiv.textContent = '✅ Все проверки пройдены';
+                msgDiv.className = 'success';
+            }
+        }
+
+        // --- ИЗМЕНЕНО: Функция проверки транскрипции с различением типов ошибок ---
+        function checkTransliterationForCard(sentence, card) {
+            const original = sentence.original;
+            const provided = sentence.transliteration.split(' ').filter(x => x);
+            const errors = []; // Массив для сбора всех ошибок
+
+            // Находим поля ввода
+            const originalTextarea = card.querySelector('.original');
+            const translitTextarea = card.querySelector('.transliteration');
+
+            // Очищаем старые локальные сообщения об ошибках транскрипции
+            const existingMissingCharError = card.querySelector('.error-message-local.missing-char');
+            const existingWrongTransError = card.querySelector('.error-message-local.wrong-trans');
+            if (existingMissingCharError) existingMissingCharError.remove();
+            if (existingWrongTransError) existingWrongTransError.remove();
+
+            // Проверяем каждый иероглиф
+            for (let i = 0; i < original.length; i++) {
+                const char = original[i];
+                const providedPart = provided[i] || '';
+
+                if (!window.charData || !window.charData[char]) {
+                    // ОШИБКА 1: Иероглиф не найден в словаре
+                    errors.push({
+                        type: 'missing_char',
+                        char: char,
+                        index: i
+                    });
+
+                    // Создаем и вставляем сообщение под полем "Оригинал"
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'error-message-local missing-char';
+                    errorMsg.textContent = `⚠️ Иероглиф "${char}" отсутствует в словаре.`;
+                    errorMsg.style.display = 'block';
+                    originalTextarea.parentNode.insertBefore(errorMsg, originalTextarea.nextSibling);
+                } else {
+                    // ОШИБКА 2: Транскрипция не совпадает
+                    const expectedPinyin = window.charData[char].pinyin;
+                    if (providedPart !== expectedPinyin) {
+                        errors.push({
+                            type: 'wrong_trans',
+                            char: char,
+                            expected: expectedPinyin,
+                            provided: providedPart,
+                            index: i
+                        });
+
+                        // Создаем и вставляем сообщение под полем "Транскрипция"
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'error-message-local wrong-trans';
+                        errorMsg.textContent = `⚠️ Ожидалось: "${expectedPinyin}".`;
+                        errorMsg.style.display = 'block';
+                        translitTextarea.parentNode.insertBefore(errorMsg, translitTextarea.nextSibling);
+                    }
+                }
+            }
+
+            // Удаляем старые классы ошибок
+            card.classList.remove('error-missing', 'error-wrong');
+
+            // Применяем новый класс в зависимости от типа первой ошибки
+            if (errors.length > 0) {
+                const firstError = errors[0];
+                if (firstError.type === 'missing_char') {
+                    card.classList.add('error-missing');
+                } else if (firstError.type === 'wrong_trans') {
+                    card.classList.add('error-wrong');
+                }
+            }
+
+            return errors; // Возвращаем массив ошибок для дальнейшего анализа
+        }
+
+
+        // --- УПРАВЛЕНИЕ КАРТОЧКАМИ ---
+
+        // --- ИЗМЕНЕНО: Функция для вставки новой карточки ПОСЛЕ указанного индекса ---
+        function insertNewCardAfter(index) {
+            if (!currentLessonData) return;
+
+            // Создаем новую пустую карточку
+            const newSentence = {
+                number: index + 2, // Временный номер
+                original: "",
+                transliteration: "",
+                translation: ""
+            };
+
+            // Вставляем ее ПОСЛЕ указанного индекса
+            currentLessonData.sentences.splice(index + 1, 0, newSentence);
+
+            // Пересчитываем номера для ВСЕХ последующих карточек
+            for (let i = index + 1; i < currentLessonData.sentences.length; i++) {
+                currentLessonData.sentences[i].number = i + 1;
+            }
+
+            // Перерендериваем все карточки
+            renderCards(currentLessonData.sentences);
+            validateAll();
+        }
+
+        function removeCard(index) {
+            if (!currentLessonData || index < 0 || index >= currentLessonData.sentences.length) return;
+
+            // Удаляем карточку из массива
+            currentLessonData.sentences.splice(index, 1);
+
+            // Пересчитываем номера
+            currentLessonData.sentences.forEach((s, i) => s.number = i + 1);
+
+            // Перерендериваем все карточки
+            renderCards(currentLessonData.sentences);
+            validateAll();
+        }
+
+        // --- ИЗМЕНЕНО: Кнопка "Очистить оригинал от пунктуации" ---
+        document.getElementById('clear-punctuation').addEventListener('click', function() {
+            if (!currentLessonData) return;
+
+            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
+            currentLessonData.sentences.forEach(sentence => {
+                sentence.original = sentence.original.replace(punctuationRegex, '');
+            });
+
+            // Перерендерим карточки, чтобы изменения отразились в textarea
+            renderCards(currentLessonData.sentences);
+            // Перезапустим валидацию, так как текст изменился
+            validateAll();
+        });
+
+        // --- АВТОМАТИЧЕСКОЕ ИСПРАВЛЕНИЕ ТРАНСКРИПЦИИ ---
+        document.getElementById('fix-transliteration').addEventListener('click', function () {
+            if (!currentLessonData) return;
+
+            currentLessonData.sentences.forEach(sentence => {
+                const original = sentence.original;
+                const expected = [];
+
+                for (let char of original) {
+                    if (window.charData && window.charData[char]) {
+                        expected.push(window.charData[char].pinyin);
+                    } else {
+                        expected.push('?');
+                    }
+                }
+
+                sentence.transliteration = expected.join(' ');
+            });
+
+            renderCards(currentLessonData.sentences);
+            validateAll();
+        });
+
+        // --- СОХРАНЕНИЕ ---
+        document.getElementById('save-btn').addEventListener('click', function() {
+            if (!currentLessonData || !originalLessonNumber) {
+                alert('Нет данных для сохранения.');
+                return;
+            }
+
+            try {
+                // Генерируем содержимое файла
+                const content = `var SentenceData = ${JSON.stringify(currentLessonData, null, 4)};`;
+
+                // Создаем Blob
+                const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
+
+                // Создаем ссылку для скачивания
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `segmentation.js`;
+
+                // Добавляем ссылку в DOM, кликаем по ней и удаляем
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Показываем сообщение об успехе
+                document.getElementById('status').textContent = '✅ Файл успешно сохранен!';
+                setTimeout(() => {
+                    document.getElementById('status').textContent = `Загружен урок ${originalLessonNumber}`;
+                }, 3000);
+
+                // Обновляем originalLessonData и diff view
+                originalLessonData = JSON.parse(JSON.stringify(currentLessonData));
+                if (currentView === 'diff') {
+                    renderDiffView();
+                }
+
+            } catch (error) {
+                console.error('Ошибка при сохранении файла:', error);
+                alert('Произошла ошибка при сохранении файла.');
+            }
+        });
+
+        // --- УПРАВЛЕНИЕ ВКЛАДКАМИ ---
+        function switchView(viewName) {
+            // Обновляем активную вкладку
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === viewName);
+            });
+
+            // Показываем/скрываем контейнеры
+            document.getElementById('cards-view').classList.toggle('active', viewName === 'cards');
+            document.getElementById('diff-view').classList.toggle('active', viewName === 'diff');
+            document.getElementById('diagnostics-view').classList.toggle('active', viewName === 'diagnostics');
+
+            currentView = viewName;
+
+            // Если переключились на вкладку "Текстовый вид", обновляем diff
+            if (viewName === 'diff') {
+                renderDiffView();
+            }
+            // Если переключились на вкладку "Диагностика", ничего не делаем автоматически
+        }
+
+        // Добавляем обработчики на кнопки вкладок
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const viewName = button.dataset.view;
+                switchView(viewName);
+            });
+        });
+
+        // --- РЕНДЕРИНГ DIFF VIEW ---
+        function renderDiffView() {
+            const diffContainer = document.getElementById('diff-container');
+            if (!originalLessonData || !currentLessonData) {
+                diffContainer.innerHTML = '<p style="text-align: center; color: #8b949e;">Нет данных для сравнения.</p>';
+                return;
+            }
+
+            // Преобразуем объекты в строки с одинаковым форматированием
+            const originalStr = JSON.stringify(originalLessonData, null, 2);
+            const currentStr = JSON.stringify(currentLessonData, null, 2);
+
+            // Генерируем diff
+            const diffString = Diff.createTwoFilesPatch('original.js', 'modified.js', originalStr, currentStr);
+
+            // Очищаем контейнер
+            diffContainer.innerHTML = '';
+
+            // Используем diff2html для отображения
+            const diff2htmlUi = new Diff2HtmlUI(diffContainer, diffString, {
+                drawFileList: true,
+                matching: 'lines',
+                outputFormat: 'side-by-side', // или 'line-by-line'
+                synchronisedScroll: true,
+                highlight: true,
+                renderNothingWhenEmpty: false
+            });
+            diff2htmlUi.draw();
+            diff2htmlUi.highlightCode();
+
+            // Применяем наши кастомные стили для темной темы
+            setTimeout(() => {
+                const d2hElements = diffContainer.querySelectorAll('.d2h-wrapper');
+                d2hElements.forEach(el => {
+                    el.style.backgroundColor = '#0d1117';
+                    el.style.color = '#c9d1d9';
+                });
+            }, 100);
+        }
+
+        // --- ОТКРЫТИЕ ФАЙЛА ---
+        document.getElementById('open-file-btn').addEventListener('click', function() {
+            const overlay = document.getElementById('open-file-modal-overlay');
+            overlay.classList.add('active');
+        });
+
+        // Закрытие модального окна по клику на оверлей или крестик
+        document.getElementById('open-file-modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        document.querySelector('#open-file-modal .close-btn').addEventListener('click', function() {
+            document.getElementById('open-file-modal-overlay').classList.remove('active');
+        });
+
+        // Обработка перетаскивания файла
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Обработка выбора файла через кнопку
+        document.getElementById('select-file-btn').addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                handleFile(this.files[0]);
+            }
+        });
+
+        // Основная функция обработки файла
+        function handleFile(file) {
+            const errorDiv = document.getElementById('open-file-error');
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                try {
+                    // Создаем изолированную песочницу для выполнения кода
+                    const sandbox = {
+                        SentenceData: null
+                    };
+                    // Оборачиваем код в функцию, чтобы изолировать его выполнение
+                    const codeToExecute = `(function() {
+                        ${fileContent}
+                        return typeof SentenceData !== 'undefined' ? SentenceData : null;
+                    })();`;
+
+                    const extractedData = eval(codeToExecute);
+
+                    if (!extractedData || typeof extractedData !== 'object') {
+                        throw new Error('Файл не содержит валидный объект SentenceData.');
+                    }
+
+                    if (!extractedData.lesson || !Array.isArray(extractedData.sentences)) {
+                        throw new Error('Структура объекта SentenceData неверна.');
+                    }
+
+                    // Загружаем данные в редактор
+                    currentLessonData = JSON.parse(JSON.stringify(extractedData)); // Клонируем
+                    originalLessonData = JSON.parse(JSON.stringify(extractedData)); // Клонируем для diff
+                    originalLessonNumber = extractedData.lesson;
+
+                    // Рендерим карточки
+                    renderCards(currentLessonData.sentences);
+                    // Запускаем валидацию
+                    validateAll();
+                    // Активируем кнопки
+                    document.getElementById('save-btn').disabled = false;
+                    document.getElementById('clear-punctuation').disabled = false;
+                    // Закрываем модальное окно
+                    document.getElementById('open-file-modal-overlay').classList.remove('active');
+                    // Показываем статус
+                    document.getElementById('status').textContent = `Файл "${file.name}" успешно загружен.`;
+
+                } catch (error) {
+                    console.error('Ошибка при обработке файла:', error);
+                    errorDiv.textContent = `Ошибка: ${error.message}`;
+                    errorDiv.style.display = 'block';
+                }
+            };
+            reader.onerror = function() {
+                errorDiv.textContent = 'Ошибка чтения файла.';
+                errorDiv.style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+
+        // --- ОБЩАЯ ДИАГНОСТИКА ---
+        async function runFullDiagnostics() {
+            const outputDiv = document.getElementById('diagnostics-output');
+            outputDiv.innerHTML = '<p>Запуск диагностики...</p>';
+
+            const report = [];
+
+            for (let lessonNumber of availableLessons) {
+                const lessonErrors = await diagnoseSingleLesson(lessonNumber);
+                if (lessonErrors.length > 0) {
+                    report.push(`Урок № ${lessonNumber}:`);
+                    lessonErrors.forEach(error => {
+                        report.push(`  ${error}`);
+                    });
+                    report.push(''); // Пустая строка для разделения уроков
+                }
+            }
+
+            if (report.length === 0) {
+                outputDiv.innerHTML = '<p>🎉 Поздравляем! Во всех уроках не обнаружено ошибок.</p>';
+            } else {
+                outputDiv.innerHTML = `<pre>${report.join('\n')}</pre>`;
+            }
+        }
+
+        async function diagnoseSingleLesson(lessonNumber) {
+            const errors = [];
+
+            // Загружаем данные урока
+            const lessonData = await loadLessonData(lessonNumber);
+            if (!lessonData) {
+                errors.push('❌ Не удалось загрузить данные урока.');
+                return errors;
+            }
+
+            // 1. Проверка целостности текста
+            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
+            const cleanOriginal = lessonData.text.replace(/\n/g, '').replace(punctuationRegex, '').replace(/\s+/g, '');
+            const cleanReconstructed = lessonData.sentences.map(s => s.original.replace(punctuationRegex, '')).join('').replace(/\s+/g, '');
+
+            if (cleanOriginal !== cleanReconstructed) {
+                errors.push('❌ ОШИБКА: строки original не составляют исходный текст!');
+            }
+
+            // 2. Проверка каждого предложения
+            lessonData.sentences.forEach((sentence, index) => {
+                const sentenceErrors = [];
+
+                // 2.1. Проверка пунктуации в original
+                if (/[.,;:!?—–\(\)\[\]"]/.test(sentence.original)) {
+                    sentenceErrors.push('Запрещённая пунктуация в оригинале');
+                }
+
+                // 2.2. Проверка пунктуации в translation
+                if (/[.,;:!?—–\(\)\[\]"]/.test(sentence.translation)) {
+                    sentenceErrors.push('Запрещённая пунктуация в переводе');
+                }
+
+                // 2.3. Проверка транскрипции
+                const original = sentence.original;
+                const provided = sentence.transliteration.split(' ').filter(x => x);
+                const expected = [];
+
+                for (let char of original) {
+                    if (window.charData && window.charData[char]) {
+                        expected.push(window.charData[char].pinyin);
+                    } else {
+                        sentenceErrors.push(`Иероглиф "${char}" отсутствует в словаре`);
+                    }
+                }
+
+                if (provided.join(' ') !== expected.join(' ')) {
+                    sentenceErrors.push('Неверная транскрипция');
+                }
+
+                // Если есть ошибки для этого предложения, добавляем их в общий список
+                if (sentenceErrors.length > 0) {
+                    errors.push(`Предложение ${index + 1} (${sentence.number}): ${sentenceErrors.join('; ')}`);
+                }
+            });
+
+            return errors;
+        }
+
+        // Вспомогательная функция: загружает данные урока без изменения глобального состояния
+        function loadLessonData(lessonNumber) {
+            return new Promise((resolve) => {
+                // Сохраняем текущее состояние
+                const prevScript = currentScript;
+                const prevLessonData = currentLessonData;
+
+                // Удаляем текущий скрипт, если есть
+                if (prevScript) {
+                    document.head.removeChild(prevScript);
+                    currentScript = null;
+                    delete window.SentenceData;
+                }
+
+                const script = document.createElement('script');
+                script.src = `./lesson${lessonNumber}/segmentation.js`;
+                script.type = 'text/javascript';
+
+                const timeoutId = setTimeout(() => {
+                    cleanupAndResolve(null);
+                }, 5000);
+
+                script.onload = function () {
+                    clearTimeout(timeoutId);
+                    setTimeout(() => {
+                        if (typeof window.SentenceData !== 'undefined' && window.SentenceData.lesson === lessonNumber) {
+                            const data = JSON.parse(JSON.stringify(window.SentenceData)); // Клонируем
+                            cleanupAndResolve(data);
+                        } else {
+                            cleanupAndResolve(null);
+                        }
+                    }, 100);
+                };
+
+                script.onerror = function () {
+                    clearTimeout(timeoutId);
+                    cleanupAndResolve(null);
+                };
+
+                document.head.appendChild(script);
+
+                function cleanupAndResolve(data) {
+                    // Удаляем временный скрипт
+                    if (script.parentNode) {
+                        document.head.removeChild(script);
+                    }
+                    // Восстанавливаем предыдущее состояние
+                    currentScript = prevScript;
+                    currentLessonData = prevLessonData;
+                    resolve(data);
+                }
+            });
+        }
+
+        // Обработчик кнопки "Запустить диагностику"
+        document.getElementById('run-diagnostics-btn').addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = 'Выполняется...';
+            runFullDiagnostics().then(() => {
+                this.disabled = false;
+                this.textContent = 'Запустить диагностику';
+            });
+        });
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM загружен. Начинаю автопоиск уроков...");
+            detectAvailableLessons(50); // Ищем до 50 уроков
+        });
+
+        document.getElementById('lesson-select').addEventListener('change', function () {
+            const lessonNumber = this.value;
+            if (lessonNumber) {
+                document.getElementById('status').textContent = `Загрузка урока ${lessonNumber}...`;
+                loadLesson(lessonNumber);
+            } else {
+                currentLessonData = null;
+                originalLessonData = null;
+                originalLessonNumber = null;
+                renderCards([]);
+                document.getElementById('status').textContent = 'Урок не выбран';
+                document.getElementById('validation-message').textContent = '';
+                document.getElementById('validation-message').className = '';
+                document.getElementById('save-btn').disabled = true;
+                document.getElementById('clear-punctuation').disabled = true;
+                document.getElementById('fix-transliteration').style.display = 'none';
+
+                // Очищаем diff view
+                if (currentView === 'diff') {
+                    document.getElementById('diff-container').innerHTML = '<p style="text-align: center; color: #8b949e;">Выберите урок и внесите изменения, чтобы увидеть diff.</p>';
+                }
+            }
         });
     </script>
 </body>
