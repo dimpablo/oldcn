@@ -1,111 +1,92 @@
-// Ждём полной загрузки DOM
 document.addEventListener('DOMContentLoaded', function () {
-  // Определяем путь к папке help (относительно текущего location)
-  const helpPath = '../help'; // Путь от /lessonN/theory.html к /help/
-
-  // Массив иероглифов, для которых есть справочные страницы
+  const helpPath = '../help'; // Путь к справке
   const glyphs = ['不', '亡', '其', '叀', '弗', '曰', '若', '于', '允', '占', '唯', '弜', '王', '貞', '奚'];
 
-  // Функция для создания ссылки с сохранением стилей
-  function createLink(char) {
-    const link = document.createElement('a');
-    link.href = `${helpPath}/${char}.html`;
-    link.target = '_blank'; // Открытие в новой вкладке — опционально
-    link.rel = 'noopener';
+  // Функция создания иероглифа с иконкой "ссылка" в виде степени
+  function createGlyphWithLink(char) {
+    const container = document.createElement('span');
+    container.style.position = 'relative';
+    container.style.display = 'inline-block';
+    container.style.lineHeight = '1'; // Чтобы не сбивалась высота строки
 
-    // КРИТИЧЕСКИЕ СТИЛИ: сохраняем внешний вид как у обычного текста
-    link.style.fontSize = 'inherit';        // Наследуем размер шрифта
-    link.style.lineHeight = 'inherit';      // Наследуем высоту строки
-    link.style.fontFamily = 'inherit';      // Наследуем шрифт
-    link.style.fontWeight = 'inherit';      // Наследуем жирность
-    link.style.letterSpacing = 'inherit';   // Наследуем интервал между буквами
-    link.style.color = 'inherit';           // Сохраняем цвет текста
-    link.style.textDecoration = 'none';     // Убираем подчёркивание
+    // Иероглиф
+    const glyphSpan = document.createElement('span');
+    glyphSpan.textContent = char;
+    glyphSpan.style.position = 'relative';
+    glyphSpan.style.zIndex = '1';
 
-    // Визуальные стили выделения
-    link.style.backgroundColor = '#fdeced'; // Пастельно-розовый фон
-    link.style.padding = '0 2px';
-    link.style.borderRadius = '3px';
-    link.style.display = 'inline-block';    // Чтобы padding и border работали
-    link.style.verticalAlign = 'middle';    // Ровняем по базовой линии
-    link.style.textAlign = 'center';        // Центрируем иероглиф
+    // Значок степени
+    const linkLabel = document.createElement('a');
+    linkLabel.href = `${helpPath}/${char}.html`;
+    linkLabel.target = '_blank';
+    linkLabel.rel = 'noopener';
+    linkLabel.textContent = '●'; // Круглая точка
+    linkLabel.style.position = 'absolute';
+    linkLabel.style.top = '-0.5em';      // Поднимаем вверх
+    linkLabel.style.right = '0';
+    linkLabel.style.fontSize = '0.6em';  // Меньше основного текста
+    linkLabel.style.lineHeight = '1';
+    linkLabel.style.color = '#d81b60';   // Цвет
+    linkLabel.style.textDecoration = 'none';
+    linkLabel.style.zIndex = '2';
+    linkLabel.style.transform = 'translateX(50%)'; // Сдвиг вправо, чтобы был над краем
+    linkLabel.style.cursor = 'pointer';
 
-    // Защита от мобильной авто-подстройки шрифта (особенно в Safari)
-    link.style.textSizeAdjust = 'none';
-    link.style.WebkitTextSizeAdjust = 'none';
+    container.appendChild(glyphSpan);
+    container.appendChild(linkLabel);
 
-    // Добавляем иероглиф
-    link.appendChild(document.createTextNode(char));
-
-    return link;
+    return container;
   }
 
-  // Создаём TreeWalker для обхода текстовых узлов
-  const walker = document.createTreeWalker(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: function (node) {
-        const parent = node.parentNode;
+  // === Создание навигационной полоски ===
+  function createNavigation() {
+    const textDiv = document.querySelector('.text');
+    if (!textDiv) return;
 
-        // Исключаем служебные теги
-        const excludedTags = ['SCRIPT', 'STYLE', 'TEXTAREA', 'CODE', 'PRE'];
-        if (excludedTags.includes(parent.tagName)) {
-          return NodeFilter.FILTER_REJECT;
-        }
+    // Получаем номер урока из URL
+    const path = window.location.pathname;
+    const lessonMatch = path.match(/\/lesson(\d+)\//);
+    
+    if (lessonMatch) {
+      const lessonNum = parseInt(lessonMatch[1]);
+      const prevLesson = lessonNum - 1;
+      const nextLesson = lessonNum + 1;
 
-        // Исключаем элементы с атрибутом data-no-glyph-links
-        if (parent.hasAttribute && parent.hasAttribute('data-no-glyph-links')) {
-          return NodeFilter.FILTER_REJECT;
-        }
+      // Создаем навигационную полоску
+      const navDiv = document.createElement('div');
+      navDiv.style.cssText = `
+        text-align: center;
+        margin: 15px 0;
+        padding: 8px 0;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        background-color: #f8f9fa;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        font-size: 0.9em;
+      `;
 
-        // Принимаем, если текст не пустой
-        return node.textContent.trim().length > 0
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      }
-    }
-  );
+      // Создаем ссылки
+      const prevLink = prevLesson > 0 ? 
+        '<a href="../lesson' + prevLesson + '/theory.html" style="color: #1a4f72; text-decoration: none;">← предыдущая</a>' : 
+        '<span style="color: #999;">← предыдущая</span>';
 
-  const nodesToReplace = [];
-  let node;
+      const currentLink = '<a href="../lesson' + lessonNum + '/theory.html" style="color: #1a4f72; text-decoration: none; font-weight: bold;">урок ' + lessonNum + '</a>';
+      
+      // Для следующего урока проверяем, не выходит ли за пределы (1-60)
+      const nextLink = nextLesson <= 60 ? 
+        '<a href="../lesson' + nextLesson + '/theory.html" style="color: #1a4f72; text-decoration: none;">следующая →</a>' : 
+        '<span style="color: #999;">следующая →</span>';
+      
+      const homeLink = '<a href="../index.html" style="color: #1a4f72; text-decoration: none;">на главную</a>';
 
-  while ((node = walker.nextNode())) {
-    const text = node.textContent;
-    let fragment = document.createDocumentFragment();
-    let lastIndex = 0;
-    let modified = false;
-
-    // Проходим по каждому символу
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      if (glyphs.includes(char)) {
-        // Добавляем текст до иероглифа
-        if (i > lastIndex) {
-          fragment.appendChild(document.createTextNode(text.slice(lastIndex, i)));
-        }
-        // Добавляем ссылку
-        fragment.appendChild(createLink(char));
-        lastIndex = i + 1;
-        modified = true;
-      }
-    }
-
-    // Добавляем остаток текста
-    if (modified) {
-      if (lastIndex < text.length) {
-        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
-      }
-      nodesToReplace.push({ node, fragment });
+      navDiv.innerHTML = prevLink + ' | ' + currentLink + ' | ' + nextLink + ' | ' + homeLink;
+      
+      // Вставляем навигацию перед текстом
+      textDiv.parentNode.insertBefore(navDiv, textDiv);
     }
   }
 
-  // Применяем изменения к текстовым узлам
-  nodesToReplace.forEach(({ node, fragment }) => {
-    node.parentNode.replaceChild(fragment, node);
-  });
-
-  // === Обработка таблицы #oracleTable ===
+  // === Обработка таблицы oracleTable ===
   const tableCells = document.querySelectorAll('#oracleTable td');
   tableCells.forEach((td) => {
     const child = td.firstChild;
@@ -116,16 +97,13 @@ document.addEventListener('DOMContentLoaded', function () {
     ) {
       const char = child.textContent.trim();
       if (glyphs.includes(char)) {
-        td.innerHTML = ''; // Очищаем
-        const link = createLink(char);
-        td.appendChild(link);
-        // Убираем лишние отступы, если нужно
-        td.style.padding = '0'; // или оставьте стандартное, если мешает
+        td.innerHTML = '';
+        td.appendChild(createGlyphWithLink(char));
       }
     }
   });
 
-  // === Обработка .char-item (например, словарные карточки) ===
+  // === Обработка .char-item > span:first-child ===
   document.querySelectorAll('.char-item > span:first-child').forEach((span) => {
     const firstChild = span.firstChild;
     if (
@@ -135,13 +113,10 @@ document.addEventListener('DOMContentLoaded', function () {
     ) {
       const char = firstChild.textContent.trim();
       if (glyphs.includes(char)) {
-        // Сохраняем pinyin, если есть
         const pinyin = span.querySelector('.inline-pinyin');
 
-        // Пересоздаём span содержимое
         span.innerHTML = '';
-        const link = createLink(char);
-        span.appendChild(link);
+        span.appendChild(createGlyphWithLink(char));
         if (pinyin) {
           span.appendChild(pinyin);
         }
@@ -149,50 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // === Дополнительно: защита от мобильного масштабирования ===
-  // Добавляем стиль на страницу, если его ещё нет
-  if (!document.getElementById('glyph-link-styles')) {
-    const style = document.createElement('style');
-    style.id = 'glyph-link-styles';
-    style.textContent = `
-      a[href*="/help/"] {
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-      }
-      @media (max-width: 768px) {
-        a[href*="/help/"] {
-          font-size: inherit !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
+  // Создаем навигацию
+  createNavigation();
 });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const table = document.getElementById('oracleTable');
-        if (!table) return;
-
-        const rows = table.querySelectorAll('tr');
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            cells.forEach(cell => {
-                // Получаем текстовое содержимое ячейки, включая скрытые элементы, и удаляем пробелы
-                const cellText = cell.textContent.trim();
-                
-                // Проверяем, является ли содержимое ячейки только "_"
-                if (cellText === '_') {
-                    // Делаем текст невидимым, очищая textContent
-                    // Это удалит текстовый узел "_" , но оставит другие элементы (например, подсказки)
-                    cell.textContent = ''; 
-                }
-                // Проверяем, является ли содержимое ячейки только "|"
-                else if (cellText === '|') {
-                    // Меняем фоновый цвет на пастельно-бордовый
-                    cell.style.backgroundColor = '#e0bfb8'; // Пример пастельно-бордового цвета
-                    // Делаем текст (символ "|") невидимым, очищая textContent
-                    cell.textContent = '';
-                }
-            });
-        });
-    });

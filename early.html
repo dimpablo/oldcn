@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <title>Курс древнекитайского</title>
-
 <style>
   body {
     margin: 0;
     padding: 0;
-    background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
+    background: linear-gradient(315deg, #a8d8ea 0%, #aa96da 100%); /* Светло-голубой -> Лавандовый */
     font-family: Verdana, sans-serif;
     min-height: 100vh;
-    overscroll-behavior: none; /* Отключает эффект "резиновой" прокрутки на iOS */
+    overscroll-behavior: none;
   }
 
-  /* Цвета для различных типов юнитов */
+  /* Цвета для различных типов юнитов - КОНТРАСТНАЯ, НО МЯГКАЯ ПАЛИТРА */
   :root {
-    --color-theory: #d32f2f;
-    --color-vocab: #6a5acd;
-    --color-kanji: #311b92;
-    --color-exercise: #ef6c00;
-    --color-segmentation: #1565c0;
-    --color-translation: #689f38;
-    --color-syntax: #8e24aa;
-    --color-puzzle: #f57c00;
-    --color-community: #00897b;
+    --color-theory: #4a6fa5;        /* Сине-стальной */
+    --color-vocab: #6b5b95;        /* Фиолетово-серый */
+    --color-kanji: #8a6d8c;        /* Средний фиолетово-серый */
+    --color-exercise: #5b7c99;     /* Сине-серый */
+    --color-segmentation: #7a9e7e; /* Приглушённый зелёный */
+    --color-translation: #9b87a8;  /* Светло-фиолетовый */
+    --color-syntax: #6a8a9d;       /* Сине-серо-зелёный */
+    --color-puzzle: #b0a1c8;       /* Светлый фиолетовый */
+    --color-community: #7d9aa9;    /* Сине-серо-зелёный (альтернатива) */
   }
 
   /* КРУЖОК дефолт 150x150 */
@@ -32,15 +31,15 @@
     display: block;
     width: 300px;
     height: 300px;
-    color: #e6e6fa;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    color: #ffffff; /* Белый */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
     text-align: center;
     line-height: 300px;
     border-radius: 50%;
     font-weight: bold;
     font-size: 1.5em;
     margin: 0 auto;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -48,7 +47,7 @@
 
   .unit-circle:hover {
     transform: scale(1.05) translateY(-5px);
-    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
   }
 
   /* Цвета для различных типов юнитов */
@@ -71,15 +70,15 @@
     text-align: center;
   }
 
-  /* Ячейка для текстов — вдвое короче и с радостным цветом */
+  /* Ячейка для текстов — вдвое короче */
   .label-row {
     height: 30px;
     border-bottom: hidden;
     position: relative;
     overflow: hidden;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #4a6fa5 0%, #3a5a80 100%); /* Сине-стальной -> Более глубокий сине-стальной */
+    color: #ffffff; /* Белый */
     padding: 20px 30px;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -88,15 +87,14 @@
     font-size: 18px;
     font-weight: 500;
     margin: 10px 20px;
-    /* Добавлено: фиксация при прокрутке */
     position: sticky;
     top: 0;
     z-index: 10;
-    pointer-events: none; /* Чтобы не мешал кликам */
+    pointer-events: none;
   }
 
   .label-row * {
-    pointer-events: auto; /* Разрешаем клики по содержимому */
+    pointer-events: auto;
   }
 
   /* Прямоугольник на всю ячейку */
@@ -104,7 +102,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    color: #e6e6fa;
+    color: #ffffff; /* Белый */
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     text-align: center;
     line-height: 20px;
@@ -119,7 +117,6 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    /* Убедимся, что таблица не обрезает sticky */
     overflow: visible;
   }
 
@@ -130,12 +127,11 @@
     position: relative;
     overflow: hidden;
     text-align: center;
-    background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);
+    background: linear-gradient(135deg, #3a5a80 0%, #2a3f5f 100%); /* Более глубокий сине-стальной -> Очень глубокий */
     border-radius: 16px;
     margin: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     padding: 20px;
-    /* Добавлено: фиксация панели */
     position: sticky;
     top: 0;
     z-index: 20;
@@ -155,7 +151,7 @@
     align-items: center;
     height: 100%;
     gap: 15px;
-    color: white;
+    color: #ffffff; /* Белый */
   }
 
   .user-info {
@@ -169,7 +165,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    border: 3px solid white;
+    border: 3px solid #ffffff; /* Белый */
     object-fit: cover;
   }
 
@@ -180,7 +176,7 @@
 
   .user-email {
     font-size: 14px;
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .btn {
@@ -196,32 +192,32 @@
   }
 
   .btn-primary {
-    background-color: #4285F4;
-    color: white;
+    background-color: #6b5b95; /* Фиолетово-серый */
+    color: #ffffff;
   }
 
   .btn-primary:hover {
-    background-color: #3367D6;
+    background-color: #5a4a80; /* Темнее */
     transform: translateY(-2px);
   }
 
   .btn-secondary {
-    background-color: #00897b;
-    color: white;
+    background-color: #7a9e7e; /* Приглушённый зелёный */
+    color: #ffffff;
   }
 
   .btn-secondary:hover {
-    background-color: #00695C;
+    background-color: #638267; /* Темнее */
     transform: translateY(-2px);
   }
 
   .btn-logout {
-    background-color: #d32f2f;
-    color: white;
+    background-color: #b0a1c8; /* Светлый фиолетовый */
+    color: #2a3f5f; /* Очень глубокий */
   }
 
   .btn-logout:hover {
-    background-color: #c62828;
+    background-color: #9585b0; /* Темнее */
     transform: translateY(-2px);
   }
 
@@ -250,6 +246,7 @@
     }
   }
 </style>
+
 </head>
 <body>
   <!-- Основная таблица -->
