@@ -326,7 +326,8 @@
     <h2>Текст урока</h2>
     <table class="oracle-table" id="oracleTable"></table>
 </div>
-<div style="text-align: center; margin: 20px 0;">
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
     <label class="toggle-switch">
         <input id="fontToggle" type="checkbox"/>
         <span class="slider"></span>
@@ -372,17 +373,12 @@
     // Функция для создания таблицы
     function createOracleTable() {
         const table = document.getElementById('oracleTable');
-
         // Создаём строку с номерами колонок
         const headerRow = document.createElement('tr');
-
-        // Пустая ячейка для выравнивания с номерами строк
         const emptyCell = document.createElement('td');
         emptyCell.className = 'line-num';
         headerRow.appendChild(emptyCell);
-
-        // Номера колонок: от 1 до 15
-        for (let i = 1; i <= 15; i++) {
+        for (let i = 1; i <= 11; i++) {
             const th = document.createElement('td');
             th.className = 'col-num';
             th.textContent = i;
@@ -393,25 +389,17 @@
         // Создаём строки с текстом
         for (let i = 0; i < lessonText.length; i++) {
             const row = document.createElement('tr');
-
-            // Номер строки
             const lineNumCell = document.createElement('td');
             lineNumCell.className = 'line-num';
             lineNumCell.textContent = i + 1;
             row.appendChild(lineNumCell);
 
-            // Разбиваем строку на символы, игнорируя разделитель "|"
-            const chars = Array.from(lessonText[i].replace(/\|/g, ''));
-
-            // Заполняем ячейки для позиций 1–15
-            for (let j = 0; j < 15; j++) {
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 11; j++) {
                 const td = document.createElement('td');
-
-                // Если есть символ на этой позиции — ставим его
-                if (j < chars.length && chars[j].trim() !== '') {
+                if (j < chars.length) {
                     const char = chars[j];
                     td.textContent = char;
-
                     if (charData[char]) {
                         const tooltip = document.createElement('div');
                         tooltip.className = 'char-tooltip';
@@ -425,7 +413,6 @@
                 }
                 row.appendChild(td);
             }
-
             table.appendChild(row);
         }
     }
@@ -622,6 +609,34 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('oracleTable');
+        if (!table) return;
 
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                // Получаем текстовое содержимое ячейки, включая скрытые элементы, и удаляем пробелы
+                const cellText = cell.textContent.trim();
+                
+                // Проверяем, является ли содержимое ячейки только "_"
+                if (cellText === '_') {
+                    // Делаем текст невидимым, очищая textContent
+                    // Это удалит текстовый узел "_" , но оставит другие элементы (например, подсказки)
+                    cell.textContent = ''; 
+                }
+                // Проверяем, является ли содержимое ячейки только "|"
+                else if (cellText === '|') {
+                    // Меняем фоновый цвет на пастельно-бордовый
+                    cell.style.backgroundColor = '#e0bfb8'; // Пример пастельно-бордового цвета
+                    // Делаем текст (символ "|") невидимым, очищая textContent
+                    cell.textContent = '';
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

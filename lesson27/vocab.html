@@ -32,7 +32,7 @@
 
     <script>
         // === НАСТРОЙКА УРОКА ===
-        const LESSON = 29;
+        const LESSON =  parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
         
         // === СИСТЕМА ЗВУКОВ ИНТЕРФЕЙСА ===
         const uiSounds = {
@@ -131,31 +131,34 @@
         }
 
         // === ОЗВУЧКА ===
-        function playHanziSound(hanzi) {
-            const data = charData[hanzi];
-            if (!data || !data.pinyin) return;
+function playHanziSound(hanzi) {
+    const data = charData[hanzi];
+    if (!data || !data.pinyin) return;
 
-            let cleanPinyin = data.pinyin
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/ü/g, 'u')
-                .replace(/v/g, 'u');
+    let cleanPinyin = data.pinyin
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ü/g, 'u')
+        .replace(/v/g, 'u');
 
-            let tone = '1';
-            if (data.pinyin.includes('ā')) tone = '1';
-            else if (data.pinyin.includes('á')) tone = '2';
-            else if (data.pinyin.includes('ǎ')) tone = '3';
-            else if (data.pinyin.includes('à')) tone = '4';
+    let tone = '1';
+    if (data.pinyin.includes('ā')) tone = '1';
+    else if (data.pinyin.includes('á')) tone = '2';
+    else if (data.pinyin.includes('ǎ')) tone = '3';
+    else if (data.pinyin.includes('à')) tone = '4';
 
-            const pinyinKey = cleanPinyin + tone;
-            const url = `https://data.dong-chinese.com/pinyin/b/  ${pinyinKey}.mp3`;
-            const audio = new Audio(url);
+    const pinyinKey = cleanPinyin + tone;
+    const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
 
-            audio.play().catch(e => {
-                console.warn(`🔇 Нет звука для ${hanzi}`);
-            });
-        }
+    // Создаем аудио-объект
+    const audio = new Audio(url);
 
+    // 🚀 Используем метод play() внутри обработчика клика
+    // Это гарантирует, что воспроизведение инициировано пользователем
+    audio.play().catch(e => {
+        console.warn(`🔇 Нет звука для ${hanzi}`, e.message);
+    });
+}
         // === СИСТЕМА БАЛЛОВ ===
         async function updateUserPoints(pointsChange) {
             if (!db || !currentUser || !updateDocRef || !docRef || !getDocRef) {

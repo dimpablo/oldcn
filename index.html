@@ -2,244 +2,440 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Курс: Древнекитайские оракульные надписи</title>
-
-  <!-- Подключаем словарь как обычный скрипт -->
-  <script src="./../dictionary.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Древнекитайский язык — Онлайн-курс</title>
 
   <style>
-    html, body {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 10px;
-      gap: 8px;
-      width: 100%;
-      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(315deg, #8a9cf8 0%, #9a75c8 100%);
+      font-family: 'Segoe UI', Verdana, sans-serif;
+      min-height: 100vh;
+      color: #e6e6fa;
+      overscroll-behavior: none;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      color: #555;
-      flex-shrink: 0;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
     }
 
-    .scale-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .scale-btn {
-      width: 28px;
-      height: 28px;
-      font-size: 18px;
-      line-height: 28px;
+    header {
       text-align: center;
-      background-color: #e0e0e0;
-      border-radius: 50%;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
+      padding: 40px 20px;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
 
-    .scale-btn:hover {
-      background-color: #ccc;
+    h1 {
+      font-size: 2.8em;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
 
-    .scale-btn:active {
-      transform: translateY(1px);
+    .subtitle {
+      font-size: 1.2em;
+      margin: 10px 0 0;
+      opacity: 0.9;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
 
-    .scale-value {
-      min-width: 36px;
-      text-align: center;
-      font-weight: bold;
+    /* Панель пользователя */
+    .user-panel {
+      background: rgba(44, 62, 80, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      margin: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
-    #progress-container {
-      width: 100%;
-      height: 6px;
-      background-color: #e0e0e0;
-      border-radius: 3px;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    #progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: #4caf50;
-      transition: width 0.4s ease;
-      border-radius: 3px;
-    }
-
-    #task-container {
-      flex: 1;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease;
-      min-height: 0;
-      max-height: calc(100vh - 150px);
-    }
-
-    #task-container.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    #task-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      transform-origin: center top; /* Ключевое для масштаба */
-      transform: scale(1);
-      transition: transform 0.2s ease;
-      overflow: auto;
-    }
-
-    .controls {
-      padding: 12px 0;
+    .login-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 12px;
-      flex-wrap: nowrap;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    #next-btn, #skip-btn {
-      padding: 14px 24px;
-      font-size: 18px;
-      font-weight: 600;
-      color: white;
+    .user-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid white;
+      object-fit: cover;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .user-name {
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .user-email {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .user-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .user-stats a {
+      color: #e0f7fa;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.95em;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
       border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      max-width: 300px;
-      flex: 1;
-      min-width: 150px;
-    }
-
-    #next-btn {
-      background-color: #1976d2;
-    }
-
-    #next-btn:active {
-      transform: scale(0.98);
-    }
-
-    #next-btn:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    #skip-btn {
-      background-color: #ff9800;
-    }
-
-    #skip-btn:hover {
-      background-color: #f57c00;
-    }
-
-    #skip-btn:active {
-      transform: scale(0.98);
-    }
-
-    .hidden-iframe {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      border: none;
-    }
-
-    #status {
-      font-size: 16px;
+      font-size: 1.1em;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      text-decoration: none;
       text-align: center;
-      color: #555;
     }
 
+    .btn-primary {
+      background-color: #4285F4;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #3367D6;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: #00897b;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #00695C;
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background-color: #d32f2f;
+      color: white;
+    }
+
+    .btn-logout:hover {
+      background-color: #c62828;
+      transform: translateY(-2px);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Карточки периодов */
+    .periods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
+    }
+
+    .period-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      height: 320px;
+      color: white;
+    }
+
+    .period-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+      z-index: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .period-card:hover::before {
+      opacity: 0.6;
+    }
+
+    .period-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .bg-archaic     { background-image: url('img/oracle.jpeg'); }
+    .bg-early       { background-image: url('img/bronze.png'); }
+    .bg-late        { background-image: url('img/seal.jpg'); }
+    .bg-classical   { background-image: url('img/laozi.jpg'); }
+    .bg-postclassical { background-image: url('img/simaqian.jpeg'); }
+    .bg-common      { background-image: url('img/vinegartasters.jpg'); }
+
+    .period-card {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .period-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .period-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 8px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .period-desc {
+      font-size: 0.95em;
+      margin: 0 0 8px;
+      line-height: 1.5;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .lesson-count {
+      font-size: 0.85em;
+      opacity: 0.9;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+    }
+
+    /* Подвал */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9em;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* === Адаптивность для мобильных устройств === */
     @media (max-width: 768px) {
-      #task-container {
-        max-height: calc(100vh - 180px);
+      /* Отключаем прилипание панели */
+      .user-panel {
+        position: static;
+        margin: 10px;
+        padding: 15px;
       }
-      
-      .controls {
-        padding: 8px 0;
+
+      .login-container,
+      .auth-buttons {
         flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
       }
-      
-      #next-btn, #skip-btn {
-        width: 90%;
+
+      .btn {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 0.9em;
+        text-align: center;
+      }
+
+      .user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .user-stats {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 0;
+      }
+      .user-stats a {
+        font-size: 0.9em;
+      }
+      .container {
+        padding: 10px;
+      }
+      header {
+        padding: 30px 10px;
+      }
+      h1 {
+        font-size: 2.2em;
+      }
+      .subtitle {
+        font-size: 1.1em;
+      }
+      .period-card {
+        height: 260px;
+      }
+      .period-title {
+        font-size: 1.1em;
+      }
+      .period-desc {
+        font-size: 0.9em;
+        line-height: 1.45;
+      }
+      .lesson-count {
+        font-size: 0.8em;
       }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div id="status">🔍 Поиск заданий...</div>
-    <div class="scale-controls">
-      <div class="scale-btn" id="zoom-out">−</div>
-      <div class="scale-value" id="scale-value">1.0</div>
-      <div class="scale-btn" id="zoom-in">+</div>
+  <div class="container">
+    <!-- Заголовок -->
+    <header>
+      <h1>Древнекитайский язык</h1>
+      <div class="subtitle">Онлайн-курс по архаическому и классическому китайскому языку</div>
+    </header>
+
+    <!-- Панель пользователя -->
+    <div class="user-panel">
+      <div id="login-container" class="login-container">
+        <button class="btn btn-primary" id="loginWithGoogle">Войти через Google</button>
+        <a href="https://t.me/oldcnio" class="btn btn-secondary">Связаться с разработчиком</a>
+      </div>
+      <div id="user-container" class="user-container hidden">
+        <div class="user-info">
+          <img id="user-photo" class="user-avatar" src="" alt="User photo">
+          <div>
+            <div id="user-name" class="user-name"></div>
+            <div id="user-email" class="user-email"></div>
+          </div>
+          <div class="user-stats">
+            <a href="./community.html#leaderboard" target="_blank">
+              🎯 <strong id="user-points">0</strong> баллов
+            </a>
+            <a href="./community.html#friends" target="_blank">
+              👥 <strong id="user-friends">0</strong> друзей
+            </a>
+            <a href="./community.html#messages" target="_blank">
+              ✉️ <strong id="user-unread">0</strong> новых
+            </a>
+          </div>
+        </div>
+        <div class="auth-buttons">
+          <a href="./community.html#users" class="btn btn-secondary">Сообщество</a>
+          <a href="https://t.me/oldcnio" class="btn btn-secondary">Разработчик</a>
+          <button class="btn btn-logout" id="logoutBtn">Выйти</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Карточки периодов -->
+    <div class="periods-grid">
+      <a href="./archaic.html" class="period-card bg-archaic">
+        <div class="period-content">
+          <div class="period-title">Архаический</div>
+          <div class="period-desc">Язык оракульных надписей<br>на костях и бронзе династии Шан</div>
+          <div class="lesson-count">Уроки 1–10</div>
+        </div>
+      </a>
+
+      <a href="./early.html" class="period-card bg-early">
+        <div class="period-content">
+          <div class="period-title">Ранний доклассический</div>
+          <div class="period-desc">Тексты Западного Чжоу,<br>надписи на бронзовых сосудах</div>
+          <div class="lesson-count">Уроки 11–20</div>
+        </div>
+      </a>
+
+      <a href="./late.html" class="period-card bg-late">
+        <div class="period-content">
+          <div class="period-title">Поздний доклассический</div>
+          <div class="period-desc">Философия и политика эпохи Чуньцю</div>
+          <div class="lesson-count">Уроки 21–30</div>
+        </div>
+      </a>
+
+      <a href="./classical.html" class="period-card bg-classical">
+        <div class="period-content">
+          <div class="period-title">Ранний классический</div>
+          <div class="period-desc">Мэн-цзы, Чжуан-цзы, Сунь-цзы<br>— эпоха Чжаньго</div>
+          <div class="lesson-count">Уроки 31–40</div>
+        </div>
+      </a>
+
+      <a href="./postclassical.html" class="period-card bg-postclassical">
+        <div class="period-content">
+          <div class="period-title">Поздний классический</div>
+          <div class="period-desc">Историки Хань: Сыма Цянь, Бань Гу</div>
+          <div class="lesson-count">Уроки 41–50</div>
+        </div>
+      </a>
+
+      <a href="./postclassical.html" class="period-card bg-common">
+        <div class="period-content">
+          <div class="period-title">Постклассический</div>
+          <div class="period-desc">Эволюция языка в эпоху разделения и буддизма</div>
+          <div class="lesson-count">Уроки 51–60</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Подвал -->
+    <footer>
+      <p>© 2025 OLDCN.github.IO | <a href="https://t.me/oldcnio">Канал в Telegram</a></p>
+      <p>Учебник: В. А. Крюков, Хуан Шуин. «Древнекитайский язык»</p>
+    </footer>
   </div>
 
-  <div id="progress-container">
-    <div id="progress-bar"></div>
-  </div>
-
-  <div id="task-container">
-    <iframe id="task-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
-  </div>
-
-  <div class="controls">
-    <button id="next-btn" disabled>Следующее задание</button>
-    <button id="skip-btn">Пропустить задание</button>
-  </div>
-
-  <!-- НОМЕР УРОКА — МЕНЯЙ ВРУЧНУЮ ДЛЯ КАЖДОЙ ПАПКИ -->
-  <script>
-  const LESSON =  parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
-  </script>
-
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK и логика авторизации -->
   <script type="module">
-    // Импорт Firebase
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    // Конфиг
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -253,268 +449,157 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById('loginWithGoogle');
+    const loginContainer = document.getElementById('login-container');
+    const userContainer = document.getElementById('user-container');
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
+    const userPhoto = document.getElementById('user-photo');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userPointsEl = document.getElementById('user-points');
+    const userFriendsEl = document.getElementById('user-friends');
+    const userUnreadEl = document.getElementById('user-unread');
+
     let currentUser = null;
-    let totalEarnedForLesson = 0;
 
-
-    // === ✅ Функция начисления баллов ===
-    async function addPoints(points, reason) {
-      if (!currentUser) return;
-      try {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        const currentPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
-        const newPoints = currentPoints + points;
-        await updateDoc(userRef, { points: newPoints });
-        totalEarnedForLesson += points;
-        console.log(`[Баллы] ${points} (${reason}) → всего: ${newPoints}`);
-      } catch (e) {
-        console.error("❌ Ошибка обновления баллов:", e);
-      }
-    }
-
-    // === 📚 Получаем иероглифы урока из charData ===
-    function getLessonWords(lessonNum) {
-      if (typeof charData === 'undefined') {
-        console.error('❌ charData не загружен');
-        return [];
-      }
-
-      return Object.keys(charData)
-        .filter(key => {
-          const data = charData[key];
-          return data.lesson === lessonNum && key.length === 1;
+    loginBtn.addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          loadUserData(result.user);
+        })
+        .catch((error) => {
+          alert("Ошибка входа: " + error.message);
         });
-    }
+    });
 
-    const lessonwords = getLessonWords(LESSON);
-    if (lessonwords.length === 0) {
-      document.getElementById('status').textContent = `❌ Нет иероглифов для урока ${LESSON}`;
-    }
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth).catch(() => {
+        alert("Ошибка выхода");
+      });
+    });
 
-    // === 🧩 ОСНОВНОЙ КОД КВИЗА ===
-    let tasks = [];
-    let currentTaskIndex = 0;
-    let currentScale = 1.0;
-    const minScale = 0.5;
-    const maxScale = 2.0;
-    const scaleStep = 0.1;
+    async function loadUserData(user) {
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
 
-    const iframe = document.getElementById("task-frame");
-    const statusEl = document.getElementById("status");
-    const nextBtn = document.getElementById("next-btn");
-    const skipBtn = document.getElementById("skip-btn");
-    const progressBar = document.getElementById("progress-bar");
-    const scaleValueEl = document.getElementById("scale-value");
-    const zoomInBtn = document.getElementById("zoom-in");
-    const zoomOutBtn = document.getElementById("zoom-out");
-
-    let hasProcessedHanzi = false;
-    let discoveryCompleted = false;
-
-    function shuffleArray(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          displayName: user.displayName || 'Аноним',
+          email: user.email,
+          photoURL: user.photoURL,
+          points: 0,
+          friends: [],
+          joinedAt: new Date()
+        });
       }
-      return arr;
+
+      const data = userSnap.data();
+      currentUser = { uid: user.uid, ...data };
+
+      userName.textContent = user.displayName || 'Пользователь';
+      userEmail.textContent = user.email;
+      userPhoto.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
+
+      userPointsEl.textContent = data.points || 0;
+      userFriendsEl.textContent = (data.friends ? data.friends.length : 0);
+
+      if (currentUser) {
+        loadUnreadMessages(currentUser.uid);
+      }
+
+      loginContainer.classList.add('hidden');
+      userContainer.classList.remove('hidden');
     }
 
-    function checkTaskIsValid(n) {
-      return new Promise((resolve) => {
-        const filename = `tasks/task${n}.html`;
-        const frame = document.createElement("iframe");
-        frame.classList.add("hidden-iframe");
-        frame.setAttribute("data-check", n);
+    function loadUnreadMessages(userId) {
+      const msgQuery = query(
+        collection(db, 'messages'),
+        where('participants', 'array-contains', userId)
+      );
 
-        let responded = false;
-        let timeoutId;
-
-        function onMessage(event) {
-          const frameN = parseInt(frame.getAttribute("data-check"));
-          if (event.data.type === "TASK_EXISTS" && event.data.valid) {
-            if (!responded && frameN === n) {
-              responded = true;
-              clearTimeout(timeoutId);
-              document.body.removeChild(frame);
-              window.removeEventListener("message", onMessage);
-              resolve({ exists: true, n });
-            }
+      onSnapshot(msgQuery, (snap) => {
+        let unread = 0;
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (data.to === userId && (!data.seenBy || !data.seenBy.includes(userId))) {
+            unread++;
           }
-        }
-
-        window.addEventListener("message", onMessage);
-
-        timeoutId = setTimeout(() => {
-          if (!responded) {
-            document.body.removeChild(frame);
-            window.removeEventListener("message", onMessage);
-            resolve({ exists: false, n });
-          }
-        }, 3000);
-
-        frame.onload = () => {
-          try {
-            if (frame.contentDocument && frame.contentDocument.title === "404 Not Found") {
-              if (!responded) {
-                clearTimeout(timeoutId);
-                document.body.removeChild(frame);
-                window.removeEventListener("message", onMessage);
-                resolve({ exists: false, n });
-              }
-            }
-          } catch (e) {}
-        };
-
-        frame.onerror = () => {
-          if (!responded) {
-            clearTimeout(timeoutId);
-            document.body.removeChild(frame);
-            window.removeEventListener("message", onMessage);
-            resolve({ exists: false, n });
-          }
-        };
-
-        frame.src = filename + "?_=" + Date.now();
-        document.body.appendChild(frame);
+        });
+        userUnreadEl.textContent = unread;
+      }, (error) => {
+        console.error("Ошибка при подсчёте непрочитанных:", error);
       });
     }
 
-    async function discoverTasks() {
-      const existingTasks = [];
-      let n = 1;
-
-      statusEl.textContent = "🔍 Ищем задания...";
-
-      while (true) {
-        const result = await checkTaskIsValid(n);
-        if (result.exists) {
-          existingTasks.push(`tasks/task${n}.html`);
-          n++;
-        } else {
-          break;
-        }
-        if (n > 200) break;
-      }
-
-      if (existingTasks.length === 0) {
-        statusEl.innerHTML = `
-          ❌ Не найдено ни одного <strong>настоящего</strong> задания.<br>
-          Убедитесь, что каждый <code>taskN.html</code> отправляет:<br>
-          <code>window.parent.postMessage({ type: "TASK_EXISTS", valid: true }, "*");</code>
-        `;
-        return;
-      }
-
-      tasks = shuffleArray(existingTasks);
-      discoveryCompleted = true;
-      statusEl.textContent = `✅ Найдено ${tasks.length} заданий.`;
-      updateProgress();
-      document.getElementById("task-container").classList.add("active");
-
-      if (isMobile()) setScale(1);
-      loadTask(0);
-    }
-
-    function loadTask(index) {
-      if (index >= tasks.length) {
-        iframe.style.display = "none";
-        nextBtn.disabled = true;
-        skipBtn.disabled = true;
-
-        statusEl.innerHTML = `<div style="text-align: center;">
-          <h2>🎉 Поздравляем!</h2>
-          <p>Вы успешно завершили урок!</p>
-          <p><strong>+10 баллов за полное прохождение!</strong></p>
-        </div>`;
-
-        addPoints(10, `успешное завершение урока ${LESSON}`);
-        setTimeout(() => {
-          window.location.href = "../";
-        }, 5000);
-
-        updateProgress();
-        return;
-      }
-
-      hasProcessedHanzi = false;
-      const url = tasks[index] + "?_=" + Date.now();
-      iframe.src = url;
-      updateProgress();
-      nextBtn.disabled = true;
-      currentTaskIndex = index;
-    }
-
-    function updateProgress() {
-      const progress = tasks.length > 0 ? (currentTaskIndex / tasks.length) * 100 : 0;
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // === 🔍 Масштабирование (РАБОТАЕТ!) ===
-    function setScale(scale) {
-      currentScale = Math.max(minScale, Math.min(maxScale, Math.round(scale * 10) / 10));
-      iframe.style.transform = `scale(${currentScale})`;
-      scaleValueEl.textContent = currentScale.toFixed(1);
-    }
-
-    zoomInBtn.addEventListener("click", () => {
-      if (currentScale < maxScale) {
-        setScale(currentScale + scaleStep);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadUserData(user);
+      } else {
+        loginContainer.classList.remove('hidden');
+        userContainer.classList.add('hidden');
       }
     });
-
-    zoomOutBtn.addEventListener("click", () => {
-      if (currentScale > minScale) {
-        setScale(currentScale - scaleStep);
-      }
-    });
-
+  </script>
+  <script>
+    // Проверка, мобильное ли устройство
     function isMobile() {
-      return window.innerWidth <= 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+      return window.innerWidth <= 768 ||
+             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // === 🎯 Обработка сообщений от заданий ===
-    window.addEventListener("message", async (event) => {
-      const { type, success } = event.data;
+    // Функция для внедрения CSS
+    function injectMobileStyles() {
+      if (!isMobile()) return;
 
-      if (type === "DO_HANZI" && !hasProcessedHanzi && discoveryCompleted && lessonwords.length > 0) {
-        hasProcessedHanzi = true;
-        const randomChar = lessonwords[Math.floor(Math.random() * lessonwords.length)];
-        const newSrc = `${tasks[currentTaskIndex]}?_=${Date.now()}#${randomChar}`;
-        iframe.src = '';
-        setTimeout(() => { iframe.src = newSrc; }, 10);
-        nextBtn.disabled = true;
-        return;
-      }
-
-      if (type === "TASK_RESULT") {
-        if (success) {
-          statusEl.textContent = "✅ Задание выполнено!";
-          nextBtn.disabled = false;
-          addPoints(5, `успешное задание ${tasks[currentTaskIndex]}`);
-        } else {
-          statusEl.textContent = "❌ Ошибка или пропуск";
-          nextBtn.disabled = false;
-          addPoints(-4, `ошибка или пропуск в ${tasks[currentTaskIndex]}`);
+      const style = document.createElement('style');
+      style.id = 'mobile-auth-buttons-style';
+      style.textContent = `
+        .user-panel .auth-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
         }
-      }
-    });
+        .user-panel .auth-buttons .btn {
+          width: 100% !important;
+          max-width: none !important;
+          flex: 1;
+          text-align: center;
+          box-sizing: border-box;
+        }
+        .user-panel .auth-buttons .btn-secondary,
+        .user-panel .auth-buttons .btn-logout {
+          min-width: 0 !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
-    // === ⏭️ Кнопки ===
-    nextBtn.addEventListener("click", () => {
-      currentTaskIndex++;
-      loadTask(currentTaskIndex);
-    });
+    // Запускаем при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+      injectMobileStyles();
 
-    skipBtn.addEventListener("click", () => {
-      addPoints(-4, `пропуск задания ${tasks[currentTaskIndex]}`);
-      currentTaskIndex++;
-      loadTask(currentTaskIndex);
-    });
+      // На случай, если пользователь логинится позже — перезапускаем стили
+      const observer = new MutationObserver(() => {
+        const userContainer = document.getElementById('user-container');
+        if (userContainer && !userContainer.classList.contains('hidden')) {
+          // Убедимся, что стили всё ещё вставлены
+          if (!document.getElementById('mobile-auth-buttons-style')) {
+            injectMobileStyles();
+          }
+        }
+      });
 
-    // === 🚀 Запуск ===
-    discoverTasks();
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    });
+    //МЕНЯЕМ РАЗМЕР КНОПОК
   </script>
 </body>
 </html>

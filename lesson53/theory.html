@@ -323,10 +323,11 @@
 
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст</h2>
+    <h2>Текст урока</h2>
     <table class="oracle-table" id="oracleTable"></table>
 </div>
-<div style="text-align: center; margin: 20px 0;">
+
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
     <label class="toggle-switch">
         <input id="fontToggle" type="checkbox"/>
         <span class="slider"></span>
@@ -371,17 +372,12 @@
     // Функция для создания таблицы
     function createOracleTable() {
         const table = document.getElementById('oracleTable');
-
         // Создаём строку с номерами колонок
         const headerRow = document.createElement('tr');
-
-        // Пустая ячейка для выравнивания с номерами строк
         const emptyCell = document.createElement('td');
         emptyCell.className = 'line-num';
         headerRow.appendChild(emptyCell);
-
-        // Номера колонок: от 1 до 15
-        for (let i = 1; i <= 15; i++) {
+        for (let i = 1; i <= 11; i++) {
             const th = document.createElement('td');
             th.className = 'col-num';
             th.textContent = i;
@@ -392,26 +388,17 @@
         // Создаём строки с текстом
         for (let i = 0; i < lessonText.length; i++) {
             const row = document.createElement('tr');
-
-            // Номер строки
             const lineNumCell = document.createElement('td');
             lineNumCell.className = 'line-num';
             lineNumCell.textContent = i + 1;
             row.appendChild(lineNumCell);
 
-            // Разбиваем строку на символы
-            const parts = lessonText[i].split('|');
-            const chars = Array.from(parts[0] + parts[1]); // Объединяем обе части
-
-            // Заполняем ячейки для позиций 1–15
-            for (let j = 0; j < 15; j++) {
+            const chars = Array.from(lessonText[i].replace(/\s+/g, ' ')).filter(ch => ch.trim() !== '');
+            for (let j = 0; j < 11; j++) {
                 const td = document.createElement('td');
-
-                // Если есть символ на этой позиции — ставим его
-                if (j < chars.length && chars[j].trim() !== '') {
+                if (j < chars.length) {
                     const char = chars[j];
                     td.textContent = char;
-
                     if (charData[char]) {
                         const tooltip = document.createElement('div');
                         tooltip.className = 'char-tooltip';
@@ -423,10 +410,8 @@
                         td.appendChild(tooltip);
                     }
                 }
-                // Если символа нет — ячейка остаётся пустой
                 row.appendChild(td);
             }
-
             table.appendChild(row);
         }
     }
@@ -435,6 +420,7 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
 
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
@@ -528,89 +514,20 @@
     </p>
 </div>
 
+<!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
 
 <script>
-    // Укажи номер урока здесь
-    const LESSON = 53;
-
-    // Список иероглифов урока 53 (согласно данным из PDF)
-    const lesson53Chars = [
-        "抬", "tái", "0290", "扶", "fú", "0994", "嬉", "xī", "0249", "涕", "tì", "0916", "低", "dī", "1313", "誓", "shì", "0234",
-        "隔", "gé", "0757", "感", "gǎn", "1640", "被", "bèi", "0197", "驅", "qū", "0744", "遣", "qiǎn", "0724", "若", "ruò", "0722",
-        "見", "jiàn", "0158", "錄", "lù", "0448", "如", "rú", "0221", "我", "wǒ", "0001", "長", "cháng", "0049", "不", "bù", "0002",
-        "久", "jiǔ", "0163", "望", "wàng", "0099", "君", "jūn", "0024", "來", "lái", "0030", "養", "yǎng", "0085", "公", "gōng", "0025",
-        "姥", "mǔ", "0450", "當", "dāng", "0008", "作", "zuò", "0007", "磐", "pán", "0219", "石", "shí", "0051", "相", "xiāng", "0005",
-        "將", "jiāng", "0033", "妾", "qiè", "0452", "蒲", "pú", "0729", "葦", "wěi", "0501", "及", "jí", "0157", "下", "xià", "0029",
-        "九", "jiǔ", "0164", "紉", "rèn", "0842", "絲", "sī", "0052", "莫", "mò", "0187", "忘", "wàng", "0098", "轉", "zhuǎn", "0100",
-        "移", "yí", "0101", "登", "dēng", "0053", "車", "chē", "0054", "去", "qù", "0028", "有", "yǒu", "0003", "親", "qīn", "0084",
-        "父", "fù", "0026", "兄", "xiōng", "0027", "百", "bǎi", "0188", "餘", "yú", "0189", "行", "xíng", "0087", "性", "xìng", "0086",
-        "暴", "bào", "1082", "雷", "léi", "0363", "馬", "mǎ", "0055", "在", "zài", "0010", "前", "qián", "0056", "恐", "kǒng", "0453",
-        "不", "bù", "0002", "任", "rèn", "0190", "意", "yì", "0088", "新", "xīn", "0004", "婦", "fù", "0057", "後", "hòu", "0191",
-        "逆", "nì", "0454", "以", "yǐ", "0011", "煎", "jiān", "1656", "懷", "huái", "0192", "大", "dà", "0058", "道", "dào", "0059",
-        "口", "kǒu", "0060", "入", "rù", "0012", "門", "mén", "0061", "上", "shàng", "0062", "堂", "táng", "0063", "中", "zhōng", "0013",
-        "進", "jìn", "0064", "退", "tuì", "0065", "無", "wú", "0006", "顏", "yán", "0455", "儀", "yí", "0456", "共", "gòng", "0066",
-        "耳", "ěr", "0067", "語", "yǔ", "0068", "阿", "ā", "0069", "母", "mǔ", "0450", "拊", "fǔ", "0457", "掌", "zhǎng", "0458",
-        "且", "qiě", "0070", "還", "huán", "0071", "家", "jiā", "0072", "去", "qù", "0028", "教", "jiào", "0073", "汝", "rǔ", "0074",
-        "織", "zhī", "0075", "今", "jīn", "0076", "赴", "fù", "0459", "府", "fǔ", "0077", "歸", "guī", "0078", "彈", "tán", "0079",
-        "箜", "kōng", "0460", "篌", "hóu", "0461", "禮", "lǐ", "0080", "儀", "yí", "0456", "兒", "ér", "0081", "實", "shí", "0082",
-        "才", "cái", "0649", "第", "dì", "0917", "郎", "láng", "0451", "窈", "yǎo", "0929", "窕", "tiǎo", "1471", "始", "shǐ", "0291"
-    ];
-
-    // Создаём объект charData для урока 53, если он не определён
-    if (typeof charData === 'undefined') {
-        window.charData = {};
-    }
-
-    // Заполняем charData для урока 53
-    for (let i = 0; i < lesson53Chars.length; i += 3) {
-        const char = lesson53Chars[i];
-        const pinyin = lesson53Chars[i + 1];
-        const lesson = lesson53Chars[i + 2];
-        charData[char] = { pinyin: pinyin, meaning: "", lesson: lesson };
-    }
-
-    // Получаем контейнер
-    const charList = document.querySelector('.char-list');
-
-    // Очищаем (на всякий случай)
-    charList.innerHTML = '';
-
-    // Генерируем элементы
+    // Извлечение иероглифов урока 56 из charData
     const lessonChars = Object.entries(charData)
-        .filter(([char, data]) => data.lesson === "0290" || data.lesson === "0994" || data.lesson === "0249" ||
-            data.lesson === "0916" || data.lesson === "1313" || data.lesson === "0234" || data.lesson === "0757" ||
-            data.lesson === "1640" || data.lesson === "0197" || data.lesson === "0744" || data.lesson === "0724" ||
-            data.lesson === "0722" || data.lesson === "0158" || data.lesson === "0448" || data.lesson === "0221" ||
-            data.lesson === "0001" || data.lesson === "0049" || data.lesson === "0002" || data.lesson === "0163" ||
-            data.lesson === "0099" || data.lesson === "0024" || data.lesson === "0030" || data.lesson === "0085" ||
-            data.lesson === "0025" || data.lesson === "0450" || data.lesson === "0008" || data.lesson === "0007" ||
-            data.lesson === "0219" || data.lesson === "0051" || data.lesson === "0005" || data.lesson === "0033" ||
-            data.lesson === "0452" || data.lesson === "0729" || data.lesson === "0501" || data.lesson === "0157" ||
-            data.lesson === "0029" || data.lesson === "0164" || data.lesson === "0842" || data.lesson === "0052" ||
-            data.lesson === "0187" || data.lesson === "0098" || data.lesson === "0100" || data.lesson === "0101" ||
-            data.lesson === "0053" || data.lesson === "0054" || data.lesson === "0028" || data.lesson === "0003" ||
-            data.lesson === "0084" || data.lesson === "0026" || data.lesson === "0027" || data.lesson === "0188" ||
-            data.lesson === "0189" || data.lesson === "0087" || data.lesson === "0086" || data.lesson === "1082" ||
-            data.lesson === "0363" || data.lesson === "0055" || data.lesson === "0010" || data.lesson === "0056" ||
-            data.lesson === "0453" || data.lesson === "0002" || data.lesson === "0190" || data.lesson === "0088" ||
-            data.lesson === "0004" || data.lesson === "0057" || data.lesson === "0191" || data.lesson === "0454" ||
-            data.lesson === "0011" || data.lesson === "1656" || data.lesson === "0192" || data.lesson === "0058" ||
-            data.lesson === "0059" || data.lesson === "0060" || data.lesson === "0012" || data.lesson === "0061" ||
-            data.lesson === "0062" || data.lesson === "0063" || data.lesson === "0013" || data.lesson === "0064" ||
-            data.lesson === "0065" || data.lesson === "0006" || data.lesson === "0455" || data.lesson === "0456" ||
-            data.lesson === "0066" || data.lesson === "0067" || data.lesson === "0068" || data.lesson === "0069" ||
-            data.lesson === "0450" || data.lesson === "0457" || data.lesson === "0458" || data.lesson === "0070" ||
-            data.lesson === "0071" || data.lesson === "0072" || data.lesson === "0028" || data.lesson === "0073" ||
-            data.lesson === "0074" || data.lesson === "0075" || data.lesson === "0076" || data.lesson === "0459" ||
-            data.lesson === "0077" || data.lesson === "0078" || data.lesson === "0079" || data.lesson === "0460" ||
-            data.lesson === "0461" || data.lesson === "0080" || data.lesson === "0456" || data.lesson === "0081" ||
-            data.lesson === "0082" || data.lesson === "0649" || data.lesson === "0917" || data.lesson === "0451" ||
-            data.lesson === "0929" || data.lesson === "1471" || data.lesson === "0291")
+        .filter(([char, data]) => data.lesson === 56)
         .sort(([charA, dataA], [charB, dataB]) => {
             return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
         });
+
+    const charList = document.querySelector('.char-list');
+    charList.innerHTML = '';
 
     lessonChars.forEach(([char, data]) => {
         const item = document.createElement('div');
@@ -618,7 +535,7 @@
 
         item.innerHTML = `
             <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
-            <div class="char-tooltip">${data.meaning || 'Значение не указано'}</div>
+            <div class="char-tooltip">${data.meaning}</div>
         `;
 
         charList.appendChild(item);
@@ -751,6 +668,34 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('oracleTable');
+        if (!table) return;
 
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                // Получаем текстовое содержимое ячейки, включая скрытые элементы, и удаляем пробелы
+                const cellText = cell.textContent.trim();
+                
+                // Проверяем, является ли содержимое ячейки только "_"
+                if (cellText === '_') {
+                    // Делаем текст невидимым, очищая textContent
+                    // Это удалит текстовый узел "_" , но оставит другие элементы (например, подсказки)
+                    cell.textContent = ''; 
+                }
+                // Проверяем, является ли содержимое ячейки только "|"
+                else if (cellText === '|') {
+                    // Меняем фоновый цвет на пастельно-бордовый
+                    cell.style.backgroundColor = '#e0bfb8'; // Пример пастельно-бордового цвета
+                    // Делаем текст (символ "|") невидимым, очищая textContent
+                    cell.textContent = '';
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
