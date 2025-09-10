@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+    <meta charset="utf-8"/>
+    <title>Урок 50 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+
+    <style>
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #1a5fb4;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+
+    <style>
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 300px;
+            background: #1a4f72;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            text-align: left;
+            white-space: normal;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+        }
+        td:hover .char-tooltip {
+            display: block;
+        }
+        .lesson-badge {
+            display: inline-block;
+            background: #e6f2ff;
+            color: #1a4f72;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        /* Стили для правой фигурной скобки, объединяющей строки справа */
+        .math-example {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+        }
+        .math-content {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            margin-right: 12px; /* Отступ между текстом и скобкой */
+        }
+        .math-content .example {
+            margin: 2px 0;
+            white-space: pre; /* Сохраняем пробелы */
+        }
+        .math-brace {
+            font-size: 2em; /* Большая скобка */
+            line-height: 0.7;
+            color: #1a4f72;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 0;
+        }
+        .math-caption {
+            margin-left: 15px;
+            font-style: italic;
+            color: #1a4f72;
+        }
+        .image-container-inline {
+            float: right;
+            margin: 10px 0 10px 15px;
+            text-align: center;
+            max-width: 40%;
+        }
+        .lesson-image-inline {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .image-caption-inline {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        table.data-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        table.data-table th {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+        }
+        table.data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>УРОК 50</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
+
+/* Tooltip — без изменений */
+.char-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 300px;
+    background: #1a4f72;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    text-align: left;
+    white-space: normal;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+    line-height: 1.5;
+}
+
+td:hover .char-tooltip {
+    display: block;
+}
+
+.lesson-badge {
+    display: inline-block;
+    background: #e6f2ff;
+    color: #1a4f72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}</style>
+<script>
+const lessonText = [
+    "秦王度之終不可強奪遂許齋五日舍",
+    "相如廣成傳舍相如度秦王雖齋決負",
+    "約不償城乃使其從者衣褐懷其璧從",
+    "徑道亡歸璧於趙秦王齋五日後乃設",
+    "九賓禮於廷引趙使者藺相如相如至",
+    "謂秦王曰秦自繆公以來二十餘君未",
+    "嘗有堅明約束者也臣誠恐見欺於王",
+    "而負趙故令人持璧歸間至趙矣且秦",
+    "強而趙弱大王遣一介之使至趙趙立",
+    "奉璧來今以秦之強而先割十五都予",
+    "趙趙豈敢留璧而得罪於大王乎臣知",
+    "欺大王之罪當誅臣請就湯鑊唯大王",
+    "與群臣熟計議之秦王與群臣相視而",
+    "嘻左右或欲引相如去秦王因曰今殺",
+    "相如終不能得璧也而絶秦趙之歡不",
+    "如因而厚遇之使歸趙趙王豈以一璧",
+    "之故欺秦邪卒廷見相如畢禮而歸之",
+    "相如既歸趙王以爲賢大夫使不辱於",
+    "諸侯拜相如爲上大夫秦亦不以城予",
+    "趙趙亦終不予秦璧"
+];
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    
+    // Создаём строку с номерами колонок
+    const headerRow = document.createElement('tr');
+    
+    // Пустая ячейка для выравнивания с номерами строк
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    
+    // Номера колонок: от 1 до 15
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    
+    // Создаём строки с текстом
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        
+        // Номер строки
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        
+        // Разбиваем строку на символы
+        const chars = Array.from(lessonText[i]);
+        
+        // Заполняем ячейки для позиций 1–15
+        for (let j = 0; j < 15; j++) {  // Ровно 15 ячеек
+            const td = document.createElement('td');
+            
+            // Если есть символ на этой позиции — ставим его
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
+                }
+            }
+            // Если символа нет — ячейка остаётся пустой (ничего не делаем)
+            row.appendChild(td);
+        }
+        
+        table.appendChild(row);
+    }
+}
+
+// Инициализация таблицы при загрузке страницы
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>50.1. Обстоятельство времени, выраженное конструкцией
+со словом後 hòu</h3>
+    <p class="original">
+        Так же как и в конструкции со словом時 shí(48.2), перед後
+hòu может стоять имя, именной или предикативный оборот:
+        <br>
+        <span class="example">王齋五日後 wáng zhāi wǔ rì hòu «после того как ван
+пять дней постился».</span>
+    </p>
+
+    <h3>50.2. Дополнительные предикативы со значением
+направления движения(продолжение)</h3>
+    <p class="original">
+        Выше(44.3) мы видели, что предикатив來 lái, присоединяе-
+мый к другому предикативу с дополнением, служит указанием на
+направление движения к говорящему: <span class="example">趙立奉璧來 zhào lì f èng bì lái «Чжао немедленно доста-вит яшму».</span>
+        <br>
+        В противоположность來 lái предикатив去 qù указывает на об-ратное направление — от говорящего: <span class="example">左右或欲引相如去 zuǒ yòu huò yù yǐn xiàng rú qù «Кто-то из свиты хотел увести[Линь] Сянжу».</span>
+    </p>
+
+    <h3>50.3. Конструкция типа從...以往 cóng... yǐ wǎng
+(продолжение)</h3>
+    <p class="original">
+        Эта конструкция может обозначать движение из определенной
+точки не только в пространстве, но и во времени.
+        <br><br>
+        В тексте данного урока она употреблена именно во втором зна-чении. Исходная точка отсчета вводится здесь предлогом自 zì, а направление обозначается предикативом來 lái(в сторону гово-рящего): <span class="example">自繆公以來二十餘君 zì miào gōng yǐ lái èr shí yú jūn «двадцать c лишним правителей, начиная с Мяо-гуна».</span>
+    </p>
+
+    <h3>50.4. Наречия(продолжение)</h3>
+    <p class="original">
+        В данном уроке употреблено еще несколько наречий, свой-
+ственных классическому языку, которые близки друг к другу по
+своим значениям.
+        <br><br>
+        卒 cù используется в двух основных значениях — «быстро», «сразу» и «в конце концов», «в конечном счете»: <span class="example">然卒破楚者此三人力也 rán cù pò chǔ zhě cǐ sān rán
+lì yě «Но в конечном счете царство Чу было разгромлено
+усилиями этих трех человек».</span>
+        <br>
+        <span class="example">傾側擾攘楚魏之間,卒歸高帝 qīng cè rǎo rǎng chǔ
+wèi zhī jiān, cù guī gāo dì «Он колебался между Чу и Вэй, а в конце концов перешел на сторону Гао-ди».</span>
+        <br><br>
+        終 zhōng встречалось нам в сочетании с不 bù(終不 zhōng bù
+«так и не...»). Само по себе это наречие имеет то же значение, что
+и卒 cù, — «в конце концов»:
+        <br>
+        <span class="example">終必獲鄭,何必今日 zhōng bì huò zhèng, hé bì j īn rì «В конечном итоге мы непременно захватим Чжэн, зачем это
+обязательно делать сегодня?»</span> 立 lì — синоним卒 cù в его первом значении «сразу», «немед-ленно»:
+        <br>
+        <span class="example">劍堅,故不可立拔 jiàn jiān gù bù kě lì bá «Меч застрял
+в ножнах, поэтому не удалось выхватить его сразу».</span>
+        <br>
+        <span class="example">我有善則立譽我,我有過則立毀我 wǒ yǒu shàn zé lì yù wǒ, wǒ yǒu guò zé lì huǐ wǒ «Если я сделаю нечто хоро-
+шее, сразу хвали меня, а если я допущу ошибку, тут же
+ругай меня за нее».</span>
+    </p>
+
+    <h3>50.5. Словосочетание因而 yīn ér</h3>
+    <p class="original">
+        Выше(44.5) отмечалось, что в позднем классическом языке
+слово而 ér может соединять предикатив и вынесенное вперед до-
+полнение с предлогом. Но дополнение с предлогом因 yīn может
+быть опущено, оставив вместо себя только因 yīn. Отсюда возни-
+        <br><br>
+        кает возможность соположения слов因 yīn и而 ér, которые посте-
+пенно превращаются в устойчивое словосочетание因而 yīn ér со
+значением «вследствие этого», «по этой причине»:
+        <br>
+        <span class="example">俗之所欲因而與之 sú zhī suǒ yù yīn ér yǔ zhī «Поэтому
+отдавай то, что обычно считается желаемым».</span>
+    </p>
+
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА 50</h2>
+<div class="char-list"></div>
+
+<script>
+// Укажи номер урока здесь
+const LESSON = 50;
+
+// Находим все иероглифы этого урока из charData
+const lessonChars = Object.entries(charData)
+  .filter(([char, data]) => data.lesson === LESSON)
+  .sort(([charA, dataA], [charB, dataB]) => {
+    // Сортировка по пиньиню (опционально)
+    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+  });
+
+// Получаем контейнер
+const charList = document.querySelector('.char-list');
+
+// Очищаем (на всякий случай)
+charList.innerHTML = '';
+
+// Генерируем элементы
+lessonChars.forEach(([char, data]) => {
+  const item = document.createElement('div');
+  item.className = 'char-item';
+
+  item.innerHTML = `
+    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+    <div class="char-tooltip">${data.meaning}</div>
+  `;
+
+  charList.appendChild(item);
+});
+</script>
+
+<div class="lexicon">
+    <h2>СЛОВОСОЧЕТАНИЯ</h2>
+    <p class="original">
+        <span class="example">廣成 guǎng chéng «Гуанчэн»(название постоялого двора)</span><br>
+        <span class="example">傳舍 zhuàn shè «постоялый двор»</span><br>
+        <span class="example">繆公 miào gōng «Мяо-гун»(титул правителя)</span><br>
+        <span class="example">湯鑊 tāng huò «котел с кипящей водой»</span><br>
+        <span class="example">一介之使 yī jiè zhī shǐ «посол, едущий без сопровождающих»</span><br>
+        <span class="example">上大夫 shàng dà fū «шандафу»(название должности)</span>
+    </p>
+</div>
+
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>50.А. «Поститься в течение пяти дней»</h3>
+    <p class="original">
+        Перед совершением какого бы то ни было торжественного ак-
+та правитель в Древнем Китае обычно соблюдал пост в течение
+        <br><br>
+        определенного периода времени, когда он воздерживался от де-ликатесов и вина. «Попостившись и вымывшись, можно совер-
+шать жертвоприношения Верховному Владыке», — говаривал
+Мэн-цзы.
+    </p>
+
+    <h3>50.Б. «Ритуал девяти гостей»</h3>
+    <p class="original">
+        Не вполне ясно, что конкретно подразумевалось в эпоху
+Чжаньго под этим специальным термином. Так или иначе он обо-значал официальную церемонию встречи иностранных послов, по-видимому, особенно торжественную.
+    </p>
+
+    <h3>50.В. Постоялый двор «Гуанчэн»</h3>
+    <p class="original">
+        В крупных городах эпохи Чжаньго существовали постоялые
+дворы для приезжающих(傳舍 zhuàn shè, букв. «сменное жили-
+ще»), обычно, подобно современным гостиницам, имевшие свои
+собственные названия.
+    </p>
+
+    <h3>50.Г. Циньский правитель Мяо-гун</h3>
+    <p class="original">
+        Правителя с таким титулом в официальных генeалогиях дома
+Цинь нет. По-видимому, здесь имеется в виду Му-гун(659–621
+до н. э.). Циньский Чжао-ван был двадцатым по счету после
+Му-гуна.
+        <br><br>
+        Между тем Линь Сянжу говорит о «двадцати с лишним» прави-
+телях этого царства. По-видимому, он включает в это число двух
+гунов, которые занимали престол лишь краткое время и впослед-ствии не вошли в генeалогический список.
+    </p>
+
+    <h3>50.Д. «Залезть в кипящий котел»</h3>
+    <p class="original">
+        В результате реформ Шан Яна в царстве Цинь(середина IV в.
+до н. э.) были введены чрезвычайно жестокие законы. В частно-
+сти, совершивших особо тяжкие преступления бросали в кипящий
+котел.
+        <div class="image-container-inline">
+            <img src="boiling_pot.jpg" alt="Высшая мера (средневековый рисунок)" class="lesson-image-inline">
+            <div class="image-caption-inline">Высшая мера (средневековый рисунок)</div>
+        </div>
+    </p>
+    <div class="clearfix"></div>
+
+</div>
+
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст, расставив знаки препинания.</li>
+        <li>Проделайте грамматический анализ текста.</li>
+        <li>Переведите текст на русский язык.</li>
+        <li>Каковы важнейшие особенности позднего классического языка, от-личающие его от предыдущих этапов?</li>
+    </ol>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Поздний классический древнекитайский язык.<br/>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Все иероглифы — из текстов Уроков 1–50, либо из циклических знаков (甲子 – 癸亥).
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

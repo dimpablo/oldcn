@@ -229,7 +229,7 @@
 
   <!-- НОМЕР УРОКА — МЕНЯЙ ВРУЧНУЮ ДЛЯ КАЖДОЙ ПАПКИ -->
   <script>
-    const LESSON = 9; // lesson1 → 1, lesson2 → 2, и т.д.
+  const LESSON =  parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
   </script>
 
   <!-- Firebase SDK -->
