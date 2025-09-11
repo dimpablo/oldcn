@@ -780,7 +780,7 @@
             const allTranslations = SentenceData.sentences.map(s => s.translation);
 
             function cleanRussian(text) {
-                return text.replace(/[.,:;?!«»"()]/g, '').toLowerCase();
+                return text.replace(/[.,:;?!«»"()„“"'‛՚’]/g, '').toLowerCase();
             }
 
             const allRussianWords = [];
