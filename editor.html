@@ -1123,11 +1123,6 @@
 
             // 3. Проверка пунктуации в translation
             const badTranslation = currentLessonData.sentences.find(s => /[.,;:!?—–\(\)\[\]"]/g.test(s.translation));
-            if (badTranslation) {
-                msgDiv.textContent = '❌ ОШИБКА: в переводе обнаружена запрещённая пунктуация (.,;:!?—–()[]")!';
-                msgDiv.className = 'error';
-                return;
-            }
 
             // 4. Проверка транскрипции по словарю с различением типов ошибок
             let allErrors = [];

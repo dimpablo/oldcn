@@ -37,6 +37,7 @@ const charData = {
     '自': {pinyin: 'zì', meaning: 'служ. предлог из, от; сам, лично', lesson: 2},
     '今': {pinyin: 'jīn', meaning: 'ныне', lesson: 2},
     '歳': {pinyin: 'suì', meaning: 'год (в значении год урожая, год правления)', lesson: 2},
+    '歲': {pinyin: 'suì', meaning: 'год (в значении год урожая, год правления)', lesson: 2},
     '商': {pinyin: 'shāng', meaning: 'собств. Шан (династия или личное имя)', lesson: 2},
     '受': {pinyin: 'shòu', meaning: 'давать; получать', lesson: 2},
     '年': {pinyin: 'nián', meaning: 'урожай; год; возраст', lesson: 2},
