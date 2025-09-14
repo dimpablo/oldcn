@@ -203,7 +203,7 @@ const charData = {
     '迄': {pinyin: 'qì', meaning: 'предлог, «до» (в пространстве или времени)', lesson: 10},
     '臣': {pinyin: 'chén', meaning: 'чиновник', lesson: 10},
     '鄙': {pinyin: 'bì', meaning: 'окраина, граница', lesson: 10},
-    '車': {pinyin: 'jū, chē', meaning: 'колесница, повозка', lesson: 10},
+    '車': {pinyin: 'chē', meaning: 'колесница, повозка', lesson: 10},
     '亦': {pinyin: 'yì', meaning: 'также, тоже', lesson: 10},
     '侵': {pinyin: 'qīn', meaning: 'вторгаться, нападать', lesson: 10},
     '田': {pinyin: 'tián', meaning: 'охотиться, поле', lesson: 10},

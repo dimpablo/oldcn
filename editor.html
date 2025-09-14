@@ -1279,19 +1279,18 @@
         }
 
         // --- ИЗМЕНЕНО: Кнопка "Очистить оригинал от пунктуации" ---
-        document.getElementById('clear-punctuation').addEventListener('click', function() {
-            if (!currentLessonData) return;
+document.getElementById('clear-punctuation').addEventListener('click', function() {
+    if (!currentLessonData) return;
 
-            const punctuationRegex = /[.,;:!?—–\(\)\[\]"]/g;
-            currentLessonData.sentences.forEach(sentence => {
-                sentence.original = sentence.original.replace(punctuationRegex, '');
-            });
+    const fullCleanupRegex = /[.,;:!?—–\(\)\[\]"»«\s\u3000\r\n]+/g;
 
-            // Перерендерим карточки, чтобы изменения отразились в textarea
-            renderCards(currentLessonData.sentences);
-            // Перезапустим валидацию, так как текст изменился
-            validateAll();
-        });
+    currentLessonData.sentences.forEach(sentence => {
+        sentence.original = sentence.original.replace(fullCleanupRegex, '');
+    });
+
+    renderCards(currentLessonData.sentences);
+    validateAll();
+});
 
         // --- АВТОМАТИЧЕСКОЕ ИСПРАВЛЕНИЕ ТРАНСКРИПЦИИ ---
         document.getElementById('fix-transliteration').addEventListener('click', function () {
