@@ -803,10 +803,10 @@
   
   <!-- Firebase SDK -->
 <script type="module">
-  // === 🔥 ИМПОРТ FIREBASE ===
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/Урок 11:9.1/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/Урок 11:9.1/firebase-auth.js';
-  import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/Урок 11:9.1/firebase-firestore.js';
+// === 🔥 ИМПОРТ FIREBASE ===
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
   // === 🔧 КОНФИГУРАЦИЯ FIREBASE ===
   const firebaseConfig = {
@@ -976,7 +976,7 @@
     }
 
     // Скрываем строки с указанными секциями
-    hideRowsByText(['Сегментация', 'Перевод', 'Задания']);
+    hideRowsByText(['Задания']);
   });
 </script>
 

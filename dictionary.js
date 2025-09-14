@@ -548,6 +548,8 @@ const charData = {
 '新': {pinyin: 'xīn', meaning: 'новый', lesson: 20},
 '冲': {pinyin: 'chōng', meaning: 'толкать', lesson: 20},
 '烈': {pinyin: 'liè', meaning: 'достославный', lesson: 20},
+'沖': {pinyin: 'chōng', meaning: 'Чун (имя собств.)', lesson: 20},
+
 
 // Урок 21
 

@@ -578,7 +578,7 @@
             </select>
             <button id="clear-punctuation" disabled>Очистить оригинал от пунктуации</button>
             <button id="open-file-btn">Открыть из файла</button>
-            <button id="fix-transliteration" style="display:none;">Исправить транскрипцию</button>
+            <button id="fix-transliteration">Исправить транскрипцию</button>
             <button id="save-btn" disabled>Сохранить</button>
         </div>
 
@@ -686,7 +686,7 @@
         }
 
         // --- АВТООПРЕДЕЛЕНИЕ УРОКОВ ---
-        async function detectAvailableLessons(max = 50) {
+        async function detectAvailableLessons(max = 60) {
             const select = document.getElementById('lesson-select');
             if (!select) return;
 
@@ -1694,7 +1694,7 @@
         // --- ИНИЦИАЛИЗАЦИЯ ---
         document.addEventListener('DOMContentLoaded', function () {
             console.log("DOM загружен. Начинаю автопоиск уроков...");
-            detectAvailableLessons(50); // Ищем до 50 уроков
+            detectAvailableLessons(60); // Ищем до 60 уроков
         });
 
         document.getElementById('lesson-select').addEventListener('change', function () {
