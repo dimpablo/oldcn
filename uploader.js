@@ -1,7 +1,7 @@
-// === СКРИПТ ДЛЯ КОНСОЛИ: ПЕРЕЗАПУСКАЕТСЯ ПОСЛЕ КАЖДОГО ЗАДАНИЯ ===
+// === СКРИПТ ДЛЯ КОНСОЛИ: ЗАПУСКАЕТСЯ ПРИ ЗАГРУЗКЕ + ПРИ КАЖДОМ ОБНОВЛЕНИИ СЛОВАРЯ ===
 
 (function mainScript() {
-    // --- ВСЁ ТО ЖЕ САМОЕ: ПОИСК + UI ---
+    // --- ОСНОВНАЯ ЛОГИКА ---
     (async function () {
         var dictContainer = document.getElementById('dictionaryContent');
         if (!dictContainer) return;
@@ -236,17 +236,29 @@
         }
     })();
 
-    // --- ОБНАРУЖЕНИЕ ИЗМЕНЕНИЙ: ПЕРЕЗАПУСК ЧЕРЕЗ 100мс ПОСЛЕ ОБНОВЛЕНИЯ СЛОВАРЯ ---
-    var observer = new MutationObserver(function (mutations) {
-        for (var m of mutations) {
-            if (m.type === 'childList' && m.target.id === 'dictionaryContent') {
-                setTimeout(mainScript, 100); // Перезапускаем всё
-                break;
+    // --- ОБНАРУЖЕНИЕ ИЗМЕНЕНИЙ В DOM ---
+    if (!window.__theoryObserverInstalled) {
+        var observer = new MutationObserver(function (mutations) {
+            for (var m of mutations) {
+                if (m.type === 'childList' && m.target.id === 'dictionaryContent') {
+                    setTimeout(mainScript, 100);
+                    break;
+                }
             }
-        }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    console.log('✅ Скрипт установлен. Будет перезапущен при каждом обновлении словаря.');
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        window.__theoryObserverInstalled = true;
+        console.log('✅ Наблюдатель за DOM установлен.');
+    }
 })();
+
+// --- ЗАПУСК ПРИ ПЕРВОЙ ЗАГРУЗКЕ ---
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('🔄 Первый запуск после загрузки DOM');
+        mainScript();
+    });
+} else {
+    console.log('🔄 Страница уже загружена. Запускаем немедленно.');
+    mainScript();
+}
