@@ -414,7 +414,8 @@
     </div>
 
     <!-- Подключаем данные -->
-    <script src="segmentation.js"></script>
+<script src="segmentation.js"></script>
+<script src="extra.js"></script>
 
 <script>
         // ==================== FIREBASE INIT ====================
@@ -770,14 +771,28 @@
             // ==================== ОСНОВНАЯ ЛОГИКА ====================
             // Подготовка данных
             // Проверка SentenceData теперь внутри DOMContentLoaded, где она гарантированно загружена
-            if (typeof SentenceData === 'undefined' || !SentenceData.sentences) {
-                console.error("SentenceData не загружена или имеет неверный формат!");
-                document.getElementById('sourceText').textContent = "Ошибка загрузки данных!";
-                return;
-            }
+// Проверяем основные данные
+if (typeof SentenceData === 'undefined' || !SentenceData.sentences || !Array.isArray(SentenceData.sentences)) {
+    console.error("SentenceData не загружена или имеет неверный формат!");
+    document.getElementById('sourceText').textContent = "Ошибка: данные урока не загружены.";
+    return;
+}
 
-            const allOriginals = SentenceData.sentences.map(s => s.original);
-            const allTranslations = SentenceData.sentences.map(s => s.translation);
+// Проверяем дополнительные данные (необязательные, но если есть — должны быть валидны)
+let extraSentences = [];
+if (typeof extra !== 'undefined' && extra.sentences && Array.isArray(extra.sentences)) {
+    console.log(`✅ Загружено ${extra.sentences.length} дополнительных предложений из extra.js`);
+    extraSentences = extra.sentences;
+} else {
+    console.warn("⚠️ Файл extra.js не загружен или имеет неверный формат. Продолжаем без дополнительных заданий.");
+}
+
+
+// Объединяем предложения из основного и дополнительного источника
+const allSentences = [...SentenceData.sentences, ...extraSentences];
+
+const allOriginals = allSentences.map(s => s.original);
+const allTranslations = allSentences.map(s => s.translation);
 
             function cleanRussian(text) {
                 return text.replace(/[.,:;?!«»"()„“"'‛՚’]/g, '').toLowerCase();
@@ -803,30 +818,30 @@
                 return arr;
             }
 
-            let tasks = [];
-            SentenceData.sentences.forEach(sentence => {
-                tasks.push({
-                    type: 'toTranslation',
-                    source: sentence.original,
-                    correctAnswer: cleanRussian(sentence.translation),
-                    words: shuffleArray([
-                        ...cleanRussian(sentence.translation).split(' ').filter(w => w),
-                        ...shuffleArray(allRussianWords).slice(0, Math.max(3, Math.floor(sentence.translation.length * 0.3)))
-                    ]),
-                    direction: 'с китайского на русский'
-                });
+let tasks = [];
+allSentences.forEach(sentence => {
+    tasks.push({
+        type: 'toTranslation',
+        source: sentence.original,
+        correctAnswer: cleanRussian(sentence.translation),
+        words: shuffleArray([
+            ...cleanRussian(sentence.translation).split(' ').filter(w => w),
+            ...shuffleArray(allRussianWords).slice(0, Math.max(3, Math.floor(sentence.translation.length * 0.3)))
+        ]),
+        direction: 'с китайского на русский'
+    });
 
-                tasks.push({
-                    type: 'toOriginal',
-                    source: sentence.translation,
-                    correctAnswer: sentence.original,
-                    words: shuffleArray([
-                        ...sentence.original.split(''),
-                        ...shuffleArray(allChineseChars).slice(0, Math.max(2, Math.floor(sentence.original.length * 0.2)))
-                    ]),
-                    direction: 'с русского на китайский'
-                });
-            });
+    tasks.push({
+        type: 'toOriginal',
+        source: sentence.translation,
+        correctAnswer: sentence.original,
+        words: shuffleArray([
+            ...sentence.original.split(''),
+            ...shuffleArray(allChineseChars).slice(0, Math.max(2, Math.floor(sentence.original.length * 0.2)))
+        ]),
+        direction: 'с русского на китайский'
+    });
+});
 
             tasks = shuffleArray(tasks);
 
