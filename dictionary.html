@@ -175,7 +175,13 @@
         <div id="progress-bar"></div>
     </div>
 
-    <!-- Контейнер для карточек -->
+    <!-- Контейнер для результатов поиска -->
+    <div id="search-results" class="lesson" style="display: none;">
+        <h2>Результаты поиска</h2>
+        <div class="card-container"></div>
+    </div>
+
+    <!-- Основной контейнер для уроков -->
     <div id="lessons-container"></div>
 
     <!-- Модальное окно для деталей иероглифа -->
@@ -193,12 +199,11 @@
     </div>
 
     <!-- ЗАГЛУШКИ — скрыты, для будущего использования -->
-    <div id="theory-loading-bar">
+    <div id="theory-loading-bar" style="display:none;">
         🔍 Поиск данных... (0/60)
     </div>
 
-    <div id="theory-tabbed-box">
-        <!-- Сюда позже вставится UI с вкладками "Теория" и "Рукописный ввод" -->
+    <div id="theory-tabbed-box" style="display:none;">
         <div id="tab-header"></div>
         <div id="tab-content">
             <div id="tab-theory"></div>
@@ -210,6 +215,265 @@
 
     <!-- Подключаем словарь -->
     <script src="dictionary.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lessonsContainer = document.getElementById('lessons-container');
+        const progressBar = document.getElementById('progress-bar');
+        const modal = document.getElementById('char-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalChar = document.getElementById('modal-char');
+        const modalPinyin = document.getElementById('modal-pinyin');
+        const modalMeaning = document.getElementById('modal-meaning');
+        const modalLessons = document.getElementById('modal-lessons');
+        const searchInput = document.getElementById('search-input');
+        const noResultsDiv = document.getElementById('no-results');
+        const searchResultsContainer = document.getElementById('search-results');
+        const searchCardContainer = searchResultsContainer.querySelector('.card-container');
+
+        // Функция удаления диакритик (например, bǐng → bing)
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        // Создаём индекс: иероглиф → массив уроков
+        const charIndex = {};
+        for (const char in charData) {
+            const lessonNum = charData[char].lesson;
+            if (!charIndex[char]) {
+                charIndex[char] = [];
+            }
+            charIndex[char].push(lessonNum);
+        }
+
+        // Группируем иероглифы по урокам
+        const lessons = {};
+        for (const char in charData) {
+            const lessonNum = charData[char].lesson;
+            if (!lessons[lessonNum]) {
+                lessons[lessonNum] = [];
+            }
+            lessons[lessonNum].push({
+                char,
+                pinyin: charData[char].pinyin,
+                meaning: charData[char].meaning
+            });
+        }
+
+        const sortedLessons = Object.keys(lessons).sort((a, b) => a - b);
+        const totalLessons = sortedLessons.length;
+        let renderedLessons = 0;
+
+        // Сохраняем все карточки для фильтрации
+        const allCards = [];
+
+        // Функция обновления прогресс-бара
+        function updateProgress() {
+            renderedLessons++;
+            const percent = Math.round((renderedLessons / totalLessons) * 100);
+            progressBar.style.width = percent + '%';
+        }
+
+        // Создаём HTML для каждого урока
+        sortedLessons.forEach(lessonNum => {
+            const lessonDiv = document.createElement('div');
+            lessonDiv.className = 'lesson';
+            lessonDiv.dataset.lesson = lessonNum;
+
+            const title = document.createElement('h2');
+            title.textContent = `Урок ${lessonNum}`;
+            lessonDiv.appendChild(title);
+
+            const cardContainer = document.createElement('div');
+            cardContainer.className = 'card-container';
+
+            lessons[lessonNum].sort((a, b) => a.char.localeCompare(b.char));
+
+            lessons[lessonNum].forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.char = item.char;
+                card.dataset.pinyin = item.pinyin;
+                card.dataset.meaning = item.meaning;
+
+                const charElem = document.createElement('div');
+                charElem.className = 'char';
+                charElem.textContent = item.char;
+
+                const pinyinElem = document.createElement('div');
+                pinyinElem.className = 'pinyin';
+                pinyinElem.textContent = item.pinyin;
+
+                const meaningElem = document.createElement('div');
+                meaningElem.className = 'meaning';
+                meaningElem.textContent = item.meaning;
+
+                card.appendChild(charElem);
+                card.appendChild(pinyinElem);
+                card.appendChild(meaningElem);
+
+                // Обработчик клика — показ модального окна
+                card.addEventListener('click', function() {
+                    const char = this.dataset.char;
+                    const data = charData[char];
+
+                    modalChar.textContent = char;
+                    modalPinyin.textContent = data.pinyin;
+                    modalMeaning.textContent = data.meaning;
+
+                    modalLessons.innerHTML = '';
+                    charIndex[char].sort((a, b) => a - b).forEach(lesson => {
+                        const li = document.createElement('li');
+                        li.className = 'lesson-item';
+                        li.textContent = `Урок ${lesson}`;
+                        modalLessons.appendChild(li);
+                    });
+
+                    modal.style.display = 'block';
+                });
+
+                cardContainer.appendChild(card);
+                allCards.push({
+                    element: card,
+                    char: item.char,
+                    pinyin: item.pinyin,
+                    meaning: item.meaning,
+                    lessonNum: charIndex[item.char][0], // можно взять первый урок, или min
+                    normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+                    normalizedMeaning: item.meaning.toLowerCase()
+                });
+            });
+
+            lessonDiv.appendChild(cardContainer);
+            lessonsContainer.appendChild(lessonDiv);
+
+            // Обновляем прогресс после рендеринга урока
+            setTimeout(updateProgress, 0);
+        });
+
+        // Функция фильтрации карточек
+        function filterCards(query) {
+            const input = query.trim();
+            if (!input) {
+                // Показываем уроки, скрываем результаты поиска
+                searchResultsContainer.style.display = 'none';
+                lessonsContainer.style.display = 'block';
+                noResultsDiv.style.display = 'none';
+                return;
+            }
+
+            // Очищаем контейнер поиска
+            searchCardContainer.innerHTML = '';
+            const lowerQuery = input.toLowerCase();
+            const normalizedQuery = removeDiacritics(lowerQuery);
+            let found = false;
+
+            // Проходим по всем карточкам
+            allCards.forEach(cardData => {
+                let match = false;
+
+                // 1. По иероглифу
+                if (cardData.char.includes(input)) {
+                    match = true;
+                }
+                // 2. По пиньиню (без диакритик)
+                else if (cardData.normalizedPinyin.includes(normalizedQuery)) {
+                    match = true;
+                }
+                // 3. По значению
+                else if (cardData.normalizedMeaning.includes(lowerQuery)) {
+                    match = true;
+                }
+
+                if (match) {
+                    // Создаём новую карточку для режима поиска
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'card';
+
+                    // Добавляем номер урока над карточкой
+                    const lessonLabel = document.createElement('div');
+                    lessonLabel.style.color = '#4CAF50';
+                    lessonLabel.style.fontSize = '14px';
+                    lessonLabel.style.fontWeight = 'bold';
+                    lessonLabel.style.marginBottom = '4px';
+                    lessonLabel.textContent = `Урок ${cardData.lessonNum}`;
+
+                    // Элементы карточки
+                    const charElem = document.createElement('div');
+                    charElem.className = 'char';
+                    charElem.textContent = cardData.char;
+
+                    const pinyinElem = document.createElement('div');
+                    pinyinElem.className = 'pinyin';
+                    pinyinElem.textContent = cardData.pinyin;
+
+                    const meaningElem = document.createElement('div');
+                    meaningElem.className = 'meaning';
+                    meaningElem.textContent = cardData.meaning;
+
+                    // Собираем карточку
+                    wrapper.appendChild(lessonLabel);
+                    wrapper.appendChild(charElem);
+                    wrapper.appendChild(pinyinElem);
+                    wrapper.appendChild(meaningElem);
+
+                    // Добавляем обработчик клика
+                    wrapper.addEventListener('click', () => {
+                        modalChar.textContent = cardData.char;
+                        modalPinyin.textContent = cardData.pinyin;
+                        modalMeaning.textContent = cardData.meaning;
+
+                        modalLessons.innerHTML = '';
+                        charIndex[cardData.char].sort((a, b) => a - b).forEach(lesson => {
+                            const li = document.createElement('li');
+                            li.className = 'lesson-item';
+                            li.textContent = `Урок ${lesson}`;
+                            modalLessons.appendChild(li);
+                        });
+
+                        modal.style.display = 'block';
+                    });
+
+                    searchCardContainer.appendChild(wrapper);
+                    found = true;
+                }
+            });
+
+            // Управление отображением
+            if (found) {
+                searchResultsContainer.style.display = 'block';
+                lessonsContainer.style.display = 'none';
+                noResultsDiv.style.display = 'none';
+            } else {
+                searchResultsContainer.style.display = 'none';
+                lessonsContainer.style.display = 'block';
+                noResultsDiv.style.display = 'block';
+            }
+        }
+
+        // Обработчик поиска
+        searchInput.addEventListener('input', function() {
+            filterCards(this.value);
+        });
+
+        // Закрытие модального окна
+        closeModalBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -428,5 +692,327 @@
             });
         });
     </script>
+    <script>// === СКРИПТ ДЛЯ КОНСОЛИ: ПОИСК ИЕРОГЛИФОВ В ТЕОРИИ УРОКОВ + ВКЛАДКА "РУКОПИСНЫЙ ВВОД" ===
+
+(function() {
+    'use strict';
+
+    // Создаем прогресс-бар для поиска по теории
+    let progressBarContainer = document.createElement('div');
+    progressBarContainer.id = 'theory-progress-container';
+    progressBarContainer.style.cssText = `
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        margin: 10px 0 20px;
+        display: none;
+    `;
+    progressBarContainer.innerHTML = `
+        <div id="theory-progress-bar" style="
+            height: 8px;
+            background-color: #2196F3;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.2s ease;
+        "></div>
+        <div id="theory-progress-text" style="
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding: 5px 0;
+        ">Готово: 0/0</div>
+    `;
+    document.querySelector('h1').after(progressBarContainer);
+
+    // Глобальный кэш
+    if (!window.theoryCache) window.theoryCache = {};
+    if (!window.theoryResults) window.theoryResults = {};
+
+    // Функция поиска в одном уроке
+    async function searchInLesson(lessonNum, hanziList) {
+        const url = `./lesson${lessonNum}/theory.html`;
+        let html = window.theoryCache[url];
+
+        if (!html) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return [];
+                html = await response.text();
+                window.theoryCache[url] = html;
+            } catch (err) {
+                console.warn(`Урок ${lessonNum} не найден или ошибка загрузки.`);
+                return [];
+            }
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const grammarSection = doc.querySelector('.grammar');
+        if (!grammarSection) return [];
+
+        const results = [];
+        const blocks = grammarSection.querySelectorAll('p.original');
+
+        for (let block of blocks) {
+            for (let hanzi of hanziList) {
+                if (block.textContent.includes(hanzi)) {
+                    // Ищем заголовок H3 перед блоком
+                    let h3 = null;
+                    let sibling = block.previousElementSibling;
+                    while (sibling) {
+                        if (sibling.tagName === 'H3') {
+                            h3 = sibling;
+                            break;
+                        }
+                        sibling = sibling.previousElementSibling;
+                    }
+                    const title = h3 ? h3.textContent.trim() : '(без заголовка)';
+                    const context = block.outerHTML;
+
+                    results.push({
+                        hanzi,
+                        lesson: lessonNum,
+                        title,
+                        context
+                    });
+                }
+            }
+        }
+
+        return results;
+    }
+
+    // Основная функция — сканирует все уроки
+    async function scanAllLessons() {
+        // Собираем все уникальные иероглифы на странице
+        const cards = document.querySelectorAll('.card');
+        const hanziSet = new Set();
+        cards.forEach(card => {
+            const hanzi = card.dataset.char;
+            if (hanzi) hanziSet.add(hanzi);
+        });
+        const hanziList = [...hanziSet];
+
+        if (hanziList.length === 0) {
+            alert('Не найдено ни одного иероглифа на странице.');
+            return;
+        }
+
+        // Показываем прогресс-бар
+        progressBarContainer.style.display = 'block';
+        const progressBar = document.getElementById('theory-progress-bar');
+        const progressText = document.getElementById('theory-progress-text');
+
+        const totalLessons = 60; // можно изменить
+        let completed = 0;
+
+        // Сканируем уроки 1-60
+        for (let i = 1; i <= totalLessons; i++) {
+            const results = await searchInLesson(i, hanziList);
+            for (let result of results) {
+                if (!window.theoryResults[result.hanzi]) {
+                    window.theoryResults[result.hanzi] = [];
+                }
+                // Проверяем дубликаты
+                const exists = window.theoryResults[result.hanzi].some(
+                    r => r.lesson === result.lesson && r.title === result.title
+                );
+                if (!exists) {
+                    window.theoryResults[result.hanzi].push(result);
+                }
+            }
+
+            completed++;
+            const percent = Math.round((completed / totalLessons) * 100);
+            progressBar.style.width = percent + '%';
+            progressText.textContent = `Готово: ${completed}/${totalLessons} уроков. Найдено иероглифов: ${Object.keys(window.theoryResults).length}`;
+        }
+
+        console.log('✅ Сканирование завершено. Результаты:', window.theoryResults);
+        alert(`Сканирование завершено.\nПросканировано уроков: ${completed}\nНайдено иероглифов с контекстом: ${Object.keys(window.theoryResults).length}`);
+    }
+
+    // Функция показа модального окна с контекстом
+    function showTheoryModal(hanzi) {
+        const results = window.theoryResults[hanzi] || [];
+        const modal = document.getElementById('char-modal');
+        const modalChar = document.getElementById('modal-char');
+        const modalPinyin = document.getElementById('modal-pinyin');
+        const modalMeaning = document.getElementById('modal-meaning');
+        const modalLessons = document.getElementById('modal-lessons');
+
+        // Заполняем базовую инфу
+        const data = charData[hanzi];
+        modalChar.textContent = hanzi;
+        modalPinyin.textContent = data?.pinyin || '—';
+        modalMeaning.textContent = data?.meaning || '—';
+
+        // Очищаем содержимое
+        modalLessons.innerHTML = '';
+
+        // --- Создаём вкладки ---
+        const tabHeader = document.createElement('div');
+        tabHeader.style.cssText = `
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        `;
+
+        const tabTheory = document.createElement('div');
+        tabTheory.className = 'tab-active';
+        tabTheory.textContent = '📌 Теория';
+        tabTheory.style.cssText = `
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #7c6b96;
+            background: white;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+        `;
+
+        const tabInput = document.createElement('div');
+        tabInput.className = 'tab-inactive';
+        tabInput.textContent = '✍️ Рукописный ввод';
+        tabInput.style.cssText = `
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            background: #f8f6fb;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            margin-left: 4px;
+        `;
+
+        tabHeader.appendChild(tabTheory);
+        tabHeader.appendChild(tabInput);
+
+        // Блоки контента
+        const theoryPane = document.createElement('div');
+        const inputPane = document.createElement('div');
+
+        // Заполняем вкладку "Теория"
+        if (results.length === 0) {
+            theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных.</p>';
+        } else {
+            const grouped = {};
+            results.forEach(r => {
+                if (!grouped[r.lesson]) grouped[r.lesson] = [];
+                grouped[r.lesson].push(r);
+            });
+
+            for (let lesson in grouped) {
+                grouped[lesson].forEach(item => {
+                    const div = document.createElement('div');
+                    div.style.cssText = `
+                        margin: 14px 0;
+                        padding: 12px;
+                        background: #f9f7fc;
+                        border-left: 4px solid #a8c8d8;
+                        border-radius: 0 6px 6px 0;
+                        font-size: 13px;
+                        line-height: 1.5;
+                    `;
+
+                    const highlightedContext = item.context.replace(
+                        new RegExp(`(${hanzi})`, 'g'),
+                        '<span style="background-color:#ffb6c1; padding:2px 3px; border-radius:3px; font-weight:bold;">$1</span>'
+                    );
+
+                    div.innerHTML = `
+                        <strong style="color:#5a5a5a; font-size:12px;">Урок ${item.lesson}</strong><br>
+                        <strong style="color:#7c6b96; margin:4px 0; display:block;">${item.title}</strong>
+                        <div>${highlightedContext}</div>
+                    `;
+                    theoryPane.appendChild(div);
+                });
+            }
+        }
+
+        // Заполняем вкладку "Рукописный ввод"
+        inputPane.innerHTML = `
+            <iframe 
+                id="hanzi-frame" 
+                src="./lesson1/tasks/task1.html#${hanzi}" 
+                style="
+                    width: 100%;
+                    height: 400px;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    margin-top: 10px;
+                ">
+            </iframe>
+        `;
+        inputPane.style.display = 'none';
+
+        // Переключение вкладок
+        tabTheory.onclick = () => {
+            tabTheory.style.backgroundColor = 'white';
+            tabInput.style.backgroundColor = '#f8f6fb';
+            theoryPane.style.display = 'block';
+            inputPane.style.display = 'none';
+        };
+        tabInput.onclick = () => {
+            tabInput.style.backgroundColor = 'white';
+            tabTheory.style.backgroundColor = '#f8f6fb';
+            inputPane.style.display = 'block';
+            theoryPane.style.display = 'none';
+        };
+
+        // Добавляем всё в modalLessons
+        modalLessons.appendChild(tabHeader);
+        modalLessons.appendChild(theoryPane);
+        modalLessons.appendChild(inputPane);
+
+        // Открываем "Теорию" по умолчанию
+        theoryPane.style.display = 'block';
+        inputPane.style.display = 'none';
+
+        modal.style.display = 'block';
+    }
+
+    // Переназначаем обработчики клика на карточки
+    function attachClickHandlers() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const hanzi = card.dataset.char;
+            // Удаляем старый обработчик (если был)
+            const oldHandler = card._theoryHandler;
+            if (oldHandler) {
+                card.removeEventListener('click', oldHandler);
+            }
+
+            // Новый обработчик
+            const newHandler = function() {
+                showTheoryModal(hanzi);
+            };
+
+            card.addEventListener('click', newHandler);
+            card._theoryHandler = newHandler; // сохраняем ссылку для удаления
+        });
+    }
+
+    // Запускаем сканирование при вставке скрипта
+    console.log('🚀 Запуск сканирования теории по урокам...');
+    scanAllLessons().then(() => {
+        attachClickHandlers();
+        console.log('✅ Обработчики кликов обновлены. Теперь при клике будет показываться контекст из теории.');
+    });
+
+    // Экспортируем функции в window для ручного вызова (опционально)
+    window.scanTheory = scanAllLessons;
+    window.showTheoryFor = showTheoryModal;
+    window.refreshTheoryHandlers = attachClickHandlers;
+
+    console.log('📌 Доступные команды в консоли:');
+    console.log('→ window.scanTheory() — повторно просканировать уроки');
+    console.log('→ window.showTheoryFor("丙") — показать теорию для иероглифа');
+    console.log('→ window.refreshTheoryHandlers() — обновить обработчики кликов');
+})();</script>
+
 </body>
 </html>
