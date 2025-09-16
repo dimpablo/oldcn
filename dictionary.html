@@ -126,19 +126,26 @@
             font-weight: bold;
             color: #2c3e50;
         }
+
+        /* Скрытые заглушки для будущего функционала */
+        #theory-loading-bar,
+        #theory-tabbed-box {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <h1>Словарь иероглифов по урокам</h1>
 
-    <!-- Progress Bar -->
+    <!-- Progress Bar загрузки карточек -->
     <div class="progress-container">
         <div id="progress-bar"></div>
     </div>
 
+    <!-- Контейнер для карточек -->
     <div id="lessons-container"></div>
 
-    <!-- Modal -->
+    <!-- Модальное окно для деталей иероглифа -->
     <div id="char-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">&times;</span>
@@ -148,6 +155,22 @@
                 <p><strong>Значение:</strong> <span id="modal-meaning"></span></p>
                 <p><strong>Встречается в уроках:</strong></p>
                 <ul class="lesson-list" id="modal-lessons"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАГЛУШКИ — скрыты, для будущего использования -->
+    <div id="theory-loading-bar">
+        🔍 Поиск данных... (0/60)
+    </div>
+
+    <div id="theory-tabbed-box">
+        <!-- Сюда позже вставится UI с вкладками "Теория" и "Рукописный ввод" -->
+        <div id="tab-header"></div>
+        <div id="tab-content">
+            <div id="tab-theory"></div>
+            <div id="tab-input">
+                <iframe id="hanzi-frame"></iframe>
             </div>
         </div>
     </div>
@@ -218,7 +241,7 @@
                 lessons[lessonNum].forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.dataset.char = item.char; // для связи с модальным окном
+                    card.dataset.char = item.char;
 
                     const charElem = document.createElement('div');
                     charElem.className = 'char';
@@ -236,7 +259,7 @@
                     card.appendChild(pinyinElem);
                     card.appendChild(meaningElem);
 
-                    // Добавляем обработчик клика
+                    // Добавляем обработчик клика — показ модального окна
                     card.addEventListener('click', function() {
                         const char = this.dataset.char;
                         const data = charData[char];
@@ -245,10 +268,7 @@
                         modalPinyin.textContent = data.pinyin;
                         modalMeaning.textContent = data.meaning;
 
-                        // Очищаем список уроков
                         modalLessons.innerHTML = '';
-
-                        // Добавляем все уроки, где встречается иероглиф
                         charIndex[char].sort((a, b) => a - b).forEach(lesson => {
                             const li = document.createElement('li');
                             li.className = 'lesson-item';
@@ -266,7 +286,7 @@
                 container.appendChild(lessonDiv);
 
                 // Обновляем прогресс после рендеринга урока
-                setTimeout(updateProgress, 0); // даём браузеру отрисовать
+                setTimeout(updateProgress, 0);
             });
 
             // Закрытие модального окна
@@ -280,7 +300,6 @@
                 }
             }
 
-            // ESC для закрытия
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape' && modal.style.display === 'block') {
                     modal.style.display = 'none';
