@@ -14,6 +14,33 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .search-container {
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+        #search-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #search-input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .no-results {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 18px;
+            margin: 40px 0;
+            font-weight: bold;
+            display: none;
+        }
         .progress-container {
             width: 100%;
             background-color: #e0e0e0;
@@ -137,6 +164,12 @@
 <body>
     <h1>Словарь иероглифов по урокам</h1>
 
+    <!-- Search Box -->
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню или значению...">
+    </div>
+    <div id="no-results" class="no-results">Ничего не найдено</div>
+
     <!-- Progress Bar загрузки карточек -->
     <div class="progress-container">
         <div id="progress-bar"></div>
@@ -188,6 +221,8 @@
             const modalPinyin = document.getElementById('modal-pinyin');
             const modalMeaning = document.getElementById('modal-meaning');
             const modalLessons = document.getElementById('modal-lessons');
+            const searchInput = document.getElementById('search-input');
+            const noResultsDiv = document.getElementById('no-results');
 
             // Создаём индекс: иероглиф → массив уроков
             const charIndex = {};
@@ -217,6 +252,9 @@
             const totalLessons = sortedLessons.length;
             let renderedLessons = 0;
 
+            // Сохраняем все карточки для фильтрации
+            const allCards = [];
+
             // Функция обновления прогресс-бара
             function updateProgress() {
                 renderedLessons++;
@@ -228,6 +266,7 @@
             sortedLessons.forEach(lessonNum => {
                 const lessonDiv = document.createElement('div');
                 lessonDiv.className = 'lesson';
+                lessonDiv.dataset.lesson = lessonNum;
 
                 const title = document.createElement('h2');
                 title.textContent = `Урок ${lessonNum}`;
@@ -242,6 +281,8 @@
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.dataset.char = item.char;
+                    card.dataset.pinyin = item.pinyin;
+                    card.dataset.meaning = item.meaning;
 
                     const charElem = document.createElement('div');
                     charElem.className = 'char';
@@ -280,6 +321,13 @@
                     });
 
                     cardContainer.appendChild(card);
+                    allCards.push({
+                        element: card,
+                        char: item.char,
+                        pinyin: item.pinyin,
+                        meaning: item.meaning,
+                        lessonElement: lessonDiv
+                    });
                 });
 
                 lessonDiv.appendChild(cardContainer);
@@ -287,6 +335,71 @@
 
                 // Обновляем прогресс после рендеринга урока
                 setTimeout(updateProgress, 0);
+            });
+
+            // Функция фильтрации карточек
+            function filterCards(query) {
+                if (!query.trim()) {
+                    // Показываем все карточки и уроки
+                    allCards.forEach(card => {
+                        card.element.style.display = 'block';
+                        card.lessonElement.style.display = 'block';
+                    });
+                    noResultsDiv.style.display = 'none';
+                    return;
+                }
+
+                const lowerQuery = query.toLowerCase();
+                let found = false;
+
+                // Сначала ищем по иероглифу
+                allCards.forEach(card => {
+                    if (card.char.includes(query)) {
+                        card.element.style.display = 'block';
+                        found = true;
+                    } else {
+                        card.element.style.display = 'none';
+                    }
+                });
+
+                // Если не найдено по иероглифу — ищем по пиньиню
+                if (!found) {
+                    allCards.forEach(card => {
+                        if (card.pinyin.toLowerCase().includes(lowerQuery)) {
+                            card.element.style.display = 'block';
+                            found = true;
+                        } else {
+                            card.element.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Если не найдено по пиньиню — ищем по значению
+                if (!found) {
+                    allCards.forEach(card => {
+                        if (card.meaning.toLowerCase().includes(lowerQuery)) {
+                            card.element.style.display = 'block';
+                            found = true;
+                        } else {
+                            card.element.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Управляем видимостью уроков
+                const lessonDivs = document.querySelectorAll('.lesson');
+                lessonDivs.forEach(lesson => {
+                    const visibleCards = Array.from(lesson.querySelectorAll('.card')).filter(card => card.style.display !== 'none');
+                    lesson.style.display = visibleCards.length > 0 ? 'block' : 'none';
+                });
+
+                // Показываем сообщение, если ничего не найдено
+                noResultsDiv.style.display = found ? 'none' : 'block';
+            }
+
+            // Обработчик поиска
+            searchInput.addEventListener('input', function() {
+                filterCards(this.value);
             });
 
             // Закрытие модального окна
