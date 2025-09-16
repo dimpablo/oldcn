@@ -521,128 +521,40 @@
 </div>
 
 <div class="lexicon">
-  <h2>СПИСОК СЛОВ УРОКА 1</h2>
-  <div class="char-list">
-    <div class="char-item">
-      <span>丙<span class="inline-pinyin">bǐng</span></span>
-      <div class="char-tooltip">
-        Небесный ствол (3-й); в паре с 寅 — день «bǐng yín»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>寅<span class="inline-pinyin">yín</span></span>
-      <div class="char-tooltip">
-        Земная ветвь (3-я); в паре с 丙 — день «bǐng yín»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>卜<span class="inline-pinyin">bǔ</span></span>
-      <div class="char-tooltip">
-        Гадать; в составе 名 + 卜 — «гадатель по имени...»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>爭<span class="inline-pinyin">zhēng</span></span>
-      <div class="char-tooltip">
-        Имя гадателя; 卜爭 — «гадатель Чжэн»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>貞<span class="inline-pinyin">zhēn</span></span>
-      <div class="char-tooltip">
-        Спрашивать (в гадании); маркер вопроса: «спрашивают: ...?»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>雨<span class="inline-pinyin">yǔ</span></span>
-      <div class="char-tooltip">
-        Дождь; сказуемое: «будет дождь», «идёт дождь», «прошёл дождь»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>曰<span class="inline-pinyin">yuē</span></span>
-      <div class="char-tooltip">
-        Говорить; вводит прямую речь: «сказал: „...“»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>其<span class="inline-pinyin">qí</span></span>
-      <div class="char-tooltip">
-        Служебное наречие; указывает на будущее/возможность: «будет ли?»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>癸<span class="inline-pinyin">guǐ</span></span>
-      <div class="char-tooltip">
-        Небесный ствол (10-й); часть дат: 癸亥, 癸丑
-      </div>
-    </div>
-    <div class="char-item">
-      <span>亥<span class="inline-pinyin">hài</span></span>
-      <div class="char-tooltip">
-        Земная ветвь (12-я); в паре с 癸 — «гуй-хай»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>不<span class="inline-pinyin">bù</span></span>
-      <div class="char-tooltip">
-        Не; отрицание перед сказуемым: «не будет дождя»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>允<span class="inline-pinyin">yǔn</span></span>
-      <div class="char-tooltip">
-        Действительно; подтверждает: «и в самом деле пошёл дождь»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>王<span class="inline-pinyin">wáng</span></span>
-      <div class="char-tooltip">
-        Правитель; подлежащее: «царь сказал», «царь истолковал»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>占<span class="inline-pinyin">zhān</span></span>
-      <div class="char-tooltip">
-        Истолковывать (гадание); 王占曰 — «царь истолковал: „...“»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>丑<span class="inline-pinyin">chǒu</span></span>
-      <div class="char-tooltip">
-        Земная ветвь (2-я); в паре с 癸 — «гуй-чоу»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>己<span class="inline-pinyin">jǐ</span></span>
-      <div class="char-tooltip">
-        Небесный ствол (6-й); в паре с 卯 — «цзи-мао»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>卯<span class="inline-pinyin">mǎo</span></span>
-      <div class="char-tooltip">
-        Земная ветвь (4-я); день «цзи-мао»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>㱿<span class="inline-pinyin">jué</span></span>
-      <div class="char-tooltip">
-        Имя гадателя; 卜㱿 — «гадатель Цзюэ»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>壬<span class="inline-pinyin">rén</span></span>
-      <div class="char-tooltip">
-        Небесный ствол (9-й); в паре с 午 — «жэнь-у»
-      </div>
-    </div>
-    <div class="char-item">
-      <span>午<span class="inline-pinyin">wǔ</span></span>
-      <div class="char-tooltip">
-        Земная ветвь (7-я); день «жэнь-у»
-      </div>
-    </div>
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
   </div>
 
   <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>

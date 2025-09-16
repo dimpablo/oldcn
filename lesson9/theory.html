@@ -630,55 +630,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 </div>
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>唯<span class="inline-pinyin">wéi</span></span>
-<div class="char-tooltip">Эмфатическая частица «именно ли»</div>
-</div>
-<div class="char-item">
-<span>叀<span class="inline-pinyin">huì</span></span>
-<div class="char-tooltip">Эмфатическая частица (синоним 唯)</div>
-</div>
-<div class="char-item">
-<span>弜<span class="inline-pinyin">jiàng</span></span>
-<div class="char-tooltip">Частица усиления вопроса, «не... ли»</div>
-</div>
-<div class="char-item">
-<span>逐<span class="inline-pinyin">zhú</span></span>
-<div class="char-tooltip">Преследовать, охотиться</div>
-</div>
-<div class="char-item">
-<span>兕<span class="inline-pinyin">sì</span></span>
-<div class="char-tooltip">Однорогий носорог</div>
-</div>
-<div class="char-item">
-<span>鹿<span class="inline-pinyin">lù</span></span>
-<div class="char-tooltip">Олень</div>
-</div>
-<div class="char-item">
-<span>貝<span class="inline-pinyin">bèi</span></span>
-<div class="char-tooltip">Раковина; условное обозначение добычи</div>
-</div>
-</div>
-<!-- СЛОВОСОЧЕТАНИЯ -->
-<h2>СЛОВОСОЧЕТАНИЯ</h2>
-<div class="original">
-<p class="phrase-item">
-<span class="phrase-char">洗震</span>
-<span class="phrase-pinyin">xǐ zhèn</span>
-<span class="phrase-meaning">«племя Си-Чжэнь»</span>
-</p>
-<p class="phrase-item">
-<span class="phrase-char">今日</span>
-<span class="phrase-pinyin">jīn rì</span>
-<span class="phrase-meaning">«сегодня»</span>
-</p>
-<p class="phrase-item">
-<span class="phrase-char">貝鹿</span>
-<span class="phrase-pinyin">bèi lù</span>
-<span class="phrase-meaning">«олень с раковиной (условное обозначение добычи)»</span>
-</p>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
 <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="lexicon">
 <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>

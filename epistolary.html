@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактор Diff</title>
+    <!-- Подключаем jsdiff -->
+    <script src="https://cdn.jsdelivr.net/npm/diff@5.1.0/dist/diff.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --card-border: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --font-size-base: 16px;
+            --font-size-large: 18px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--primary-bg);
+            color: #333;
+            font-size: var(--font-size-base);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 300;
+        }
+
+        /* --- Оригинальный текст сверху --- */
+        .original-text-container {
+            margin-bottom: 15px;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .original-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 8px 12px;
+            font-weight: 600;
+            font-size: var(--font-size-large);
+        }
+
+        #original-text-display {
+            width: 100%;
+            min-height: 60px;
+            max-height: 120px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: none;
+            background-color: #fafafa;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-y: auto;
+        }
+
+        #toggle-original-btn {
+            background: none;
+            border: none;
+            color: #1a73e8;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        #toggle-original-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* --- Основная область редактор + diff --- */
+        .editor-diff-container {
+            display: flex;
+            height: 70vh;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .panel {
+            height: 100%;
+            overflow: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .editor-panel {
+            flex: 1 1 auto;
+            border-right: 1px solid var(--card-border);
+            min-width: 0;
+        }
+
+        .diff-panel {
+            flex: 1 1 auto;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            min-width: 0;
+        }
+
+        /* --- Resizer --- */
+        .resizer {
+            width: 5px;
+            background-color: var(--card-border);
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .resizer:hover {
+            background-color: #90caf9;
+        }
+
+        /* --- Textarea для редактирования --- */
+        #modified-text-input {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+        }
+
+        #modified-text-input:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+
+        /* --- Стили для diff --- */
+        .inserted {
+            background-color: rgba(46, 160, 67, 0.3);
+            color: #f2fffa;
+        }
+
+        .deleted {
+            background-color: rgba(248, 81, 73, 0.3);
+            color: #ffebe9;
+            text-decoration: line-through;
+        }
+
+        .unchanged {
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Редактор Diff</h1>
+
+    <!-- Оригинальный текст (редактируемый) -->
+    <div class="original-text-container">
+        <div class="original-header">
+            <span>Оригинальный текст</span>
+            <button id="toggle-original-btn">Свернуть</button>
+        </div>
+        <textarea id="original-text-display"></textarea>
+    </div>
+
+    <!-- Основная область: редактор + diff -->
+    <div class="editor-diff-container">
+        <div class="panel editor-panel">
+            <textarea id="modified-text-input" placeholder="Вносите изменения здесь..."></textarea>
+        </div>
+        <div class="resizer" id="resizer"></div>
+        <div class="panel diff-panel" id="diff-output">
+            Diff появится автоматически при изменении текста.
+        </div>
+    </div>
+
+    <script>
+        // --- Элементы ---
+        const originalTextDisplay = document.getElementById('original-text-display');
+        const modifiedTextInput = document.getElementById('modified-text-input');
+        const diffOutput = document.getElementById('diff-output');
+        const toggleOriginalBtn = document.getElementById('toggle-original-btn');
+        const resizer = document.getElementById('resizer');
+        const editorPanel = document.querySelector('.editor-panel');
+        const diffPanel = document.querySelector('.diff-panel');
+
+        // --- Переменные для ресайза ---
+        let isResizing = false;
+
+        // --- Функция сравнения ---
+        function generateDiff() {
+            const original = originalTextDisplay.value;
+            const modified = modifiedTextInput.value;
+
+            if (typeof Diff === 'undefined') {
+                diffOutput.textContent = "Ошибка: библиотека Diff не загружена.";
+                return;
+            }
+
+            try {
+                const diffParts = Diff.diffWords(original, modified);
+                diffOutput.innerHTML = '';
+
+                const fragment = document.createDocumentFragment();
+
+                diffParts.forEach(part => {
+                    const span = document.createElement('span');
+                    if (part.removed) {
+                        span.classList.add('deleted');
+                    } else if (part.added) {
+                        span.classList.add('inserted');
+                    } else {
+                        span.classList.add('unchanged');
+                    }
+                    span.textContent = part.value;
+                    fragment.appendChild(span);
+                });
+
+                diffOutput.appendChild(fragment);
+
+            } catch (error) {
+                console.error("Ошибка при генерации diff:", error);
+                diffOutput.textContent = `Ошибка при генерации diff: ${error.message}`;
+            }
+        }
+
+        // --- Свернуть/развернуть оригинальный текст ---
+        toggleOriginalBtn.addEventListener('click', () => {
+            const isHidden = originalTextDisplay.style.display === 'none';
+            originalTextDisplay.style.display = isHidden ? 'block' : 'none';
+            toggleOriginalBtn.textContent = isHidden ? 'Свернуть' : 'Развернуть';
+        });
+
+        // --- Автоматическое сравнение при вводе ---
+        modifiedTextInput.addEventListener('input', generateDiff);
+        originalTextDisplay.addEventListener('input', generateDiff); // теперь и оригинал можно менять!
+
+        // --- Логика ресайза через Pointer Events ---
+        resizer.addEventListener('pointerdown', (e) => {
+            isResizing = true;
+            resizer.setPointerCapture(e.pointerId);
+            document.body.style.cursor = 'col-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('pointermove', (e) => {
+            if (!isResizing) return;
+
+            const container = document.querySelector('.editor-diff-container');
+            const rect = container.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const min = 50;
+            const max = rect.width - min;
+
+            const leftWidth = Math.max(min, Math.min(offsetX, max));
+            const rightWidth = rect.width - leftWidth;
+
+            editorPanel.style.flexBasis = `${leftWidth}px`;
+            diffPanel.style.flexBasis = `${rightWidth}px`;
+        });
+
+        resizer.addEventListener('pointerup', () => {
+            isResizing = false;
+            document.body.style.cursor = '';
+        });
+
+        resizer.addEventListener('pointercancel', () => {
+            isResizing = false;
+            document.body.style.cursor = '';
+        });
+
+        // --- Инициализация: начальные размеры ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.editor-diff-container');
+            const containerWidth = container.offsetWidth;
+            const half = containerWidth / 2;
+
+            editorPanel.style.flexBasis = `${half}px`;
+            diffPanel.style.flexBasis = `${half}px`;
+
+            // Запускаем первое сравнение
+            generateDiff();
+        });
+    </script>
+</body>
+</html>

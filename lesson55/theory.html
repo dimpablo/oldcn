@@ -454,7 +454,7 @@
 
 <script>
     // Укажи номер урока здесь
-    const LESSON = 55;
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
 
     // Находим все иероглифы этого урока из charData
     const lessonChars = Object.entries(charData)

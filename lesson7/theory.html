@@ -426,120 +426,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 </div>
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>下<span class="inline-pinyin">xià</span></span>
-<div class="char-tooltip">Вниз, низ</div>
-</div>
-<div class="char-item">
-<span>衆<span class="inline-pinyin">zhòng</span></span>
-<div class="char-tooltip">Множество, народ</div>
-</div>
-<div class="char-item">
-<span>震<span class="inline-pinyin">zhèn</span></span>
-<div class="char-tooltip">Гром, бедствие</div>
-</div>
-<div class="char-item">
-<span>危<span class="inline-pinyin">wēi</span></span>
-<div class="char-tooltip">Опасность, угроза</div>
-</div>
-<div class="char-item">
-<span>羽<span class="inline-pinyin">yǔ</span></span>
-<div class="char-tooltip">Перо, крыло</div>
-</div>
-<div class="char-item">
-<span>周<span class="inline-pinyin">zhōu</span></span>
-<div class="char-tooltip">Чжоу (племя)</div>
-</div>
-<div class="char-item">
-<span>令<span class="inline-pinyin">lìng</span></span>
-<div class="char-tooltip">Приказывать</div>
-</div>
-<div class="char-item">
-<span>登<span class="inline-pinyin">dēng</span></span>
-<div class="char-tooltip">Поднимать, собирать</div>
-</div>
-<div class="char-item">
-<span>望<span class="inline-pinyin">wàng</span></span>
-<div class="char-tooltip">Надеяться, смотреть</div>
-</div>
-<div class="char-item">
-<span>婦<span class="inline-pinyin">fù</span></span>
-<div class="char-tooltip">Жена, невестка</div>
-</div>
-<div class="char-item">
-<span>人<span class="inline-pinyin">rén</span></span>
-<div class="char-tooltip">Человек</div>
-</div>
-<div class="char-item">
-<span>乘<span class="inline-pinyin">chéng</span></span>
-<div class="char-tooltip">Кочевой народ, ван Чэн</div>
-</div>
-<div class="char-item">
-<span>千<span class="inline-pinyin">qiān</span></span>
-<div class="char-tooltip">Тысяча</div>
-</div>
-<div class="char-item">
-<span>征<span class="inline-pinyin">zhēng</span></span>
-<div class="char-tooltip">Поход, карательная экспедиция</div>
-</div>
-<div class="char-item">
-<span>高<span class="inline-pinyin">gāo</span></span>
-<div class="char-tooltip">Высокий, Гао</div>
-</div>
-<div class="char-item">
-<span>雞<span class="inline-pinyin">jī</span></span>
-<div class="char-tooltip">Петух, племя Цзи</div>
-</div>
-<div class="char-item">
-<span>三<span class="inline-pinyin">sān</span></span>
-<div class="char-tooltip">Три</div>
-</div>
-<div class="char-item">
-<span>夷<span class="inline-pinyin">yí</span></span>
-<div class="char-tooltip">Варвары, племя И</div>
-</div>
-<div class="char-item">
-<span>從<span class="inline-pinyin">cóng</span></span>
-<div class="char-tooltip">Следовать, сопровождать</div>
-</div>
-<div class="char-item">
-<span>呼<span class="inline-pinyin">hū</span></span>
-<div class="char-tooltip">Приказывать, повелевать</div>
-</div>
-<div class="char-item">
-<span>畢<span class="inline-pinyin">bì</span></span>
-<div class="char-tooltip">Би (имя)</div>
-</div>
-<div class="char-item">
-<span>洗<span class="inline-pinyin">xǐ</span></span>
-<div class="char-tooltip">Си (имя)</div>
-</div>
-<div class="char-item">
-<span>妌<span class="inline-pinyin">jǐng</span></span>
-<div class="char-tooltip">Цзин (имя)</div>
-</div>
-<div class="char-item">
-<span>一<span class="inline-pinyin">yī</span></span>
-<div class="char-tooltip">Один</div>
-</div>
-<div class="char-item">
-<span>尹<span class="inline-pinyin">yǐn</span></span>
-<div class="char-tooltip">Инь (имя)</div>
-</div>
-<div class="char-item">
-<span>寇<span class="inline-pinyin">kòu</span></span>
-<div class="char-tooltip">Грабить, нападать</div>
-</div>
-<div class="char-item">
-<span>萬<span class="inline-pinyin">wàn</span></span>
-<div class="char-tooltip">Десять тысяч</div>
-</div>
-<div class="char-item">
-<span>倉<span class="inline-pinyin">cāng</span></span>
-<div class="char-tooltip">Цан (имя)</div>
-</div>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
 <!-- СЛОВОСОЧЕТАНИЯ -->
 <h2>СЛОВОСОЧЕТАНИЯ</h2>
 <div class="original">

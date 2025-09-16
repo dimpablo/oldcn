@@ -519,16 +519,24 @@
 <div class="char-list"></div>
 
 <script>
-    // Извлечение иероглифов урока 56 из charData
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
     const lessonChars = Object.entries(charData)
-        .filter(([char, data]) => data.lesson === 56)
+        .filter(([char, data]) => data.lesson === LESSON)
         .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
             return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
         });
 
+    // Получаем контейнер
     const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
     charList.innerHTML = '';
 
+    // Генерируем элементы
     lessonChars.forEach(([char, data]) => {
         const item = document.createElement('div');
         item.className = 'char-item';

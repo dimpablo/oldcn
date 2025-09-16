@@ -510,12 +510,12 @@
     </p>
 </div>
 
-<h2>СПИСОК СЛОВ УРОКА 52</h2>
+<h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
 
 <script>
     // Укажи номер урока здесь
-    const LESSON = 52;
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
 
     // Находим все иероглифы этого урока из charData
     const lessonChars = Object.entries(charData)

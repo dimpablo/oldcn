@@ -447,159 +447,41 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 <span class="example">河東 hé dōng</span> «к востоку от реки».
         </p>
 </div>
-<h2>СПИСОК СЛОВ УРОКА 3</h2>
-<div class="char-list">
-<div class="char-item">
-<span>庚<span class="inline-pinyin">gēng</span></span>
-<div class="char-tooltip">
-                Небесный ствол (7-й); циклический знак
-            </div>
-</div>
-<div class="char-item">
-<span>乙<span class="inline-pinyin">yǐ</span></span>
-<div class="char-tooltip">
-                Небесный ствол (2-й); циклический знак
-            </div>
-</div>
-<div class="char-item">
-<span>勿<span class="inline-pinyin">wù</span></span>
-<div class="char-tooltip">
-                Служебное слово: отрицание с модальным оттенком
-            </div>
-</div>
-<div class="char-item">
-<span>入<span class="inline-pinyin">rù</span></span>
-<div class="char-tooltip">
-                Входить, вступать
-            </div>
-</div>
-<div class="char-item">
-<span>于<span class="inline-pinyin">yú</span></span>
-<div class="char-tooltip">
-                Предлог: в, на, к (универсальный предлог)
-            </div>
-</div>
-<div class="char-item">
-<span>辛<span class="inline-pinyin">xīn</span></span>
-<div class="char-tooltip">
-                Небесный ствол (8-й); циклический знак
-            </div>
-</div>
-<div class="char-item">
-<span>大<span class="inline-pinyin">dà</span></span>
-<div class="char-tooltip">
-                Большой, великий
-            </div>
-</div>
-<div class="char-item">
-<span>邑<span class="inline-pinyin">yì</span></span>
-<div class="char-tooltip">
-                Город, поселение
-            </div>
-</div>
-<div class="char-item">
-<span>六<span class="inline-pinyin">liù</span></span>
-<div class="char-tooltip">
-                Шесть; шестой
-            </div>
-</div>
-<div class="char-item">
-<span>月<span class="inline-pinyin">yuè</span></span>
-<div class="char-tooltip">
-                Месяц; луна
-            </div>
-</div>
-<div class="char-item">
-<span>生<span class="inline-pinyin">shēng</span></span>
-<div class="char-tooltip">
-                Рождаться; наступающий (о времени)
-            </div>
-</div>
-<div class="char-item">
-<span>七<span class="inline-pinyin">qī</span></span>
-<div class="char-tooltip">
-                Семь; седьмой
-            </div>
-</div>
-<div class="char-item">
-<span>九<span class="inline-pinyin">jiǔ</span></span>
-<div class="char-tooltip">
-                Девять; девятый
-            </div>
-</div>
-<div class="char-item">
-<span>求<span class="inline-pinyin">qiú</span></span>
-<div class="char-tooltip">
-                Просить, молить
-            </div>
-</div>
-<div class="char-item">
-<span>妣<span class="inline-pinyin">bǐ</span></span>
-<div class="char-tooltip">
-                Умершая мать, прародительница
-            </div>
-</div>
-<div class="char-item">
-<span>日<span class="inline-pinyin">rì</span></span>
-<div class="char-tooltip">
-                День; солнце
-            </div>
-</div>
-<div class="char-item">
-<span>翌<span class="inline-pinyin">yì</span></span>
-<div class="char-tooltip">
-                Следующий, будущий (о времени)
-            </div>
-</div>
-<div class="char-item">
-<span>告<span class="inline-pinyin">gào</span></span>
-<div class="char-tooltip">
-                Сообщать, докладывать
-            </div>
-</div>
-<div class="char-item">
-<span>中<span class="inline-pinyin">zhōng</span></span>
-<div class="char-tooltip">
-                Середина; средний
-            </div>
-</div>
-<div class="char-item">
-<span>丁<span class="inline-pinyin">dīng</span></span>
-<div class="char-tooltip">
-                Небесный ствол (4-й); циклический знак
-            </div>
-</div>
-<div class="char-item">
-<span>戊<span class="inline-pinyin">wù</span></span>
-<div class="char-tooltip">
-                Небесный ствол (5-й); циклический знак
-            </div>
-</div>
-<div class="char-item">
-<span>工<span class="inline-pinyin">gōng</span></span>
-<div class="char-tooltip">
-                Работа; племя Гун
-            </div>
-</div>
-<div class="char-item">
-<span>上<span class="inline-pinyin">shàng</span></span>
-<div class="char-tooltip">
-                Верх; верхний
-            </div>
-</div>
-<div class="char-item">
-<span>河<span class="inline-pinyin">hé</span></span>
-<div class="char-tooltip">
-                Река (особенно Хуанхэ)
-            </div>
-</div>
-<div class="char-item">
-<span>唐<span class="inline-pinyin">táng</span></span>
-<div class="char-tooltip">
-                Собственное имя: Тан (легендарный правитель)
-            </div>
-</div>
-</div>
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
+
 <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="lexicon">
 <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>

@@ -599,39 +599,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 
 </div>
 
-<h2>СПИСОК СЛОВ УРОКА 48</h2>
+<h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
 
 <script>
-// Укажи номер урока здесь
-const LESSON = 48;
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
 
-// Находим все иероглифы этого урока из charData
-const lessonChars = Object.entries(charData)
-  .filter(([char, data]) => data.lesson === LESSON)
-  .sort(([charA, dataA], [charB, dataB]) => {
-    // Сортировка по пиньиню (опционально)
-    return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
-  });
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
 
-// Получаем контейнер
-const charList = document.querySelector('.char-list');
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
 
-// Очищаем (на всякий случай)
-charList.innerHTML = '';
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
 
-// Генерируем элементы
-lessonChars.forEach(([char, data]) => {
-  const item = document.createElement('div');
-  item.className = 'char-item';
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
 
-  item.innerHTML = `
-    <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
-    <div class="char-tooltip">${data.meaning}</div>
-  `;
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
 
-  charList.appendChild(item);
-});
+        charList.appendChild(item);
+    });
 </script>
 
 <div class="lexicon">

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Китайские иероглифы по урокам</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        .lesson {
+            margin-bottom: 40px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .char {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .pinyin {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .meaning {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Стили из твоего скрипта — без изменений */
+        #theory-loading-bar {
+            background-color: #fffaf7;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 13px;
+            color: #a0a0a0;
+            border: 1px solid #f5e1da;
+        }
+
+        #theory-tabbed-box {
+            display: none;
+            background-color: #fffdfb;
+            padding: 0;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #f5e1da;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        #tab-header {
+            display: flex;
+            align-items: flex-start;
+            background-color: #f8f6fb;
+            padding: 0;
+            user-select: none;
+            height: 36px;
+        }
+
+        .tab {
+            padding: 8px 14px;
+            background-color: #f8f6fb;
+            color: #a0a0a0;
+            font-size: 13px;
+            font-weight: normal;
+            border: 1px solid #eae5f3;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            margin-left: 4px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background-color: white;
+            color: #7c6b96;
+            font-weight: bold;
+            border-bottom: none;
+            position: relative;
+            top: 1px;
+            z-index: 2;
+        }
+
+        #close-theory-btn {
+            margin-left: auto;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 8px 10px 0 0;
+            height: 28px;
+        }
+
+        #tab-content {
+            padding: 10px;
+            min-height: 60px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        #hanzi-frame {
+            width: 100%;
+            height: 1px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Словарь иероглифов по урокам</h1>
+
+    <!-- Контейнер для уроков -->
+    <div id="lessons-container"></div>
+
+    <!-- Подключаем словарь -->
+    <script src="dictionary.js"></script>
+
+    <!-- Основной рендеринг карточек -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('lessons-container');
+
+            // Группируем иероглифы по урокам
+            const lessons = {};
+            for (const char in charData) {
+                const lessonNum = charData[char].lesson;
+                if (!lessons[lessonNum]) {
+                    lessons[lessonNum] = [];
+                }
+                lessons[lessonNum].push({
+                    char,
+                    pinyin: charData[char].pinyin,
+                    meaning: charData[char].meaning
+                });
+            }
+
+            const sortedLessons = Object.keys(lessons).sort((a, b) => a - b);
+
+            // Создаём HTML для каждого урока
+            sortedLessons.forEach(lessonNum => {
+                const lessonDiv = document.createElement('div');
+                lessonDiv.className = 'lesson';
+
+                const title = document.createElement('h2');
+                title.textContent = `Урок ${lessonNum}`;
+                lessonDiv.appendChild(title);
+
+                const cardContainer = document.createElement('div');
+                cardContainer.className = 'card-container';
+
+                lessons[lessonNum].sort((a, b) => a.char.localeCompare(b.char));
+
+                lessons[lessonNum].forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.hanzi = item.char; // ← ВАЖНО: твой скрипт использует dataset.hanzi
+
+                    const charElem = document.createElement('div');
+                    charElem.className = 'char';
+                    charElem.textContent = item.char;
+
+                    const pinyinElem = document.createElement('div');
+                    pinyinElem.className = 'pinyin';
+                    pinyinElem.textContent = item.pinyin;
+
+                    const meaningElem = document.createElement('div');
+                    meaningElem.className = 'meaning';
+                    meaningElem.textContent = item.meaning;
+
+                    card.appendChild(charElem);
+                    card.appendChild(pinyinElem);
+                    card.appendChild(meaningElem);
+
+                    cardContainer.appendChild(card);
+                });
+
+                lessonDiv.appendChild(cardContainer);
+                container.appendChild(lessonDiv);
+            });
+
+            // Запускаем ТВОЙ скрипт после рендеринга
+            setTimeout(() => {
+                if (typeof mainScript === 'function') {
+                    mainScript();
+                }
+            }, 100);
+        });
+    </script>
+
+    <!-- ТВОЙ СКРИПТ — адаптированный под .card и #lessons-container -->
+    <script>
+        // === СКРИПТ ДЛЯ КОНСОЛИ: ГЛОБАЛЬНАЯ mainScript + НАБЛЮДАТЕЛЬ ===
+        function mainScript() {
+            // ИЗМЕНЕНО: ищем не в #dictionaryContent, а в #lessons-container
+            var dictContainer = document.getElementById('lessons-container');
+            if (!dictContainer) return;
+
+            // ИЗМЕНЕНО: собираем не .dict-item, а .card
+            var items = dictContainer.querySelectorAll('.card');
+            var list = [];
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var hanzi = item.dataset.hanzi;
+                var pinyin = ''; // в карточке пиньинь есть, но для твоего скрипта он не обязателен
+                if (hanzi) {
+                    list.push({ hanzi: hanzi, pinyin: pinyin });
+                }
+            }
+
+            if (list.length === 0) return;
+
+            // --- Удаляем старый прогресс-бар и блок теории ---
+            var oldLoading = document.getElementById('theory-loading-bar');
+            if (oldLoading) oldLoading.remove();
+
+            var oldBox = document.getElementById('theory-tabbed-box');
+            if (oldBox) oldBox.remove();
+
+            // --- Создаем контейнеры ---
+            // ИЗМЕНЕНО: вставляем прогресс-бар и UI прямо в body, после lessons-container
+            var container = document.body;
+            var contentAnchor = document.getElementById('lessons-container');
+
+            if (!container || !contentAnchor) return;
+
+            // --- Создаем прогресс-бар ---
+            var loadingEl = document.createElement('div');
+            loadingEl.id = 'theory-loading-bar';
+            loadingEl.style.cssText = `
+                background-color: #fffaf7;
+                padding: 10px;
+                border-radius: 8px;
+                margin: 10px 0;
+                text-align: center;
+                font-size: 13px;
+                color: #a0a0a0;
+                border: 1px solid #f5e1da;
+            `;
+            loadingEl.innerHTML = '🔍 Поиск данных... (0/60)';
+            container.insertBefore(loadingEl, contentAnchor.nextSibling);
+
+            function updateProgress(count) {
+                if (loadingEl) {
+                    loadingEl.innerHTML = `🔍 Поиск данных... (${count}/60)`;
+                }
+            }
+
+            // --- Кэши и результаты ---
+            if (!window.theoryCache) window.theoryCache = {};
+            if (!window.masterTheoryResults) window.masterTheoryResults = [];
+            var results = [];
+            var loadedCount = 0;
+
+            // --- Асинхронный поиск ---
+            (async function () {
+                try {
+                    for (var lessonNum = 1; lessonNum <= 60; lessonNum++) {
+                        var url = '../lesson' + lessonNum + '/theory.html';
+                        try {
+                            var html = window.theoryCache[url];
+                            if (!html) {
+                                var response = await fetch(url);
+                                if (!response.ok) continue;
+                                html = await response.text();
+                                window.theoryCache[url] = html;
+                            }
+
+                            var parser = new DOMParser();
+                            var doc = parser.parseFromString(html, 'text/html');
+                            var grammarSection = doc.querySelector('.grammar');
+                            if (!grammarSection) continue;
+
+                            var blocks = grammarSection.querySelectorAll('p.original');
+                            for (var j = 0; j < list.length; j++) {
+                                var hanzi = list[j].hanzi;
+                                for (var k = 0; k < blocks.length; k++) {
+                                    var block = blocks[k];
+                                    if (block.textContent.includes(hanzi)) {
+                                        var h3 = null;
+                                        var sibling = block.previousElementSibling;
+                                        while (sibling) {
+                                            if (sibling.tagName === 'H3') {
+                                                h3 = sibling;
+                                                break;
+                                            }
+                                            sibling = sibling.previousElementSibling;
+                                        }
+                                        var title = h3 ? h3.textContent.trim() : '(без заголовка)';
+                                        var context = h3 ? '<h3>' + h3.innerHTML + '</h3>' + block.outerHTML : block.outerHTML;
+                                        results.push({ hanzi: hanzi, lesson: lessonNum, title: title, context: context });
+                                    }
+                                }
+                            }
+                        } catch (err) {
+                            console.warn(`Ошибка в уроке ${lessonNum}`, err.message);
+                        } finally {
+                            loadedCount++;
+                            updateProgress(loadedCount);
+                        }
+                    }
+
+                    // --- Обновляем глобальную базу ---
+                    window.masterTheoryResults = window.masterTheoryResults.concat(
+                        results.filter(r => !window.masterTheoryResults.some(x => x.hanzi === r.hanzi && x.lesson === r.lesson && x.title === r.title))
+                    );
+
+                    // --- Удаляем прогресс-бар и создаем UI ---
+                    if (loadingEl) loadingEl.remove();
+                    createTabInterface(container, contentAnchor, results);
+
+                } catch (err) {
+                    console.error('Critical error:', err);
+                    if (loadingEl) loadingEl.innerHTML = '❌ Ошибка загрузки';
+                }
+            })();
+        }
+
+        function createTabInterface(container, contentAnchor, resultsForDebug) {
+            var theoryBox = document.createElement('div');
+            theoryBox.id = 'theory-tabbed-box';
+            theoryBox.style.cssText = `
+                display: none;
+                background-color: #fffdfb;
+                padding: 0;
+                border-radius: 8px;
+                margin: 10px 0;
+                border: 1px solid #f5e1da;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                overflow: hidden;
+            `;
+            container.insertBefore(theoryBox, contentAnchor.nextSibling);
+
+            theoryBox.innerHTML = `
+                <div id="tab-header" style="
+                    display: flex;
+                    align-items: flex-start;
+                    background-color: #f8f6fb;
+                    padding: 0;
+                    user-select: none;
+                    height: 36px;
+                ">
+                    <div class="tab active" data-tab="theory" style="
+                        padding: 8px 14px;
+                        background-color: white;
+                        color: #7c6b96;
+                        font-size: 13px;
+                        font-weight: bold;
+                        border: 1px solid #eae5f3;
+                        border-bottom: none;
+                        border-radius: 6px 6px 0 0;
+                        margin-left: 10px;
+                        cursor: pointer;
+                        box-shadow: 0 -1px 2px rgba(0,0,0,0.05);
+                        position: relative;
+                        top: 1px;
+                        z-index: 2;
+                    ">📌 Теория</div>
+                    <div class="tab" data-tab="input" style="
+                        padding: 8px 14px;
+                        background-color: #f8f6fb;
+                        color: #a0a0a0;
+                        font-size: 13px;
+                        font-weight: normal;
+                        border: 1px solid #eae5f3;
+                        border-bottom: none;
+                        border-radius: 6px 6px 0 0;
+                        margin-left: 4px;
+                        cursor: pointer;
+                    ">✍️ Рукописный ввод</div>
+                    <button id="close-theory-btn" style="
+                        margin-left: auto;
+                        background-color: #ff6b6b;
+                        color: white;
+                        border: none;
+                        padding: 6px 12px;
+                        border-radius: 6px;
+                        font-size: 13px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        margin: 8px 10px 0 0;
+                        height: 28px;
+                    ">ЗАКРЫТЬ</button>
+                </div>
+                <div id="tab-content" style="padding: 10px; min-height: 60px;">
+                    <div id="tab-theory" class="tab-pane active"></div>
+                    <div id="tab-input" class="tab-pane" style="display:none;">
+                        <iframe id="hanzi-frame" style="width:100%; height:1px; border:none;" src=""></iframe>
+                    </div>
+                </div>
+            `;
+
+            var tabs = document.querySelectorAll('.tab');
+            var panes = document.querySelectorAll('.tab-pane');
+            var closeBtn = document.getElementById('close-theory-btn');
+            var hanziFrame = document.getElementById('hanzi-frame');
+
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].onclick = function () {
+                    for (var tab of tabs) {
+                        tab.classList.remove('active');
+                        if (tab.dataset.tab === 'input') {
+                            tab.style.backgroundColor = '#f8f6fb';
+                            tab.style.color = '#a0a0a0';
+                            tab.style.fontWeight = 'normal';
+                        }
+                    }
+                    for (var pane of panes) pane.style.display = 'none';
+
+                    this.classList.add('active');
+                    this.style.backgroundColor = 'white';
+                    this.style.color = '#7c6b96';
+                    this.style.fontWeight = 'bold';
+
+                    var targetPane = document.getElementById('tab-' + this.dataset.tab);
+                    targetPane.style.display = 'block';
+
+                    if (this.dataset.tab === 'input') {
+                        var hanzi = theoryBox.dataset.hanzi;
+                        hanziFrame.src = './tasks/task1.html#' + hanzi;
+                        document.getElementById('tab-content').style.padding = '10px 10px 15px';
+                        hanziFrame.style.height = '420px';
+                    } else {
+                        document.getElementById('tab-content').style.padding = '10px';
+                        if (hanziFrame) hanziFrame.style.height = '1px';
+                    }
+                };
+            }
+
+            closeBtn.onclick = function () {
+                theoryBox.style.display = 'none';
+                if (hanziFrame) hanziFrame.src = '';
+            };
+
+            // ИЗМЕНЕНО: обрабатываем клики по .card, а не .dict-item
+            var items = document.querySelectorAll('.card');
+            for (var idx = 0; idx < items.length; idx++) {
+                (function (item) {
+                    var hanzi = item.dataset.hanzi;
+                    // Убираем старый обработчик, если есть
+                    if (item.clickHandler) {
+                        item.removeEventListener('click', item.clickHandler);
+                    }
+                    item.clickHandler = function () {
+                        if (theoryBox.style.display === 'block' && theoryBox.dataset.hanzi === hanzi) {
+                            theoryBox.style.display = 'none';
+                            return;
+                        }
+                        theoryBox.dataset.hanzi = hanzi;
+                        theoryBox.style.display = 'block';
+                        var theoryPane = document.getElementById('tab-theory');
+                        theoryPane.innerHTML = '<p style="color:#999;font-size:12px;">Поиск...</p>';
+
+                        var filteredResults = window.masterTheoryResults.filter(r => r.hanzi === hanzi);
+                        if (filteredResults.length === 0) {
+                            theoryPane.innerHTML = '<p style="color:#999;font-size:12px;">Нет данных.</p>';
+                        } else {
+                            var html = '';
+                            for (var j = 0; j < filteredResults.length; j++) {
+                                var res = filteredResults[j];
+                                var context = res.context.replace(new RegExp('(' + hanzi + ')', 'g'), '<span style="background-color:#ffb6c1;padding:0 2px;border-radius:3px;">$1</span>');
+                                html += `
+                                    <div style="margin-bottom:14px;">
+                                        <strong style="color:#5a5a5a;font-size:12px;">Урок ${res.lesson}</strong>
+                                        <h4 style="margin:4px 0;color:#7c6b96;">${res.title}</h4>
+                                        <div style="
+                                            background:#f9f7fc;
+                                            padding:10px;
+                                            border-left:4px solid #a8c8d8;
+                                            border-radius:0 6px 6px 0;
+                                            font-size:13px;
+                                            line-height:1.5;
+                                        ">${context}</div>
+                                    </div>`;
+                            }
+                            theoryPane.innerHTML = html;
+                        }
+                        tabs[0].onclick(); // активируем первую вкладку
+                    };
+                    item.addEventListener('click', item.clickHandler);
+                })(items[idx]);
+            }
+        }
+
+        // --- Наблюдатель за изменениями в DOM ---
+        if (!window.__theoryObserverInstalled) {
+            var observer = new MutationObserver(function (mutations) {
+                for (var m of mutations) {
+                    if (m.type === 'childList' && m.target.id === 'lessons-container') {
+                        setTimeout(mainScript, 100);
+                        break;
+                    }
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+            window.__theoryObserverInstalled = true;
+            console.log('✅ Наблюдатель за DOM установлен.');
+        }
+
+        // --- Первый запуск (уже есть в основном скрипте выше) ---
+        // mainScript() вызывается после рендеринга карточек
+    </script>
+</body>
+</html>

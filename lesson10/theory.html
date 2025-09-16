@@ -432,92 +432,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 </div>
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>迄<span class="inline-pinyin">qì</span></span>
-<div class="char-tooltip">Предлог, «до» (в пространстве или времени)</div>
-</div>
-<div class="char-item">
-<span>臣<span class="inline-pinyin">chén</span></span>
-<div class="char-tooltip">Чиновник</div>
-</div>
-<div class="char-item">
-<span>鄙<span class="inline-pinyin">bì</span></span>
-<div class="char-tooltip">Окраина, граница</div>
-</div>
-<div class="char-item">
-<span>車<span class="inline-pinyin">jū, chē</span></span>
-<div class="char-tooltip">Колесница, повозка</div>
-</div>
-<div class="char-item">
-<span>亦<span class="inline-pinyin">yì</span></span>
-<div class="char-tooltip">Также, тоже</div>
-</div>
-<div class="char-item">
-<span>侵<span class="inline-pinyin">qīn</span></span>
-<div class="char-tooltip">Вторгаться, нападать</div>
-</div>
-<div class="char-item">
-<span>田<span class="inline-pinyin">tián</span></span>
-<div class="char-tooltip">Охотиться, поле</div>
-</div>
-<div class="char-item">
-<span>四<span class="inline-pinyin">sì</span></span>
-<div class="char-tooltip">Четыре</div>
-</div>
-<div class="char-item">
-<span>昔<span class="inline-pinyin">xī</span></span>
-<div class="char-tooltip">Раньше, в прошлом</div>
-</div>
-<div class="char-item">
-<span>俘<span class="inline-pinyin">fú</span></span>
-<div class="char-tooltip">Пленить, взять в плен</div>
-</div>
-<div class="char-item">
-<span>十<span class="inline-pinyin">shí</span></span>
-<div class="char-tooltip">Десять</div>
-</div>
-<div class="char-item">
-<span>若<span class="inline-pinyin">ruò</span></span>
-<div class="char-tooltip">Быть похожим, словно</div>
-</div>
-<div class="char-item">
-<span>往<span class="inline-pinyin">wǎng</span></span>
-<div class="char-tooltip">Отправляться, ехать</div>
-</div>
-<div class="char-item">
-<span>娩<span class="inline-pinyin">miǎn</span></span>
-<div class="char-tooltip">Рожать</div>
-</div>
-<div class="char-item">
-<span>嘉<span class="inline-pinyin">jiā</span></span>
-<div class="char-tooltip">Благополучно, удачно</div>
-</div>
-<div class="char-item">
-<span>死<span class="inline-pinyin">sǐ</span></span>
-<div class="char-tooltip">Умереть</div>
-</div>
-<div class="char-item">
-<span>偁<span class="inline-pinyin">chēng</span></span>
-<div class="char-tooltip">Указательное местоимение, «тот»</div>
-</div>
-<div class="char-item">
-<span>馭<span class="inline-pinyin">yù</span></span>
-<div class="char-tooltip">Управлять (лошадьми), править</div>
-</div>
-<div class="char-item">
-<span>央<span class="inline-pinyin">yāng</span></span>
-<div class="char-tooltip">Имя собственное (цзы Ян)</div>
-</div>
-<div class="char-item">
-<span>墜<span class="inline-pinyin">zhuì</span></span>
-<div class="char-tooltip">Падать, сваливаться</div>
-</div>
-<div class="char-item">
-<span>硪<span class="inline-pinyin">wò</span></span>
-<div class="char-tooltip">Имя собственное (возможно, имя возничего)</div>
-</div>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
 <!-- СЛОВОСОЧЕТАНИЯ -->
 <h2>СЛОВОСОЧЕТАНИЯ</h2>
 <div class="original">

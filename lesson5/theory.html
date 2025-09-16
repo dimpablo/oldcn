@@ -519,84 +519,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 </div>
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>帝<span class="inline-pinyin">dì</span></span>
-<div class="char-tooltip">Небесный Владыка</div>
-</div>
-<div class="char-item">
-<span>熯<span class="inline-pinyin">hàn</span></span>
-<div class="char-tooltip">Иссушать, засуха</div>
-</div>
-<div class="char-item">
-<span>申<span class="inline-pinyin">shēn</span></span>
-<div class="char-tooltip">Земная ветвь (9-я)</div>
-</div>
-<div class="char-item">
-<span>降<span class="inline-pinyin">jiàng</span></span>
-<div class="char-tooltip">Посылать (вниз)</div>
-</div>
-<div class="char-item">
-<span>伐<span class="inline-pinyin">fá</span></span>
-<div class="char-tooltip">Нападать, воевать</div>
-</div>
-<div class="char-item">
-<span>佑<span class="inline-pinyin">yòu</span></span>
-<div class="char-tooltip">Помощь, защита</div>
-</div>
-<div class="char-item">
-<span>洹<span class="inline-pinyin">huán</span></span>
-<div class="char-tooltip">Река Хуань</div>
-</div>
-<div class="char-item">
-<span>作<span class="inline-pinyin">zuò</span></span>
-<div class="char-tooltip">Совершать, причинять</div>
-</div>
-<div class="char-item">
-<span>茲<span class="inline-pinyin">zī</span></span>
-<div class="char-tooltip">Этот, здесь</div>
-</div>
-<div class="char-item">
-<span>禍<span class="inline-pinyin">huò</span></span>
-<div class="char-tooltip">Несчастье, бедствие</div>
-</div>
-<div class="char-item">
-<span>余<span class="inline-pinyin">yú</span></span>
-<div class="char-tooltip">Я (местоимение)</div>
-</div>
-<div class="char-item">
-<span>得<span class="inline-pinyin">dé</span></span>
-<div class="char-tooltip">Получить</div>
-</div>
-<div class="char-item">
-<span>汝<span class="inline-pinyin">rǔ</span></span>
-<div class="char-tooltip">Ты</div>
-</div>
-<div class="char-item">
-<span>使<span class="inline-pinyin">shǐ</span></span>
-<div class="char-tooltip">Посол</div>
-</div>
-<div class="char-item">
-<span>合<span class="inline-pinyin">hé</span></span>
-<div class="char-tooltip">Соединить</div>
-</div>
-<div class="char-item">
-<span>乃<span class="inline-pinyin">nǎi</span></span>
-<div class="char-tooltip">Твой (в определении)</div>
-</div>
-<div class="char-item">
-<span>以<span class="inline-pinyin">yǐ</span></span>
-<div class="char-tooltip">С помощью, привести</div>
-</div>
-<div class="char-item">
-<span>羌<span class="inline-pinyin">qiāng</span></span>
-<div class="char-tooltip">Племя Цянь</div>
-</div>
-<div class="char-item">
-<span>朕<span class="inline-pinyin">zhèn</span></span>
-<div class="char-tooltip">Мой (местоимение)</div>
-</div>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
 <div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
 <strong>Словосочетания</strong>
 <span class="phrase-item">

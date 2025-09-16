@@ -454,92 +454,39 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 </div>
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>身<span class="inline-pinyin">shēn</span></span>
-<div class="char-tooltip">Тело, человек</div>
-</div>
-<div class="char-item">
-<span>有<span class="inline-pinyin">yǒu</span></span>
-<div class="char-tooltip">Иметь</div>
-</div>
-<div class="char-item">
-<span>疾<span class="inline-pinyin">jī</span></span>
-<div class="char-tooltip">Болезнь</div>
-</div>
-<div class="char-item">
-<span>亡<span class="inline-pinyin">wú</span></span>
-<div class="char-tooltip">Не иметь</div>
-</div>
-<div class="char-item">
-<span>酉<span class="inline-pinyin">yǒu</span></span>
-<div class="char-tooltip">Десятый земной ветви</div>
-</div>
-<div class="char-item">
-<span>及<span class="inline-pinyin">jí</span></span>
-<div class="char-tooltip">Достигать, к</div>
-</div>
-<div class="char-item">
-<span>二<span class="inline-pinyin">èr</span></span>
-<div class="char-tooltip">Два</div>
-</div>
-<div class="char-item">
-<span>未<span class="inline-pinyin">wèi</span></span>
-<div class="char-tooltip">Восьмой земной ветви</div>
-</div>
-<div class="char-item">
-<span>足<span class="inline-pinyin">zú</span></span>
-<div class="char-tooltip">Достаточно</div>
-</div>
-<div class="char-item">
-<span>旬<span class="inline-pinyin">xún</span></span>
-<div class="char-tooltip">Декада (10 дней)</div>
-</div>
-<div class="char-item">
-<span>出<span class="inline-pinyin">chū</span></span>
-<div class="char-tooltip">Выходить</div>
-</div>
-<div class="char-item">
-<span>祟<span class="inline-pinyin">suì</span></span>
-<div class="char-tooltip">Зло, дух-искуситель</div>
-</div>
-<div class="char-item">
-<span>振<span class="inline-pinyin">zhèn</span></span>
-<div class="char-tooltip">Потрясение, бедствие</div>
-</div>
-<div class="char-item">
-<span>旅<span class="inline-pinyin">lǚ</span></span>
-<div class="char-tooltip">Имя гадателя</div>
-</div>
-<div class="char-item">
-<span>艱<span class="inline-pinyin">jiān</span></span>
-<div class="char-tooltip">Трудность, беда</div>
-</div>
-<div class="char-item">
-<span>永<span class="inline-pinyin">yǒng</span></span>
-<div class="char-tooltip">Имя гадателя</div>
-</div>
-<div class="char-item">
-<span>土<span class="inline-pinyin">tǔ</span></span>
-<div class="char-tooltip">Земля</div>
-</div>
-<div class="char-item">
-<span>眔<span class="inline-pinyin">dà</span></span>
-<div class="char-tooltip">И, союз</div>
-</div>
-<div class="char-item">
-<span>叶<span class="inline-pinyin">yè</span></span>
-<div class="char-tooltip">Совершать, выполнять</div>
-</div>
-<div class="char-item">
-<span>祐<span class="inline-pinyin">yòu</span></span>
-<div class="char-tooltip">Помогать</div>
-</div>
-<div class="char-item">
-<span>兄<span class="inline-pinyin">xiōng</span></span>
-<div class="char-tooltip">Старший брат</div>
-</div>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
 <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="lexicon">
 <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>

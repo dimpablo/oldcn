@@ -396,66 +396,41 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 <span class="example">旬雨 xún yǔ</span> «Дождь будет идти в течение декады».
         </p>
 </div>
-<!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
-<div class="char-list">
-<div class="char-item">
-<span>至<span class="inline-pinyin">zhì</span></span>
-<div class="char-tooltip">Достигать; до</div>
-</div>
-<div class="char-item">
-<span>后<span class="inline-pinyin">hòu</span></span>
-<div class="char-tooltip">Князь (титул)</div>
-</div>
-<div class="char-item">
-<span>子<span class="inline-pinyin">zǐ</span></span>
-<div class="char-tooltip">Вождь племени (титул)</div>
-</div>
-<div class="char-item">
-<span>示<span class="inline-pinyin">shì</span></span>
-<div class="char-tooltip">Жертвенный алтарь; предок</div>
-</div>
-<div class="char-item">
-<span>烖<span class="inline-pinyin">zāi</span></span>
-<div class="char-tooltip">Опасность, бедствие</div>
-</div>
-<div class="char-item">
-<span>基<span class="inline-pinyin">jī</span></span>
-<div class="char-tooltip">Племя Цзи</div>
-</div>
-<div class="char-item">
-<span>賽<span class="inline-pinyin">sài</span></span>
-<div class="char-tooltip">Приносить жертву</div>
-</div>
-<div class="char-item">
-<span>毋<span class="inline-pinyin">wú</span></span>
-<div class="char-tooltip">Не (запрет)</div>
-</div>
-<div class="char-item">
-<span>多<span class="inline-pinyin">duō</span></span>
-<div class="char-tooltip">Много</div>
-</div>
-<div class="char-item">
-<span>五<span class="inline-pinyin">wǔ</span></span>
-<div class="char-tooltip">Пять</div>
-</div>
-<div class="char-item">
-<span>西<span class="inline-pinyin">xī</span></span>
-<div class="char-tooltip">Запад</div>
-</div>
-<div class="char-item">
-<span>東<span class="inline-pinyin">dōng</span></span>
-<div class="char-tooltip">Восток</div>
-</div>
-<div class="char-item">
-<span>南<span class="inline-pinyin">nán</span></span>
-<div class="char-tooltip">Юг</div>
-</div>
-<div class="char-item">
-<span>北<span class="inline-pinyin">běi</span></span>
-<div class="char-tooltip">Север</div>
-</div>
-</div>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
+
 <div style="text-align: center; margin: 20px 0; font-family: 'Segoe UI', sans-serif;">
 <strong>Словосочетания</strong><br/><br/>
 <span class="phrase-item">
