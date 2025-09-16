@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- Вкладка "Рукописный ввод" ---
-        inputPane.innerHTML = `<iframe src="./lesson1/tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
+        inputPane.innerHTML = `<iframe src="./tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
         inputPane.style.display = 'none';
 
         modalLessons.append(lessonsPane, theoryPane, inputPane);
@@ -554,6 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
+
 // === СКРИПТ ДЛЯ КОНСОЛИ: ОБОГАЩЕНИЕ charData + ВКЛАДКИ "ТЕОРИЯ" И "РУКОПИСНЫЙ ВВОД" ===
 // ✅ Никаких "Уроков"
 // ✅ Только "📌 Теория" и "✍️ Рукописный ввод"
