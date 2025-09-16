@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- Вкладка "Рукописный ввод" ---
-        inputPane.innerHTML = `<iframe src="./tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
+        inputPane.innerHTML = `<iframe src="./lesson1/tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
         inputPane.style.display = 'none';
 
         modalLessons.append(lessonsPane, theoryPane, inputPane);
@@ -554,21 +554,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script>
-    // === СКРИПТ ДЛЯ КОНСОЛИ: ОБОГАТИТЬ charData И ОСТАВИТЬ ВСЁ КАК ЕСТЬ ===
-// 1. Загружает theory.html
-// 2. Добавляет данные в charData.theory
-// 3. Ничего не меняет в UI — работает через существующий обработчик
+// === СКРИПТ ДЛЯ КОНСОЛИ: ОБОГАЩЕНИЕ charData + ВКЛАДКИ "ТЕОРИЯ" И "РУКОПИСНЫЙ ВВОД" ===
+// ✅ Никаких "Уроков"
+// ✅ Только "📌 Теория" и "✍️ Рукописный ввод"
+// ✅ Работает при динамическом поиске
 
 (async function enrichCharDataInMemory() {
     'use strict';
 
-    // --- 1. Проверка ---
     if (typeof charData !== 'object') {
         console.error('❌ charData не найдена');
         return;
     }
 
-    // --- 2. Прогресс-бар для загрузки теории ---
+    // --- Прогресс-бар ---
     const progressBarContainer = document.createElement('div');
     progressBarContainer.id = 'enrichment-progress-container';
     progressBarContainer.style.cssText = `
@@ -597,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bar = document.getElementById('enrichment-progress-bar');
     const text = document.getElementById('enrichment-progress-text');
 
-    // --- 3. Обогащаем charData ---
+    // --- Обогащаем charData ---
     for (const hanzi in charData) {
         if (!charData[hanzi].theory) {
             charData[hanzi].theory = [];
@@ -625,7 +624,6 @@ document.addEventListener('DOMContentLoaded', function() {
             for (const block of blocks) {
                 for (const hanzi in charData) {
                     if (block.textContent.includes(hanzi)) {
-                        // Ищем H3 перед блоком
                         let h3 = null;
                         let sib = block.previousElementSibling;
                         while (sib) {
@@ -654,16 +652,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- 4. Удаляем прогресс-бар ---
+    // Удаляем прогресс-бар через 2 секунды
     setTimeout(() => {
         progressBarContainer.remove();
     }, 2000);
 
-    console.log('✅ charData успешно обогащена теорией из 60 уроков');
-    console.log('📌 Теперь при клике на иероглиф будет доступна информация из теории');
-
-    // Экспортируем для отладки
-    window.charData = charData;
+    console.log('✅ charData обогащена данными из theory.html');
+    window.charData = charData; // На всякий случай
 })();
 </script>
 </body>
