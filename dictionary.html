@@ -692,10 +692,15 @@
             });
         });
     </script>
-    <script>// === СКРИПТ ДЛЯ КОНСОЛИ: ПОИСК ИЕРОГЛИФОВ В ТЕОРИИ УРОКОВ + ВКЛАДКА "РУКОПИСНЫЙ ВВОД" ===
+    <script>
+
+// === СКРИПТ ДЛЯ КОНСОЛИ: ПОИСК ИЕРОГЛИФОВ В ТЕОРИИ УРОКОВ + ВКЛАДКА "РУКОПИСНЫЙ ВВОД" ===
+// ✅ Использует charData вместо DOM
 
 (function() {
     'use strict';
+
+    console.log('🚀 Запуск скрипта: теория по урокам (на основе charData)');
 
     // Создаем прогресс-бар для поиска по теории
     let progressBarContainer = document.createElement('div');
@@ -724,7 +729,7 @@
     `;
     document.querySelector('h1').after(progressBarContainer);
 
-    // Глобальный кэш
+    // Глобальный кэш и результаты
     if (!window.theoryCache) window.theoryCache = {};
     if (!window.theoryResults) window.theoryResults = {};
 
@@ -759,11 +764,8 @@
                     // Ищем заголовок H3 перед блоком
                     let h3 = null;
                     let sibling = block.previousElementSibling;
-                    while (sibling) {
-                        if (sibling.tagName === 'H3') {
-                            h3 = sibling;
-                            break;
-                        }
+                    while (sibling && !h3) {
+                        if (sibling.tagName === 'H3') h3 = sibling;
                         sibling = sibling.previousElementSibling;
                     }
                     const title = h3 ? h3.textContent.trim() : '(без заголовка)';
@@ -784,26 +786,23 @@
 
     // Основная функция — сканирует все уроки
     async function scanAllLessons() {
-        // Собираем все уникальные иероглифы на странице
-        const cards = document.querySelectorAll('.card');
-        const hanziSet = new Set();
-        cards.forEach(card => {
-            const hanzi = card.dataset.char;
-            if (hanzi) hanziSet.add(hanzi);
-        });
-        const hanziList = [...hanziSet];
-
-        if (hanziList.length === 0) {
-            console.log('Не найдено ни одного иероглифа на странице.');
+        // --- КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: берём иероглифы НЕ из DOM, а из charData ---
+        if (typeof charData !== 'object' || Object.keys(charData).length === 0) {
+            console.error('❌ Переменная charData не найдена или пуста.');
+            alert('Ошибка: словарь charData не загружен.');
             return;
         }
+
+        const hanziList = Object.keys(charData); // Все иероглифы из словаря
+
+        console.log(`📋 Найдено иероглифов в charData: ${hanziList.length}`);
 
         // Показываем прогресс-бар
         progressBarContainer.style.display = 'block';
         const progressBar = document.getElementById('theory-progress-bar');
         const progressText = document.getElementById('theory-progress-text');
 
-        const totalLessons = 60; // можно изменить
+        const totalLessons = 60;
         let completed = 0;
 
         // Сканируем уроки 1-60
@@ -978,41 +977,58 @@
     // Переназначаем обработчики клика на карточки
     function attachClickHandlers() {
         const cards = document.querySelectorAll('.card');
+        console.log(`🔧 Назначаем обработчики на ${cards.length} карточек`);
+
         cards.forEach(card => {
             const hanzi = card.dataset.char;
-            // Удаляем старый обработчик (если был)
-            const oldHandler = card._theoryHandler;
-            if (oldHandler) {
-                card.removeEventListener('click', oldHandler);
+            if (!hanzi) return;
+
+            // Удаляем старый обработчик
+            if (card._theoryHandler) {
+                card.removeEventListener('click', card._theoryHandler);
             }
 
-            // Новый обработчик
             const newHandler = function() {
                 showTheoryModal(hanzi);
             };
 
             card.addEventListener('click', newHandler);
-            card._theoryHandler = newHandler; // сохраняем ссылку для удаления
+            card._theoryHandler = newHandler;
         });
     }
 
-    // Запускаем сканирование при вставке скрипта
-    console.log('🚀 Запуск сканирования теории по урокам...');
-    scanAllLessons().then(() => {
-        attachClickHandlers();
-        console.log('✅ Обработчики кликов обновлены. Теперь при клике будет показываться контекст из теории.');
-    });
+    // Ждём полной загрузки DOM и наличия charData
+    function waitForCharData() {
+        if (typeof charData !== 'undefined' && Object.keys(charData).length > 0) {
+            console.log('✅ charData загружена, запускаем сканирование...');
+            scanAllLessons().then(() => {
+                attachClickHandlers();
+                console.log('✅ Обработчики кликов назначены.');
+            });
+        } else {
+            console.log('⏳ charData ещё не загружена... ждём.');
+            setTimeout(waitForCharData, 100);
+        }
+    }
 
-    // Экспортируем функции в window для ручного вызова (опционально)
+    // Запускаем после DOMContentLoaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', waitForCharData);
+    } else {
+        waitForCharData();
+    }
+
+    // Экспортируем функции
     window.scanTheory = scanAllLessons;
     window.showTheoryFor = showTheoryModal;
     window.refreshTheoryHandlers = attachClickHandlers;
 
-    console.log('📌 Доступные команды в консоли:');
-    console.log('→ window.scanTheory() — повторно просканировать уроки');
-    console.log('→ window.showTheoryFor("丙") — показать теорию для иероглифа');
-    console.log('→ window.refreshTheoryHandlers() — обновить обработчики кликов');
-})();</script>
+    console.log('📌 Доступные команды:');
+    console.log('→ window.scanTheory() — пересканировать');
+    console.log('→ window.showTheoryFor("丙") — показать для иероглифа');
+    console.log('→ window.refreshTheoryHandlers() — обновить клики');
+})();
+    </script>
 
 </body>
 </html>
