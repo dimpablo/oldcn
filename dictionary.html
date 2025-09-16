@@ -307,108 +307,80 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- ОСНОВНОЕ ИЗМЕНЕНИЕ: showTheoryModal теперь знает про .theory ---
-    function showTheoryModal(hanzi) {
-        const data = charData[hanzi];
-        modalChar.textContent = hanzi;
-        modalPinyin.textContent = data?.pinyin || '—';
-        modalMeaning.textContent = data?.meaning || '—';
+function showTheoryModal(hanzi) {
+    const data = charData[hanzi];
+    modalChar.textContent = hanzi;
+    modalPinyin.textContent = data?.pinyin || '—';
+    modalMeaning.textContent = data?.meaning || '—';
 
-        // Очищаем
-        modalLessons.innerHTML = '';
+    // Очищаем
+    modalLessons.innerHTML = '';
 
-        // --- Вкладки ---
-        const tabHeader = document.createElement('div');
-        tabHeader.style.cssText = 'display:flex;margin-bottom:15px;border-bottom:1px solid #ddd';
+    // --- Создаём вкладки ---
+    const tabHeader = document.createElement('div');
+    tabHeader.style.cssText = 'display:flex;margin-bottom:15px;border-bottom:1px solid #ddd';
 
-        const tabLessons = document.createElement('div');
-        tabLessons.textContent = '📚 Уроки';
-        tabLessons.style.cssText = 'padding:8px 16px;cursor:pointer;font-weight:bold;color:#7c6b96;background:white;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;margin-left:10px;z-index:2;';
+    const tabTheory = document.createElement('div');
+    tabTheory.textContent = '📌 Теория';
+    tabTheory.style.cssText = 'padding:8px 16px;cursor:pointer;font-weight:bold;color:#7c6b96;background:white;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;margin-left:10px;z-index:2;';
 
-        const tabTheory = document.createElement('div');
-        tabTheory.textContent = '📌 Теория';
-        tabTheory.style.cssText = 'padding:8px 16px;cursor:pointer;color:#666;background:#f8f6fb;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;margin-left:4px;';
-        tabTheory.style.display = data?.theory && data.theory.length > 0 ? 'block' : 'none';
+    const tabInput = document.createElement('div');
+    tabInput.textContent = '✍️ Рукописный ввод';
+    tabInput.style.cssText = 'padding:8px 16px;cursor:pointer;color:#666;background:#f8f6fb;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;margin-left:4px;';
 
-        const tabInput = document.createElement('div');
-        tabInput.textContent = '✍️ Рукописный ввод';
-        tabInput.style.cssText = 'padding:8px 16px;cursor:pointer;color:#666;background:#f8f6fb;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;margin-left:4px;';
+    tabHeader.append(tabTheory, tabInput);
+    modalLessons.appendChild(tabHeader);
 
-        tabHeader.append(tabLessons, tabTheory, tabInput);
-        modalLessons.appendChild(tabHeader);
+    const theoryPane = document.createElement('div');
+    const inputPane = document.createElement('div');
 
-        const lessonsPane = document.createElement('div');
-        const theoryPane = document.createElement('div');
-        const inputPane = document.createElement('div');
+    // --- Вкладка "Теория" ---
+    if (!data.theory || data.theory.length === 0) {
+        theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных.</p>';
+    } else {
+        for (const item of data.theory) {
+            const div = document.createElement('div');
+            div.style.cssText = 'margin:14px 0;padding:12px;background:#f9f7fc;border-left:4px solid #a8c8d8;border-radius:0 6px 6px 0;font-size:13px;line-height:1.5';
 
-        // --- Вкладка "Уроки" ---
-        lessonsPane.innerHTML = '';
-        charIndex[hanzi]?.sort((a, b) => a - b).forEach(lesson => {
-            const li = document.createElement('li');
-            li.className = 'lesson-item';
-            li.textContent = `Урок ${lesson}`;
-            lessonsPane.appendChild(li);
-        });
+            const highlightedContext = item.context.replace(
+                new RegExp(`(${hanzi})`, 'g'),
+                '<span style="background:#ffb6c1;padding:2px 3px;border-radius:3px;font-weight:bold;">$1</span>'
+            );
 
-        // --- Вкладка "Теория" ---
-        if (data?.theory && data.theory.length > 0) {
-            data.theory.forEach(item => {
-                const div = document.createElement('div');
-                div.style.cssText = 'margin:14px 0;padding:12px;background:#f9f7fc;border-left:4px solid #a8c8d8;border-radius:0 6px 6px 0;font-size:13px;line-height:1.5';
-
-                const highlightedContext = item.context.replace(
-                    new RegExp(`(${hanzi})`, 'g'),
-                    '<span style="background:#ffb6c1;padding:2px 3px;border-radius:3px;font-weight:bold;">$1</span>'
-                );
-
-                div.innerHTML = `
-                    <strong style="color:#5a5a5a;font-size:12px">Урок ${item.lesson}</strong><br>
-                    <strong style="color:#7c6b96;margin:4px 0;display:block">${item.title}</strong>
-                    <div>${highlightedContext}</div>
-                `;
-                theoryPane.appendChild(div);
-            });
-        } else {
-            theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных.</p>';
+            div.innerHTML = `
+                <strong style="color:#5a5a5a;font-size:12px">Урок ${item.lesson}</strong><br>
+                <strong style="color:#7c6b96;margin:4px 0;display:block">${item.title}</strong>
+                <div>${highlightedContext}</div>
+            `;
+            theoryPane.appendChild(div);
         }
-
-        // --- Вкладка "Рукописный ввод" ---
-        inputPane.innerHTML = `<iframe src="./tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
-        inputPane.style.display = 'none';
-
-        modalLessons.append(lessonsPane, theoryPane, inputPane);
-
-        // Переключение вкладок
-        tabLessons.onclick = () => {
-            tabLessons.style.backgroundColor = 'white';
-            tabTheory.style.backgroundColor = '#f8f6fb';
-            tabInput.style.backgroundColor = '#f8f6fb';
-            lessonsPane.style.display = 'block';
-            theoryPane.style.display = 'none';
-            inputPane.style.display = 'none';
-        };
-        tabTheory.onclick = () => {
-            tabTheory.style.backgroundColor = 'white';
-            tabLessons.style.backgroundColor = '#f8f6fb';
-            tabInput.style.backgroundColor = '#f8f6fb';
-            theoryPane.style.display = 'block';
-            lessonsPane.style.display = 'none';
-            inputPane.style.display = 'none';
-        };
-        tabInput.onclick = () => {
-            tabInput.style.backgroundColor = 'white';
-            tabLessons.style.backgroundColor = '#f8f6fb';
-            tabTheory.style.backgroundColor = '#f8f6fb';
-            inputPane.style.display = 'block';
-            lessonsPane.style.display = 'none';
-            theoryPane.style.display = 'none';
-        };
-
-        // Открыть "Уроки" по умолчанию
-        tabLessons.click();
-
-        modal.style.display = 'block';
     }
 
+    // --- Вкладка "Рукописный ввод" ---
+    inputPane.innerHTML = `<iframe src="./tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
+    inputPane.style.display = 'none';
+
+    modalLessons.append(theoryPane, inputPane);
+
+    // Переключение вкладок
+    tabTheory.onclick = () => {
+        tabTheory.style.backgroundColor = 'white';
+        tabInput.style.backgroundColor = '#f8f6fb';
+        theoryPane.style.display = 'block';
+        inputPane.style.display = 'none';
+    };
+    tabInput.onclick = () => {
+        tabInput.style.backgroundColor = 'white';
+        tabTheory.style.backgroundColor = '#f8f6fb';
+        inputPane.style.display = 'block';
+        theoryPane.style.display = 'none';
+    };
+
+    // Открываем "Теорию" по умолчанию
+    tabTheory.click();
+
+    modal.style.display = 'block';
+}
     // Создание карточек (без изменений)
     sortedLessons.forEach(lessonNum => {
         const lessonDiv = document.createElement('div');
