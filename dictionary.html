@@ -224,6 +224,11 @@
             const searchInput = document.getElementById('search-input');
             const noResultsDiv = document.getElementById('no-results');
 
+            // Функция для удаления диакритик из строки (например, bǐng → bing)
+            function removeDiacritics(str) {
+                return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
+
             // Создаём индекс: иероглиф → массив уроков
             const charIndex = {};
             for (const char in charData) {
@@ -326,7 +331,9 @@
                         char: item.char,
                         pinyin: item.pinyin,
                         meaning: item.meaning,
-                        lessonElement: lessonDiv
+                        lessonElement: lessonDiv,
+                        normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+                        normalizedMeaning: item.meaning.toLowerCase()
                     });
                 });
 
@@ -350,9 +357,10 @@
                 }
 
                 const lowerQuery = query.toLowerCase();
+                const normalizedQuery = removeDiacritics(lowerQuery);
                 let found = false;
 
-                // Сначала ищем по иероглифу
+                // 1. Поиск по иероглифу
                 allCards.forEach(card => {
                     if (card.char.includes(query)) {
                         card.element.style.display = 'block';
@@ -362,10 +370,10 @@
                     }
                 });
 
-                // Если не найдено по иероглифу — ищем по пиньиню
+                // 2. Если не найдено — ищем по пиньиню без диакритик
                 if (!found) {
                     allCards.forEach(card => {
-                        if (card.pinyin.toLowerCase().includes(lowerQuery)) {
+                        if (card.normalizedPinyin.includes(normalizedQuery)) {
                             card.element.style.display = 'block';
                             found = true;
                         } else {
@@ -374,10 +382,10 @@
                     });
                 }
 
-                // Если не найдено по пиньиню — ищем по значению
+                // 3. Если всё ещё не найдено — ищем по значению
                 if (!found) {
                     allCards.forEach(card => {
-                        if (card.meaning.toLowerCase().includes(lowerQuery)) {
+                        if (card.normalizedMeaning.includes(lowerQuery)) {
                             card.element.style.display = 'block';
                             found = true;
                         } else {
