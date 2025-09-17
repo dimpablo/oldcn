@@ -104,7 +104,6 @@
       getDocs
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    // Конфиг Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -122,13 +121,11 @@
     let currentUser = null;
     let otherUser = null;
 
-    // === 🔍 Парсинг #chat/userId ===
     function getOtherUserIdFromHash() {
       const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
       return match ? match[1] : null;
     }
 
-    // === 🔄 При загрузке или изменении хеша ===
     function onHashChange() {
       const otherUserId = getOtherUserIdFromHash();
       if (!otherUserId) {
@@ -142,7 +139,6 @@
       }
     }
 
-    // === 📥 Загрузка данных собеседника и запуск прослушивания чата ===
     async function loadChatAndStartListening(otherUserId) {
       try {
         const userRef = doc(db, 'users', otherUserId);
@@ -156,14 +152,12 @@
         }
 
         startListeningToMessages(otherUserId);
-        markMessagesAsRead(otherUserId);
       } catch (e) {
         console.error('Ошибка загрузки чата:', e);
         document.getElementById('chat-name').textContent = 'Ошибка подключения';
       }
     }
 
-    // === 💬 Прослушивание сообщений ===
     function startListeningToMessages(otherUserId) {
       const chatQuery = query(
         collection(db, 'messages'),
@@ -184,12 +178,15 @@
 
         messages.sort((a, b) => a.timestamp - b.timestamp);
         renderMessages(messages, otherUserId);
+
+        // ✅ ✅ ✅ Помечаем все сообщения в этом диалоге как прочитанные
+        markMessagesAsRead(otherUserId);
+
       }, (error) => {
         console.error('Ошибка при получении сообщений:', error);
       });
     }
 
-    // === 🖼️ Отображение сообщений ===
     function renderMessages(msgs, otherUserId) {
       const list = document.getElementById('messages-list');
       list.innerHTML = '';
@@ -208,31 +205,41 @@
       list.scrollTop = list.scrollHeight;
     }
 
-    // === ✅ Пометить сообщения как прочитанные ===
+    // ✅ Исправленная версия: помечает ВСЕ сообщения в диалоге
     async function markMessagesAsRead(otherUserId) {
       const q = query(
         collection(db, 'messages'),
-        where('to', '==', currentUser.uid),
-        where('from', '==', otherUserId)
+        where('participants', 'array-contains', currentUser.uid),
+        where('participants', 'array-contains', otherUserId)
       );
+
       const snapshot = await getDocs(q);
-      snapshot.forEach(async (doc) => {
+      const docsToUpdate = [];
+
+      snapshot.forEach((doc) => {
         const data = doc.data();
         if (!data.seenBy?.includes(currentUser.uid)) {
-          await updateDoc(doc.ref, {
-            seenBy: arrayUnion(currentUser.uid)
+          docsToUpdate.push({
+            ref: doc.ref,
+            currentSeenBy: data.seenBy || []
           });
         }
       });
+
+      for (const { ref, currentSeenBy } of docsToUpdate) {
+        await updateDoc(ref, {
+          seenBy: [...currentSeenBy, currentUser.uid]
+        });
+      }
+
+      console.log(`✅ Отмечено ${docsToUpdate.length} сообщений как прочитанные для диалога с ${otherUserId}`);
     }
 
-    // === 📤 Отправка сообщения ===
     async function sendMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
       if (!text || !otherUser || otherUser.id === currentUser.uid) return;
 
-      // Генерация userPair: отсортированная пара UID через "_"
       const [id1, id2] = [currentUser.uid, otherUser.id].sort();
       const userPair = `${id1}_${id2}`;
 
@@ -241,9 +248,9 @@
         to: otherUser.id,
         text,
         timestamp: Date.now(),
-        participants: [currentUser.uid, otherUser.id].sort(), // массив из двух UID
-        userPair: userPair, // ⚠️ Требуется в security rules
-        seenBy: [currentUser.uid] // только отправитель прочитал
+        participants: [currentUser.uid, otherUser.id].sort(),
+        userPair: userPair,
+        seenBy: [currentUser.uid]
       };
 
       try {
@@ -255,23 +262,20 @@
       }
     }
 
-    // === Кнопки ===
     document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') sendMessage();
     });
 
-    // === 🔁 Слушаем изменения хеша ===
     window.addEventListener('load', onHashChange);
     window.addEventListener('hashchange', onHashChange);
 
-    // === 🔐 Авторизация ===
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           currentUser = { uid: user.uid, ...userDoc.data() };
-          onHashChange(); // перезапустить логику чата
+          onHashChange();
         } else {
           alert('Профиль не найден');
           window.close();
