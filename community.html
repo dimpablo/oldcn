@@ -1,4 +1,4 @@
-V6
+V7
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -668,10 +668,13 @@ V6
 
       // === 🧠 Обновление текущего пользователя
       function updateCurrentUser(data) {
-        currentUser = { uid: data.uid, ...data };
-        if (!currentUser.friends) currentUser.friends = [];
-        console.log('👤 Текущий пользователь:', currentUser);
-      }
+  currentUser = { uid: data.uid, ...data };
+  if (!currentUser.friends) currentUser.friends = [];
+  console.log('👤 Текущий пользователь:', currentUser);
+  
+  // Нормализуем друзей сразу после загрузки пользователя
+  normalizeFriends();
+}
 
       // === 🔐 Авторизация
       onAuthStateChanged(auth, async (user) => {
