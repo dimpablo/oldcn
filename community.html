@@ -135,10 +135,10 @@
     #chat-frame {
       flex: 1;
       width: 100%;
-      height: 500px;
+      min-height: 600px;
       border: none;
       border-radius: 8px;
-      background: rgba(255,255,255,0.1);
+      background: #fff;
     }
 
     .hidden {
@@ -191,6 +191,22 @@
       padding: 0 2px;
       box-shadow: 0 0 4px rgba(0,0,0,0.3);
       z-index: 3;
+    }
+
+    .btn-back {
+      width: 100%;
+      padding: 12px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .btn-back:hover {
+      background: #5a6268;
     }
   </style>
 </head>
@@ -256,13 +272,13 @@
       <!-- Чат через iframe -->
       <div id="chat-container" class="hidden">
         <button class="btn-back" id="back-to-users">← Назад к списку</button>
-<iframe 
-  id="chat-frame" 
-  src="" 
-  style="flex: 1; width: 100%; height: 1000px; min-height: 400px; border: none; border-radius: 8px; background: #fff;"
-  frameborder="0"
-  allowfullscreen>
-</iframe>
+        <iframe 
+          id="chat-frame" 
+          src="" 
+          style="flex: 1; width: 100%; min-height: 600px; border: none; border-radius: 8px; background: #fff;"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
       </div>
     </div>
   </div>
@@ -378,31 +394,38 @@
       }
 
       // === 💬 ЧАТ: Открыть чат с пользователем
-window.showChatWith = function(user) {
-  if (!user || !user.id) {
-    console.error('❌ showChatWith: неверный пользователь', user);
-    return;
-  }
+      window.showChatWith = function(user) {
+        if (!user || !user.id) {
+          console.error('❌ showChatWith: неверный пользователь', user);
+          return;
+        }
+        console.log('📩 Открываем чат с:', user);
 
-  messagesUsers.classList.add('hidden');
-  chatContainer.classList.remove('hidden');
+        // Показываем контейнер
+        messagesUsers.classList.add('hidden');
+        chatContainer.classList.remove('hidden');
 
-  const iframe = document.getElementById('chat-frame');
-  const url = `./chat.html#chat/${user.id}`;
+        // Получаем iframe
+        const iframe = document.getElementById('chat-frame');
 
-  // Принудительная перезагрузка с нужным хешем
-  iframe.src = '';
-  setTimeout(() => { iframe.src = url; }, 10);
+        // Устанавливаем src с хешем
+        const chatUrl = `./chat.html#chat/${user.id}`;
+        iframe.src = ''; // сначала очистим
+        setTimeout(() => {
+          iframe.src = chatUrl;
+        }, 10); // чтобы гарантированно перезагрузился
 
-  console.log(`✅ Чат открыт: ${url}`);
-};
+        console.log(`✅ iframe.src установлен: ${chatUrl}`);
+      };
+
       // === 🔔 Обратно к списку
-backToUsersBtn?.addEventListener('click', () => {
-  const iframe = document.getElementById('chat-frame');
-  iframe.src = ''; // освобождаем ресурсы
-  window.location.hash = 'messages';
-  showMessagesUsers();
-});
+      backToUsersBtn?.addEventListener('click', () => {
+        console.log('🔙 Возвращаемся к списку');
+        const iframe = document.getElementById('chat-frame');
+        iframe.src = ''; // очищаем, чтобы прекратить фоновые действия
+        window.location.hash = 'messages';
+        showMessagesUsers(); // снова показываем список
+      });
 
       // === 🔍 Загрузка пользователей
       function loadUsers() {
@@ -469,7 +492,7 @@ backToUsersBtn?.addEventListener('click', () => {
             const data = doc.data();
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<img src="${data.photoURL||'https://...'}" alt="${data.displayName}"/><h3>${data.displayName}</h3><p>Баллы: ${data.points||0}</p>`;
+            card.innerHTML = `<img src="${data.photoURL||'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}"/><h3>${data.displayName}</h3><p>Баллы: ${data.points||0}</p>`;
             grids.friends.appendChild(card);
           });
         });
@@ -544,7 +567,7 @@ backToUsersBtn?.addEventListener('click', () => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                  <img src="${user.photoURL || 'https://...'}" alt="${user.displayName}" />
+                  <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
                   <h3>${user.displayName}</h3>
                   <p>Баллы: ${user.points || 0}</p>
                 `;
