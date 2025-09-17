@@ -677,28 +677,30 @@ V7
 }
 
       // === 🔐 Авторизация
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          console.log('🔐 Пользователь вошёл:', user.uid);
-          const userRef = doc(db, 'users', user.uid);
-          onSnapshot(userRef, (docSnap) => {
-            if (docSnap.exists()) {
-              updateCurrentUser({ uid: user.uid, ...docSnap.data() });
-              loadUsers();
-              loadLeaderboard();
-              loadFriends();
-              loadReactions();
-              loadMessagesUsers();
-            } else {
-              console.error('❌ Профиль не найден');
-              location.href = 'index.html';
-            }
-          });
-        } else {
-          console.warn('🔒 Не авторизован');
-          location.href = 'index.html';
-        }
-      });
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    console.log('🔐 Пользователь вошёл:', user.uid);
+    const userRef = doc(db, 'users', user.uid);
+    onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        updateCurrentUser({ uid: user.uid, ...docSnap.data() });
+        // Нормализуем друзей после загрузки данных
+        normalizeFriends();
+        loadUsers();
+        loadLeaderboard();
+        loadFriends();
+        loadReactions();
+        loadMessagesUsers();
+      } else {
+        console.error('❌ Профиль не найден');
+        location.href = 'index.html';
+      }
+    });
+  } else {
+    console.warn('🔒 Не авторизован');
+    location.href = 'index.html';
+  }
+});
 
       // === 📨 Функции запросов в друзья
       window.sendFriendRequest = async (toId, toName) => {
@@ -799,9 +801,10 @@ window.acceptFriend = async (reqId, fromId) => {
     } catch (error) {
       console.error('💀 КРИТИЧЕСКАЯ ОШИБКА в community.html:', error);
     }
-    // Функция нормализации друзей - удаляет дубликаты
+// Функция нормализации друзей - удаляет дубликаты
 async function normalizeFriends() {
-  if (!currentUser || !currentUser.friends || currentUser.friends.length === 0) {
+  // Проверяем, определен ли currentUser
+  if (typeof currentUser === 'undefined' || !currentUser || !currentUser.friends || currentUser.friends.length === 0) {
     return;
   }
   
@@ -838,7 +841,9 @@ function updateCurrentUser(data) {
   console.log('👤 Текущий пользователь:', currentUser);
   
   // Нормализуем друзей сразу после загрузки пользователя
-  normalizeFriends();
+  setTimeout(() => {
+    normalizeFriends();
+  }, 0);
 }
   </script>
 </body>
