@@ -1,4 +1,4 @@
-V9
+V10
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -248,6 +248,73 @@ V9
       flex-wrap: wrap;
       gap: 10px;
     }
+    .leaderboard {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.leaderboard h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+#leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#leaderboard-table th {
+  background: rgba(0, 131, 143, 0.8);
+  color: white;
+  padding: 12px 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#leaderboard-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+#leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+#leaderboard-table tr:nth-child(even) {
+  background: rgba(255,255,255,0.05);
+}
+
+#leaderboard-table tr:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+#leaderboard-table td:first-child {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+#leaderboard-table td:nth-child(2) {
+  text-align: left;
+}
+
+#leaderboard-table td:nth-child(3) strong {
+  color: #4caf50;
+  font-size: 16px;
+}
   </style>
 </head>
 <body>
