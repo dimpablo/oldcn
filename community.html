@@ -324,12 +324,13 @@ V8
   </div>
 
   <!-- Firebase SDK -->
-  <script type="module">
+
+<script type="module">
     console.log('🔧 community.html: Запуск скрипта');
 
     // 🔐 Импорты
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  ';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  ';
     import {
       getFirestore,
       collection,
@@ -343,7 +344,7 @@ V8
       getDocs,
       arrayUnion,
       deleteDoc
-    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ';
 
     // 🛠 Конфиг (убедись, что совпадает)
     const firebaseConfig = {
@@ -497,7 +498,7 @@ V8
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-              <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+              <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg  '}" alt="${user.displayName}" />
               <h3>${user.displayName}</h3>
               <p>Баллы: ${user.points || 0}</p>
               <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить</button>
@@ -550,7 +551,7 @@ V8
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-              <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
+              <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg  '}" alt="${data.displayName}" />
               <h3>${data.displayName}</h3>
               <p>Баллы: ${data.points || 0}</p>
             `;
@@ -645,7 +646,7 @@ V8
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                  <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+                  <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg  '}" alt="${user.displayName}" />
                   <h3>${user.displayName}</h3>
                   <p>Баллы: ${user.points || 0}</p>
                 `;
@@ -668,39 +669,39 @@ V8
 
       // === 🧠 Обновление текущего пользователя
       function updateCurrentUser(data) {
-  currentUser = { uid: data.uid, ...data };
-  if (!currentUser.friends) currentUser.friends = [];
-  console.log('👤 Текущий пользователь:', currentUser);
-  
-  // Нормализуем друзей сразу после загрузки пользователя
-  normalizeFriends();
-}
+        currentUser = { uid: data.uid, ...data };
+        if (!currentUser.friends) currentUser.friends = [];
+        console.log('👤 Текущий пользователь:', currentUser);
+        
+        // Нормализуем друзей сразу после загрузки пользователя
+        setTimeout(() => {
+          normalizeFriends();
+        }, 0);
+      }
 
       // === 🔐 Авторизация
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    console.log('🔐 Пользователь вошёл:', user.uid);
-    const userRef = doc(db, 'users', user.uid);
-    onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        updateCurrentUser({ uid: user.uid, ...docSnap.data() });
-        // Нормализуем друзей после загрузки данных
-        normalizeFriends();
-        loadUsers();
-        loadLeaderboard();
-        loadFriends();
-        loadReactions();
-        loadMessagesUsers();
-      } else {
-        console.error('❌ Профиль не найден');
-        location.href = 'index.html';
-      }
-    });
-  } else {
-    console.warn('🔒 Не авторизован');
-    location.href = 'index.html';
-  }
-});
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log('🔐 Пользователь вошёл:', user.uid);
+          const userRef = doc(db, 'users', user.uid);
+          onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+              updateCurrentUser({ uid: user.uid, ...docSnap.data() });
+              loadUsers();
+              loadLeaderboard();
+              loadFriends();
+              loadReactions();
+              loadMessagesUsers();
+            } else {
+              console.error('❌ Профиль не найден');
+              location.href = 'index.html';
+            }
+          });
+        } else {
+          console.warn('🔒 Не авторизован');
+          location.href = 'index.html';
+        }
+      });
 
       // === 📨 Функции запросов в друзья
       window.sendFriendRequest = async (toId, toName) => {
@@ -719,59 +720,58 @@ onAuthStateChanged(auth, async (user) => {
         }
       };
 
-window.acceptFriend = async (reqId, fromId) => {
-  // Блокируем повторные клики
-  const button = document.querySelector(`button[onclick*="${reqId}"]`);
-  if (button) {
-    button.disabled = true;
-    button.textContent = "Обработка...";
-  }
+      window.acceptFriend = async (reqId, fromId) => {
+        // Блокируем повторные клики
+        const button = document.querySelector(`button[onclick*="${reqId}"]`);
+        if (button) {
+          button.disabled = true;
+          button.textContent = "Обработка...";
+        }
 
-  try {
-    const reqDoc = doc(db, 'friendRequests', reqId);
-    
-    const reqSnap = await getDoc(reqDoc);
-    if (!reqSnap.exists()) {
-      console.log("Заявка уже обработана");
-      const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
-      if (notification) notification.remove();
-      return;
-    }
+        try {
+          const reqDoc = doc(db, 'friendRequests', reqId);
+          
+          const reqSnap = await getDoc(reqDoc);
+          if (!reqSnap.exists()) {
+            console.log("Заявка уже обработана");
+            const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+            if (notification) notification.remove();
+            return;
+          }
 
-    const userRef = doc(db, 'users', currentUser.uid);
-    // Проверяем, не является ли уже другом
-    const isAlreadyFriend = currentUser.friends && currentUser.friends.includes(fromId);
-    if (!isAlreadyFriend) {
-      const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
-      await updateDoc(userRef, { friends });
-      // Обновляем currentUser в памяти
-      currentUser.friends = friends;
-      
-      console.log(`✅ Добавлен новый друг. Всего друзей в переменной: ${currentUser.friends.length}`);
-    } else {
-      console.log(`ℹ️ Пользователь уже является другом. Всего друзей в переменной: ${currentUser.friends ? currentUser.friends.length : 0}`);
-    }
+          const userRef = doc(db, 'users', currentUser.uid);
+          // Проверяем, не является ли уже другом
+          const isAlreadyFriend = currentUser.friends && currentUser.friends.includes(fromId);
+          if (!isAlreadyFriend) {
+            const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
+            await updateDoc(userRef, { friends });
+            // Обновляем currentUser в памяти
+            currentUser.friends = friends;
+            
+            console.log(`✅ Добавлен новый друг. Всего друзей в переменной: ${currentUser.friends.length}`);
+          } else {
+            console.log(`ℹ️ Пользователь уже является другом. Всего друзей в переменной: ${currentUser.friends ? currentUser.friends.length : 0}`);
+          }
 
-    await deleteDoc(reqDoc);
-    
-    alert('Теперь вы друзья!');
+          await deleteDoc(reqDoc);
+          
+          alert('Теперь вы друзья!');
 
-    const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
-    if (notification) notification.remove();
+          const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+          if (notification) notification.remove();
 
-    loadFriends();
-  } catch (e) {
-    console.error("Ошибка при принятии:", e);
-    alert("Ошибка при принятии заявки: " + e.message);
-  } finally {
-    // Разблокируем кнопку
-    if (button) {
-      button.disabled = false;
-      button.textContent = "Принять";
-    }
-  }
-};
-
+          loadFriends();
+        } catch (e) {
+          console.error("Ошибка при принятии:", e);
+          alert("Ошибка при принятии заявки: " + e.message);
+        } finally {
+          // Разблокируем кнопку
+          if (button) {
+            button.disabled = false;
+            button.textContent = "Принять";
+          }
+        }
+      };
 
       window.declineFriend = async (reqId) => {
         try {
@@ -798,53 +798,42 @@ window.acceptFriend = async (reqId, fromId) => {
       };
       console.log('🎯 [DEBUG] FB_DEBUG экспортирован:', window.FB_DEBUG);
 
+      // Функция нормализации друзей - удаляет дубликаты
+      async function normalizeFriends() {
+        // Проверяем, определен ли currentUser
+        if (typeof currentUser === 'undefined' || !currentUser || !currentUser.friends || currentUser.friends.length === 0) {
+          return;
+        }
+        
+        // Подсчитываем уникальных друзей
+        const uniqueFriends = [...new Set(currentUser.friends)];
+        
+        console.log(`📊 НОРМАЛИЗАЦИЯ ДРУЗЕЙ:`);
+        console.log(`   Всего в переменной: ${currentUser.friends.length}`);
+        console.log(`   Уникальных: ${uniqueFriends.length}`);
+        
+        // Если есть дубликаты - обновляем в Firestore
+        if (uniqueFriends.length < currentUser.friends.length) {
+          try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await updateDoc(userRef, { friends: uniqueFriends });
+            // Обновляем в памяти
+            currentUser.friends = uniqueFriends;
+            console.log(`✅ Список друзей нормализован: ${uniqueFriends.length} уникальных друзей`);
+            
+            // Перезагружаем секцию друзей
+            loadFriends();
+          } catch (error) {
+            console.error("Ошибка нормализации друзей:", error);
+          }
+        } else {
+          console.log(`✅ Список друзей уже нормализован`);
+        }
+      }
+
     } catch (error) {
       console.error('💀 КРИТИЧЕСКАЯ ОШИБКА в community.html:', error);
     }
-// Функция нормализации друзей - удаляет дубликаты
-async function normalizeFriends() {
-  // Проверяем, определен ли currentUser
-  if (typeof currentUser === 'undefined' || !currentUser || !currentUser.friends || currentUser.friends.length === 0) {
-    return;
-  }
-  
-  // Подсчитываем уникальных друзей
-  const uniqueFriends = [...new Set(currentUser.friends)];
-  
-  console.log(`📊 НОРМАЛИЗАЦИЯ ДРУЗЕЙ:`);
-  console.log(`   Всего в переменной: ${currentUser.friends.length}`);
-  console.log(`   Уникальных: ${uniqueFriends.length}`);
-  
-  // Если есть дубликаты - обновляем в Firestore
-  if (uniqueFriends.length < currentUser.friends.length) {
-    try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, { friends: uniqueFriends });
-      // Обновляем в памяти
-      currentUser.friends = uniqueFriends;
-      console.log(`✅ Список друзей нормализован: ${uniqueFriends.length} уникальных друзей`);
-      
-      // Перезагружаем секцию друзей
-      loadFriends();
-    } catch (error) {
-      console.error("Ошибка нормализации друзей:", error);
-    }
-  } else {
-    console.log(`✅ Список друзей уже нормализован`);
-  }
-}
-
-// Вызываем функцию нормализации после загрузки пользователя
-function updateCurrentUser(data) {
-  currentUser = { uid: data.uid, ...data };
-  if (!currentUser.friends) currentUser.friends = [];
-  console.log('👤 Текущий пользователь:', currentUser);
-  
-  // Нормализуем друзей сразу после загрузки пользователя
-  setTimeout(() => {
-    normalizeFriends();
-  }, 0);
-}
   </script>
 </body>
 </html>
