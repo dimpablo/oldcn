@@ -796,6 +796,47 @@ window.acceptFriend = async (reqId, fromId) => {
     } catch (error) {
       console.error('💀 КРИТИЧЕСКАЯ ОШИБКА в community.html:', error);
     }
+    // Функция нормализации друзей - удаляет дубликаты
+async function normalizeFriends() {
+  if (!currentUser || !currentUser.friends || currentUser.friends.length === 0) {
+    return;
+  }
+  
+  // Подсчитываем уникальных друзей
+  const uniqueFriends = [...new Set(currentUser.friends)];
+  
+  console.log(`📊 НОРМАЛИЗАЦИЯ ДРУЗЕЙ:`);
+  console.log(`   Всего в переменной: ${currentUser.friends.length}`);
+  console.log(`   Уникальных: ${uniqueFriends.length}`);
+  
+  // Если есть дубликаты - обновляем в Firestore
+  if (uniqueFriends.length < currentUser.friends.length) {
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, { friends: uniqueFriends });
+      // Обновляем в памяти
+      currentUser.friends = uniqueFriends;
+      console.log(`✅ Список друзей нормализован: ${uniqueFriends.length} уникальных друзей`);
+      
+      // Перезагружаем секцию друзей
+      loadFriends();
+    } catch (error) {
+      console.error("Ошибка нормализации друзей:", error);
+    }
+  } else {
+    console.log(`✅ Список друзей уже нормализован`);
+  }
+}
+
+// Вызываем функцию нормализации после загрузки пользователя
+function updateCurrentUser(data) {
+  currentUser = { uid: data.uid, ...data };
+  if (!currentUser.friends) currentUser.friends = [];
+  console.log('👤 Текущий пользователь:', currentUser);
+  
+  // Нормализуем друзей сразу после загрузки пользователя
+  normalizeFriends();
+}
   </script>
 </body>
 </html>
