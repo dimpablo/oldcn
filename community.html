@@ -925,7 +925,26 @@ function showMessagesUsers() {
       currentUser = data;
       if (!currentUser.friends) currentUser.friends = [];
     }
-
+// 🔧 ОТЛАДКА: прикрепляем ключевые переменные к window
+// УБЕРИ ЭТО ПОЗЖЕ В ПРОДАКШЕНЕ!
+window.FB_DEBUG = {
+  db,
+  auth,
+  currentUser: () => currentUser, // функция, потому что меняется
+  allUsers: () => allUsers,        // динамические массивы
+  loadMessagesUsers,
+  markMessagesAsRead,
+  showChatWith,
+  query,
+  collection,
+  where,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  onSnapshot,
+  app
+};
+console.log("🎯 [Отладка] Firebase и данные экспортированы в window.FB_DEBUG");
     // Наблюдение за авторизацией
     onAuthStateChanged(auth, (user) => {
       if (user) {
