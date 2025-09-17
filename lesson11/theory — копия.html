@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <title>Урок 11 — Древнекитайский язык по Крюкову</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            line-height: 1.8;
+            margin: 50px auto;
+            background-color: #fbf8f0;
+            color: #2c3e50;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #1a4f72;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            border-bottom: 2px solid #1a4f72;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            border-bottom: none;
+            margin-top: 30px;
+        }
+        .original {
+            background-color: #f0f4f8;
+            padding: 18px 20px;
+            border-left: 6px solid #1a4f72;
+            font-size: 1.08em;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
+        }
+        .text, .grammar, .lexicon, .assignment {
+            margin-bottom: 45px;
+        }
+        .footer {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            line-height: 1.4;
+        }
+        .example {
+            display: block;
+            margin: 8px 0 8px 15px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+            color: #1a4f72;
+        }
+        ol {
+            line-height: 1.8;
+        }
+
+        /* === Интерактивные подсказки для иероглифов === */
+        .char-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .char-item {
+            position: relative;
+            display: inline-block;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.1em;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .char-item:hover {
+            background: #e6f2ff;
+        }
+
+        .char-item > span {
+            cursor: help;
+        }
+
+        .inline-pinyin {
+            font-size: 0.85em;
+            color: #555;
+            margin-left: 4px;
+            font-style: italic;
+        }
+
+        .char-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 260px;
+            background: #1a4f72;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: left;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .char-item:hover .char-tooltip {
+            display: block;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Jiaguwen';
+            src: url('../jiaguwen.ttf') format('truetype');
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+    <style id="2change">
+        .oracle-table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+            font-size: 1.3em;
+            table-layout: fixed;
+            width: 95%;
+            max-width: 1200px;
+        }
+        .oracle-table td {
+            padding: 6px 8px;
+            border: 1px solid #d4d4d4;
+            text-align: center;
+            position: relative;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .line-num, .col-num {
+            background-color: #f0f4f8;
+            color: #1a4f72;
+            font-weight: bold;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+    </style>
+<script src="./../dictionary.js"></script>
+</head>
+<body>
+
+<h1>УРОК 11</h1>
+
+<!-- ТАБЛИЦА ТЕКСТ УРОКА -->
+<div class="text">
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
+</div>
+<div style="display: none;" style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+    Обычный вид
+  </span>
+</div>
+<style>
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #1a5fb4;
+  }
+  input:checked + .slider:before {
+    transform: translateX(30px);
+  }
+</style>
+
+<style>/* Уменьшаем размер для номеров */
+/* Tooltip — без изменений */
+.char-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 300px;
+    background: #1a4f72;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    text-align: left;
+    white-space: normal;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(26, 79, 114, 0.3);
+    line-height: 1.5;
+}
+td:hover .char-tooltip {
+    display: block;
+}
+.lesson-badge {
+    display: inline-block;
+    background: #e6f2ff;
+    color: #1a4f72;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}</style>
+<script>
+
+// Данные текста урока 10
+const lessonText = [
+    "唯四月甲午王灌于嘗公東宮納饗于",
+    "王王賜公貝五十朋公賜厥順子效王",
+    "休貝二十朋效對公休用作寳尊彝效",
+    "其萬年夙夜奔走揚公休亦其子子孫",
+    "孫永寳用",
+    "唯十又二月王在周眛爽王格于大廟",
+    "井叔右免即位王受作冊尹書俾冊令",
+    "免曰令汝司林賜汝赤芾用事免對揚",
+    "王休用作尊簋免其萬年永寳用"
+];
+
+// Функция для создания таблицы
+function createOracleTable() {
+    const table = document.getElementById('oracleTable');
+    // Создаём строку с номерами колонок
+    const headerRow = document.createElement('tr');
+    // Пустая ячейка для выравнивания с номерами строк
+    const emptyCell = document.createElement('td');
+    emptyCell.className = 'line-num';
+    headerRow.appendChild(emptyCell);
+    // Номера колонок: от 1 до 15
+    for (let i = 1; i <= 15; i++) {
+        const th = document.createElement('td');
+        th.className = 'col-num';
+        th.textContent = i;
+        headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    // Создаём строки с текстом
+    for (let i = 0; i < lessonText.length; i++) {
+        const row = document.createElement('tr');
+        // Номер строки
+        const lineNumCell = document.createElement('td');
+        lineNumCell.className = 'line-num';
+        lineNumCell.textContent = i + 1;
+        row.appendChild(lineNumCell);
+        // Разбиваем строку на символы
+        const chars = Array.from(lessonText[i]);
+        // Заполняем ячейки для позиций 1–15
+        for (let j = 0; j < 15; j++) {  // Ровно 15 ячеек
+            const td = document.createElement('td');
+            // Если есть символ на этой позиции — ставим его
+            if (j < chars.length && chars[j].trim() !== '') {
+                const char = chars[j];
+                td.textContent = char;
+                if (charData[char]) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'char-tooltip';
+                    tooltip.innerHTML = `
+                        <strong>${char}</strong> <em>${charData[char].pinyin}</em><br>
+                        ${charData[char].meaning}<br>
+                        <span class="lesson-badge">Урок ${charData[char].lesson}</span>
+                    `;
+                    td.appendChild(tooltip);
+                }
+            }
+            // Если символа нет — ячейка остаётся пустой (ничего не делаем)
+            row.appendChild(td);
+        }
+        table.appendChild(row);
+    }
+}
+// Инициализация таблицы при загрузке страницы
+document.addEventListener('DOMContentLoaded', createOracleTable);
+</script>
+<!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
+
+
+<!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
+<div class="grammar">
+    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>11.1. Приемы членения текста</h3>
+    <p class="original">
+        При чтении памятников доклассического языка нам постоянно приходится решать проблему, которая практически почти не вставала перед нами в процессе изучения иньских надписей. Речь идет о членении текста и определении границ предложения.
+    </p>
+    <p class="original">
+        Для этой цели применительно к чжоуским текстам можно использовать несколько конкретных приемов. Разумеется, не каждый из них может быть применен в каждом отдельном случае.
+    </p>
+    <p class="original">
+        Основой членения текста на предложения является сумма наших знаний о структуре древнекитайского предложения. В доклассическом языке существуют те же члены предложения, что и в архаическом, и занимают они те же позиции, что и прежде. Поэтому можно утверждать, что, например, после сказуемого и прямого дополнения может следовать только косвенное дополнение с предлогом, а после него наличие какого-либо еще члена предложения уже невозможно. Таким образом, если мы определили наличие косвенного дополнения с предлогом в постпозиции по отношению к сказуемому, это дает нам указание на конец предложения.
+    </p>
+    <p class="original">
+        Далее, несмотря на то, что чжоуские надписи не столь стандартны по своему формуляру, как иньские, в них также встречаются некоторые привычные формулы, знание которых позволяет расчленять текст на более мелкие части.
+    </p>
+    <p class="original">
+        Например, почти в каждой надписи есть слова вана или другого высокопоставленного лица, обращенные к владельцу сосуда. Эти слова обычно даются в виде прямой речи, т. е. вводятся словом <span class="example">曰 yuē</span>, причем начинаются с обращения. Речь вана в таких случаях начинается словами: <span class="example">王若曰 wáng ruò yuē</span> «Ван так сказал: “...”».
+    </p>
+    <p class="original">
+        После речи вана в большинстве случаев следует фраза, в которой владелец сосуда выражает благодарность за награду, пожалование или иное признание его заслуг. Эта фраза может быть представлена различными вариантами, чаще всего в следующем виде:
+        <br/><br/>
+        <span class="example">...拜手稽首對揚...休 ...bài shǒu qǐ shǒu duì yáng ... xiū</span>
+        «...сложил руки и поклонился до земли, сделал надпись [на сосуде и тем] вознес хвалу... за [его] милость».
+    </p>
+    <p class="original">
+        Далее следует сообщение о том, что владелец сосуда посвящает его памяти какого-то своего предка:
+        <br/><br/>
+        <span class="example">用作...尊彝 yòng zuò...zūn yí</span> «Использовал его в качестве сосуда для жертвоприношений...»
+    </p>
+
+    <h3>11.2. Личное местоимение <strong>厥 jué</strong></h3>
+    <p class="original">
+        Для системы личных местоимений архаического периода было характерно, как уже было сказано, четкое противопоставление одной группы личных местоимений, употреблявшихся в функции подлежащего и дополнения, другой группе (в функции определения к имени).
+    </p>
+    <p class="original">
+        Это разграничение сохраняется и в раннем доклассическом языке.
+    </p>
+    <p class="original">
+        Местоимения первой группы (余 yú для 1-го лица, 汝 rǔ для 2-го):
+        <br/><br/>
+        а) местоимения в функции подлежащего:
+        <br/>
+        <span class="example">余唯令 yú wéi lìng</span> «Я приказываю»;
+        <br/>
+        <span class="example">汝勿不善 rǔ wù bù shàn</span> «Тебе не следует поступать дурно»;
+        <br/><br/>
+        б) местоимения в функции дополнения:
+        <br/>
+        <span class="example">受余 shòu yú</span> «даровать мне»;
+        <br/>
+        <span class="example">令汝 lìng rǔ</span> «приказать тебе».
+    </p>
+    <p class="original">
+        Местоимения второй группы (朕 zhèn для 1-го лица, 乃 năi для 2-го):
+        <br/><br/>
+        <span class="example">拼朕位 pīn zhèn wèi</span> «Поддерживай мой трон!»
+        <br/>
+        <span class="example">乃祖既令乃父 năi zǔ jì lìng năi fù</span> «Твой дед приказал твоему отцу».
+    </p>
+    <p class="original">
+        Однако если в архаическом языке полностью отсутствовали какие бы то ни было местоимения 3-го лица, то в текстах раннего доклассического периода появляется <strong>厥 jué</strong> — новое личное местоимение, относящееся ко второй группе.
+    </p>
+    <p class="original">
+        Особенности употребления этого местоимения явствуют, например, из следующих двух отрывков, один из которых содержит прямую речь, а другой — нет:
+        <br/><br/>
+        <span class="example">令曰更乃祖考 lìng yuē gēng năi zǔ kăo</span> «Приказал: “Займи место своего деда и отца!”»
+        <br/>
+        <span class="example">令更厥祖考 lìng gèng jué zǔ kăo</span> «Приказал занять место его деда и отца».
+    </p>
+    <p class="original">
+        <strong>厥 jué</strong> — личное местоимение 3-го лица, употребляемое только в функции определения к имени. Это значит, что в тексте после данного местоимения может стоять только имя:
+        <br/><br/>
+        <span class="example">厥絲束 jué sī shù</span> «его моток шелка»;
+        <br/>
+        <span class="example">厥寶尊彝 jué băo zūn yí</span> «его драгоценный сосуд».
+    </p>
+    <p class="original">
+        <strong>厥 jué</strong> может переводиться словом <em>«свой»</em>:
+        <br/><br/>
+        <span class="example">公賜厥順子貝 gōng cì jué shùn zǐ bèi</span> «Гун подарил своему послушному сыну раковины».
+    </p>
+
+    <h3>11.3. Удвоение знаменательных слов</h3>
+    <p class="original">
+        В доклассическом языке встречается несколько различных случаев удвоения знаменательных слов.
+    </p>
+    <p class="original">
+        Один из них — удвоение слова в именной функции. Оно употребляется для того, чтобы обозначить множественность предметов (лиц), выраженных этим именем:
+        <br/><br/>
+        <span class="example">子子孫孫 zǐ zǐ sūn sūn</span> «дети и внуки».
+    </p>
+
+    <h3>11.4. Обстоятельство длительности действия</h3>
+    <p class="original">
+        Указание на длительность действия или состояния выражается в доклассическом (как и в архаическом) языке посредством обстоятельства, стоящего перед соответствующим предикативом:
+        <br/><br/>
+        <span class="example">三年静東國 sān nián jìng dōng guó</span> «Три года усмирял восточные государства».
+    </p>
+    <p class="original">
+        В надписях на западночжоуских бронзовых сосудах часто используются стандартные формулы для обозначения продолжительности действия, включающие словосочетание <strong>萬年 wàn nián</strong> «десять тысяч лет»:
+        <br/><br/>
+        <span class="example">余其萬年寶用 yú qí wàn nián băo yòng</span> «Я буду пользоваться [этим сосудом] как драгоценностью на протяжении десяти тысяч лет».
+        <br/>
+        <span class="example">效其萬年奔走扬公休 xiào qí wàn nián bēn zǒu yáng gōng xiū</span> «Сяо десять тысяч лет будет стараться отблагодарить гуна за милость».
+    </p>
+    <p class="original">
+        На то, что данное словосочетание употреблено здесь именно как обстоятельство, указывает стоящее перед ним наречие <strong>其 qí</strong>.
+    </p>
+    <p class="original">
+        Наличие наречий <strong>亦 yì</strong> и <strong>其 qí</strong> перед именным словосочетанием <span class="example">子子孫孫 zǐ zǐ sūn sūn</span> позволяет определить, что оно также является обстоятельством в следующем предложении:
+        <br/><br/>
+        <span class="example">亦其子子孫孫永寳 yì qí zǐ zǐ sūn sūn yǒng băo</span> «Также будет вечно, на протяжении жизни всех сыновей и внуков, пользоваться [этим сосудом] как драгоценностью».
+    </p>
+</div>
+
+<h2>СПИСОК СЛОВ УРОКА</h2>
+<div class="char-list"></div>
+
+<script>
+    // Укажи номер урока здесь
+    const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
+
+    // Находим все иероглифы этого урока из charData
+    const lessonChars = Object.entries(charData)
+        .filter(([char, data]) => data.lesson === LESSON)
+        .sort(([charA, dataA], [charB, dataB]) => {
+            // Сортировка по пиньиню (опционально)
+            return dataA.pinyin.localeCompare(dataB.pinyin, 'zh');
+        });
+
+    // Получаем контейнер
+    const charList = document.querySelector('.char-list');
+
+    // Очищаем (на всякий случай)
+    charList.innerHTML = '';
+
+    // Генерируем элементы
+    lessonChars.forEach(([char, data]) => {
+        const item = document.createElement('div');
+        item.className = 'char-item';
+
+        item.innerHTML = `
+            <span>${char}<span class="inline-pinyin">${data.pinyin}</span></span>
+            <div class="char-tooltip">${data.meaning}</div>
+        `;
+
+        charList.appendChild(item);
+    });
+</script>
+
+<div class="lexicon">
+    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+
+    <h3>11.А. Обозначение дат</h3>
+    <p class="original">
+        Для обозначения дней в чжоуское время, как и в иньское, продолжает применяться система циклических знаков. Однако в целом даты записываются теперь несколько иначе.
+    </p>
+    <p class="original">
+        Прежде всего для обозначения года употребляется слово <strong>年 nián</strong>, ранее имевшее значение «урожай». Перед ним, как правило, стоит слово <strong>王 wáng</strong>, что указывает на систему летосчисления, принятую чжоуским правителем. Однако титул вана не указывается, и остается неизвестным, какой именно правитель имеется в виду (единой системы летосчисления в чжоуское время не существовало).
+    </p>
+    <p class="original">
+        После обозначения года обычно следует указание на соответствующий месяц. Первый месяц в году называется <strong>正月 zhēng yuè</strong>, а последующие обозначаются словосочетаниями <strong>二月 èr yuè</strong> «второй месяц», <strong>三月 sān yuè</strong> «третий месяц» и т. д.
+    </p>
+    <p class="original">
+        Перед обозначением дня иногда стоит выражение <strong>辰在 chén zài</strong> «созвездие находится в...», связанное с особенностями астрономических представлений чжоусцев.
+    </p>
+    <p class="original">
+        Дата в начале надписи всегда оформляется эмфатической частицей <strong>唯 wéi</strong>:
+        <br/><br/>
+        <span class="example">唯王二十又五年四月甲午 wéi wáng èr shí yòu wǔ nián sì yuè jiă wǔ</span> «двадцать пятый год вана, четвертый месяц, день цзя-у».
+    </p>
+
+    <h3>11.Б. Обозначение времени суток</h3>
+    <p class="original">
+        В иньских надписях встречается несколько специальных терминов для обозначения частей суток: <strong>明 míng</strong> «рассвет», <strong>旦 dàn</strong> «восход солнца», <strong>朝 zhāo</strong> «утро», <strong>中日 zhōng rì</strong> «полдень», <strong>昏 hūn</strong> «вечер», <strong>夕 xī</strong> «ночь». Практически так же делили сутки и чжоусцы. Единственным нововведением было, пожалуй, лишь выделение еще одного периода — предрассветного времени, когда ночь уже на исходе. Это время называлось <strong>昧爽 mèi shuăng</strong> или <strong>昧旦 mèi dàn</strong> (в «Шицзине» есть такая фраза: <span class="example">女曰雞鳴, 士曰昧旦 nǚ yuē jī míng, shì yuē mèi dàn</span> «Жена сказала: “Петух пропел”, cупруг сказал: “Редеет мрак”»).
+    </p>
+    <p class="original">
+        Обратим внимание на то, что все торжественные церемонии, связанные с назначением на должность высших сановников и т. д., начинались всегда очень рано, часто еще до рассвета, чтобы наиболее важная их часть приходилась на тот момент, когда вставало солнце.
+    </p>
+
+    <h3>11.В. Чжоуские ритуальные сосуды</h3>
+    <p class="original">
+        До завоевания чжоусцы, по всей видимости, не владели бронзолитейной технологией. Покорив Инь, они привлекли к себе на службу иньских ремесленников, и поэтому раннечжоуские бронзовые изделия, в том числе ритуальные сосуды, в общем и целом схожи с иньскими прототипами.
+    </p>
+    <p class="original">
+        Для жертвоприношений в чжоуское время использовались сосуды нескольких типов, имевшие различное назначение.
+        Мясо варили в триподах или тетраподах, именовавшихся <strong>鼎 dǐng</strong>, зерно — в <strong>鬲 lì</strong>. Готовую пищу клали в сосуд <strong>簋 guǐ</strong> — круглой формы, на невысоком поддоне. Непременной составной частью любого жертвоприношения были возлияния вином. Вино наливали в сосуды различной формы, среди которых наибольшее значение имели кувшины с крышкой и дугообразной ручкой <strong>卣 yǒu</strong>. Пили вино из кубков <strong>爵 jué</strong>.
+    </p>
+    <div style="text-align: center; margin-bottom: 40px;">
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/13.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/14.jpg" style="border: none; padding: 0; max-width: 100%;"/><br>
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/15.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/16.jpg" style="border: none; padding: 0; max-width: 100%;"/><br>
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/17.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+    <img alt="Чжоуские ритуальные бронзовые сосуды" class="original" src="./img/18.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+    
+    <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Чжоуские ритуальные бронзовые сосуды</p>
+</div>
+    <p class="original">
+        У чжоусцев существовал также общий термин <strong>彝 yí</strong> «сосуд для жертвоприношений». В надписях он употребляется с определениями <strong>尊 zūn</strong> или <strong>宗 zōng</strong>, указывающими на его применение в связи с жертвоприношениями в храме предков.
+    </p>
+
+    <h3>11.Г. Чжоуская одежда</h3>
+    <p class="original">
+        В надписях нередко встречаются упоминания о дарах вана. Если в ранних текстах чаще всего говорится о пожалованиях раковин каури, то позднéе аристократы удостаивались даров в виде оружия и одежды.
+    </p>
+    <p class="original">
+        Одежда чжоусцев состояла из халата <strong>衣 yī</strong> и некоего подобия набедренной повязки <strong>芾 fú</strong>. Это был кусок выделанной и окрашенной кожи, закреплявшийся на поясе и спускавшийся ниже колен. По-видимому, последним обстоятельством и объясняется ошибка А. А. Штукина, который перевел этот термин словом «наколенники» («наколенники ярким багрянцем сверкают и подвески бряцают нефритом зеленым»*). Действительно, чжоуская знать высшего ранга носила набедренные повязки алого цвета.
+    </p>
+
+    <h3>11.Д. Титулы наследственных владетелей</h3>
+    <p class="original">
+        Чжоуское завоевание не изменило политического статуса большинства племенных вождей, ранее подчинявшихся иньцам. Введение их в наследственное владение соответствующими территориями означало в действительности признание de jure их прежних прав. Сохранились в чжоуское время и старые титулы наследственных владетелей. К ним, правда, добавились еще два — гун (<strong>公 gōng</strong>) и нань (<strong>男 nán</strong>), в иньское время неизвестные.
+    </p>
+    <p class="original">
+        Титул определял положение и права владетеля. В древнем трактате «Чжоули» утверждается, что гун имеет поля площадью 500 ли; хоу — 400 ли; бо — 300 ли; цзы — 200 ли; нань — 100 ли.
+    </p>
+    <p class="original">
+        Общим наименованием наследственных владетелей был в чжоуское время термин чжухоу (<strong>諸侯 zhū hóu</strong>).
+    </p>
+</div>
+
+
+<div style="text-align: center; margin-bottom: 40px;">
+    <img alt="Эта яшмовая статуэтка дает представление о том, как выглядели 芾 fú" class="original" src="./img/19.jpg" style="border: none; padding: 0; max-width: 100%;"/>
+    <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Эта яшмовая статуэтка дает представление о том, как выглядели 芾 fú</p>
+</div>
+
+<!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
+<div class="assignment">
+    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+    <ol>
+        <li>Перепишите текст, расставив знаки препинания.</li>
+        <li>Проделайте грамматический анализ текста.</li>
+        <li>Переведите текст на русский язык.</li>
+    </ol>
+    <p class="footer" style="margin-top: 20px; border-top: none; font-style: italic;">
+        * Шицзин. М., 1957. С. 226.
+    </p>
+</div>
+
+<div class="footer">
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Все иероглифы — из текстов Уроков 1–11, либо из циклических знаков (甲子 – 癸亥).
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('fontToggle');
+        const label = document.getElementById('toggleLabel');
+        const styleSheet = document.getElementById('2change');
+
+        const normalCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        const oracleCSS = `
+            .oracle-table {
+                border-collapse: collapse;
+                margin: 20px auto;
+                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-size: 1.3em;
+                table-layout: fixed;
+                width: 95%;
+                max-width: 1200px;
+            }
+            .oracle-table td {
+                padding: 6px 8px;
+                border: 1px solid #d4d4d4;
+                text-align: center;
+                position: relative;
+                word-break: keep-all;
+                white-space: nowrap;
+            }
+            .line-num, .col-num {
+                background-color: #f0f4f8;
+                color: #1a4f72;
+                font-weight: bold;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 0.85em;
+                white-space: nowrap;
+            }
+        `;
+
+        styleSheet.textContent = normalCSS;
+
+        toggle.addEventListener('change', function () {
+            if (toggle.checked) {
+                styleSheet.textContent = oracleCSS;
+                label.textContent = 'Оракульный вид';
+            } else {
+                styleSheet.textContent = normalCSS;
+                label.textContent = 'Обычный вид';
+            }
+        });
+    });
+</script>
+
+<script id="help" src="../help.js"></script>
+
+</body>
+</html>
