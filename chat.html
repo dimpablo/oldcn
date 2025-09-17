@@ -127,8 +127,7 @@
       doc,
       getDoc,
       updateDoc,
-      arrayUnion, // ✅ Импортируем arrayUnion
-      arrayContains,
+      arrayUnion,
       getDocs
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
@@ -283,99 +282,101 @@
       logDebug(`🖼️ Отрендерено ${msgs.length} сообщений в интерфейсе`);
     }
 
-    // ✅ ИСПРАВЛЕННАЯ ВЕРСИЯ: ПОМЕТКА КАК ПРОЧИТАННЫЕ
-    async function markMessagesAsRead(otherUserId) {
-      logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: НАЧАЛО ========`);
-      logDebug(`👤 Текущий пользователь: ${currentUser.uid}`);
-      logDebug(`👥 Собеседник: ${otherUserId}`);
+    // ✅ ПОЛНАЯ ОТЛАДКА ПОМЕТКИ КАК ПРОЧИТАННЫХ
 
-      if (!currentUser || !otherUserId) {
-        logDebug(`❌ Невозможно пометить: currentUser или otherUserId не определены`);
-        return;
+// ✅ ИСПРАВЛЕННАЯ ВЕРСИЯ: Без двух array-contains!
+async function markMessagesAsRead(otherUserId) {
+  logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: НАЧАЛО ========`);
+  logDebug(`👤 Текущий пользователь: ${currentUser.uid}`);
+  logDebug(`👥 Собеседник: ${otherUserId}`);
+
+  if (!currentUser || !otherUserId) {
+    logDebug(`❌ Невозможно пометить: currentUser или otherUserId не определены`);
+    return;
+  }
+
+  // 🚫 УБРАЛИ второй array-contains — теперь только один!
+  const q = query(
+    collection(db, 'messages'),
+    where('participants', 'array-contains', currentUser.uid)
+  );
+
+  logDebug(`🔎 Выполняем запрос к Firestore: поиск всех сообщений, где участвует я (${currentUser.uid})`);
+
+  try {
+    const snapshot = await getDocs(q);
+    logDebug(`✅ Получено ${snapshot.size} документов, где участвует текущий пользователь`);
+
+    const docsToUpdate = [];
+    let totalRelevant = 0;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const participants = data.participants || [];
+
+      // 🔍 ПРОВЕРКА: СОДЕРЖИТ ЛИ ЭТО СООБЩЕНИЕ ТОЖЕ СОБЕСЕДНИКА?
+      if (participants.includes(otherUserId)) {
+        totalRelevant++;
+        const currentSeenBy = data.seenBy || [];
+
+        // Проверяем тип данных
+        if (!Array.isArray(currentSeenBy)) {
+          logDebug(`⚠️ НЕОЖИДАННЫЙ ТИП seenBy в документе ${doc.id}: ${typeof currentSeenBy} — ожидался Array`);
+          logDebug(`   Данные: ${JSON.stringify(data)}`);
+        }
+
+        const alreadyRead = currentSeenBy.includes(currentUser.uid);
+
+        logDebug(`📄 Сообщение ${doc.id}: участники [${participants.join(', ')}] | уже прочитано? ${alreadyRead ? '✅' : '❌'} | seenBy: [${currentSeenBy.join(', ')}]`);
+
+        if (!alreadyRead) {
+          docsToUpdate.push({
+            ref: doc.ref,
+            currentSeenBy: [...currentSeenBy],
+            docId: doc.id,
+            participants: participants
+          });
+        }
+      } else {
+        logDebug(`🔇 Пропущено сообщение ${doc.id}: участниками являются [${participants.join(', ')}], но собеседника ${otherUserId} нет`);
       }
+    });
 
-      // 🚫 УБРАЛИ второй array-contains — теперь только один!
-      const q = query(
-        collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid)
-      );
+    logDebug(`📊 Из ${snapshot.size} найденных сообщений: ${totalRelevant} — принадлежат диалогу с ${otherUserId}`);
+    logDebug(`📋 Всего сообщений для обновления: ${docsToUpdate.length}`);
 
-      logDebug(`🔎 Выполняем запрос к Firestore: поиск всех сообщений, где участвует я (${currentUser.uid})`);
+    if (docsToUpdate.length === 0) {
+      logDebug(`🎉 Все сообщения в этом диалоге уже прочитаны!`);
+      return;
+    }
+
+    // 🔧 Обновляем по одному
+    let updatedCount = 0;
+    for (const { ref, currentSeenBy, docId } of docsToUpdate) {
+      const newSeenBy = [...currentSeenBy, currentUser.uid];
+      logDebug(`🔧 Обновление документа ${docId}: добавляем ${currentUser.uid} в seenBy → [${newSeenBy.join(', ')}]`);
 
       try {
-        const snapshot = await getDocs(q);
-        logDebug(`✅ Получено ${snapshot.size} документов, где участвует текущий пользователь`);
-
-        const docsToUpdate = [];
-        let totalRelevant = 0;
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const participants = data.participants || [];
-
-          // 🔍 ПРОВЕРКА: СОДЕРЖИТ ЛИ ЭТО СООБЩЕНИЕ ТОЖЕ СОБЕСЕДНИКА?
-          if (participants.includes(otherUserId)) {
-            totalRelevant++;
-            const currentSeenBy = data.seenBy || [];
-
-            // Проверяем тип данных
-            if (!Array.isArray(currentSeenBy)) {
-              logDebug(`⚠️ НЕОЖИДАННЫЙ ТИП seenBy в документе ${doc.id}: ${typeof currentSeenBy} — ожидался Array`);
-              logDebug(`   Данные: ${JSON.stringify(data)}`);
-            }
-
-            const alreadyRead = currentSeenBy.includes(currentUser.uid);
-
-            logDebug(`📄 Сообщение ${doc.id}: участники [${participants.join(', ')}] | уже прочитано? ${alreadyRead ? '✅' : '❌'} | seenBy: [${currentSeenBy.join(', ')}]`);
-
-            if (!alreadyRead) {
-              docsToUpdate.push({
-                ref: doc.ref,
-                currentSeenBy: [...currentSeenBy],
-                docId: doc.id,
-                participants: participants
-              });
-            }
-          } else {
-            logDebug(`🔇 Пропущено сообщение ${doc.id}: участниками являются [${participants.join(', ')}], но собеседника ${otherUserId} нет`);
-          }
+        await updateDoc(ref, {
+          seenBy: newSeenBy
         });
-
-        logDebug(`📊 Из ${snapshot.size} найденных сообщений: ${totalRelevant} — принадлежат диалогу с ${otherUserId}`);
-        logDebug(`📋 Всего сообщений для обновления: ${docsToUpdate.length}`);
-
-        if (docsToUpdate.length === 0) {
-          logDebug(`🎉 Все сообщения в этом диалоге уже прочитаны!`);
-          return;
-        }
-
-        // 🔧 Обновляем по одному, используя arrayUnion
-        let updatedCount = 0;
-        for (const { ref, docId } of docsToUpdate) {
-          logDebug(`🔧 Обновление документа ${docId}: добавляем ${currentUser.uid} в seenBy с помощью arrayUnion`);
-
-          try {
-            await updateDoc(ref, {
-              seenBy: arrayUnion(currentUser.uid) // ✅ Используем arrayUnion
-            });
-            updatedCount++;
-            logDebug(`✅ Успешно обновлен документ ${docId}`);
-          } catch (err) {
-            logDebug(`🚨 ОШИБКА при обновлении документа ${docId}: ${err.message}`);
-            console.error(`Ошибка обновления ${docId}:`, err);
-          }
-        }
-
-        logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: ЗАВЕРШЕНО ========`);
-        logDebug(`📊 Результат: ${updatedCount}/${docsToUpdate.length} сообщений обновлено`);
-
-      } catch (e) {
-        logDebug(`🚨 КРИТИЧЕСКАЯ ОШИБКА при выполнении getDocs(): ${e.message}`);
-        console.error('Критическая ошибка в markMessagesAsRead:', e);
-        alert('Ошибка при попытке отметить сообщения как прочитанные. Проверьте консоль.');
+        updatedCount++;
+        logDebug(`✅ Успешно обновлен документ ${docId}`);
+      } catch (err) {
+        logDebug(`🚨 ОШИБКА при обновлении документа ${docId}: ${err.message}`);
+        console.error(`Ошибка обновления ${docId}:`, err);
       }
     }
 
+    logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: ЗАВЕРШЕНО ========`);
+    logDebug(`📊 Результат: ${updatedCount}/${docsToUpdate.length} сообщений обновлено`);
+
+  } catch (e) {
+    logDebug(`🚨 КРИТИЧЕСКАЯ ОШИБКА при выполнении getDocs(): ${e.message}`);
+    console.error('Критическая ошибка в markMessagesAsRead:', e);
+    alert('Ошибка при попытке отметить сообщения как прочитанные. Проверьте консоль.');
+  }
+}
 
     async function sendMessage() {
       const input = document.getElementById('message-input');
