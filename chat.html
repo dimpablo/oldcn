@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Чат</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #chat-header {
+      background: #00838f;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    #messages-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      margin: 4px 0;
+      word-wrap: break-word;
+    }
+    .msg-from-me {
+      background: #00838f;
+      color: white;
+      align-self: flex-end;
+    }
+    .msg-from-them {
+      background: #e0e0e0;
+      color: black;
+      align-self: flex-start;
+    }
+    #chat-controls {
+      display: flex;
+      padding: 10px;
+      gap: 10px;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+    #message-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    #send-message-btn {
+      padding: 10px 16px;
+      background: #00838f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #send-message-btn:hover {
+      background: #006064;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="chat-header">
+    <h3 id="chat-name">Выберите собеседника</h3>
+  </div>
+
+  <div id="messages-list"></div>
+
+  <div id="chat-controls">
+    <input type="text" id="message-input" placeholder="Введите сообщение..." />
+    <button id="send-message-btn">Отправить</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      onSnapshot,
+      addDoc,
+      doc,
+      getDoc,
+      updateDoc,
+      arrayUnion,
+      getDocs
+    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+    // Конфиг Firebase (скопирован из основного проекта)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+      authDomain: "antient-9bff0.firebaseapp.com",
+      projectId: "antient-9bff0",
+      storageBucket: "antient-9bff0.firebasestorage.app",
+      messagingSenderId: "311792589414",
+      appId: "1:311792589414:web:5fff3154735007c2006ba7",
+      measurementId: "G-W4ZQXWRTKK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let otherUser = null;
+
+    // === 🔍 Извлечение ID пользователя из #chat/userId ===
+    function getOtherUserIdFromHash() {
+      const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
+      return match ? match[1] : null;
+    }
+
+    // === 🔄 При загрузке или изменении хеша ===
+    function onHashChange() {
+      const otherUserId = getOtherUserIdFromHash();
+      if (!otherUserId) {
+        document.getElementById('chat-name').textContent = "Выберите собеседника";
+        document.getElementById('messages-list').innerHTML = '';
+        return;
+      }
+
+      loadChatAndStartListening(otherUserId);
+    }
+
+    // === 📥 Загрузка данных собеседника и запуск прослушивания чата ===
+    async function loadChatAndStartListening(otherUserId) {
+      try {
+        const userRef = doc(db, 'users', otherUserId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          otherUser = { id: userSnap.id, ...userSnap.data() };
+          document.getElementById('chat-name').textContent = otherUser.displayName;
+        } else {
+          document.getElementById('chat-name').textContent = "Пользователь не найден";
+        }
+
+        startListeningToMessages(otherUserId);
+        markMessagesAsRead(otherUserId);
+      } catch (e) {
+        console.error("Ошибка загрузки чата:", e);
+        document.getElementById('chat-name').textContent = "Ошибка подключения";
+      }
+    }
+
+    // === 💬 Прослушивание сообщений ===
+    function startListeningToMessages(otherUserId) {
+      const chatQuery = query(
+        collection(db, 'messages'),
+        where('participants', 'array-contains', currentUser.uid)
+      );
+
+      onSnapshot(chatQuery, (snapshot) => {
+        const messages = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (
+            data.participants.includes(currentUser.uid) &&
+            data.participants.includes(otherUserId)
+          ) {
+            messages.push({ id: doc.id, ...data });
+          }
+        });
+
+        messages.sort((a, b) => a.timestamp - b.timestamp);
+        renderMessages(messages);
+      }, (error) => {
+        console.error("Ошибка при получении сообщений:", error);
+      });
+    }
+
+    // === 🖼️ Отображение сообщений ===
+    function renderMessages(msgs) {
+      const list = document.getElementById('messages-list');
+      list.innerHTML = '';
+      msgs.forEach(msg => {
+        const fromMe = msg.from === currentUser.uid;
+        const div = document.createElement('div');
+        div.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
+        div.innerHTML = `
+          <div>${msg.text}</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:4px;">
+            ${new Date(msg.timestamp).toLocaleTimeString()}
+          </div>
+        `;
+        list.appendChild(div);
+      });
+      list.scrollTop = list.scrollHeight;
+    }
+
+    // === ✅ Пометить как прочитанное ===
+    async function markMessagesAsRead(otherUserId) {
+      const q = query(
+        collection(db, 'messages'),
+        where('to', '==', currentUser.uid),
+        where('from', '==', otherUserId)
+      );
+      const snapshot = await getDocs(q);
+      snapshot.forEach(async (doc) => {
+        if (!doc.data().seenBy?.includes(currentUser.uid)) {
+          await updateDoc(doc.ref, {
+            seenBy: arrayUnion(currentUser.uid)
+          });
+        }
+      });
+    }
+
+    // === 📤 Отправка сообщения ===
+    async function sendMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text || !otherUser) return;
+
+      const messageData = {
+        from: currentUser.uid,
+        to: otherUser.id,
+        text,
+        timestamp: Date.now(),
+        participants: [currentUser.uid, otherUser.id].sort(),
+        seenBy: [currentUser.uid]
+      };
+
+      try {
+        await addDoc(collection(db, 'messages'), messageData);
+        input.value = '';
+      } catch (e) {
+        console.error("Ошибка отправки:", e);
+        alert("Не удалось отправить сообщение");
+      }
+    }
+
+    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+    document.getElementById('message-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // === 🔁 Слушаем изменения хеша ===
+    window.addEventListener('load', onHashChange);
+    window.addEventListener('hashchange', onHashChange);
+
+    // === 🔐 Авторизация ===
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          currentUser = { uid: user.uid, ...userDoc.data() };
+          // Перезапустим обработку хеша, если пользователь уже авторизован
+          onHashChange();
+        } else {
+          alert("Профиль не найден");
+        }
+      } else {
+        // Если не авторизован — редирект
+        window.location.href = './index.html';
+      }
+    });
+  </script>
+</body>
+</html>
