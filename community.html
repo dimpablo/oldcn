@@ -713,34 +713,49 @@
         }
       };
 
-      window.acceptFriend = async (reqId, fromId) => {
-        try {
-          const userRef = doc(db, 'users', currentUser.uid);
-          const fromRef = doc(db, 'users', fromId);
-          const reqDoc = doc(db, 'friendRequests', reqId);
+window.acceptFriend = async (reqId, fromId) => {
+  // Блокируем повторные клики
+  const button = document.querySelector(`button[onclick*="${reqId}"]`);
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Обработка...";
+  }
 
-          const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
-          await updateDoc(userRef, { friends });
+  try {
+    const reqDoc = doc(db, 'friendRequests', reqId);
+    
+    const reqSnap = await getDoc(reqDoc);
+    if (!reqSnap.exists()) {
+      console.log("Заявка уже обработана");
+      const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+      if (notification) notification.remove();
+      return;
+    }
 
-          const fromSnap = await getDoc(fromRef);
-          if (fromSnap.exists()) {
-            const fromData = fromSnap.data();
-            const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
-            await updateDoc(fromRef, { friends: fromFriends });
-          }
+    const userRef = doc(db, 'users', currentUser.uid);
+    const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
+    await updateDoc(userRef, { friends });
 
-          await deleteDoc(reqDoc);
-          alert('Теперь вы друзья!');
+    await deleteDoc(reqDoc);
+    
+    alert('Теперь вы друзья!');
 
-          // ✅ Удаляем элемент из DOM
-          const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
-          if (notification) notification.remove();
+    const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+    if (notification) notification.remove();
 
-          loadFriends();
-        } catch (e) {
-          console.error("Ошибка при принятии:", e);
-        }
-      };
+    loadFriends();
+  } catch (e) {
+    console.error("Ошибка при принятии:", e);
+    alert("Ошибка при принятии заявки: " + e.message);
+  } finally {
+    // Разблокируем кнопку
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Принять";
+    }
+  }
+};
+
 
       window.declineFriend = async (reqId) => {
         try {
