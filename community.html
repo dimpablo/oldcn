@@ -45,6 +45,7 @@
       font-size: 16px;
       min-width: 100px;
       text-align: center;
+      position: relative !important; /* 🔒 Для бейджа */
     }
 
     .tab:hover, .tab:focus {
@@ -157,21 +158,23 @@
       color: #e0f7fa;
     }
 
+    /* 🔒 Фикс бейджа */
     .tab[data-tab="messages"] .badge {
-      position: absolute;
-      top: -6px;
-      right: -10px;
-      background: #d32f2f;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+      position: absolute !important;
+      top: -6px !important;
+      right: -10px !important;
+      background: #d32f2f !important;
+      color: white !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3) !important;
+      z-index: 10 !important;
     }
 
     .card .msg-badge {
@@ -208,6 +211,42 @@
     .btn-back:hover {
       background: #5a6268;
     }
+
+    .btn {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: #00838f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #006064;
+    }
+
+    .btn-danger {
+      background: #d32f2f;
+    }
+
+    .btn-danger:hover {
+      background: #b71c1c;
+    }
+
+    .notification {
+      background: rgba(255,255,0,0.2);
+      border: 1px solid #ffcc00;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -222,7 +261,7 @@
       <div class="tab" data-tab="leaderboard">Лига лидеров</div>
       <div class="tab" data-tab="friends">Друзья</div>
       <div class="tab" data-tab="reactions">Реакции</div>
-      <div class="tab" data-tab="messages">💬 Сообщения</div>
+      <div class="tab" data-tab="messages">💬 Сообщения<div class="badge" style="display:none">0</div></div>
     </div>
 
     <!-- Пользователи -->
@@ -301,7 +340,8 @@
       getDoc,
       updateDoc,
       getDocs,
-      arrayUnion
+      arrayUnion,
+      deleteDoc
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
     // 🛠 Конфиг (убедись, что совпадает)
@@ -347,6 +387,7 @@
         reactions: document.getElementById('reactions-list')?.parentElement.querySelector('.loading') || null,
         messages: document.getElementById('messages-users')?.querySelector('.loading') || null
       };
+      const reactionsList = document.getElementById('reactions-list');
 
       const messagesUsers = document.getElementById('messages-users');
       const chatContainer = document.getElementById('chat-container');
@@ -430,6 +471,7 @@
       // === 🔍 Загрузка пользователей
       function loadUsers() {
         console.log('📥 loadUsers: запрос к Firestore');
+        if (loading.users) loading.users.style.display = 'block';
         const q = query(collection(db, 'users'));
         onSnapshot(q, (snap) => {
           allUsers = [];
@@ -438,9 +480,10 @@
             if (data.displayName) allUsers.push({ id: doc.id, ...data });
           });
           renderUsers();
-          loading.users?.remove();
+          if (loading.users) loading.users.style.display = 'none';
         }, (error) => {
           console.error('🔥 Ошибка загрузки пользователей:', error);
+          if (loading.users) loading.users.textContent = 'Ошибка: ' + error.message;
         });
       }
 
@@ -456,76 +499,112 @@
               <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
               <h3>${user.displayName}</h3>
               <p>Баллы: ${user.points || 0}</p>
+              <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить</button>
             `;
             card.onclick = () => window.showChatWith(user);
             grids.users.appendChild(card);
           });
       }
 
-      // === 📊 Лига, друзья, реакции — аналогично (упрощено)
+      // === 📊 Лига лидеров
       function loadLeaderboard() {
+        if (loading.leaderboard) loading.leaderboard.style.display = 'block';
         const tbody = document.querySelector('#leaderboard-table tbody');
+        tbody.innerHTML = '';
         const q = query(collection(db, 'users'));
         onSnapshot(q, (snap) => {
-          const users = snap.docs
-            .map(d => ({ id: d.id, ...d.data() }))
-            .filter(u => u.displayName)
-            .sort((a,b) => (b.points||0)-(a.points||0))
-            .slice(0,10);
-          tbody.innerHTML = '';
-          users.forEach((u,i) => {
-            const row = `<tr><td>${i+1}</td><td>${u.displayName}</td><td><strong>${u.points||0}</strong></td></tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
+          const users = [];
+          snap.forEach(doc => {
+            const data = doc.data();
+            if (data.displayName) users.push(data);
           });
+          users.sort((a, b) => (b.points || 0) - (a.points || 0));
+          tbody.innerHTML = '';
+          users.slice(0, 10).forEach((u, i) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${i+1}</td><td>${u.displayName}</td><td><strong>${u.points || 0}</strong></td>`;
+            tbody.appendChild(row);
+          });
+          if (loading.leaderboard) loading.leaderboard.style.display = 'none';
+        }, (error) => {
+          console.error("Ошибка загрузки лиги:", error);
+          if (loading.leaderboard) loading.leaderboard.textContent = 'Ошибка: ' + error.message;
         });
       }
 
+      // === 👥 Друзья
       function loadFriends() {
-        if (!currentUser.friends?.length) {
+        if (!currentUser.friends || currentUser.friends.length === 0) {
+          if (loading.friends) loading.friends.style.display = 'none';
           grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
           return;
         }
+        if (loading.friends) loading.friends.style.display = 'block';
+        grids.friends.innerHTML = '';
         const q = query(collection(db, 'users'), where('__name__', 'in', currentUser.friends));
-        onSnapshot(q, snap => {
+        onSnapshot(q, (snap) => {
           grids.friends.innerHTML = '';
           snap.forEach(doc => {
             const data = doc.data();
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<img src="${data.photoURL||'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}"/><h3>${data.displayName}</h3><p>Баллы: ${data.points||0}</p>`;
+            card.innerHTML = `
+              <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
+              <h3>${data.displayName}</h3>
+              <p>Баллы: ${data.points || 0}</p>
+            `;
             grids.friends.appendChild(card);
           });
+          if (loading.friends) loading.friends.style.display = 'none';
+        }, (error) => {
+          console.error("Ошибка загрузки друзей:", error);
+          if (loading.friends) loading.friends.textContent = 'Ошибка';
         });
       }
 
+      // === 💬 Реакции (запросы в друзья)
       function loadReactions() {
+        if (loading.reactions) loading.reactions.style.display = 'block';
+        reactionsList.innerHTML = '';
         const q = query(collection(db, 'friendRequests'), where('to', '==', currentUser.uid));
-        onSnapshot(q, snap => {
-          const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          const list = document.getElementById('reactions-list');
-          list.innerHTML = '';
-          if (!requests.length) {
-            list.innerHTML = '<p style="text-align:center">Нет новых реакций</p>';
-            return;
-          }
-          requests.forEach(req => {
-            const item = document.createElement('div');
-            item.className = 'notification';
-            item.innerHTML = `
-              <span>💬 <strong>${req.fromName}</strong> хочет с тобой дружить!</span>
-              <div>
-                <button class="btn" onclick="acceptFriend('${req.id}', '${req.from}')">Принять</button>
-                <button class="btn btn-danger" onclick="declineFriend('${req.id}')">Отклонить</button>
-              </div>
-            `;
-            list.appendChild(item);
+        onSnapshot(q, (snap) => {
+          const requests = [];
+          snap.forEach(doc => {
+            const data = doc.data();
+            requests.push({ id: doc.id, ...data });
           });
+          renderReactions(requests);
+          if (loading.reactions) loading.reactions.style.display = 'none';
+        }, (error) => {
+          console.error("Ошибка загрузки реакций:", error);
+          if (loading.reactions) loading.reactions.textContent = 'Ошибка';
+        });
+      }
+
+      function renderReactions(requests) {
+        reactionsList.innerHTML = '';
+        if (requests.length === 0) {
+          reactionsList.innerHTML = '<p style="text-align:center">Нет новых реакций</p>';
+          return;
+        }
+        requests.forEach(req => {
+          const item = document.createElement('div');
+          item.className = 'notification';
+          item.innerHTML = `
+            <span>💬 <strong>${req.fromName}</strong> хочет с тобой дружить!</span>
+            <div>
+              <button class="btn" onclick="acceptFriend('${req.id}', '${req.from}')">Принять</button>
+              <button class="btn btn-danger" onclick="declineFriend('${req.id}')">Отклонить</button>
+            </div>
+          `;
+          reactionsList.appendChild(item);
         });
       }
 
       // === 📥 Загрузка списка для чата
       function loadMessagesUsers() {
         console.log('📥 loadMessagesUsers: начинаем загрузку');
+        if (loading.messages) loading.messages.style.display = 'block';
         const q = query(collection(db, 'users'));
         onSnapshot(q, (snap) => {
           allUsers = [];
@@ -550,15 +629,13 @@
             const tab = document.querySelector('.tab[data-tab="messages"]');
             const badge = tab.querySelector('.badge');
             if (unreadCount > 0) {
-              if (!badge) {
-                const b = document.createElement('div');
-                b.className = 'badge';
-                b.textContent = unreadCount > 9 ? '9+' : unreadCount;
-                tab.appendChild(b);
-              } else {
+              if (badge) {
+                badge.style.display = 'flex';
                 badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
               }
-            } else if (badge) badge.remove();
+            } else if (badge) {
+              badge.style.display = 'none';
+            }
 
             grids.messages.innerHTML = '';
             allUsers
@@ -580,10 +657,11 @@
                 card.onclick = () => window.showChatWith(user);
                 grids.messages.appendChild(card);
               });
-            loading.messages?.remove();
+            if (loading.messages) loading.messages.style.display = 'none';
           });
         }, (error) => {
           console.error("🔥 Ошибка загрузки пользователей для чата:", error);
+          if (loading.messages) loading.messages.textContent = 'Ошибка';
         });
       }
 
@@ -617,6 +695,65 @@
           location.href = 'index.html';
         }
       });
+
+      // === 📨 Функции запросов в друзья
+      window.sendFriendRequest = async (toId, toName) => {
+        try {
+          await addDoc(collection(db, 'friendRequests'), {
+            from: currentUser.uid,
+            fromName: currentUser.displayName,
+            to: toId,
+            toName,
+            timestamp: new Date()
+          });
+          alert(`Запрос в друзья отправлен пользователю ${toName}!`);
+        } catch (e) {
+          console.error("Ошибка отправки запроса:", e);
+          alert("Не удалось отправить запрос");
+        }
+      };
+
+      window.acceptFriend = async (reqId, fromId) => {
+        try {
+          const userRef = doc(db, 'users', currentUser.uid);
+          const fromRef = doc(db, 'users', fromId);
+          const reqDoc = doc(db, 'friendRequests', reqId);
+
+          const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
+          await updateDoc(userRef, { friends });
+
+          const fromSnap = await getDoc(fromRef);
+          if (fromSnap.exists()) {
+            const fromData = fromSnap.data();
+            const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
+            await updateDoc(fromRef, { friends: fromFriends });
+          }
+
+          await deleteDoc(reqDoc);
+          alert('Теперь вы друзья!');
+
+          // ✅ Удаляем элемент из DOM
+          const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+          if (notification) notification.remove();
+
+          loadFriends();
+        } catch (e) {
+          console.error("Ошибка при принятии:", e);
+        }
+      };
+
+      window.declineFriend = async (reqId) => {
+        try {
+          await deleteDoc(doc(db, 'friendRequests', reqId));
+          alert('Запрос отклонён');
+
+          // ✅ Удаляем элемент из DOM
+          const notification = document.querySelector(`.notification button[onclick*="${reqId}"]`)?.closest('.notification');
+          if (notification) notification.remove();
+        } catch (e) {
+          console.error("Ошибка при отклонении:", e);
+        }
+      };
 
       // === 🐞 ОТЛАДКА: экспорт в window
       window.FB_DEBUG = {
