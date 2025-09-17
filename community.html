@@ -100,85 +100,29 @@
       opacity: 0.9;
     }
 
-    .btn {
-      margin-top: 10px;
-      padding: 8px 14px;
-      background: #00838f;
+    .btn-back-to-lessons {
+      display: block;
+      width: fit-content;
+      padding: 14px 28px;
+      margin: 30px auto;
+      background: rgba(0, 96, 100, 0.85);
       color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      background: #006064;
-    }
-
-    .btn-danger {
-      background: #d32f2f;
-    }
-
-    .btn-danger:hover {
-      background: #b71c1c;
-    }
-
-    .leaderboard {
-      background: rgba(255,255,255,0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 40px;
-    }
-
-    .leaderboard table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    .leaderboard th, .leaderboard td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .leaderboard th {
-      color: #ffcc80;
-      font-weight: 600;
-    }
-
-    .leaderboard tr:first-child td {
+      text-decoration: none;
       font-weight: bold;
-      color: gold;
-    }
-
-    .hidden {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      position: absolute !important;
-      pointer-events: none !important;
-      z-index: -1 !important;
-    }
-
-    .loading {
-      text-align: center;
       font-size: 18px;
-      margin: 40px 0;
-      color: #e0f7fa;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
     }
 
-    .notification {
-      background: rgba(255,255,0,0.2);
-      border: 1px solid #ffcc00;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+    .btn-back-to-lessons:hover {
+      background: rgba(0, 76, 76, 0.95);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* === Чат через iframe === */
@@ -197,9 +141,20 @@
       background: rgba(255,255,255,0.1);
     }
 
-    /* === Уведомления === */
-    .tab[data-tab="messages"] {
-      position: relative;
+    .hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: absolute !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      margin: 40px 0;
+      color: #e0f7fa;
     }
 
     .tab[data-tab="messages"] .badge {
@@ -236,31 +191,6 @@
       padding: 0 2px;
       box-shadow: 0 0 4px rgba(0,0,0,0.3);
       z-index: 3;
-    }
-
-    .btn-back-to-lessons {
-      display: block;
-      width: fit-content;
-      padding: 14px 28px;
-      margin: 30px auto;
-      background: rgba(0, 96, 100, 0.85);
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 18px;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-    }
-
-    .btn-back-to-lessons:hover {
-      background: rgba(0, 76, 76, 0.95);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      border-color: rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -326,15 +256,22 @@
       <!-- Чат через iframe -->
       <div id="chat-container" class="hidden">
         <button class="btn-back" id="back-to-users">← Назад к списку</button>
-        <iframe id="chat-frame" src="./chat.html" style="flex: 1; width: 100%; height: 500px; border: none; border-radius: 8px;"></iframe>
+        <iframe 
+          id="chat-frame" 
+          src="./chat.html" 
+          style="flex: 1; width: 100%; height: 500px; border: none; border-radius: 8px;"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
       </div>
     </div>
   </div>
 
   <!-- Firebase SDK -->
   <script type="module">
+    console.log('🔧 community.html: Запуск скрипта');
 
-    // Импорт
+    // 🔐 Импорты
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
     import {
@@ -351,7 +288,7 @@
       arrayUnion
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    // Конфиг
+    // 🛠 Конфиг (убедись, что совпадает)
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -362,405 +299,313 @@
       measurementId: "G-W4ZQXWRTKK"
     };
 
-    // Инициализация
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    try {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      console.log('✅ Firebase: инициализировано', { app, auth, db });
+      
+      // 🧰 Глобальные переменные
+      let currentUser = null;
+      let allUsers = [];
+      let unreadCount = 0;
 
-    // Элементы
-    const tabs = document.querySelectorAll('.tab');
-    const sections = {
-      users: document.getElementById('users-section'),
-      leaderboard: document.getElementById('leaderboard-section'),
-      friends: document.getElementById('friends-section'),
-      reactions: document.getElementById('reactions-section'),
-      messages: document.getElementById('messages-section')
-    };
-    const grids = {
-      users: document.getElementById('users-grid'),
-      friends: document.getElementById('friends-grid'),
-      messages: document.getElementById('messages-users-grid')
-    };
-    const loading = {
-      users: grids.users.parentElement.querySelector('.loading'),
-      friends: grids.friends.parentElement.querySelector('.loading'),
-      leaderboard: document.querySelector('#leaderboard-section .loading'),
-      reactions: document.getElementById('reactions-list').parentElement.querySelector('.loading'),
-      messages: document.getElementById('messages-users').querySelector('.loading')
-    };
-    const reactionsList = document.getElementById('reactions-list');
+      // 🎯 Элементы DOM
+      const tabs = document.querySelectorAll('.tab');
+      const sections = {
+        users: document.getElementById('users-section'),
+        leaderboard: document.getElementById('leaderboard-section'),
+        friends: document.getElementById('friends-section'),
+        reactions: document.getElementById('reactions-section'),
+        messages: document.getElementById('messages-section')
+      };
+      const grids = {
+        users: document.getElementById('users-grid'),
+        friends: document.getElementById('friends-grid'),
+        messages: document.getElementById('messages-users-grid')
+      };
+      const loading = {
+        users: grids.users?.parentElement.querySelector('.loading') || null,
+        friends: grids.friends?.parentElement.querySelector('.loading') || null,
+        leaderboard: document.querySelector('#leaderboard-section .loading'),
+        reactions: document.getElementById('reactions-list')?.parentElement.querySelector('.loading') || null,
+        messages: document.getElementById('messages-users')?.querySelector('.loading') || null
+      };
 
-    // Элементы чата
-    const messagesUsers = document.getElementById('messages-users');
-    const chatContainer = document.getElementById('chat-container');
-    const backToUsersBtn = document.getElementById('back-to-users');
+      const messagesUsers = document.getElementById('messages-users');
+      const chatContainer = document.getElementById('chat-container');
+      const backToUsersBtn = document.getElementById('back-to-users');
 
-    let currentUser = null;
-    let allUsers = [];
-    let unreadCount = 0;
+      if (!backToUsersBtn) console.error('❌ Не найдена кнопка #back-to-users');
+      if (!chatContainer) console.error('❌ Не найден #chat-container');
+      if (!messagesUsers) console.error('❌ Не найден #messages-users');
 
-    // === 🔁 ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ===
-    function setActiveTab(tabName) {
-      tabs.forEach(t => t.classList.remove('active'));
-      const tab = Array.from(tabs).find(t => t.dataset.tab === tabName);
-      if (tab) tab.classList.add('active');
-      Object.values(sections).forEach(s => s.classList.add('hidden'));
-      if (sections[tabName]) sections[tabName].classList.remove('hidden');
-      localStorage.setItem('activeTab', tabName);
-    }
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const tabName = tab.dataset.tab;
-        setActiveTab(tabName);
-        window.history.pushState(null, null, `#${tabName}`);
-      });
-    });
-
-    // Восстановление вкладки при загрузке
-    window.addEventListener('load', () => {
-      const hash = window.location.hash.substring(1);
-      const validTabs = ['users', 'leaderboard', 'friends', 'reactions', 'messages'];
-      const [mainPart] = hash.split('/');
-
-      const activeTab = validTabs.includes(mainPart) ? mainPart : localStorage.getItem('activeTab') || 'users';
-      setActiveTab(activeTab);
-
-      if (activeTab === 'messages') {
-        showMessagesUsers();
+      // === 🔁 Управление вкладками ===
+      function setActiveTab(tabName) {
+        tabs.forEach(t => t.classList.remove('active'));
+        const tab = Array.from(tabs).find(t => t.dataset.tab === tabName);
+        if (tab) tab.classList.add('active');
+        Object.values(sections).forEach(s => s?.classList.add('hidden'));
+        if (sections[tabName]) sections[tabName].classList.remove('hidden');
+        localStorage.setItem('activeTab', tabName);
+        console.log(`📌 Активная вкладка: ${tabName}`);
       }
 
-      if (!window.location.hash && activeTab) {
-        window.history.replaceState(null, null, `#${activeTab}`);
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          setActiveTab(tabName);
+          window.history.pushState(null, null, `#${tabName}`);
+        });
+      });
+
+      window.addEventListener('load', () => {
+        const hash = window.location.hash.substring(1) || localStorage.getItem('activeTab') || 'users';
+        const [main] = hash.split('/');
+        const valid = ['users','leaderboard','friends','reactions','messages'];
+        const active = valid.includes(main) ? main : 'users';
+        setActiveTab(active);
+
+        if (active === 'messages') showMessagesUsers();
+        if (!window.location.hash) history.replaceState(null, '', `#${active}`);
+      });
+
+      // === 💬 ЧАТ: Показать список
+      function showMessagesUsers() {
+        console.log('📋 showMessagesUsers: показываем список пользователей');
+        messagesUsers?.classList.remove('hidden');
+        chatContainer?.classList.add('hidden');
       }
-    });
 
-    // Загрузка пользователей
-    function loadUsers() {
-      loading.users.style.display = 'block';
-      grids.users.innerHTML = '';
-      const q = query(collection(db, 'users'));
-      onSnapshot(q, (snap) => {
-        allUsers = [];
-        snap.forEach(doc => {
-          const data = doc.data();
-          if (data.displayName) {
-            allUsers.push({ id: doc.id, ...data });
-          }
-        });
-        renderUsers();
-        loading.users.style.display = 'none';
-      }, (error) => {
-        console.error("Ошибка загрузки пользователей:", error);
-        loading.users.textContent = 'Ошибка: ' + error.message;
+      // === 💬 ЧАТ: Открыть чат с пользователем
+      window.showChatWith = function(user) {
+        if (!user || !user.id) {
+          console.error('❌ showChatWith: неверный пользователь', user);
+          return;
+        }
+        console.log('📩 showChatWith:', user);
+        try {
+          messagesUsers.classList.add('hidden');
+          chatContainer.classList.remove('hidden');
+          window.location.hash = `chat/${user.id}`;
+          console.log(`✅ Хеш изменён: #chat/${user.id}`);
+        } catch (e) {
+          console.error('❌ Ошибка при открытии чата', e);
+        }
+      };
+
+      // === 🔔 Обратно к списку
+      backToUsersBtn?.addEventListener('click', () => {
+        console.log('🔙 backToUsers: возвращаемся к списку');
+        window.location.hash = 'messages';
       });
-    }
 
-    function renderUsers() {
-      grids.users.innerHTML = '';
-      allUsers
-        .filter(u => u.id !== currentUser.uid)
-        .forEach(user => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
-            <h3>${user.displayName}</h3>
-            <p>Баллы: ${user.points || 0}</p>
-            <button class="btn" onclick="sendFriendRequest('${user.id}', '${user.displayName}')">➕ Добавить</button>
-          `;
-          grids.users.appendChild(card);
-        });
-    }
-
-    // Загрузка лиги
-    function loadLeaderboard() {
-      loading.leaderboard.style.display = 'block';
-      const tbody = document.querySelector('#leaderboard-table tbody');
-      tbody.innerHTML = '';
-      const q = query(collection(db, 'users'));
-      onSnapshot(q, (snap) => {
-        const users = [];
-        snap.forEach(doc => {
-          const data = doc.data();
-          if (data.displayName) users.push(data);
-        });
-        users.sort((a, b) => (b.points || 0) - (a.points || 0));
-        tbody.innerHTML = '';
-        users.slice(0, 10).forEach((u, i) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td>${i+1}</td><td>${u.displayName}</td><td><strong>${u.points || 0}</strong></td>`;
-          tbody.appendChild(row);
-        });
-        loading.leaderboard.style.display = 'none';
-      }, (error) => {
-        console.error("Ошибка загрузки лиги:", error);
-        loading.leaderboard.textContent = 'Ошибка: ' + error.message;
-      });
-    }
-
-    // Загрузка друзей
-    function loadFriends() {
-      if (!currentUser.friends || currentUser.friends.length === 0) {
-        loading.friends.style.display = 'none';
-        grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
-        return;
-      }
-      loading.friends.style.display = 'block';
-      grids.friends.innerHTML = '';
-      const q = query(collection(db, 'users'), where('__name__', 'in', currentUser.friends));
-      onSnapshot(q, (snap) => {
-        snap.forEach(doc => {
-          const data = doc.data();
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <img src="${data.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${data.displayName}" />
-            <h3>${data.displayName}</h3>
-            <p>Баллы: ${data.points || 0}</p>
-          `;
-          grids.friends.appendChild(card);
-        });
-        loading.friends.style.display = 'none';
-      }, (error) => {
-        console.error("Ошибка загрузки друзей:", error);
-        loading.friends.textContent = 'Ошибка';
-      });
-    }
-
-    // Загрузка запросов
-    function loadReactions() {
-      loading.reactions.style.display = 'block';
-      reactionsList.innerHTML = '';
-      const q = query(collection(db, 'friendRequests'), where('to', '==', currentUser.uid));
-      onSnapshot(q, (snap) => {
-        const requests = [];
-        snap.forEach(doc => {
-          const data = doc.data();
-          requests.push({ id: doc.id, ...data });
-        });
-        renderReactions(requests);
-        loading.reactions.style.display = 'none';
-      }, (error) => {
-        console.error("Ошибка загрузки реакций:", error);
-        loading.reactions.textContent = 'Ошибка';
-      });
-    }
-
-    function renderReactions(requests) {
-      reactionsList.innerHTML = '';
-      if (requests.length === 0) {
-        reactionsList.innerHTML = '<p style="text-align:center">Нет новых реакций</p>';
-        return;
-      }
-      requests.forEach(req => {
-        const item = document.createElement('div');
-        item.className = 'notification';
-        item.innerHTML = `
-          <span>💬 <strong>${req.fromName}</strong> хочет с тобой дружить!</span>
-          <div>
-            <button class="btn" onclick="acceptFriend('${req.id}', '${req.from}')">Принять</button>
-            <button class="btn btn-danger" onclick="declineFriend('${req.id}')">Отклонить</button>
-          </div>
-        `;
-        reactionsList.appendChild(item);
-      });
-    }
-
-    // === 💬 ЧАТ / IFrames ===
-
-    function showMessagesUsers() {
-      messagesUsers.classList.remove('hidden');
-      chatContainer.classList.add('hidden');
-      // Не меняем хеш, просто показываем список
-    }
-
-    window.showChatWith = function(user) {
-      currentChatUser = user;
-      messagesUsers.classList.add('hidden');
-      chatContainer.classList.remove('hidden');
-      // Устанавливаем хеш — chat.html сам отреагирует
-      window.location.hash = `chat/${user.id}`;
-    }
-
-    // Подсчёт непрочитанных сообщений
-    function loadMessagesUsers() {
-      loading.messages.style.display = 'block';
-      grids.messages.innerHTML = '';
-      const q = query(collection(db, 'users'));
-      onSnapshot(q, (snap) => {
-        allUsers = [];
-        snap.forEach(doc => {
-          const data = doc.data();
-          if (data.displayName) {
-            allUsers.push({ id: doc.id, ...data });
-          }
-        });
-
-        const msgQuery = query(collection(db, 'messages'), where('participants', 'array-contains', currentUser.uid));
-        onSnapshot(msgQuery, (msgSnap) => {
-          const userUnread = {};
-          unreadCount = 0;
-
-          msgSnap.forEach(doc => {
+      // === 🔍 Загрузка пользователей
+      function loadUsers() {
+        console.log('📥 loadUsers: запрос к Firestore');
+        const q = query(collection(db, 'users'));
+        onSnapshot(q, (snap) => {
+          allUsers = [];
+          snap.forEach(doc => {
             const data = doc.data();
-            const otherId = data.from === currentUser.uid ? data.to : data.from;
-            if (data.to === currentUser.uid && (!data.seenBy || !data.seenBy.includes(currentUser.uid))) {
-              userUnread[otherId] = (userUnread[otherId] || 0) + 1;
-              unreadCount++;
-            }
+            if (data.displayName) allUsers.push({ id: doc.id, ...data });
+          });
+          renderUsers();
+          loading.users?.remove();
+        }, (error) => {
+          console.error('🔥 Ошибка загрузки пользователей:', error);
+        });
+      }
+
+      function renderUsers() {
+        if (!grids.users) return;
+        grids.users.innerHTML = '';
+        allUsers
+          .filter(u => u.id !== currentUser.uid)
+          .forEach(user => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
+              <h3>${user.displayName}</h3>
+              <p>Баллы: ${user.points || 0}</p>
+            `;
+            card.onclick = () => window.showChatWith(user);
+            grids.users.appendChild(card);
+          });
+      }
+
+      // === 📊 Лига, друзья, реакции — аналогично (упрощено)
+      function loadLeaderboard() {
+        const tbody = document.querySelector('#leaderboard-table tbody');
+        const q = query(collection(db, 'users'));
+        onSnapshot(q, (snap) => {
+          const users = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(u => u.displayName)
+            .sort((a,b) => (b.points||0)-(a.points||0))
+            .slice(0,10);
+          tbody.innerHTML = '';
+          users.forEach((u,i) => {
+            const row = `<tr><td>${i+1}</td><td>${u.displayName}</td><td><strong>${u.points||0}</strong></td></tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+          });
+        });
+      }
+
+      function loadFriends() {
+        if (!currentUser.friends?.length) {
+          grids.friends.innerHTML = '<p style="grid-column:1/-1;text-align:center">Нет друзей</p>';
+          return;
+        }
+        const q = query(collection(db, 'users'), where('__name__', 'in', currentUser.friends));
+        onSnapshot(q, snap => {
+          grids.friends.innerHTML = '';
+          snap.forEach(doc => {
+            const data = doc.data();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<img src="${data.photoURL||'https://...'}" alt="${data.displayName}"/><h3>${data.displayName}</h3><p>Баллы: ${data.points||0}</p>`;
+            grids.friends.appendChild(card);
+          });
+        });
+      }
+
+      function loadReactions() {
+        const q = query(collection(db, 'friendRequests'), where('to', '==', currentUser.uid));
+        onSnapshot(q, snap => {
+          const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          const list = document.getElementById('reactions-list');
+          list.innerHTML = '';
+          if (!requests.length) {
+            list.innerHTML = '<p style="text-align:center">Нет новых реакций</p>';
+            return;
+          }
+          requests.forEach(req => {
+            const item = document.createElement('div');
+            item.className = 'notification';
+            item.innerHTML = `
+              <span>💬 <strong>${req.fromName}</strong> хочет с тобой дружить!</span>
+              <div>
+                <button class="btn" onclick="acceptFriend('${req.id}', '${req.from}')">Принять</button>
+                <button class="btn btn-danger" onclick="declineFriend('${req.id}')">Отклонить</button>
+              </div>
+            `;
+            list.appendChild(item);
+          });
+        });
+      }
+
+      // === 📥 Загрузка списка для чата
+      function loadMessagesUsers() {
+        console.log('📥 loadMessagesUsers: начинаем загрузку');
+        const q = query(collection(db, 'users'));
+        onSnapshot(q, (snap) => {
+          allUsers = [];
+          snap.forEach(doc => {
+            const data = doc.data();
+            if (data.displayName) allUsers.push({ id: doc.id, ...data });
           });
 
-          // Обновляем бейдж на вкладке
-          const tab = document.querySelector('.tab[data-tab="messages"]');
-          const badge = tab.querySelector('.badge');
-          if (unreadCount > 0) {
-            if (!badge) {
-              const b = document.createElement('div');
-              b.className = 'badge';
-              b.textContent = unreadCount > 9 ? '9+' : unreadCount;
-              tab.appendChild(b);
-            } else {
-              badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-            }
-          } else if (badge) {
-            badge.remove();
-          }
-
-          // Рендерим карточки
-          grids.messages.innerHTML = '';
-          allUsers
-            .filter(u => u.id !== currentUser.uid)
-            .forEach(user => {
-              const card = document.createElement('div');
-              card.className = 'card';
-              card.innerHTML = `
-                <img src="${user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${user.displayName}" />
-                <h3>${user.displayName}</h3>
-                <p>Баллы: ${user.points || 0}</p>
-              `;
-              if (userUnread[user.id]) {
-                const badgeEl = document.createElement('div');
-                badgeEl.className = 'msg-badge';
-                badgeEl.textContent = userUnread[user.id] > 9 ? '9+' : userUnread[user.id];
-                card.appendChild(badgeEl);
+          const msgQuery = query(collection(db, 'messages'), where('participants', 'array-contains', currentUser.uid));
+          onSnapshot(msgQuery, (msgSnap) => {
+            const userUnread = {};
+            unreadCount = 0;
+            msgSnap.forEach(doc => {
+              const data = doc.data();
+              const otherId = data.from === currentUser.uid ? data.to : data.from;
+              if (data.to === currentUser.uid && (!data.seenBy || !data.seenBy.includes(currentUser.uid))) {
+                userUnread[otherId] = (userUnread[otherId] || 0) + 1;
+                unreadCount++;
               }
-              card.addEventListener('click', () => showChatWith(user));
-              grids.messages.appendChild(card);
             });
-          loading.messages.style.display = 'none';
-        });
-      }, (error) => {
-        console.error("Ошибка загрузки пользователей для чата:", error);
-        loading.messages.textContent = 'Ошибка';
-      });
-    }
 
-    // Кнопка "Назад"
-    backToUsersBtn.addEventListener('click', () => {
-      window.location.hash = 'messages'; // возвращаемся к списку
-    });
+            const tab = document.querySelector('.tab[data-tab="messages"]');
+            const badge = tab.querySelector('.badge');
+            if (unreadCount > 0) {
+              if (!badge) {
+                const b = document.createElement('div');
+                b.className = 'badge';
+                b.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                tab.appendChild(b);
+              } else {
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+              }
+            } else if (badge) badge.remove();
 
-    // Функции
-    window.sendFriendRequest = async (toId, toName) => {
-      try {
-        await addDoc(collection(db, 'friendRequests'), {
-          from: currentUser.uid,
-          fromName: currentUser.displayName,
-          to: toId,
-          toName,
-          timestamp: new Date()
-        });
-        alert(`Запрос в друзья отправлен пользователю ${toName}!`);
-      } catch (e) {
-        console.error("Ошибка отправки запроса:", e);
-        alert("Не удалось отправить запрос");
-      }
-    };
-
-    window.acceptFriend = async (reqId, fromId) => {
-      try {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const fromRef = doc(db, 'users', fromId);
-        const reqDoc = doc(db, 'friendRequests', reqId);
-
-        const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
-        await updateDoc(userRef, { friends });
-
-        const fromSnap = await getDoc(fromRef);
-        if (fromSnap.exists()) {
-          const fromData = fromSnap.data();
-          const fromFriends = fromData.friends ? [...fromData.friends, currentUser.uid] : [currentUser.uid];
-          await updateDoc(fromRef, { friends: fromFriends });
-        }
-
-        await deleteDoc(reqDoc);
-        alert('Теперь вы друзья!');
-        loadFriends();
-      } catch (e) {
-        console.error("Ошибка при принятии:", e);
-      }
-    };
-
-    window.declineFriend = async (reqId) => {
-      try {
-        await deleteDoc(doc(db, 'friendRequests', reqId));
-        alert('Запрос отклонён');
-      } catch (e) {
-        console.error("Ошибка при отклонении:", e);
-      }
-    };
-
-    // Обновление текущего пользователя
-    function updateCurrentUser(data) {
-      currentUser = data;
-      if (!currentUser.friends) currentUser.friends = [];
-    }
-
-    // Наблюдение за авторизацией
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            updateCurrentUser({ uid: user.uid, ...docSnap.data() });
-            loadUsers();
-            loadLeaderboard();
-            loadFriends();
-            loadReactions();
-            loadMessagesUsers();
-          } else {
-            console.error("Профиль не найден");
-            location.href = 'index.html';
-          }
+            grids.messages.innerHTML = '';
+            allUsers
+              .filter(u => u.id !== currentUser.uid)
+              .forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                  <img src="${user.photoURL || 'https://...'}" alt="${user.displayName}" />
+                  <h3>${user.displayName}</h3>
+                  <p>Баллы: ${user.points || 0}</p>
+                `;
+                if (userUnread[user.id]) {
+                  const badgeEl = document.createElement('div');
+                  badgeEl.className = 'msg-badge';
+                  badgeEl.textContent = userUnread[user.id] > 9 ? '9+' : userUnread[user.id];
+                  card.appendChild(badgeEl);
+                }
+                card.onclick = () => window.showChatWith(user);
+                grids.messages.appendChild(card);
+              });
+            loading.messages?.remove();
+          });
         }, (error) => {
-          console.error("Ошибка загрузки профиля:", error);
+          console.error("🔥 Ошибка загрузки пользователей для чата:", error);
         });
-      } else {
-        location.href = 'index.html';
       }
-    });
 
-    // 🔧 ОТЛАДКА: прикрепляем ключевые переменные к window
-// УБЕРИ ЭТО ПОЗЖЕ В ПРОДАКШЕНЕ!
-window.FB_DEBUG = {
-  db,
-  auth,
-  currentUser: () => currentUser,
-  allUsers: () => allUsers,
-  loadMessagesUsers,
-  markMessagesAsRead,
-  showChatWith,
-  query,
-  collection,
-  where,
-  getDocs,
-  updateDoc,
-  arrayUnion,
-  onSnapshot,
-  app
-};
-console.log("🎯 [Отладка] Firebase и данные экспортированы в window.FB_DEBUG");
+      // === 🧠 Обновление текущего пользователя
+      function updateCurrentUser(data) {
+        currentUser = { uid: data.uid, ...data };
+        if (!currentUser.friends) currentUser.friends = [];
+        console.log('👤 Текущий пользователь:', currentUser);
+      }
+
+      // === 🔐 Авторизация
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log('🔐 Пользователь вошёл:', user.uid);
+          const userRef = doc(db, 'users', user.uid);
+          onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+              updateCurrentUser({ uid: user.uid, ...docSnap.data() });
+              loadUsers();
+              loadLeaderboard();
+              loadFriends();
+              loadReactions();
+              loadMessagesUsers();
+            } else {
+              console.error('❌ Профиль не найден');
+              location.href = 'index.html';
+            }
+          });
+        } else {
+          console.warn('🔒 Не авторизован');
+          location.href = 'index.html';
+        }
+      });
+
+      // === 🐞 ОТЛАДКА: экспорт в window
+      window.FB_DEBUG = {
+        db,
+        auth,
+        currentUser: () => currentUser,
+        allUsers: () => allUsers,
+        loadMessagesUsers,
+        showChatWith: window.showChatWith,
+        app
+      };
+      console.log('🎯 [DEBUG] FB_DEBUG экспортирован:', window.FB_DEBUG);
+
+    } catch (error) {
+      console.error('💀 КРИТИЧЕСКАЯ ОШИБКА в community.html:', error);
+    }
   </script>
 </body>
 </html>
