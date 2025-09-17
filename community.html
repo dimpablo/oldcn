@@ -1,4 +1,4 @@
-V4
+V5
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -742,7 +742,6 @@ window.acceptFriend = async (reqId, fromId) => {
       // Обновляем currentUser в памяти
       currentUser.friends = friends;
       
-      // Выводим результаты в консоль
       console.log(`✅ Добавлен новый друг. Всего друзей в переменной: ${currentUser.friends.length}`);
     } else {
       console.log(`ℹ️ Пользователь уже является другом. Всего друзей в переменной: ${currentUser.friends ? currentUser.friends.length : 0}`);
