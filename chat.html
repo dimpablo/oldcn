@@ -208,6 +208,8 @@
 
     // === ✅ Пометить как прочитанное ===
 async function markMessagesAsRead(otherUserId) {
+  if (!currentUser || !otherUserId) return; // ✅ защита
+
   const q = query(
     collection(db, 'messages'),
     where('participants', 'array-contains', currentUser.uid)
@@ -229,28 +231,33 @@ async function markMessagesAsRead(otherUserId) {
 }
 
     // === 📤 Отправка сообщения ===
-    async function sendMessage() {
-const [id1, id2] = [currentUser.uid, otherUser.id].sort();
-const userPair = `${id1}_${id2}`;
+async function sendMessage() {
+  const input = document.getElementById('message-input');
+  const text = input.value.trim(); // ✅ теперь точно определено
 
-const messageData = {
-  from: currentUser.uid,
-  to: otherUser.id,
-  text,
-  timestamp: Date.now(),
-  participants: [currentUser.uid, otherUser.id],
-  userPair: userPair,
-  seenBy: [currentUser.uid]
-};
+  if (!text || !otherUser || !currentUser) return; // ✅ защита от null
 
-      try {
-        await addDoc(collection(db, 'messages'), messageData);
-        input.value = '';
-      } catch (e) {
-        console.error("Ошибка отправки:", e);
-        alert("Не удалось отправить сообщение");
-      }
-    }
+  const [id1, id2] = [currentUser.uid, otherUser.id].sort();
+  const userPair = `${id1}_${id2}`;
+
+  const messageData = {
+    from: currentUser.uid,
+    to: otherUser.id,
+    text: text,
+    timestamp: Date.now(),
+    participants: [currentUser.uid, otherUser.id],
+    userPair: userPair,
+    seenBy: [currentUser.uid]
+  };
+
+  try {
+    await addDoc(collection(db, 'messages'), messageData);
+    input.value = ''; // ✅ очищаем поле
+  } catch (e) {
+    console.error("Ошибка отправки:", e);
+    alert("Не удалось отправить сообщение");
+  }
+}
 
     document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
@@ -262,21 +269,20 @@ const messageData = {
     window.addEventListener('hashchange', onHashChange);
 
     // === 🔐 Авторизация ===
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          currentUser = { uid: user.uid, ...userDoc.data() };
-          // Перезапустим обработку хеша, если пользователь уже авторизован
-          onHashChange();
-        } else {
-          alert("Профиль не найден");
-        }
-      } else {
-        // Если не авторизован — редирект
-        window.location.href = './index.html';
-      }
-    });
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      currentUser = { uid: user.uid, ...userDoc.data() };
+      onHashChange(); // ✅ перезапуск только после загрузки currentUser
+    } else {
+      alert("Профиль не найден");
+      window.location.href = './index.html';
+    }
+  } else {
+    window.location.href = './index.html';
+  }
+});
   </script>
 </body>
 </html>
