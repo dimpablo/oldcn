@@ -46,13 +46,6 @@
       color: black;
       align-self: flex-start;
     }
-    .msg-read-indicator {
-      font-size: 9px;
-      opacity: 0.6;
-      margin-top: 2px;
-      color: #666;
-      text-align: right;
-    }
     #chat-controls {
       display: flex;
       padding: 10px;
@@ -111,6 +104,7 @@
       getDocs
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
+    // Конфиг Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -128,14 +122,13 @@
     let currentUser = null;
     let otherUser = null;
 
-    // Храним ID уже обработанных сообщений, чтобы не дублировать обновления
-    const processedMessageIds = new Set();
-
+    // === 🔍 Парсинг #chat/userId ===
     function getOtherUserIdFromHash() {
       const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
       return match ? match[1] : null;
     }
 
+    // === 🔄 При загрузке или изменении хеша ===
     function onHashChange() {
       const otherUserId = getOtherUserIdFromHash();
       if (!otherUserId) {
@@ -146,11 +139,10 @@
 
       if (currentUser && otherUserId !== currentUser.uid) {
         loadChatAndStartListening(otherUserId);
-      } else if (otherUserId === currentUser?.uid) {
-        document.getElementById('chat-name').textContent = 'Нельзя чатиться с собой';
       }
     }
 
+    // === 📥 Загрузка данных собеседника и запуск прослушивания чата ===
     async function loadChatAndStartListening(otherUserId) {
       try {
         const userRef = doc(db, 'users', otherUserId);
@@ -158,19 +150,20 @@
 
         if (userSnap.exists()) {
           otherUser = { id: userSnap.id, ...userSnap.data() };
-          document.getElementById('chat-name').textContent = otherUser.displayName || otherUser.email || 'Неизвестный';
+          document.getElementById('chat-name').textContent = otherUser.displayName;
         } else {
           document.getElementById('chat-name').textContent = 'Пользователь не найден';
-          alert('Пользователь не найден в базе.');
-          return;
         }
 
         startListeningToMessages(otherUserId);
+        markMessagesAsRead(otherUserId);
       } catch (e) {
+        console.error('Ошибка загрузки чата:', e);
         document.getElementById('chat-name').textContent = 'Ошибка подключения';
       }
     }
 
+    // === 💬 Прослушивание сообщений ===
     function startListeningToMessages(otherUserId) {
       const chatQuery = query(
         collection(db, 'messages'),
@@ -181,89 +174,65 @@
         const messages = [];
         snapshot.forEach(doc => {
           const data = doc.data();
-          const participants = data.participants || [];
-          const hasMe = participants.includes(currentUser.uid);
-          const hasOther = participants.includes(otherUserId);
-
-          if (hasMe && hasOther) {
+          if (
+            data.participants.includes(currentUser.uid) &&
+            data.participants.includes(otherUserId)
+          ) {
             messages.push({ id: doc.id, ...data });
           }
         });
 
         messages.sort((a, b) => a.timestamp - b.timestamp);
         renderMessages(messages, otherUserId);
-        markMessagesAsRead(otherUserId);
-      }, () => {
-        alert('Ошибка получения сообщений.');
+      }, (error) => {
+        console.error('Ошибка при получении сообщений:', error);
       });
     }
 
+    // === 🖼️ Отображение сообщений ===
     function renderMessages(msgs, otherUserId) {
       const list = document.getElementById('messages-list');
       list.innerHTML = '';
-
       msgs.forEach(msg => {
         const fromMe = msg.from === currentUser.uid;
         const div = document.createElement('div');
         div.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
-
-        const timestamp = new Date(msg.timestamp).toLocaleTimeString();
-
-        let readStatus = '';
-        if (!fromMe && msg.seenBy && msg.seenBy.includes(currentUser.uid)) {
-          readStatus = '<div class="msg-read-indicator">✓ Прочитано</div>';
-        }
-
         div.innerHTML = `
           <div>${msg.text}</div>
           <div style="font-size:11px;opacity:0.7;margin-top:4px;">
-            ${timestamp}
+            ${new Date(msg.timestamp).toLocaleTimeString()}
           </div>
-          ${readStatus}
         `;
         list.appendChild(div);
       });
-
       list.scrollTop = list.scrollHeight;
     }
 
+    // === ✅ Пометить сообщения как прочитанные ===
     async function markMessagesAsRead(otherUserId) {
       const q = query(
         collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid)
+        where('to', '==', currentUser.uid),
+        where('from', '==', otherUserId)
       );
-
-      try {
-        const snapshot = await getDocs(q);
-
-        for (const doc of snapshot.docs) {
-          const data = doc.data();
-          const participants = data.participants || [];
-
-          if (!participants.includes(otherUserId)) continue;
-
-          const currentSeenBy = data.seenBy || [];
-
-          if (currentSeenBy.includes(currentUser.uid)) continue;
-
-          if (processedMessageIds.has(doc.id)) continue;
-
-          processedMessageIds.add(doc.id);
-
+      const snapshot = await getDocs(q);
+      snapshot.forEach(async (doc) => {
+        const data = doc.data();
+        if (!data.seenBy?.includes(currentUser.uid)) {
           await updateDoc(doc.ref, {
             seenBy: arrayUnion(currentUser.uid)
           });
         }
-      } catch (e) {
-        console.error('Ошибка при пометке как прочитанных:', e);
-      }
+      });
     }
 
+    // === 📤 Отправка сообщения ===
     async function sendMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
       if (!text || !otherUser || otherUser.id === currentUser.uid) return;
 
+      // Генерация userPair: отсортированная пара UID через "_"
       const [id1, id2] = [currentUser.uid, otherUser.id].sort();
       const userPair = `${id1}_${id2}`;
 
@@ -272,36 +241,40 @@
         to: otherUser.id,
         text,
         timestamp: Date.now(),
-        participants: [currentUser.uid, otherUser.id],
-        userPair: userPair,
-        seenBy: [currentUser.uid]
+        participants: [currentUser.uid, otherUser.id].sort(), // массив из двух UID
+        userPair: userPair, // ⚠️ Требуется в security rules
+        seenBy: [currentUser.uid] // только отправитель прочитал
       };
 
       try {
         await addDoc(collection(db, 'messages'), messageData);
         input.value = '';
       } catch (e) {
-        alert('Не удалось отправить сообщение.');
+        console.error('Ошибка отправки:', e);
+        alert('Не удалось отправить сообщение');
       }
     }
 
+    // === Кнопки ===
     document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') sendMessage();
     });
 
+    // === 🔁 Слушаем изменения хеша ===
     window.addEventListener('load', onHashChange);
     window.addEventListener('hashchange', onHashChange);
 
+    // === 🔐 Авторизация ===
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           currentUser = { uid: user.uid, ...userDoc.data() };
-          onHashChange();
+          onHashChange(); // перезапустить логику чата
         } else {
-          alert('Профиль не найден в базе.');
-          window.location.href = './index.html';
+          alert('Профиль не найден');
+          window.close();
         }
       } else {
         window.location.href = './index.html';
