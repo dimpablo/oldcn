@@ -574,7 +574,7 @@
       // Не меняем хеш, просто показываем список
     }
 
-    function showChatWith(user) {
+    window.showChatWith = function(user) {
       currentChatUser = user;
       messagesUsers.classList.add('hidden');
       chatContainer.classList.remove('hidden');
