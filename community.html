@@ -1,3 +1,4 @@
+V2
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -733,8 +734,12 @@ window.acceptFriend = async (reqId, fromId) => {
     }
 
     const userRef = doc(db, 'users', currentUser.uid);
-    const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
-    await updateDoc(userRef, { friends });
+    // Проверяем, не является ли уже другом
+    const isAlreadyFriend = currentUser.friends && currentUser.friends.includes(fromId);
+    if (!isAlreadyFriend) {
+      const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
+      await updateDoc(userRef, { friends });
+    }
 
     await deleteDoc(reqDoc);
     
