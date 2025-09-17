@@ -104,7 +104,7 @@
       getDocs
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-    // Конфиг Firebase (скопирован из основного проекта)
+    // Конфиг Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -122,7 +122,7 @@
     let currentUser = null;
     let otherUser = null;
 
-    // === 🔍 Извлечение ID пользователя из #chat/userId ===
+    // === 🔍 Парсинг #chat/userId ===
     function getOtherUserIdFromHash() {
       const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
       return match ? match[1] : null;
@@ -132,12 +132,14 @@
     function onHashChange() {
       const otherUserId = getOtherUserIdFromHash();
       if (!otherUserId) {
-        document.getElementById('chat-name').textContent = "Выберите собеседника";
+        document.getElementById('chat-name').textContent = 'Выберите собеседника';
         document.getElementById('messages-list').innerHTML = '';
         return;
       }
 
-      loadChatAndStartListening(otherUserId);
+      if (currentUser && otherUserId !== currentUser.uid) {
+        loadChatAndStartListening(otherUserId);
+      }
     }
 
     // === 📥 Загрузка данных собеседника и запуск прослушивания чата ===
@@ -150,14 +152,14 @@
           otherUser = { id: userSnap.id, ...userSnap.data() };
           document.getElementById('chat-name').textContent = otherUser.displayName;
         } else {
-          document.getElementById('chat-name').textContent = "Пользователь не найден";
+          document.getElementById('chat-name').textContent = 'Пользователь не найден';
         }
 
         startListeningToMessages(otherUserId);
         markMessagesAsRead(otherUserId);
       } catch (e) {
-        console.error("Ошибка загрузки чата:", e);
-        document.getElementById('chat-name').textContent = "Ошибка подключения";
+        console.error('Ошибка загрузки чата:', e);
+        document.getElementById('chat-name').textContent = 'Ошибка подключения';
       }
     }
 
@@ -181,14 +183,14 @@
         });
 
         messages.sort((a, b) => a.timestamp - b.timestamp);
-        renderMessages(messages);
+        renderMessages(messages, otherUserId);
       }, (error) => {
-        console.error("Ошибка при получении сообщений:", error);
+        console.error('Ошибка при получении сообщений:', error);
       });
     }
 
     // === 🖼️ Отображение сообщений ===
-    function renderMessages(msgs) {
+    function renderMessages(msgs, otherUserId) {
       const list = document.getElementById('messages-list');
       list.innerHTML = '';
       msgs.forEach(msg => {
@@ -206,7 +208,7 @@
       list.scrollTop = list.scrollHeight;
     }
 
-    // === ✅ Пометить как прочитанное ===
+    // === ✅ Пометить сообщения как прочитанные ===
     async function markMessagesAsRead(otherUserId) {
       const q = query(
         collection(db, 'messages'),
@@ -215,7 +217,8 @@
       );
       const snapshot = await getDocs(q);
       snapshot.forEach(async (doc) => {
-        if (!doc.data().seenBy?.includes(currentUser.uid)) {
+        const data = doc.data();
+        if (!data.seenBy?.includes(currentUser.uid)) {
           await updateDoc(doc.ref, {
             seenBy: arrayUnion(currentUser.uid)
           });
@@ -227,26 +230,32 @@
     async function sendMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
-      if (!text || !otherUser) return;
+      if (!text || !otherUser || otherUser.id === currentUser.uid) return;
+
+      // Генерация userPair: отсортированная пара UID через "_"
+      const [id1, id2] = [currentUser.uid, otherUser.id].sort();
+      const userPair = `${id1}_${id2}`;
 
       const messageData = {
         from: currentUser.uid,
         to: otherUser.id,
         text,
         timestamp: Date.now(),
-        participants: [currentUser.uid, otherUser.id].sort(),
-        seenBy: [currentUser.uid]
+        participants: [currentUser.uid, otherUser.id].sort(), // массив из двух UID
+        userPair: userPair, // ⚠️ Требуется в security rules
+        seenBy: [currentUser.uid] // только отправитель прочитал
       };
 
       try {
         await addDoc(collection(db, 'messages'), messageData);
         input.value = '';
       } catch (e) {
-        console.error("Ошибка отправки:", e);
-        alert("Не удалось отправить сообщение");
+        console.error('Ошибка отправки:', e);
+        alert('Не удалось отправить сообщение');
       }
     }
 
+    // === Кнопки ===
     document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') sendMessage();
@@ -262,13 +271,12 @@
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           currentUser = { uid: user.uid, ...userDoc.data() };
-          // Перезапустим обработку хеша, если пользователь уже авторизован
-          onHashChange();
+          onHashChange(); // перезапустить логику чата
         } else {
-          alert("Профиль не найден");
+          alert('Профиль не найден');
+          window.close();
         }
       } else {
-        // Если не авторизован — редирект
         window.location.href = './index.html';
       }
     });
