@@ -46,6 +46,13 @@
       color: black;
       align-self: flex-start;
     }
+    .msg-read-indicator {
+      font-size: 9px;
+      opacity: 0.6;
+      margin-top: 2px;
+      color: #666;
+      text-align: right;
+    }
     #chat-controls {
       display: flex;
       padding: 10px;
@@ -71,6 +78,21 @@
     #send-message-btn:hover {
       background: #006064;
     }
+    #debug-panel {
+      background: #ffeb3b;
+      color: #333;
+      padding: 8px;
+      font-size: 12px;
+      font-family: monospace;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      border-top: 1px solid #ddd;
+      display: none;
+    }
+    .debug-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
@@ -84,6 +106,11 @@
   <div id="chat-controls">
     <input type="text" id="message-input" placeholder="Введите сообщение..." />
     <button id="send-message-btn">Отправить</button>
+  </div>
+
+  <div id="debug-panel">
+    <div class="debug-title">🔍 ОТЛАДКА: ПРОЧИТАННЫЕ СООБЩЕНИЯ</div>
+    <div id="debug-log"></div>
   </div>
 
   <!-- Firebase SDK -->
@@ -121,6 +148,20 @@
     let currentUser = null;
     let otherUser = null;
 
+    // === DEBUG UTILITY ===
+    const debugLog = document.getElementById('debug-log');
+    function logDebug(message) {
+      const now = new Date().toISOString().slice(11, 23);
+      const line = `[${now}] ${message}`;
+      debugLog.innerHTML += line + '<br>';
+      debugLog.scrollTop = debugLog.scrollHeight;
+      console.log('[DEBUG]', message);
+    }
+
+    function showDebugPanel() {
+      document.getElementById('debug-panel').style.display = 'block';
+    }
+
     function getOtherUserIdFromHash() {
       const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
       return match ? match[1] : null;
@@ -131,30 +172,43 @@
       if (!otherUserId) {
         document.getElementById('chat-name').textContent = 'Выберите собеседника';
         document.getElementById('messages-list').innerHTML = '';
+        logDebug('⚠️ Хэш пуст — чат не выбран');
         return;
       }
 
       if (currentUser && otherUserId !== currentUser.uid) {
+        logDebug(`🔄 Загружаем чат с пользователем: ${otherUserId}`);
         loadChatAndStartListening(otherUserId);
+      } else if (otherUserId === currentUser?.uid) {
+        logDebug('❌ Нельзя общаться с самим собой!');
+        document.getElementById('chat-name').textContent = 'Нельзя чатиться с собой';
       }
     }
 
     async function loadChatAndStartListening(otherUserId) {
       try {
+        logDebug(`📥 Запрос профиля пользователя: ${otherUserId}`);
         const userRef = doc(db, 'users', otherUserId);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
           otherUser = { id: userSnap.id, ...userSnap.data() };
-          document.getElementById('chat-name').textContent = otherUser.displayName;
+          document.getElementById('chat-name').textContent = otherUser.displayName || otherUser.email || 'Неизвестный';
+          logDebug(`✅ Успешно загружен профиль: ${otherUser.displayName || otherUser.email}`);
         } else {
           document.getElementById('chat-name').textContent = 'Пользователь не найден';
+          logDebug(`❌ Профиль с ID ${otherUserId} не существует в коллекции 'users'`);
+          alert(`Ошибка: пользователь с ID ${otherUserId} не найден в базе.`);
+          return;
         }
 
+        logDebug(`📡 Начинаем слушать сообщения для диалога с ${otherUserId}`);
         startListeningToMessages(otherUserId);
+
       } catch (e) {
         console.error('Ошибка загрузки чата:', e);
         document.getElementById('chat-name').textContent = 'Ошибка подключения';
+        logDebug(`🚨 ОШИБКА при загрузке профиля: ${e.message || JSON.stringify(e)}`);
       }
     }
 
@@ -164,75 +218,167 @@
         where('participants', 'array-contains', currentUser.uid)
       );
 
+      logDebug(`🔎 Ищем сообщения, где участвует текущий пользователь (${currentUser.uid})`);
+
       onSnapshot(chatQuery, (snapshot) => {
+        logDebug(`📊 Получено ${snapshot.size} сообщений из общего набора (все, где есть я)`);
+
         const messages = [];
         snapshot.forEach(doc => {
           const data = doc.data();
-          if (
-            data.participants.includes(currentUser.uid) &&
-            data.participants.includes(otherUserId)
-          ) {
+          const participants = data.participants || [];
+          const hasMe = participants.includes(currentUser.uid);
+          const hasOther = participants.includes(otherUserId);
+
+          if (hasMe && hasOther) {
             messages.push({ id: doc.id, ...data });
+            logDebug(`📄 Найдено сообщение (${doc.id}): от ${data.from}, участники: [${participants.join(', ')}], seenBy: ${JSON.stringify(data.seenBy || [])}`);
+          } else {
+            logDebug(`🔇 Пропущено сообщение (${doc.id}): участники [${participants.join(', ')}] — нет совпадения с ${otherUserId}`);
           }
         });
 
         messages.sort((a, b) => a.timestamp - b.timestamp);
         renderMessages(messages, otherUserId);
 
-        // ✅ ✅ ✅ Помечаем все сообщения в этом диалоге как прочитанные
+        // ✅ Помечаем все сообщения в этом диалоге как прочитанные
+        logDebug(`🔖 Начинаем процесс пометки всех сообщений как прочитанных для диалога с ${otherUserId}`);
         markMessagesAsRead(otherUserId);
 
       }, (error) => {
         console.error('Ошибка при получении сообщений:', error);
+        logDebug(`🚨 ОШИБКА при подписке на сообщения: ${error.message}`);
+        alert('Ошибка получения сообщений. Проверьте консоль.');
       });
     }
 
     function renderMessages(msgs, otherUserId) {
       const list = document.getElementById('messages-list');
       list.innerHTML = '';
+
       msgs.forEach(msg => {
         const fromMe = msg.from === currentUser.uid;
         const div = document.createElement('div');
         div.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
+
+        const timestamp = new Date(msg.timestamp).toLocaleTimeString();
+
+        let readStatus = '';
+        if (!fromMe && msg.seenBy && msg.seenBy.includes(currentUser.uid)) {
+          readStatus = '<div class="msg-read-indicator">✓ Прочитано</div>';
+        }
+
         div.innerHTML = `
           <div>${msg.text}</div>
           <div style="font-size:11px;opacity:0.7;margin-top:4px;">
-            ${new Date(msg.timestamp).toLocaleTimeString()}
+            ${timestamp}
           </div>
+          ${readStatus}
         `;
         list.appendChild(div);
       });
+
       list.scrollTop = list.scrollHeight;
+      logDebug(`🖼️ Отрендерено ${msgs.length} сообщений в интерфейсе`);
     }
 
-    // ✅ Исправленная версия: помечает ВСЕ сообщения в диалоге
+    // ✅ ПОЛНАЯ ОТЛАДКА ПОМЕТКИ КАК ПРОЧИТАННЫХ
     async function markMessagesAsRead(otherUserId) {
+      logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: НАЧАЛО ========`);
+      logDebug(`👤 Текущий пользователь: ${currentUser.uid}`);
+      logDebug(`👥 Собеседник: ${otherUserId}`);
+
+      // Проверка: есть ли вообще нужные поля
+      if (!currentUser || !otherUserId) {
+        logDebug(`❌ Невозможно пометить: currentUser или otherUserId не определены`);
+        return;
+      }
+
+      // Формируем корректный запрос: только те документы, где оба участника есть
       const q = query(
         collection(db, 'messages'),
         where('participants', 'array-contains', currentUser.uid),
         where('participants', 'array-contains', otherUserId)
       );
 
-      const snapshot = await getDocs(q);
-      const docsToUpdate = [];
+      logDebug(`🔎 Выполняем запрос к Firestore: поиск сообщений с участниками [${currentUser.uid}, ${otherUserId}]`);
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (!data.seenBy?.includes(currentUser.uid)) {
-          docsToUpdate.push({
-            ref: doc.ref,
-            currentSeenBy: data.seenBy || []
-          });
+      try {
+        const snapshot = await getDocs(q);
+        logDebug(`✅ Получено ${snapshot.size} документов по запросу`);
+
+        if (snapshot.size === 0) {
+          logDebug(`📌 Нет сообщений в этом диалоге — ничего помечать не нужно`);
+          return;
         }
-      });
 
-      for (const { ref, currentSeenBy } of docsToUpdate) {
-        await updateDoc(ref, {
-          seenBy: [...currentSeenBy, currentUser.uid]
+        const docsToUpdate = [];
+        let totalSeenBy = 0;
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const currentSeenBy = data.seenBy || [];
+
+          // Проверяем тип данных seenBy
+          if (!Array.isArray(currentSeenBy)) {
+            logDebug(`⚠️ НЕОЖИДАННЫЙ ТИП seenBy в документе ${doc.id}: ${typeof currentSeenBy} — ожидается Array`);
+            logDebug(`   Данные: ${JSON.stringify(data)}`);
+          }
+
+          const alreadyRead = currentSeenBy.includes(currentUser.uid);
+          const currentCount = currentSeenBy.length;
+
+          logDebug(`📄 Документ ${doc.id}: seenBy=[${currentSeenBy.join(', ')}] | уже прочитано? ${alreadyRead ? '✅' : '❌'} | всего: ${currentCount}`);
+
+          if (!alreadyRead) {
+            docsToUpdate.push({
+              ref: doc.ref,
+              currentSeenBy: [...currentSeenBy],
+              docId: doc.id
+            });
+            logDebug(`➕ Добавляем в очередь обновления: ${doc.id}`);
+          } else {
+            totalSeenBy++;
+          }
         });
-      }
 
-      console.log(`✅ Отмечено ${docsToUpdate.length} сообщений как прочитанные для диалога с ${otherUserId}`);
+        logDebug(`📋 Всего сообщений для обновления: ${docsToUpdate.length} / всего в диалоге: ${snapshot.size}`);
+
+        if (docsToUpdate.length === 0) {
+          logDebug(`🎉 Все сообщения уже прочитаны! Нет необходимости обновлять.`);
+          return;
+        }
+
+        // 🔧 Обновляем каждое сообщение по одному (чтобы отследить ошибки)
+        let updatedCount = 0;
+        for (const { ref, currentSeenBy, docId } of docsToUpdate) {
+          const newSeenBy = [...currentSeenBy, currentUser.uid];
+          logDebug(`🔧 Обновление документа ${docId}: добавляем ${currentUser.uid} в seenBy → [${newSeenBy.join(', ')}]`);
+
+          try {
+            await updateDoc(ref, {
+              seenBy: newSeenBy
+            });
+            updatedCount++;
+            logDebug(`✅ Успешно обновлен документ ${docId}`);
+          } catch (err) {
+            logDebug(`🚨 ОШИБКА при обновлении документа ${docId}: ${err.message}`);
+            console.error(`Ошибка обновления ${docId}:`, err);
+          }
+        }
+
+        logDebug(`======== ПОМЕТКА КАК ПРОЧИТАННЫЕ: ЗАВЕРШЕНО ========`);
+        logDebug(`📊 Результат: ${updatedCount}/${docsToUpdate.length} сообщений обновлено`);
+
+        if (updatedCount > 0) {
+          logDebug(`🎉 Отмечено как прочитанные: ${updatedCount} новых сообщений`);
+        }
+
+      } catch (e) {
+        logDebug(`🚨 КРИТИЧЕСКАЯ ОШИБКА при выполнении getDocs(): ${e.message}`);
+        console.error('Критическая ошибка в markMessagesAsRead:', e);
+        alert('Ошибка при попытке отметить сообщения как прочитанные. Проверьте консоль.');
+      }
     }
 
     async function sendMessage() {
@@ -250,15 +396,19 @@
         timestamp: Date.now(),
         participants: [currentUser.uid, otherUser.id].sort(),
         userPair: userPair,
-        seenBy: [currentUser.uid]
+        seenBy: [currentUser.uid] // ✅ Сам отправитель сразу помечен как прочитавший
       };
 
+      logDebug(`📤 Отправка сообщения: "${text}" | участники: [${messageData.participants.join(', ')}] | seenBy: [${messageData.seenBy.join(', ')}]`);
+
       try {
-        await addDoc(collection(db, 'messages'), messageData);
+        const docRef = await addDoc(collection(db, 'messages'), messageData);
+        logDebug(`✅ Сообщение успешно отправлено. ID: ${docRef.id}`);
         input.value = '';
       } catch (e) {
         console.error('Ошибка отправки:', e);
-        alert('Не удалось отправить сообщение');
+        logDebug(`🚨 ОШИБКА при отправке сообщения: ${e.message}`);
+        alert('Не удалось отправить сообщение. Проверьте интернет и права доступа.');
       }
     }
 
@@ -267,23 +417,33 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    window.addEventListener('load', onHashChange);
+    window.addEventListener('load', () => {
+      logDebug('🌐 Страница загружена. Ждём авторизации...');
+      onHashChange();
+    });
+
     window.addEventListener('hashchange', onHashChange);
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        logDebug(`🔑 Пользователь авторизован: ${user.uid}`);
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           currentUser = { uid: user.uid, ...userDoc.data() };
+          logDebug(`✅ Загружен профиль пользователя: ${currentUser.displayName || currentUser.email}`);
+          showDebugPanel(); // Показываем панель отладки после успешной авторизации
           onHashChange();
         } else {
-          alert('Профиль не найден');
-          window.close();
+          logDebug(`❌ Профиль пользователя в коллекции 'users' не найден: ${user.uid}`);
+          alert('Профиль не найден в базе. Пожалуйста, зарегистрируйтесь заново.');
+          window.location.href = './index.html';
         }
       } else {
+        logDebug('🔓 Пользователь не авторизован. Перенаправляем на index.html');
         window.location.href = './index.html';
       }
     });
+
   </script>
 </body>
 </html>
