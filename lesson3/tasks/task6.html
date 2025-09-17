@@ -43,7 +43,7 @@
     const expected = ['卜', '來', '马'];
 
     const allChars = [
-      '我', '求', '黍', '于', '卜', '來', '歲', '卜', '來', '黍',
+      '我', '求', '黍', '于', '卜', '來', '歳', '卜', '來', '黍',
       '今', '白', '马', '工', '方', '大', '邑', '商', '入', '王',
       '勿', '告', '雨', '受', '年', '不', '其', '六', '月', '生'
     ].sort(() => Math.random() - 0.5);
@@ -91,7 +91,7 @@
     checkBtn.addEventListener('click', () => {
       const current = Array.from(dropArea.children).map(el => el.textContent);
       if (arraysEqual(current, expected)) {
-        resultEl.innerHTML = '✅ Правильно!<br>我求黍于卜。來歲卜來黍';
+        resultEl.innerHTML = '✅ Правильно!<br>我求黍于卜。來歳卜來黍';
         resultEl.className = 'message success';
         sendResult(true);
       } else {
