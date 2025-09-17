@@ -71,21 +71,6 @@
     #send-message-btn:hover {
       background: #006064;
     }
-    #debug-panel {
-      background: #ffeb3b;
-      color: #333;
-      padding: 8px;
-      font-size: 12px;
-      font-family: monospace;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      border-top: 1px solid #ddd;
-      display: block; /* Всегда видно для отладки */
-    }
-    .debug-title {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
   </style>
 </head>
 <body>
@@ -99,11 +84,6 @@
   <div id="chat-controls">
     <input type="text" id="message-input" placeholder="Введите сообщение..." />
     <button id="send-message-btn">Отправить</button>
-  </div>
-
-  <div id="debug-panel">
-    <div class="debug-title">🔍 ОТЛАДКА</div>
-    <div id="debug-log"></div>
   </div>
 
   <!-- Firebase SDK -->
@@ -124,6 +104,7 @@
       getDocs
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
+    // Конфиг Firebase (скопирован из основного проекта)
     const firebaseConfig = {
       apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
       authDomain: "antient-9bff0.firebaseapp.com",
@@ -141,16 +122,6 @@
     let currentUser = null;
     let otherUser = null;
 
-    // === DEBUG UTILITY ===
-    const debugLog = document.getElementById('debug-log');
-    function logDebug(message) {
-      const now = new Date().toISOString().slice(11, 23);
-      const line = `[${now}] ${message}`;
-      debugLog.innerHTML += line + '<br>';
-      debugLog.scrollTop = debugLog.scrollHeight;
-      console.log('[DEBUG]', message);
-    }
-
     // === 🔍 Извлечение ID пользователя из #chat/userId ===
     function getOtherUserIdFromHash() {
       const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
@@ -159,81 +130,53 @@
 
     // === 🔄 При загрузке или изменении хеша ===
     function onHashChange() {
-      logDebug("🔄 onHashChange вызван");
       const otherUserId = getOtherUserIdFromHash();
       if (!otherUserId) {
         document.getElementById('chat-name').textContent = "Выберите собеседника";
         document.getElementById('messages-list').innerHTML = '';
-        logDebug("⚠️ Хэш пуст — чат не выбран");
         return;
       }
 
-      if (!currentUser) {
-        logDebug("⚠️ currentUser ещё не загружен, ждём...");
-        return; // Ждём загрузки пользователя
-      }
-
-      logDebug(`🔄 Загружаем чат с пользователем: ${otherUserId}`);
       loadChatAndStartListening(otherUserId);
     }
 
     // === 📥 Загрузка данных собеседника и запуск прослушивания чата ===
     async function loadChatAndStartListening(otherUserId) {
-      logDebug(`📥 loadChatAndStartListening: ${otherUserId}`);
       try {
-        logDebug(`📥 Запрос профиля пользователя: ${otherUserId}`);
         const userRef = doc(db, 'users', otherUserId);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
           otherUser = { id: userSnap.id, ...userSnap.data() };
-          document.getElementById('chat-name').textContent = otherUser.displayName || otherUser.email || 'Неизвестный';
-          logDebug(`✅ Успешно загружен профиль: ${otherUser.displayName || otherUser.email}`);
+          document.getElementById('chat-name').textContent = otherUser.displayName;
         } else {
           document.getElementById('chat-name').textContent = "Пользователь не найден";
-          logDebug(`❌ Профиль с ID ${otherUserId} не существует в коллекции 'users'`);
-          return;
         }
 
         startListeningToMessages(otherUserId);
         markMessagesAsRead(otherUserId);
       } catch (e) {
         console.error("Ошибка загрузки чата:", e);
-        logDebug(`🚨 ОШИБКА при загрузке чата: ${e.message}`);
         document.getElementById('chat-name').textContent = "Ошибка подключения";
       }
     }
 
     // === 💬 Прослушивание сообщений ===
     function startListeningToMessages(otherUserId) {
-      logDebug(`📡 startListeningToMessages: ${otherUserId}`);
-      if (!currentUser) {
-        logDebug("❌ currentUser is null в startListeningToMessages!");
-        return;
-      }
-
       const chatQuery = query(
         collection(db, 'messages'),
         where('participants', 'array-contains', currentUser.uid)
       );
 
-      logDebug(`🔎 Ищем сообщения, где участвует текущий пользователь (${currentUser.uid})`);
-
       onSnapshot(chatQuery, (snapshot) => {
-        logDebug(`📊 Получено ${snapshot.size} сообщений из общего набора (все, где есть я)`);
-
         const messages = [];
         snapshot.forEach(doc => {
           const data = doc.data();
-          const participants = data.participants || [];
-          const hasMe = participants.includes(currentUser.uid);
-          const hasOther = participants.includes(otherUserId);
-
-          if (hasMe && hasOther) {
+          if (
+            data.participants.includes(currentUser.uid) &&
+            data.participants.includes(otherUserId)
+          ) {
             messages.push({ id: doc.id, ...data });
-            logDebug(`📄 Найдено сообщение (${doc.id}): от ${data.from}, участники: [${participants.join(', ')}], seenBy: ${JSON.stringify(data.seenBy || [])}`);
-          } else {
-            logDebug(`🔇 Пропущено сообщение (${doc.id}): участники [${participants.join(', ')}] — нет совпадения с ${otherUserId}`);
           }
         });
 
@@ -241,7 +184,6 @@
         renderMessages(messages);
       }, (error) => {
         console.error("Ошибка при получении сообщений:", error);
-        logDebug(`🚨 ОШИБКА при подписке на сообщения: ${error.message}`);
       });
     }
 
@@ -262,154 +204,83 @@
         list.appendChild(div);
       });
       list.scrollTop = list.scrollHeight;
-      logDebug(`🖼️ Отрендерено ${msgs.length} сообщений в интерфейсе`);
     }
 
     // === ✅ Пометить как прочитанное ===
-    async function markMessagesAsRead(otherUserId) {
-      logDebug(`🔖 markMessagesAsRead: ${otherUserId}`);
-      if (!currentUser) {
-        logDebug("❌ currentUser is null в markMessagesAsRead!");
-        return;
-      }
+async function markMessagesAsRead(otherUserId) {
+  if (!currentUser || !otherUserId) return; // ✅ защита
 
-      const q = query(
-        collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid)
-      );
+  const q = query(
+    collection(db, 'messages'),
+    where('participants', 'array-contains', currentUser.uid)
+  );
+  const snapshot = await getDocs(q);
 
-      logDebug(`🔎 Выполняем запрос к Firestore: поиск всех сообщений, где участвует я (${currentUser.uid})`);
-
-      try {
-        const snapshot = await getDocs(q);
-        logDebug(`✅ Получено ${snapshot.size} документов, где участвует текущий пользователь`);
-
-        for (const doc of snapshot.docs) {
-          const data = doc.data();
-          const participants = data.participants || [];
-
-          if (!participants.includes(otherUserId)) {
-            logDebug(`🔇 Пропущено сообщение ${doc.id}: собеседника ${otherUserId} нет среди участников`);
-            continue;
-          }
-
-          const currentSeenBy = data.seenBy || [];
-
-          if (currentSeenBy.includes(currentUser.uid)) {
-            logDebug(`✅ Сообщение ${doc.id}: уже прочитано — пропускаем`);
-            continue;
-          }
-
-          logDebug(`🔧 Попытка добавить ${currentUser.uid} в seenBy через arrayUnion для документа ${doc.id}`);
-
-          try {
-            await updateDoc(doc.ref, {
-              seenBy: arrayUnion(currentUser.uid)
-            });
-            logDebug(`✅ Успешно обновлён seenBy в документе ${doc.id}`);
-          } catch (err) {
-            logDebug(`🚨 ОШИБКА при обновлении seenBy в документе ${doc.id}: ${err.message}`);
-            if (err.code === 'permission-denied') {
-              logDebug(`⛔️ ПРАВИЛА FIRESTORE ЗАПРЕТИЛИ ОБНОВЛЕНИЕ. Проверьте правила для /messages/{msgId} → allow update`);
-            }
-            console.error(`Ошибка обновления seenBy для ${doc.id}:`, err);
-          }
-        }
-
-        logDebug(`🔖 markMessagesAsRead завершён`);
-      } catch (e) {
-        logDebug(`🚨 КРИТИЧЕСКАЯ ОШИБКА в markMessagesAsRead: ${e.message}`);
-        console.error('Критическая ошибка в markMessagesAsRead:', e);
-      }
+  for (const doc of snapshot.docs) {
+    const data = doc.data();
+    if (
+      data.participants.includes(currentUser.uid) &&
+      data.participants.includes(otherUserId) &&
+      (!data.seenBy || !data.seenBy.includes(currentUser.uid))
+    ) {
+      await updateDoc(doc.ref, {
+        seenBy: arrayUnion(currentUser.uid)
+      });
     }
+  }
+}
 
     // === 📤 Отправка сообщения ===
-    async function sendMessage() {
-      logDebug("📤 sendMessage вызван");
-      const input = document.getElementById('message-input');
-      const text = input.value.trim();
-      logDebug(`📝 Текст сообщения: "${text}"`);
+async function sendMessage() {
+  const input = document.getElementById('message-input');
+  const text = input.value.trim(); // ✅ теперь точно определено
 
-      if (!text) {
-        logDebug("⚠️ Пустое сообщение — отправка отменена");
-        return;
-      }
-      if (!otherUser) {
-        logDebug("⚠️ otherUser не определён — отправка отменена");
-        alert("Выберите собеседника");
-        return;
-      }
-      if (!currentUser) {
-        logDebug("⚠️ currentUser не определён — отправка отменена");
-        alert("Ошибка: пользователь не загружен");
-        return;
-      }
+  if (!text || !otherUser || !currentUser) return; // ✅ защита от null
 
-      const [id1, id2] = [currentUser.uid, otherUser.id].sort();
-      const userPair = `${id1}_${id2}`;
+const userPair = [currentUser.uid, otherUser.id].sort().join('_');
+  const messageData = {
+    from: currentUser.uid,
+    to: otherUser.id,
+    text: text,
+    timestamp: Date.now(),
+    participants: [currentUser.uid, otherUser.id],
+    userPair: userPair,
+    seenBy: [currentUser.uid]
+  };
 
-      const messageData = {
-        from: currentUser.uid,
-        to: otherUser.id,
-        text: text,
-        timestamp: Date.now(),
-        participants: [currentUser.uid, otherUser.id],
-        userPair: userPair,
-        seenBy: [currentUser.uid]
-      };
+  try {
+    await addDoc(collection(db, 'messages'), messageData);
+    input.value = ''; // ✅ очищаем поле
+  } catch (e) {
+    console.error("Ошибка отправки:", e);
+    alert("Не удалось отправить сообщение");
+  }
+}
 
-      logDebug(`📤 Отправка сообщения: "${text}" | участники: [${messageData.participants.join(', ')}] | seenBy: [${messageData.seenBy.join(', ')}]`);
-
-      try {
-        const docRef = await addDoc(collection(db, 'messages'), messageData);
-        logDebug(`✅ Сообщение успешно отправлено. ID: ${docRef.id}`);
-        input.value = ''; // ✅ теперь очищается
-      } catch (e) {
-        console.error("Ошибка отправки:", e);
-        logDebug(`🚨 ОШИБКА при отправке сообщения: ${e.message}`);
-        alert("Не удалось отправить сообщение. Проверьте консоль.");
-      }
-    }
-
-    document.getElementById('send-message-btn').addEventListener('click', () => {
-      logDebug("🖱️ Кнопка 'Отправить' нажата");
-      sendMessage();
-    });
+    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        logDebug("⌨️ Enter нажат в поле ввода");
-        sendMessage();
-      }
+      if (e.key === 'Enter') sendMessage();
     });
 
     // === 🔁 Слушаем изменения хеша ===
-    window.addEventListener('load', () => {
-      logDebug('🌐 Страница загружена. Ждём авторизации...');
-      onHashChange();
-    });
+    window.addEventListener('load', onHashChange);
     window.addEventListener('hashchange', onHashChange);
 
     // === 🔐 Авторизация ===
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        logDebug(`🔑 Пользователь авторизован: ${user.uid}`);
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          currentUser = { uid: user.uid, ...userDoc.data() };
-          logDebug(`✅ Загружен профиль пользователя: ${currentUser.displayName || currentUser.email}`);
-          // Перезапустим обработку хеша, если пользователь уже авторизован
-          onHashChange();
-        } else {
-          logDebug(`❌ Профиль пользователя в коллекции 'users' не найден: ${user.uid}`);
-          alert("Профиль не найден");
-          window.location.href = './index.html';
-        }
-      } else {
-        logDebug('🔓 Пользователь не авторизован. Перенаправляем на index.html');
-        // Если не авторизован — редирект
-        window.location.href = './index.html';
-      }
-    });
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists()) {
+      currentUser = { uid: user.uid, ...userDoc.data() };
+      onHashChange(); // ✅ перезапуск только после загрузки currentUser
+    } else {
+      alert("Профиль не найден");
+      window.location.href = './index.html';
+    }
+  } else {
+    window.location.href = './index.html';
+  }
+});
   </script>
 </body>
 </html>
