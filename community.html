@@ -333,6 +333,7 @@
 
   <!-- Firebase SDK -->
   <script type="module">
+
     // Импорт
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
@@ -739,6 +740,27 @@
         location.href = 'index.html';
       }
     });
+
+    // 🔧 ОТЛАДКА: прикрепляем ключевые переменные к window
+// УБЕРИ ЭТО ПОЗЖЕ В ПРОДАКШЕНЕ!
+window.FB_DEBUG = {
+  db,
+  auth,
+  currentUser: () => currentUser,
+  allUsers: () => allUsers,
+  loadMessagesUsers,
+  markMessagesAsRead,
+  showChatWith,
+  query,
+  collection,
+  where,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  onSnapshot,
+  app
+};
+console.log("🎯 [Отладка] Firebase и данные экспортированы в window.FB_DEBUG");
   </script>
 </body>
 </html>
