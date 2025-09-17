@@ -739,6 +739,8 @@ window.acceptFriend = async (reqId, fromId) => {
     if (!isAlreadyFriend) {
       const friends = currentUser.friends ? [...currentUser.friends, fromId] : [fromId];
       await updateDoc(userRef, { friends });
+      // Обновляем currentUser в памяти
+      currentUser.friends = friends;
     }
 
     await deleteDoc(reqDoc);
