@@ -1,4 +1,3 @@
-V 2
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -102,7 +101,8 @@ V 2
       getDoc,
       updateDoc,
       arrayUnion,
-      getDocs
+      getDocs,
+      runTransaction
     } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -164,6 +164,7 @@ V 2
 
         startListeningToMessages(otherUserId);
         markMessagesAsRead(otherUserId);
+        runDiagnostics(otherUserId); // ✅ Запуск диагностики
       } catch (e) {
         console.error("[loadChatAndStartListening] Ошибка:", e);
         document.getElementById('chat-name').textContent = "Ошибка подключения";
@@ -263,6 +264,97 @@ V 2
         console.log("[markMessagesAsRead] Завершено");
       } catch (e) {
         console.error("[markMessagesAsRead] Критическая ошибка:", e);
+      }
+    }
+
+    // ✅ Диагностика правил Firestore
+    async function runDiagnostics(otherUserId) {
+      console.log('%c🔍 Диагностика Firestore create rules', 'font-weight: bold; color: #0066cc; font-size: 14px;');
+
+      if (!currentUser || !otherUserId) {
+        console.warn('⚠️ Недостаточно данных для диагностики');
+        return;
+      }
+
+      // Формируем данные сообщения
+      const [id1, id2] = [currentUser.uid, otherUserId].sort();
+      const userPair = `${id1}_${id2}`;
+      const messageData = {
+        from: currentUser.uid,
+        to: otherUserId,
+        text: "Test message",
+        timestamp: Date.now(),
+        participants: [currentUser.uid, otherUserId],
+        userPair: userPair,
+        seenBy: [currentUser.uid]
+      };
+
+      console.log('📤 Данные для создания сообщения:', messageData);
+
+      // Проверка 1: participants.size == 2
+      if (messageData.participants.length !== 2) {
+        console.error('❌ participants.size != 2 → будет ошибка в правилах');
+      } else {
+        console.log('✅ participants.size == 2');
+      }
+
+      // Проверка 2: participants.hasAll([from, to])
+      const hasAllParticipants = [currentUser.uid, otherUserId].every(id => messageData.participants.includes(id));
+      if (!hasAllParticipants) {
+        console.error('❌ participants не содержит обоих пользователей');
+      } else {
+        console.log('✅ participants содержит обоих');
+      }
+
+      // Проверка 3: userPair правильно отсортирован
+      const expectedUserPair = [currentUser.uid, otherUserId].sort().join('_');
+      if (messageData.userPair !== expectedUserPair) {
+        console.error(`❌ userPair неверный: "${messageData.userPair}" ≠ "${expectedUserPair}"`);
+      } else {
+        console.log('✅ userPair корректен');
+      }
+
+      // Проверка 4: seenBy
+      if (!Array.isArray(messageData.seenBy)) {
+        console.error('❌ seenBy не массив');
+      } else if (messageData.seenBy.length !== 1) {
+        console.error(`❌ seenBy.size != 1 → ${messageData.seenBy.length}`);
+      } else if (!messageData.seenBy.includes(currentUser.uid)) {
+        console.error('❌ seenBy не содержит текущего пользователя');
+      } else {
+        console.log('✅ seenBy корректен');
+      }
+
+      // Проверка 5: to != from
+      if (messageData.to === messageData.from) {
+        console.error('❌ to == from → запрещено правилами');
+      } else {
+        console.log('✅ to != from');
+      }
+
+      // Проверка 6: типы данных
+      if (typeof messageData.from !== 'string') console.warn('⚠️ from не строка');
+      if (typeof messageData.to !== 'string') console.warn('⚠️ to не строка');
+      if (typeof messageData.userPair !== 'string') console.warn('⚠️ userPair не строка');
+
+      // Проверка 7: можно ли прочитать свои же данные (для теста доступа)
+      console.log('📡 Тестируем доступ к созданию документа...');
+
+      const testRef = doc(collection(db, 'messages'));
+
+      try {
+        await runTransaction(db, async (t) => {
+          await t.set(testRef, messageData);
+          console.log('%c🎉 УСПЕХ: Вы можете создать сообщение!', 'color: green; font-weight: bold;');
+          await t.delete(testRef); // удаляем тестовый документ
+        });
+      } catch (e) {
+        if (e.code === 'permission-denied') {
+          console.error('❌ ОШИБКА ПРАВ: Missing or insufficient permissions');
+          console.info('💡 Вероятная причина: правило create использует .sort() или недопустимые операции');
+        } else {
+          console.error('❌ Ошибка:', e);
+        }
       }
     }
 
