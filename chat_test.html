@@ -1,4 +1,4 @@
-V4
+V5
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +6,27 @@ V4
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Чат</title>
   <style>
+    /* === ФИКС .theory-box В МОИХ СООБЩЕНИЯХ === */
+
+.msg-from-me .theory-box {
+  background-color: #cce6ef !important;
+  border-color: #99d1e0 !important;
+  color: #00505c !important;
+}
+
+.msg-from-me .theory-box h3 {
+  color: #006680 !important;
+  border-bottom-color: #99d1e0 !important;
+}
+
+.msg-from-me .theory-box p {
+  color: #00505c !important;
+}
+
+.msg-from-me .theory-box .example {
+  color: #004d40 !important;
+  background-color: #e6f7ff !important;
+}
     /* Фикс цвета текста в source-text внутри МОИХ сообщений */
 .msg-from-me .source-text {
   background-color: #cce6ef !important;
@@ -391,6 +412,9 @@ V4
         iframe.className = 'char-frame';
         iframe.src = `./lesson1/tasks/task1.html#${encodeURIComponent(taskData.char)}`;
         iframe.title = `Иероглиф ${taskData.char}`;
+        iframe.style.width = '120%';
+        iframe.style.height = '400px';
+
         bubble.appendChild(iframe);
       } else if (taskData.type === 'paragraph') {
         const div = document.createElement('div');
