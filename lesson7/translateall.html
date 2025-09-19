@@ -1,4 +1,3 @@
-V4
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -476,28 +475,6 @@ V4
     <script src="segmentation.js"></script>
     <script src="extra.js"></script>
     <script>
-// ==================== FIREBASE ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
-let auth = null;
-let db = null;
-let currentUser = null;
-let docRef = null;
-let getDocRef = null;
-let updateDocRef = null;
-// Дополнительные переменные для Firestore
-let collectionRef = null;
-let queryRef = null;
-let whereRef = null;
-let getDocsRef = null; // <-- Эта переменная была пропущена или объявлена дважды
-// ==================== КОНЕЦ FIREBASE ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ ====================
-        // Импортируем дополнительные функции Firestore
-        let collectionRef = null;
-        let queryRef = null;
-        let whereRef = null;
-
-        function getRandomDecoyCount(min = 1, max = 5) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
         // Функция инициализации Firebase
 // ==================== FIREBASE INIT ====================
 // Определяем глобальные переменные для Firebase
