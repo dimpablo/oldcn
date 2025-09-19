@@ -1,4 +1,4 @@
-V3
+V4
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +6,28 @@ V3
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Чат</title>
   <style>
+    /* Фикс для слов внутри моих сообщений */
+.msg-from-me .words-container,
+.msg-from-me .answer-container {
+  background-color: #cce6ef !important;
+  border-color: #99d1e0;
+}
+
+.msg-from-me .word {
+  background-color: white !important;
+  color: #333 !important; /* тёмный текст */
+  border-color: #99d1e0;
+}
+
+.msg-from-me .word.selected {
+  background-color: #ff6b6b !important;
+  color: white !important;
+}
+
+.msg-from-me .result-message {
+  background-color: #e8f4f1 !important;
+  color: #3c766f !important;
+}
     body {
       margin: 0;
       padding: 0;
