@@ -277,6 +277,17 @@ V7
       font-size: 14px;
       cursor: pointer;
     }
+
+        /* Стиль для мерцающего красного инпута */
+    .input-error {
+      border: 2px solid #ff4d4d;
+      animation: blink 0.5s ease-in-out 3;
+    }
+
+    @keyframes blink {
+      0%, 100% { border-color: #ff4d4d; box-shadow: 0 0 5px rgba(255, 77, 77, 0.7); }
+      50% { border-color: #ffcccc; box-shadow: none; }
+    }
   </style>
 </head>
 <body>
@@ -299,10 +310,6 @@ V7
       <button id="close-payload">✕</button>
     </div>
     <div id="payload-content"></div>
-    <div style="margin-top: 8px; display: flex; gap: 8px;">
-      <button id="insert-payload-btn">Добавить к сообщению</button>
-      <button id="send-payload-btn">Отправить сразу</button>
-    </div>
   </div>
 
   <!-- Firebase SDK -->
@@ -607,6 +614,7 @@ V7
     }
   }
 
+
   function insertPayloadToInput(payload) {
     const input = document.getElementById('message-input');
     if (!input.value) {
@@ -616,12 +624,13 @@ V7
   }
 
   // === ОСНОВНАЯ ЛОГИКА ЧАТА ===
+  let currentPayload = null; // Будет хранить payload из URL
 
   function getOtherUserIdFromHash() {
     const match = window.location.hash.match(/^#chat\/([^\/]+)(?:\/.*)?$/);
     return match ? match[1] : null;
   }
-
+  
   function onHashChange() {
     console.log("[onHashChange] Вызвано");
     const otherUserId = getOtherUserIdFromHash();
@@ -639,6 +648,7 @@ V7
     console.log(`[onHashChange] Загружаем чат с пользователем: ${otherUserId}`);
     loadChatAndStartListening(otherUserId);
   }
+
 
   async function loadChatAndStartListening(otherUserId) {
     try {
@@ -659,8 +669,13 @@ V7
       // === Автоматическая обработка payload ===
       const payload = getPayloadFromHash();
       if (payload) {
-        insertPayloadToInput(payload);
+        // --- ИЗМЕНЕНИЕ: Сохраняем payload в глобальную переменную вместо вставки в input ---
+        currentPayload = payload;
         showPreview(payload);
+      } else {
+        // --- ИЗМЕНЕНИЕ: Если в URL нет payload, сбрасываем переменную и скрываем панель ---
+        currentPayload = null;
+        document.getElementById('payload-preview').style.display = 'none';
       }
 
     } catch (e) {
@@ -668,6 +683,7 @@ V7
       document.getElementById('chat-name').textContent = "Ошибка подключения";
     }
   }
+
 
   function renderMessages(msgs) {
     const list = document.getElementById('messages-list');
@@ -757,17 +773,31 @@ V7
     const input = document.getElementById('message-input');
     const text = input.value.trim();
 
+    // --- ИЗМЕНЕНИЕ: Проверка на пустое поле и мерцание ---
     if (!text) {
-      alert("Сообщение не может быть пустым");
-      return;
+      // Добавляем класс для мерцания
+      input.classList.add('input-error');
+      // Убираем класс через 2 секунды, чтобы анимация успела завершиться
+      setTimeout(() => {
+        input.classList.remove('input-error');
+      }, 2000);
+      return; // Не отправляем сообщение
     }
+
     if (!otherUser || !currentUser) return;
+
+    // --- ИЗМЕНЕНИЕ: Формируем финальный текст сообщения ---
+    let finalText = text;
+    if (currentPayload) {
+      finalText += "’‘’‘ " + currentPayload + " ’‘’‘";
+    }
 
     const userPair = [currentUser.uid, otherUser.id].sort().join('_');
     const messageData = {
       from: currentUser.uid,
       to: otherUser.id,
-      text: text,
+      // --- ИЗМЕНЕНИЕ: Отправляем finalText вместо text ---
+      text: finalText,
       timestamp: Date.now(),
       participants: [currentUser.uid, otherUser.id],
       userPair: userPair,
@@ -777,6 +807,9 @@ V7
     try {
       await addDoc(collection(db, 'messages'), messageData);
       input.value = '';
+      // --- ИЗМЕНЕНИЕ: После успешной отправки очищаем currentPayload и скрываем панель ---
+      currentPayload = null;
+      document.getElementById('payload-preview').style.display = 'none';
     } catch (e) {
       alert("Ошибка отправки: " + e.message);
     }
