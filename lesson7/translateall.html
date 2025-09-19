@@ -6,6 +6,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
 <style>
+    /* === МОДАЛЬНЫЕ ОКНА === */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 600px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eaeaea;
+    background: #f8f6fb;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #5a5a5a;
+    font-size: 16px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #555;
+}
+
+.friends-grid {
+    display: grid;
+    gap: 8px;
+    padding: 16px 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.friend-card {
+    padding: 12px;
+    background: #f9f7fc;
+    border: 1px solid #d9d4e7;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.friend-card:hover {
+    background: #f0eaf9;
+    border-color: #d9d4e7;
+    transform: translateY(-1px);
+}
+
+.friend-card img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.friend-card-info {
+    flex: 1;
+}
+
+.friend-card-name {
+    font-weight: bold;
+    color: #5a5a5a;
+    margin: 0;
+}
+
+.friend-card-points {
+    font-size: 12px;
+    color: #777;
+}
+
+.info-message {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* === ЧАТ МОДАЛЬНОЕ ОКНО === */
+.chat-modal .modal-header {
+    background: #fffaf7;
+}
+
+#loadingIframe {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.chat-iframe {
+    width: 100%;
+    min-height: 500px;
+    border: none;
+    border-top: 1px solid #eee;
+    border-radius: 0 0 12px 12px;
+    display: none;
+}
 #sendTaskBtn {
     padding: 2px 6px;
     font-size: 14px;
@@ -758,7 +883,132 @@ function getTaskShareString(task, currentAnswerWords) {
             const closeModalBtn = document.getElementById('closeModalBtn');
             const shareTaskFrame = document.getElementById('shareTaskFrame');
             const loadingIframe = document.getElementById('loadingIframe');
+// === ЭЛЕМЕНТЫ DOM ===
+const modalSelectRecipient = document.getElementById('modalSelectRecipient');
+const closeRecipientModalBtn = document.getElementById('closeRecipientModalBtn');
+const recipientList = document.getElementById('recipientList');
+const noFriendsMessage = document.getElementById('noFriendsMessage');
 
+const modalShareTask = document.getElementById('modalShareTask');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const shareTaskFrame = document.getElementById('shareTaskFrame');
+const loadingIframe = document.getElementById('loadingIframe');
+
+// === ОБРАБОТЧИК КНОПКИ ✉️ ===
+sendTaskBtn.addEventListener('click', async function() {
+    playSound(uiSounds.click);
+
+    if (!currentUser || !currentUser.uid) {
+        alert('⛔ Сначала войдите в аккаунт.');
+        return;
+    }
+
+    modalSelectRecipient.style.display = 'flex';
+    loadFriendsForSelection();
+});
+
+// === ЗАГРУЗКА ДРУЗЕЙ ===
+async function loadFriendsForSelection() {
+    recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка друзей...</div>';
+    noFriendsMessage.style.display = 'none';
+
+    if (!currentUser.friends || currentUser.friends.length === 0) {
+        recipientList.innerHTML = '';
+        noFriendsMessage.style.display = 'block';
+        return;
+    }
+
+    try {
+        const friendsRef = collection(db, 'users');
+        const q = query(friendsRef, where('__name__', 'in', currentUser.friends.slice(0, 10)));
+        const querySnap = await getDocRef(q);
+
+        const friends = [];
+        querySnap.forEach(doc => {
+            friends.push({ id: doc.id, ...doc.data() });
+        });
+
+        recipientList.innerHTML = '';
+
+        if (friends.length === 0) {
+            recipientList.innerHTML = '<div style="text-align:center;color:#777">Друзья не найдены</div>';
+            return;
+        }
+
+        friends.forEach(friend => {
+            const card = document.createElement('div');
+            card.className = 'friend-card';
+            card.innerHTML = `
+                <img src="${friend.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg'}" alt="${friend.displayName}">
+                <div class="friend-card-info">
+                    <div class="friend-card-name">${friend.displayName}</div>
+                    <div class="friend-card-points">Баллы: ${friend.points || 0}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => selectRecipient(friend));
+            recipientList.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Ошибка загрузки друзей:", error);
+        recipientList.innerHTML = '<div style="text-align:center;color:red">Ошибка загрузки</div>';
+    }
+}
+
+// === ВЫБОР ПОЛУЧАТЕЛЯ ===
+function selectRecipient(friend) {
+    modalSelectRecipient.style.display = 'none';
+
+    const task = tasks[currentTaskIndex];
+    const shareString = getTaskShareString(task, currentAnswer);
+    const encodedShareString = encodeURIComponent(shareString);
+    const chatUrl = `../chat.html#chat/${friend.id}/${encodedShareString}`;
+
+    // Показываем модальное окно чата
+    modalShareTask.style.display = 'flex';
+    shareTaskFrame.src = '';
+    loadingIframe.style.display = 'block';
+    shareTaskFrame.style.display = 'none';
+
+    setTimeout(() => {
+        shareTaskFrame.src = chatUrl;
+    }, 10);
+
+    shareTaskFrame.onload = () => {
+        loadingIframe.style.display = 'none';
+        shareTaskFrame.style.display = 'block';
+    };
+}
+
+// === ЗАКРЫТИЕ МОДАЛОК ===
+closeRecipientModalBtn?.addEventListener('click', () => {
+    modalSelectRecipient.style.display = 'none';
+});
+
+closeModalBtn?.addEventListener('click', () => {
+    modalShareTask.style.display = 'none';
+    shareTaskFrame.src = '';
+});
+
+// Закрытие по Esc
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (modalSelectRecipient.style.display !== 'none') {
+            modalSelectRecipient.style.display = 'none';
+        }
+        if (modalShareTask.style.display !== 'none') {
+            modalShareTask.style.display = 'none';
+            shareTaskFrame.src = '';
+        }
+    }
+});
+
+// Закрытие по клику мимо
+modalSelectRecipient?.addEventListener('click', (e) => {
+    if (e.target === modalSelectRecipient) modalSelectRecipient.style.display = 'none';
+});
+modalShareTask?.addEventListener('click', (e) => {
+    if (e.target === modalShareTask) modalShareTask.style.display = 'none';
+});
             // Закрытие модалки
             closeModalBtn.addEventListener('click', () => {
                 modalShareTask.style.display = 'none';
@@ -1115,6 +1365,33 @@ allSentences.forEach(sentence => {
             <button id="closeModalBtn" style="background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
         </div>
         <iframe id="shareTaskFrame" src="" style="flex: 1; width: 100%; min-height: 500px; border: none; border-radius: 8px;"></iframe>
+    </div>
+</div>
+<!-- Модальное окно выбора получателя -->
+<div id="modalSelectRecipient" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📬 Выберите получателя</h3>
+            <button id="closeRecipientModalBtn" class="modal-close">×</button>
+        </div>
+        <div id="recipientList" class="friends-grid">
+            <!-- Список друзей будет загружен здесь -->
+        </div>
+        <div id="noFriendsMessage" class="info-message">
+            У вас пока нет друзей. Добавьте их в разделе "Сообщество".
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно чата -->
+<div id="modalShareTask" class="modal-overlay">
+    <div class="modal-content chat-modal">
+        <div class="modal-header">
+            <h3>💬 Отправка задания</h3>
+            <button id="closeModalBtn" class="modal-close">×</button>
+        </div>
+        <div id="loadingIframe">Загрузка чата...</div>
+        <iframe id="shareTaskFrame" src="" class="chat-iframe" frameborder="0"></iframe>
     </div>
 </div>
 </body>
