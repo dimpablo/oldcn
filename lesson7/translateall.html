@@ -64,33 +64,14 @@
         border: 1px solid #d9d4e7;
         border-radius: 8px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        font-size: 14px;
+        color: #5a5a5a;
         transition: all 0.2s ease;
     }
     .friend-card:hover {
         background: #f0eaf9;
         border-color: #d9d4e7;
         transform: translateY(-1px);
-    }
-    .friend-card img {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    .friend-card-info {
-        flex: 1;
-    }
-    .friend-card-name {
-        font-weight: bold;
-        color: #5a5a5a;
-        margin: 0;
-    }
-    .friend-card-points {
-        font-size: 12px;
-        color: #777;
     }
     .info-message {
         text-align: center;
@@ -494,9 +475,6 @@
     <script src="segmentation.js"></script>
     <script src="extra.js"></script>
     <script>
-
-        
-
         // ==================== FIREBASE INIT ====================
         // Определяем глобальные переменные для Firebase
         let auth = null;
@@ -505,16 +483,24 @@
         let docRef = null;
         let getDocRef = null;
         let updateDocRef = null;
+        // Импортируем дополнительные функции Firestore
+        let collectionRef = null;
+        let queryRef = null;
+        let whereRef = null;
+
         function getRandomDecoyCount(min = 1, max = 5) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
+
         // Функция инициализации Firebase
         async function initFirebase() {
             try {
                 // Динамически импортируем модули Firebase
                 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
                 const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
+                // Импортируем все необходимые функции Firestore
                 const { getFirestore, doc, getDoc, updateDoc, collection, query, where } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+
                 const firebaseConfig = {
                     apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
                     authDomain: "antient-9bff0.firebaseapp.com",
@@ -524,6 +510,7 @@
                     appId: "1:311792589414:web:5fff3154735007c2006ba7",
                     measurementId: "G-W4ZQXWRTKK"
                 };
+
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
@@ -531,42 +518,47 @@
                 docRef = doc;
                 getDocRef = getDoc;
                 updateDocRef = updateDoc;
+                // Присваиваем дополнительные функции Firestore
+                collectionRef = collection;
+                queryRef = query;
+                whereRef = where;
 
-// ИСПРАВЛЕННЫЙ КОД:
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        console.log('🔐 Пользователь вошёл:', user.uid);
+                // Используем async/await для получения полного профиля пользователя
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        console.log('🔐 Пользователь вошёл (auth state):', user.uid);
+                        
+                        try {
+                            // Запрашиваем документ пользователя из Firestore
+                            const userDocRef = docRef(db, 'users', user.uid);
+                            const userDocSnap = await getDocRef(userDocRef);
 
-        try {
-            // 1. Создаём ссылку на документ пользователя
-            const userDocRef = doc(db, 'users', user.uid);
-            // 2. Запрашиваем документ ПО ЭТОЙ ССЫЛКЕ
-            const userDocSnap = await getDoc(userDocRef); // <-- Исправлено: было userDocSnap
-
-            if (userDocSnap.exists()) {
-                // Теперь currentUser имеет .friends
-                currentUser = { uid: user.uid, ...userDocSnap.data() };
-                console.log('✅ Профиль пользователя загружен:', currentUser);
-            } else {
-                console.error('❌ Профиль не найден');
-                location.href = '../index.html';
-            }
-        } catch (error) {
-            console.error('❌ Ошибка загрузки профиля:', error);
-            alert('Не удалось загрузить данные пользователя.');
-        }
-    } else {
-        console.warn('🔒 Не авторизован');
-        location.href = '../index.html';
-    }
-});
-
+                            if (userDocSnap.exists()) {
+                                // Теперь currentUser имеет .friends и другие данные из Firestore
+                                currentUser = { uid: user.uid, ...userDocSnap.data() };
+                                console.log('✅ Профиль пользователя загружен из Firestore:', currentUser);
+                            } else {
+                                console.error('❌ Профиль не найден в Firestore');
+                                // location.href = '../index.html'; // Не будем редиректить в библиотечной функции
+                            }
+                        } catch (profileError) {
+                            console.error('❌ Ошибка загрузки профиля из Firestore:', profileError);
+                            // alert('Не удалось загрузить данные пользователя.');
+                        }
+                    } else {
+                        console.warn('🔒 Пользователь не авторизован');
+                        currentUser = null; // Убедимся, что currentUser null, если не авторизован
+                        // location.href = '../index.html';
+                    }
+                });
                 console.log("Firebase инициализирован");
             } catch (e) {
                 console.error("❌ Ошибка инициализации Firebase:", e);
                 // Даже если Firebase не инициализирован, приложение продолжит работу
             }
         }
+
+
         // ==================== СИСТЕМА БАЛЛОВ ====================
         async function updateUserPoints(pointsChange) {
             // Если Firebase не инициализирован или пользователь не авторизован
@@ -577,19 +569,25 @@ onAuthStateChanged(auth, async (user) => {
                 if(message) console.log(message);
                 return;
             }
+
             try {
                 const userRef = docRef(db, 'users', currentUser.uid);
+
                 // Получаем текущие баллы пользователя
                 const userDoc = await getDocRef(userRef);
                 let currentPoints = 0;
+
                 if (userDoc.exists()) {
                     currentPoints = userDoc.data().points || 0;
                 }
+
                 // Обновляем баллы с учетом текущих
                 const newPoints = currentPoints + pointsChange;
+
                 await updateDocRef(userRef, {
                     points: newPoints
                 });
+
                 currentUser.points = newPoints;
                 console.log(`[Баллы] Изменение: ${pointsChange}. Теперь: ${newPoints}`);
                 // Опционально: обновить отображение баллов на странице, если есть
@@ -597,6 +595,8 @@ onAuthStateChanged(auth, async (user) => {
                 console.error("❌ Не удалось сохранить баллы в Firestore:", e);
             }
         }
+
+
         // ==================== ЗВУКИ ИНТЕРФЕЙСА ====================
         const uiSounds = {
             click: null,
@@ -606,6 +606,7 @@ onAuthStateChanged(auth, async (user) => {
             collapse: null,
             hint: null // Новый звук для подсказки
         };
+
         // Функция для предзагрузки одного звука
         function preloadSound(path) {
             return new Promise((resolve, reject) => {
@@ -616,11 +617,13 @@ onAuthStateChanged(auth, async (user) => {
                 audio.addEventListener('error', reject);
             });
         }
+
         // Функция для предзагрузки всех звуков интерфейса
         async function preloadUISounds() {
             try {
                 // Относительный путь от translateall.html к папке Wav
                 const basePath = '../Wav/';
+
                 // Предзагружаем звуки
                 uiSounds.click = await preloadSound(basePath + 'Click_Standard_00.wav');
                 uiSounds.hover = await preloadSound(basePath + 'Click_Soft_00.wav');
@@ -629,11 +632,13 @@ onAuthStateChanged(auth, async (user) => {
                 uiSounds.collapse = await preloadSound(basePath + 'Slide_Electronic_01.wav');
                 // Звук для подсказки
                 uiSounds.hint = await preloadSound(basePath + 'Click_Mechanical_00.wav');
+
                 console.log('Все звуки интерфейса успешно загружены');
             } catch (error) {
                 console.warn('Не удалось загрузить некоторые звуки интерфейса:', error);
             }
         }
+
         // Функция для воспроизведения звука
         function playSound(sound) {
             if (sound) {
@@ -645,46 +650,58 @@ onAuthStateChanged(auth, async (user) => {
                 });
             }
         }
+
         // ==================== СУЩЕСТВУЮЩИЙ КОД ====================
+
         // Кэш для аудиофайлов
         const audioCache = new Map();
         let hintUsedForCurrentTask = false; // Флаг использования подсказки
+
         // Функция для предзагрузки аудио
         function preloadAudioForCharacters(characters) {
             characters.forEach(hanzi => {
                 // Проверяем, есть ли иероглиф в словаре charData
                 if (!charData || !charData.hasOwnProperty(hanzi)) return;
+
                 const charInfo = charData[hanzi];
                 if (!charInfo || !charInfo.pinyin) return;
+
                 const pinyin = charInfo.pinyin;
+
                 let cleanPinyin = pinyin
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .replace(/ü/g, 'u')
                     .replace(/v/g, 'u');
+
                 let tone = '1';
                 if (pinyin.includes('ā') || pinyin.includes('ō') || pinyin.includes('ē') || pinyin.includes('ī') || pinyin.includes('ū') || pinyin.includes('ǖ')) tone = '1';
                 else if (pinyin.includes('á') || pinyin.includes('ó') || pinyin.includes('é') || pinyin.includes('í') || pinyin.includes('ú') || pinyin.includes('ǘ')) tone = '2';
                 else if (pinyin.includes('ǎ') || pinyin.includes('ǒ') || pinyin.includes('ě') || pinyin.includes('ǐ') || pinyin.includes('ǔ') || pinyin.includes('ǚ')) tone = '3';
                 else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
+
                 const pinyinKey = cleanPinyin + tone;
                 // Исправляем URL - убираем лишние пробелы
                 const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+
                 if (!audioCache.has(hanzi)) {
                     const audio = new Audio();
                     audio.src = url;
                     audio.preload = 'auto';
                     audioCache.set(hanzi, audio);
+
                     audio.addEventListener('error', (e) => {
                         console.warn(`Не удалось предзагрузить аудио для ${hanzi}`);
                     });
                 }
             });
         }
+
         // Функция для озвучивания иероглифов с визуальной обратной связью
         function playHanziSound(hanzi, element) {
             // Проверяем, есть ли иероглиф в словаре charData
             if (!charData || !charData.hasOwnProperty(hanzi)) return;
+
             // Визуальная обратная связь - подсветка перламутром
             if (element) {
                 const originalBg = element.style.backgroundColor || (element.classList.contains('selected') ? '#2ecc71' : '#fff');
@@ -693,6 +710,7 @@ onAuthStateChanged(auth, async (user) => {
                     element.style.backgroundColor = originalBg;
                 }, 300);
             }
+
             if (audioCache.has(hanzi)) {
                 const audio = audioCache.get(hanzi);
                 const audioClone = audio.cloneNode();
@@ -702,50 +720,63 @@ onAuthStateChanged(auth, async (user) => {
             } else {
                 const charInfo = charData[hanzi];
                 if (!charInfo || !charInfo.pinyin) return;
+
                 const pinyin = charInfo.pinyin;
+
                 let cleanPinyin = pinyin
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .replace(/ü/g, 'u')
                     .replace(/v/g, 'u');
+
                 let tone = '1';
                 if (pinyin.includes('ā') || pinyin.includes('ō') || pinyin.includes('ē') || pinyin.includes('ī') || pinyin.includes('ū') || pinyin.includes('ǖ')) tone = '1';
                 else if (pinyin.includes('á') || pinyin.includes('ó') || pinyin.includes('é') || pinyin.includes('í') || pinyin.includes('ú') || pinyin.includes('ǘ')) tone = '2';
                 else if (pinyin.includes('ǎ') || pinyin.includes('ǒ') || pinyin.includes('ě') || pinyin.includes('ǐ') || pinyin.includes('ǔ') || pinyin.includes('ǚ')) tone = '3';
                 else if (pinyin.includes('à') || pinyin.includes('ò') || pinyin.includes('è') || pinyin.includes('ì') || pinyin.includes('ù') || pinyin.includes('ǜ')) tone = '4';
+
                 const pinyinKey = cleanPinyin + tone;
                 // Исправляем URL - убираем лишние пробелы
                 const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
+
                 const audio = new Audio(url);
                 audio.play().catch(e => {
                     console.warn(`Не удалось воспроизвести звук для ${hanzi}: ${url}`);
                 });
             }
         }
+
         // Функция для озвучивания иероглифа из словаря с эффектом свечения
         function playDictionaryHanziSound(hanzi, element) {
             // Добавляем класс свечения
             element.classList.add('glow');
+
             // Удаляем класс через 300мс
             setTimeout(() => {
                 element.classList.remove('glow');
             }, 300);
+
             // Воспроизводим звук
             playHanziSound(hanzi, element);
         }
+
         // Функция для отображения словаря
         function renderDictionary() {
             const dictionaryContent = document.getElementById('dictionaryContent');
             dictionaryContent.innerHTML = '';
+
             // Извлекаем текст из всех нужных мест
             const sourceText = document.getElementById('sourceText').textContent;
             const wordsList = document.getElementById('wordsList').textContent;
             const answerList = document.getElementById('answerList').textContent;
+
             const allText = sourceText + wordsList + answerList;
             const chars = [...allText]; // разбиваем на символы
+
             // Получаем уникальные символы, которые есть в charData
             const uniqueChars = [...new Set(chars)]
                 .filter(char => charData && charData.hasOwnProperty(char));
+
             uniqueChars.forEach(char => {
                 const charInfo = charData[char];
                 const dictItem = document.createElement('div');
@@ -756,20 +787,24 @@ onAuthStateChanged(auth, async (user) => {
                     <div class="dict-pinyin">${charInfo.pinyin}</div>
                     <div class="dict-meaning">${charInfo.meaning}</div>
                 `;
+
                 // Добавляем звук при клике на элемент словаря
                 dictItem.addEventListener('click', function() {
                     playSound(uiSounds.click); // Воспроизводим звук интерфейса
                     playDictionaryHanziSound(char, this);
                 });
+
                 dictionaryContent.appendChild(dictItem);
             });
         }
+
         document.addEventListener('DOMContentLoaded', async function() { // async
             // ==================== ИНИЦИАЛИЗАЦИЯ ====================
             await initFirebase(); // Дожидаемся инициализации Firebase
             await preloadUISounds(); // Дожидаемся загрузки звуков
+
             // ==================== ФУНКЦИИ ====================
-            // Функция для формирования строки задания
+            // Функция для формирования строки задания с правильными кавычками
             function getTaskShareString(task, currentAnswerWords) {
                 const tokens = task.words.map(w => `"${w}"`).join(', ');
                 if (task.type === 'toTranslation') {
@@ -778,11 +813,13 @@ onAuthStateChanged(auth, async (user) => {
                     return `’‘’‘ [translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}} ’‘’‘`;
                 }
             }
+
             // ==================== СОБЫТИЯ ИНТЕРФЕЙСА ====================
             // Сворачиваемый словарь
             const collapsibleHeader = document.getElementById('collapsibleHeader');
             const collapsibleContent = document.getElementById('collapsibleContent');
             const sendTaskBtn = document.getElementById('sendTaskBtn');
+
             // === ЭЛЕМЕНТЫ DOM ДЛЯ МОДАЛЬНЫХ ОКОН ===
             const modalSelectRecipient = document.getElementById('modalSelectRecipient');
             const closeRecipientModalBtn = document.getElementById('closeRecipientModalBtn');
@@ -794,129 +831,108 @@ onAuthStateChanged(auth, async (user) => {
             const loadingIframe = document.getElementById('loadingIframe');
 
             // === ОБРАБОТЧИК КНОПКИ ✉️ ===
-            // УДАЛЕН ВТОРОЙ (НЕПРАВИЛЬНЫЙ) ОБРАБОТЧИК sendTaskBtn
-
             sendTaskBtn.addEventListener('click', async function() {
                 playSound(uiSounds.click);
+
                 if (!currentUser || !currentUser.uid) {
                     alert('⛔ Сначала войдите в аккаунт.');
                     return;
                 }
+
+                // Проверяем, загружен ли массив друзей
+                if (!Array.isArray(currentUser.friends)) {
+                    alert('Данные о друзьях ещё загружаются или отсутствуют... Попробуйте позже.');
+                    console.warn("currentUser.friends не является массивом или отсутствует:", currentUser.friends);
+                    return;
+                }
+
                 modalSelectRecipient.style.display = 'flex';
                 loadFriendsForSelection();
             });
 
             // === ЗАГРУЗКА ДРУЗЕЙ ===
+            async function loadFriendsForSelection() {
+                recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка друзей...</div>';
+                noFriendsMessage.style.display = 'none';
 
-// === ЗАГРУЗКА ДРУЗЕЙ ===
-async function loadFriendsForSelection() {
-    recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка друзей...</div>';
-    noFriendsMessage.style.display = 'none';
+                // Повторная проверка внутри функции
+                if (!Array.isArray(currentUser.friends) || currentUser.friends.length === 0) {
+                    recipientList.innerHTML = '';
+                    noFriendsMessage.style.display = 'block';
+                    return;
+                }
 
-    if (!currentUser.friends || currentUser.friends.length === 0) {
-        recipientList.innerHTML = '';
-        noFriendsMessage.style.display = 'block';
-        return;
-    }
+                try {
+                    // Создаем ссылку на коллекцию пользователей
+                    const friendsRef = collectionRef(db, 'users');
+                    // Создаем запрос с фильтром по ID друзей
+                    const q = queryRef(friendsRef, whereRef('__name__', 'in', currentUser.friends));
+                    // Выполняем запрос
+                    const querySnap = await getDocRef(q);
 
-    try {
-        const friendsRef = collection(db, 'users');
-        const q = query(friendsRef, where('__name__', 'in', currentUser.friends));
-        const querySnap = await getDocRef(q);
+                    const friends = [];
+                    querySnap.forEach(doc => {
+                        friends.push({ id: doc.id, ...doc.data() });
+                    });
 
-        const friends = [];
-        querySnap.forEach(doc => {
-            friends.push({ id: doc.id, ...doc.data() });
-        });
+                    recipientList.innerHTML = '';
 
-        recipientList.innerHTML = '';
+                    if (friends.length === 0) {
+                        recipientList.innerHTML = '<div style="text-align:center;color:#777">Друзья не найдены</div>';
+                        return;
+                    }
 
-        if (friends.length === 0) {
-            recipientList.innerHTML = '<div style="text-align:center;color:#777">Друзья не найдены</div>';
-            return;
-        }
-
-        // Только список имён и баллов
-        friends.forEach(friend => {
-            const card = document.createElement('div');
-            card.className = 'friend-card';
-            // Только текст
-            card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
-            card.style.cssText = `
-                padding: 12px;
-                background: #f9f7fc;
-                border: 1px solid #d9d4e7;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 14px;
-                color: #5a5a5a;
-                transition: all 0.2s;
-            `;
-            card.addEventListener('click', () => selectRecipient(friend));
-            card.addEventListener('mouseenter', () => {
-                card.style.backgroundColor = '#f0eaf9';
-                card.style.borderColor = '#d9d4e7';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.backgroundColor = '#f9f7fc';
-                card.style.borderColor = '#d9d4e7';
-            });
-            recipientList.appendChild(card);
-        });
-    } catch (error) {
-        console.error("Ошибка загрузки друзей:", error);
-        recipientList.innerHTML = '<div style="text-align:center;color:red">Ошибка загрузки</div>';
-    }
-}
+                    // Только список имён и баллов
+                    friends.forEach(friend => {
+                        const card = document.createElement('div');
+                        card.className = 'friend-card';
+                        // Только текст
+                        card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
+                        // Стили уже определены в CSS, но можно добавить и инлайновые при необходимости
+                        card.addEventListener('click', () => selectRecipient(friend));
+                        recipientList.appendChild(card);
+                    });
+                } catch (error) {
+                    console.error("Ошибка загрузки друзей:", error);
+                    recipientList.innerHTML = '<div style="text-align:center;color:red">Ошибка загрузки</div>';
+                }
+            }
 
             // === ВЫБОР ПОЛУЧАТЕЛЯ ===
             function selectRecipient(friend) {
                 modalSelectRecipient.style.display = 'none';
+
                 const task = tasks[currentTaskIndex];
                 const shareString = getTaskShareString(task, currentAnswer);
                 const encodedShareString = encodeURIComponent(shareString);
                 const chatUrl = `../chat.html#chat/${friend.id}/${encodedShareString}`;
+
                 // Показываем модальное окно чата
                 modalShareTask.style.display = 'flex';
                 shareTaskFrame.src = '';
                 loadingIframe.style.display = 'block';
                 shareTaskFrame.style.display = 'none';
+
                 setTimeout(() => {
                     shareTaskFrame.src = chatUrl;
                 }, 10);
+
                 shareTaskFrame.onload = () => {
                     loadingIframe.style.display = 'none';
                     shareTaskFrame.style.display = 'block';
                 };
             }
-sendTaskBtn.addEventListener('click', async function() {
-    playSound(uiSounds.click);
-
-    if (!currentUser || !currentUser.uid) {
-        alert('⛔ Сначала войдите в аккаунт.');
-        return;
-    }
-
-    // Если friends ещё не загружен
-    if (!currentUser.friends) {
-        alert('Данные о друзьях ещё загружаются... Попробуйте через несколько секунд.');
-        return;
-    }
-
-    modalSelectRecipient.style.display = 'flex';
-    loadFriendsForSelection();
-});
-
-
 
             // === ЗАКРЫТИЕ МОДАЛОК ===
             closeRecipientModalBtn?.addEventListener('click', () => {
                 modalSelectRecipient.style.display = 'none';
             });
+
             closeModalBtn?.addEventListener('click', () => {
                 modalShareTask.style.display = 'none';
                 shareTaskFrame.src = '';
             });
+
             // Закрытие по Esc
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
@@ -929,15 +945,15 @@ sendTaskBtn.addEventListener('click', async function() {
                     }
                 }
             });
+
             // Закрытие по клику мимо
             modalSelectRecipient?.addEventListener('click', (e) => {
                 if (e.target === modalSelectRecipient) modalSelectRecipient.style.display = 'none';
             });
+
             modalShareTask?.addEventListener('click', (e) => {
                 if (e.target === modalShareTask) modalShareTask.style.display = 'none';
             });
-
-            // УДАЛЕН ВТОРОЙ (НЕПРАВИЛЬНЫЙ) ОБРАБОТЧИК closeModalBtn
 
             collapsibleHeader.addEventListener('click', function() {
                 this.classList.toggle('active');
@@ -949,27 +965,34 @@ sendTaskBtn.addEventListener('click', async function() {
                     playSound(uiSounds.collapse);
                 }
             });
+
             // Кнопка "На главную"
             const returnBtn = document.getElementById('returnBtn');
             returnBtn.addEventListener('click', function() {
                 playSound(uiSounds.click);
                 window.location.href = '../index.html';
             });
+
             // Hover эффекты для кнопок (кроме hintBtn)
             document.querySelectorAll('.btn:not(#hintBtn), .word, .dict-item').forEach(el => {
                 el.addEventListener('mouseenter', () => playSound(uiSounds.hover));
             });
+
             // ==================== ЛОГИКА ПОДСКАЗКИ ====================
             const hintBtn = document.getElementById('hintBtn');
             const hintContainer = document.getElementById('hintContainer');
             const hintText = document.getElementById('hintText');
+
             hintBtn.addEventListener('click', async function() {
                 if (hintUsedForCurrentTask) return; // Защита от повторного использования
+
                 playSound(uiSounds.hint); // Воспроизводим звук подсказки
                 hintUsedForCurrentTask = true;
                 this.disabled = true;
+
                 // Снимаем баллы
                 await updateUserPoints(-7);
+
                 // Показываем подсказку
                 const currentTask = tasks[currentTaskIndex];
                 if (currentTask.type === 'toTranslation') {
@@ -980,6 +1003,7 @@ sendTaskBtn.addEventListener('click', async function() {
                 }
                 hintContainer.classList.add('show');
             });
+
             // ==================== ОСНОВНАЯ ЛОГИКА ====================
             // Подготовка данных
             // Проверка SentenceData теперь внутри DOMContentLoaded, где она гарантированно загружена
@@ -989,6 +1013,7 @@ sendTaskBtn.addEventListener('click', async function() {
                 document.getElementById('sourceText').textContent = "Ошибка: данные урока не загружены.";
                 return;
             }
+
             // Проверяем дополнительные данные (необязательные, но если есть — должны быть валидны)
             let extraSentences = [];
             if (typeof extra !== 'undefined' && extra.sentences && Array.isArray(extra.sentences)) {
@@ -997,22 +1022,28 @@ sendTaskBtn.addEventListener('click', async function() {
             } else {
                 console.warn("⚠️ Файл extra.js не загружен или имеет неверный формат. Продолжаем без дополнительных заданий.");
             }
+
             // Объединяем предложения из основного и дополнительного источника
             const allSentences = [...SentenceData.sentences, ...extraSentences];
+
             const allOriginals = allSentences.map(s => s.original);
             const allTranslations = allSentences.map(s => s.translation);
+
             function cleanRussian(text) {
                 return text.replace(/[^\p{L}\p{N}\s]/gu, '').toLowerCase().trim();
             }
+
             const allRussianWords = [];
             allTranslations.forEach(trans => {
                 const cleaned = cleanRussian(trans);
                 allRussianWords.push(...cleaned.split(' ').filter(word => word));
             });
+
             const allChineseChars = [];
             allOriginals.forEach(orig => {
                 allChineseChars.push(...orig.split(''));
             });
+
             function shuffleArray(array) {
                 const arr = [...array];
                 for (let i = arr.length - 1; i > 0; i--) {
@@ -1021,10 +1052,12 @@ sendTaskBtn.addEventListener('click', async function() {
                 }
                 return arr;
             }
+
             let tasks = [];
             allSentences.forEach(sentence => {
                 const actualRussianWords = cleanRussian(sentence.translation).split(' ').filter(w => w);
                 const actualChineseChars = sentence.original.split('');
+
                 // --- Для перевода с китайского на русский ---
                 // Фильтруем общий пул слов: только те, которых НЕТ в настоящем ответе
                 const availableRussianDecoys = allRussianWords.filter(word => !actualRussianWords.includes(word));
@@ -1035,6 +1068,7 @@ sendTaskBtn.addEventListener('click', async function() {
                 // Берём случайное количество от 1 до 5, но не больше, чем доступно
                 const russianDecoyCount = Math.min(getRandomDecoyCount(), shuffledRussianDecoys.length);
                 const russianDecoys = shuffledRussianDecoys.slice(0, russianDecoyCount);
+
                 tasks.push({
                     type: 'toTranslation',
                     source: sentence.original,
@@ -1042,12 +1076,14 @@ sendTaskBtn.addEventListener('click', async function() {
                     words: shuffleArray([...actualRussianWords, ...russianDecoys]),
                     direction: 'с китайского на русский'
                 });
+
                 // --- Для перевода с русского на китайский ---
                 const availableChineseDecoys = allChineseChars.filter(char => !actualChineseChars.includes(char));
                 const uniqueChineseDecoys = [...new Set(availableChineseDecoys)];
                 const shuffledChineseDecoys = shuffleArray(uniqueChineseDecoys);
                 const chineseDecoyCount = Math.min(getRandomDecoyCount(), shuffledChineseDecoys.length);
                 const chineseDecoys = shuffledChineseDecoys.slice(0, chineseDecoyCount);
+
                 tasks.push({
                     type: 'toOriginal',
                     source: sentence.translation,
@@ -1056,9 +1092,12 @@ sendTaskBtn.addEventListener('click', async function() {
                     direction: 'с русского на китайский'
                 });
             });
+
             tasks = shuffleArray(tasks);
+
             let currentTaskIndex = 0;
             let currentAnswer = [];
+
             const sourceText = document.getElementById('sourceText');
             const wordsList = document.getElementById('wordsList');
             const answerList = document.getElementById('answerList');
@@ -1068,27 +1107,33 @@ sendTaskBtn.addEventListener('click', async function() {
             const mainContent = document.getElementById('mainContent');
             const congratulations = document.getElementById('congratulations');
             const returnBtnCongrats = document.getElementById('returnBtn'); // Уже есть, переиспользуем
+
             function renderTask() {
                 if (currentTaskIndex >= tasks.length) {
                     showCompletionScreen();
                     return;
                 }
+
                 // Сброс состояния подсказки для нового задания
                 hintUsedForCurrentTask = false;
                 hintBtn.disabled = false;
                 hintContainer.classList.remove('show');
+
                 const task = tasks[currentTaskIndex];
                 taskType.textContent = `Перевод ${task.direction}`;
                 sourceText.textContent = task.source;
                 tasksLeft.textContent = tasks.length - currentTaskIndex;
+
                 currentAnswer = [];
                 answerList.innerHTML = '';
                 wordsList.innerHTML = '';
+
                 if (task.type === 'toOriginal') {
                     // Предзагружаем аудио для китайских символов
                     const chineseCharacters = task.words.filter(word => charData && charData.hasOwnProperty(word));
                     preloadAudioForCharacters(chineseCharacters);
                 }
+
                 task.words.forEach(word => {
                     const el = document.createElement('div');
                     el.className = 'word';
@@ -1096,31 +1141,40 @@ sendTaskBtn.addEventListener('click', async function() {
                     el.dataset.word = word;
                     wordsList.appendChild(el);
                 });
+
                 document.querySelectorAll('#wordsList .word').forEach(el => {
                     el.addEventListener('click', async function() { // async
                         playSound(uiSounds.click); // Воспроизводим звук интерфейса
                         const word = this.dataset.word;
+
                         // Озвучиваем с визуальной обратной связью
                         playHanziSound(word, this);
+
                         this.remove();
+
                         const answerEl = document.createElement('div');
                         answerEl.className = 'word selected';
                         answerEl.textContent = word;
                         answerEl.dataset.word = word;
                         answerList.appendChild(answerEl);
+
                         currentAnswer.push(word);
                         await checkAnswer(); // Проверяем сразу после добавления
                     });
                 });
+
                 // Отображаем словарь после рендеринга задачи
                 setTimeout(renderDictionary, 100);
+
                 resultMessage.className = 'info';
                 resultMessage.textContent = 'Соберите перевод. Клик по иероглифу озвучивает его.';
             }
+
             // ========== ИЗМЕНЕНА ЛОГИКА ПРОВЕРКИ ==========
             async function checkAnswer() {
                 const task = tasks[currentTaskIndex];
                 const currentText = currentAnswer.join(' ').trim();
+
                 if (task.type === 'toTranslation') {
                     if (currentText === task.correctAnswer) {
                         playSound(uiSounds.success); // Воспроизводим звук успеха
@@ -1140,33 +1194,43 @@ sendTaskBtn.addEventListener('click', async function() {
                     // }
                 }
             }
+
             function showSuccess() {
                 resultMessage.className = 'success';
                 resultMessage.textContent = '✅ Верно! +5 баллов. Следующее задание...';
+
                 setTimeout(() => {
                     currentTaskIndex++;
                     renderTask();
                 }, 1200);
             }
+
             answerList.addEventListener('click', async function(e) { // async
                 if (e.target.classList.contains('word')) {
                     playSound(uiSounds.click); // Воспроизводим звук интерфейса
                     const word = e.target.dataset.word;
+
                     // Озвучиваем с визуальной обратной связью
                     playHanziSound(word, e.target);
+
                     e.target.remove();
+
                     const wordEl = document.createElement('div');
                     wordEl.className = 'word';
                     wordEl.textContent = word;
                     wordEl.dataset.word = word;
                     wordsList.appendChild(wordEl);
+
                     const index = currentAnswer.indexOf(word);
                     if (index !== -1) currentAnswer.splice(index, 1);
+
                     wordEl.addEventListener('click', async function() { // async
                         playSound(uiSounds.click); // Воспроизводим звук интерфейса
                         const w = this.dataset.word;
+
                         // Озвучиваем с визуальной обратной связью
                         playHanziSound(w, this);
+
                         this.remove();
                         const aEl = document.createElement('div');
                         aEl.className = 'word selected';
@@ -1176,12 +1240,15 @@ sendTaskBtn.addEventListener('click', async function() {
                         currentAnswer.push(w);
                         await checkAnswer(); // Проверяем после добавления
                     });
+
                 }
             });
+
             function showCompletionScreen() {
                 mainContent.style.display = 'none';
                 congratulations.style.display = 'block';
             }
+
             // Инициализируем первую задачу
             renderTask();
         });
