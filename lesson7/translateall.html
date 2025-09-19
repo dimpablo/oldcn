@@ -495,24 +495,7 @@
     <script src="extra.js"></script>
     <script>
 
-        sendTaskBtn.addEventListener('click', async function() {
-    playSound(uiSounds.click);
-
-    if (!currentUser || !currentUser.uid) {
-        alert('⛔ Сначала войдите в аккаунт.');
-        return;
-    }
-
-    // Если friends ещё не загружен
-    if (!currentUser.friends) {
-        alert('Данные о друзьях ещё загружаются... Попробуйте через несколько секунд.');
-        return;
-    }
-
-    modalSelectRecipient.style.display = 'flex';
-    loadFriendsForSelection();
-});
-
+        
 
         // ==================== FIREBASE INIT ====================
         // Определяем глобальные переменные для Firebase
@@ -906,6 +889,25 @@ async function loadFriendsForSelection() {
                     shareTaskFrame.style.display = 'block';
                 };
             }
+sendTaskBtn.addEventListener('click', async function() {
+    playSound(uiSounds.click);
+
+    if (!currentUser || !currentUser.uid) {
+        alert('⛔ Сначала войдите в аккаунт.');
+        return;
+    }
+
+    // Если friends ещё не загружен
+    if (!currentUser.friends) {
+        alert('Данные о друзьях ещё загружаются... Попробуйте через несколько секунд.');
+        return;
+    }
+
+    modalSelectRecipient.style.display = 'flex';
+    loadFriendsForSelection();
+});
+
+
 
             // === ЗАКРЫТИЕ МОДАЛОК ===
             closeRecipientModalBtn?.addEventListener('click', () => {
