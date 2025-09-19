@@ -1,4 +1,4 @@
-V8
+V9
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -787,10 +787,10 @@ V8
     if (!otherUser || !currentUser) return;
 
     // --- ИЗМЕНЕНИЕ: Формируем финальный текст сообщения ---
-    let finalText = text;
-    if (currentPayload) {
-      finalText += "’‘’‘ " + currentPayload + " ’‘’‘";
-    }
+let finalText = text;
+if (currentPayload) {
+  finalText += currentPayload; // currentPayload уже содержит ’‘’‘ ... ’‘’‘
+}
 
     const userPair = [currentUser.uid, otherUser.id].sort().join('_');
     const messageData = {
