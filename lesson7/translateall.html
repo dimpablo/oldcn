@@ -743,11 +743,9 @@
 function getTaskShareString(task, currentAnswerWords) {
     const tokens = task.words.map(w => `"${w}"`).join(', ');
     if (task.type === 'toTranslation') {
-        // Прямое: [original]->[translation]
-        return `''''[original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}''''`;
+        return `’‘’‘ [original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}} ’‘’‘`;
     } else {
-        // Обратное: [translation]->[original]
-        return `''''[translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}''''`;
+        return `’‘’‘ [translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}} ’‘’‘`;
     }
 }
 
