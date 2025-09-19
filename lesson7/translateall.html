@@ -6,6 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
 <style>
+#sendTaskBtn {
+    padding: 2px 6px;
+    font-size: 14px;
+    background-color: #a8c8d8;
+    border: 1px solid #8fb8cc;
+    border-radius: 4px;
+    cursor: pointer;
+    min-width: auto;
+    width: auto;
+    transition: background-color 0.2s;
+}
+
+#sendTaskBtn:hover {
+    background-color: #8fb8cc;
+    color: white;
+}
     * {
         box-sizing: border-box;
         margin: 0;
@@ -383,7 +399,11 @@
 
         <div id="mainContent">
             <div class="task-container">
-                <div class="task-type" id="taskType">Перевод с китайского</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div class="task-type" id="taskType">Перевод с китайского</div>
+    <button id="sendTaskBtn" title="Отправить задание" style="padding: 2px 6px; font-size: 14px; background-color: #a8c8d8; border: 1px solid #8fb8cc; border-radius: 4px; cursor: pointer; min-width: auto; width: auto;">Послать в личку ✉️</button>
+</div>
                 <div class="source-text" id="sourceText">Загрузка...</div>
 
                 <div class="words-container">
@@ -436,9 +456,9 @@
         async function initFirebase() {
             try {
                 // Динамически импортируем модули Firebase
-                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
-                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
-                const { getFirestore, doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  ');
+                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  ');
+                const { getFirestore, doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ');
 
                 const firebaseConfig = {
                     apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
@@ -718,10 +738,75 @@
             await initFirebase(); // Дожидаемся инициализации Firebase
             await preloadUISounds(); // Дожидаемся загрузки звуков
 
+            // ==================== ФУНКЦИИ ====================
+            // Функция для формирования строки задания
+            function getTaskShareString(task, currentAnswerWords) {
+                const tokens = task.words.map(w => `"${w}"`).join(', ');
+                if (task.type === 'toTranslation') {
+                    // Прямое: [original]->[translation]
+                    return `[original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}`;
+                } else {
+                    // Обратное: [translation]->[original]
+                    return `[translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}`;
+                }
+            }
+
             // ==================== СОБЫТИЯ ИНТЕРФЕЙСА ====================
             // Сворачиваемый словарь
             const collapsibleHeader = document.getElementById('collapsibleHeader');
             const collapsibleContent = document.getElementById('collapsibleContent');
+            const sendTaskBtn = document.getElementById('sendTaskBtn');
+            const modalShareTask = document.getElementById('modalShareTask');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const shareTaskFrame = document.getElementById('shareTaskFrame');
+            const loadingIframe = document.getElementById('loadingIframe');
+
+            // Закрытие модалки
+            closeModalBtn.addEventListener('click', () => {
+                modalShareTask.style.display = 'none';
+                shareTaskFrame.src = ''; // Очищаем iframe при закрытии
+            });
+
+            // Клик по кнопке "Отправить"
+            sendTaskBtn.addEventListener('click', async function() {
+                playSound(uiSounds.click);
+
+                // Проверка авторизации
+                if (!currentUser || !currentUser.uid) {
+                    alert('⛔ Сначала войдите в аккаунт, чтобы отправлять сообщения.');
+                    return;
+                }
+
+                const task = tasks[currentTaskIndex];
+                const shareString = getTaskShareString(task, currentAnswer); // currentAnswer — массив выбранных слов
+
+                // URL-кодируем строку задания
+                const encodedShareString = encodeURIComponent(shareString);
+
+                // Формируем URL для iframe
+                const chatUrl = `../chat.html#chat/${currentUser.uid}/${encodedShareString}`;
+
+                // Показываем загрузку, скрываем iframe
+                if (loadingIframe) {
+                    loadingIframe.style.display = 'block';
+                }
+                shareTaskFrame.style.display = 'none';
+                shareTaskFrame.src = ''; // Сначала очищаем
+
+                // Устанавливаем src iframe
+                setTimeout(() => {
+                    shareTaskFrame.src = chatUrl;
+                    shareTaskFrame.onload = () => {
+                        if (loadingIframe) {
+                            loadingIframe.style.display = 'none';
+                        }
+                        shareTaskFrame.style.display = 'block';
+                    };
+                }, 10);
+
+                // Показываем модалку
+                modalShareTask.style.display = 'flex';
+            });
 
             collapsibleHeader.addEventListener('click', function() {
                 this.classList.toggle('active');
@@ -1022,8 +1107,17 @@ allSentences.forEach(sentence => {
             // Инициализируем первую задачу
             renderTask();
         });
-
     </script>
-<script src="../uploader.js"></script>
+    <script src="../uploader.js"></script>
+<!-- Модальное окно для отправки задания -->
+<div id="modalShareTask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px;">
+    <div style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 800px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #5a5a5a;">✉️ Отправить задание</h3>
+            <button id="closeModalBtn" style="background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+        </div>
+        <iframe id="shareTaskFrame" src="" style="flex: 1; width: 100%; min-height: 500px; border: none; border-radius: 8px;"></iframe>
+    </div>
+</div>
 </body>
 </html>
