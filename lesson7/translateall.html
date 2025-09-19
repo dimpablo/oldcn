@@ -800,7 +800,7 @@ const allOriginals = allSentences.map(s => s.original);
 const allTranslations = allSentences.map(s => s.translation);
 
 function cleanRussian(text) {
-    return text.replace(/[.,:;?!«»"()„“"'‛՚’]/g, '').toLowerCase();
+    return text.replace(/[^\p{L}\p{N}\s]/gu, '').toLowerCase().trim();
 }
 
             const allRussianWords = [];

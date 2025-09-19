@@ -3,7 +3,7 @@ var extra = {
     "sentences": [
         {
             "number": 1,
-            "original": "余呼兹人勿作汝祸",
+            "original": "余呼茲人勿作汝禍",
             "translation": "Я приказал этому человеку не причинять тебе зла."
         },
         {
