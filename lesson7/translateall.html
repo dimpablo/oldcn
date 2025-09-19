@@ -1,4 +1,3 @@
-V5
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,6 +6,7 @@ V5
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
 <style>
+
     /* === МОДАЛЬНЫЕ ОКНА === */
     .modal-overlay {
         display: none;
@@ -85,6 +85,13 @@ V5
     .chat-modal .modal-header {
         background: #fffaf7;
     }
+    .chat-modal .modal-content {
+        /* Увеличиваем размер модального окна чата */
+        width: 95%; /* Или даже 98% */
+        max-width: 900px; /* Или больше, например, 1200px */
+        /* Можно немного увеличить высоту, если нужно */
+        /* max-height: 90vh; */ /* Пример: 90% высоты вьюпорта */
+    }
     #loadingIframe {
         text-align: center;
         padding: 30px;
@@ -93,27 +100,51 @@ V5
     }
     .chat-iframe {
         width: 100%;
-        min-height: 500px;
+        /* min-height: 500px; */ /* Можно увеличить или сделать относительным */
+        min-height: 70vh; /* Например, 70% высоты вьюпорта */
         border: none;
         border-top: 1px solid #eee;
         border-radius: 0 0 12px 12px;
         display: none; /* Скрываем по умолчанию */
     }
+    /* Стилизация кнопки "✉️" под .task-type */
     #sendTaskBtn {
-        padding: 2px 6px;
-        font-size: 14px;
-        background-color: #a8c8d8;
-        border: 1px solid #8fb8cc;
-        border-radius: 4px;
+        /* Убираем старые стили кнопки */
+        background: #e6f4f1; /* Цвет фона как у task-type */
+        color: #5a9a8f; /* Цвет текста как у task-type */
+        border: 1px solid #c2e3dd; /* Граница как у task-type */
+
+        /* Применяем стили как у task-type */
+        padding: 3px 8px; /* То же, что и у task-type */
+        border-radius: 12px; /* То же, что и у task-type */
+        font-size: 11px; /* То же, что и у task-type */
+        line-height: 1.2; /* То же или близкое значение */
+        white-space: nowrap; /* Чтобы текст не переносился */
+
+        /* Добавляем специфичные для кнопки свойства */
         cursor: pointer;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s; /* Плавные переходы */
+        /* Убираем min-width и width, чтобы размер подстраивался под содержимое */
         min-width: auto;
         width: auto;
-        transition: background-color 0.2s;
     }
-    #sendTaskBtn:hover {
-        background-color: #8fb8cc;
-        color: white;
+
+    /* Стили при наведении на кнопку */
+    #sendTaskBtn:hover:not(:disabled) {
+        background-color: #c2e3dd; /* Более темный оттенок фона */
+        color: #3c766f; /* Более темный цвет текста */
+        border-color: #a8d8ce; /* Более темная граница */
     }
+
+    /* Стили для отключенной кнопки (если нужно) */
+    #sendTaskBtn:disabled {
+        background-color: #c0c0c0; /* Серый фон */
+        border-color: #a0a0a0;
+        color: #777;
+        cursor: not-allowed;
+        opacity: 0.7; /* Делаем немного прозрачной */
+    }
+
     * {
         box-sizing: border-box;
         margin: 0;
@@ -263,6 +294,9 @@ V5
         font-size: 11px;
         margin-bottom: 8px;
         border: 1px solid #c2e3dd;
+        /* Добавим эти свойства для лучшего соответствия кнопке */
+        line-height: 1.2; /* Или подходящее значение */
+        white-space: nowrap; /* Чтобы текст не переносился */
     }
     .words-container, .answer-container {
         border: 1px dashed #d9d4e7;
@@ -424,6 +458,7 @@ V5
             font-size: 9px;
         }
     }
+
 </style>
 </head>
 <body>
