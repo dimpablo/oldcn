@@ -739,17 +739,17 @@
             await preloadUISounds(); // Дожидаемся загрузки звуков
 
             // ==================== ФУНКЦИИ ====================
-            // Функция для формирования строки задания
-            function getTaskShareString(task, currentAnswerWords) {
-                const tokens = task.words.map(w => `"${w}"`).join(', ');
-                if (task.type === 'toTranslation') {
-                    // Прямое: [original]->[translation]
-                    return `[original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}`;
-                } else {
-                    // Обратное: [translation]->[original]
-                    return `[translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}`;
-                }
-            }
+// Функция для формирования строки задания
+function getTaskShareString(task, currentAnswerWords) {
+    const tokens = task.words.map(w => `"${w}"`).join(', ');
+    if (task.type === 'toTranslation') {
+        // Прямое: [original]->[translation]
+        return `''''[original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}''''`;
+    } else {
+        // Обратное: [translation]->[original]
+        return `''''[translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}}''''`;
+    }
+}
 
             // ==================== СОБЫТИЯ ИНТЕРФЕЙСА ====================
             // Сворачиваемый словарь
