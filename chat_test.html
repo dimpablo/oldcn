@@ -1,36 +1,27 @@
-V2
+V3
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Чат с заданиями</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Чат</title>
   <style>
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.5;
-      color: #5a5a5a;
-      padding: 0;
-      background-color: #f0f2f5;
-      font-size: 14px;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     #chat-header {
       background: #00838f;
       color: white;
       padding: 15px;
       text-align: center;
     }
-
     #messages-list {
       flex: 1;
       overflow-y: auto;
@@ -39,33 +30,25 @@ V2
       flex-direction: column;
       gap: 8px;
     }
-
     .msg-bubble {
-      max-width: 80%;
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 18px;
       margin: 4px 0;
       word-wrap: break-word;
     }
-
     .msg-from-me {
+      background: #00838f;
+      color: white;
       align-self: flex-end;
     }
-
     .msg-from-them {
+      background: #e0e0e0;
+      color: black;
       align-self: flex-start;
     }
 
-    .regular-message {
-      padding: 10px 14px;
-      border-radius: 18px;
-      background: #00838f;
-      color: white;
-    }
-
-    .regular-message.them {
-      background: #e0e0e0;
-      color: black;
-    }
-
+    /* === СТИЛИ ДЛЯ ЗАДАНИЙ === */
     .task-container {
       background-color: #fffdfb;
       padding: 12px;
@@ -74,7 +57,6 @@ V2
       margin-bottom: 12px;
       width: 100%;
     }
-
     .source-text {
       font-size: 16px;
       font-weight: bold;
@@ -89,7 +71,6 @@ V2
       justify-content: center;
       border: 1px solid #eae5f3;
     }
-
     .task-type {
       display: inline-block;
       background-color: #e6f4f1;
@@ -100,7 +81,6 @@ V2
       margin-bottom: 8px;
       border: 1px solid #c2e3dd;
     }
-
     .words-container, .answer-container {
       border: 1px dashed #d9d4e7;
       border-radius: 6px;
@@ -110,18 +90,15 @@ V2
       background-color: #f9f7fc;
       font-size: 13px;
     }
-
     .answer-container {
       background-color: #f0faf8;
       border-color: #a8d8ce;
     }
-
     .word-list {
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
     }
-
     .word {
       padding: 6px 10px;
       background-color: #fff;
@@ -132,20 +109,17 @@ V2
       font-size: 13px;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-
     .word:hover {
       background-color: #f0eaf9;
       transform: translateY(-1px);
       border-color: #d9d4e7;
     }
-
     .word.selected {
       background-color: #ffb6c1;
       color: #ffffff;
       border-color: #ff99ab;
       box-shadow: 0 2px 4px rgba(255, 182, 193, 0.4);
     }
-
     .result-message {
       min-height: 20px;
       text-align: center;
@@ -155,19 +129,16 @@ V2
       border-radius: 6px;
       font-size: 13px;
     }
-
     .success {
       background-color: #e8f4f1;
       color: #3c766f;
       border: 1px solid #c2e3dd;
     }
-
     .info {
       background-color: #f0f4fb;
       color: #4a6fa5;
       border: 1px solid #d0ddf0;
     }
-
     .char-frame {
       width: 100%;
       height: 200px;
@@ -177,7 +148,6 @@ V2
       margin: 10px 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
     .theory-box {
       background: #f8f6fb;
       padding: 15px;
@@ -185,19 +155,16 @@ V2
       border: 1px solid #eae5f3;
       margin: 10px 0;
     }
-
     .theory-box h3 {
       color: #7c6b96;
       margin-bottom: 12px;
       border-bottom: 1px solid #eae5f3;
       padding-bottom: 6px;
     }
-
     .theory-box p {
       margin-bottom: 12px;
       line-height: 1.6;
     }
-
     .theory-box .example {
       color: #00838f;
       font-style: italic;
@@ -208,394 +175,485 @@ V2
       margin: 2px 0;
     }
 
-    #message-form {
+    /* === КОНТРОЛЫ ЧАТА === */
+    #chat-controls {
       display: flex;
       padding: 10px;
+      gap: 10px;
       background: white;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #ddd;
     }
-
     #message-input {
       flex: 1;
       padding: 10px;
-      border: 1px solid #e0e0e0;
-      border-radius: 18px;
-      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
     }
-
-    #send-button {
+    #send-message-btn {
+      padding: 10px 16px;
       background: #00838f;
       color: white;
       border: none;
-      border-radius: 18px;
-      padding: 10px 20px;
+      border-radius: 6px;
       cursor: pointer;
     }
-
-    #send-button:hover {
+    #send-message-btn:hover {
       background: #006064;
     }
   </style>
 </head>
 <body>
+
   <div id="chat-header">
-    <h3>Чат с заданиями</h3>
+    <h3 id="chat-name">Выберите собеседника</h3>
   </div>
 
-  <div id="messages-list">
-    <!-- Сообщения будут добавляться сюда -->
-  </div>
+  <div id="messages-list"></div>
 
-  <form id="message-form">
-    <input type="text" id="message-input" placeholder="Введите сообщение..." required>
-    <button type="submit" id="send-button">Отправить</button>
-  </form>
+  <div id="chat-controls">
+    <input type="text" id="message-input" placeholder="Введите сообщение..." />
+    <button id="send-message-btn">Отправить</button>
+  </div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      onSnapshot,
+      addDoc,
+      doc,
+      getDoc,
+      updateDoc,
+      arrayUnion,
+      getDocs
+    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
-  <script>
-    // Firebase конфигурация
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+      authDomain: "antient-9bff0.firebaseapp.com",
+      projectId: "antient-9bff0",
+      storageBucket: "antient-9bff0.firebasestorage.app",
+      messagingSenderId: "311792589414",
+      appId: "1:311792589414:web:5fff3154735007c2006ba7",
+      measurementId: "G-W4ZQXWRTKK"
     };
 
-    // Инициализация Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    // Аутентификация анонимного пользователя
-    auth.signInAnonymously().catch(error => {
-      console.error("Ошибка аутентификации:", error);
-    });
+    let currentUser = null;
+    let otherUser = null;
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const messagesList = document.getElementById('messages-list');
-      const messageForm = document.getElementById('message-form');
-      const messageInput = document.getElementById('message-input');
-      let currentUser = null;
+    // === ФУНКЦИИ ПАРСЕРА ЗАДАНИЙ ===
 
-      // Функция нормализации для сравнения ответов
-      function normalizeAnswer(text, isChineseOutput) {
-        let normalized = text.toLowerCase();
-        normalized = normalized.replace(/[^\p{L}\p{N}\s]/gu, '');
-        if (isChineseOutput) {
-          normalized = normalized.replace(/\s+/g, '');
-        } else {
-          normalized = normalized.replace(/\s+/g, ' ').trim();
+    function normalizeAnswer(text, isChineseOutput) {
+      let normalized = text.toLowerCase();
+      normalized = normalized.replace(/[^\p{L}\p{N}\s]/gu, '');
+      if (isChineseOutput) {
+        normalized = normalized.replace(/\s+/g, '');
+      } else {
+        normalized = normalized.replace(/\s+/g, ' ').trim();
+      }
+      return normalized;
+    }
+
+    function splitHybridMessage(message) {
+      const delimiter = "’‘’‘";
+      const parts = message.split(delimiter);
+      const fragments = [];
+
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 0 && parts[i].trim()) {
+          fragments.push({ type: 'text', content: parts[i] });
+        } else if (i % 2 === 1) {
+          fragments.push({ type: 'task', raw: parts[i] });
         }
-        return normalized;
       }
 
-      // Функция для добавления сообщения в чат
-      function addMessageToChat(text, isFromMe = false) {
-        const fragments = splitHybridMessage(text);
-        const container = document.getElementById('messages-list');
+      return fragments;
+    }
+
+    function parseTask(raw) {
+      raw = raw.trim();
+
+      if (raw.startsWith('[original]->[translation]:')) {
+        const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
+        if (match) {
+          const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
+          return {
+            type: 'translation',
+            direction: 'original-to-translation',
+            source: match[1],
+            target: match[2],
+            tokens: tokens
+          };
+        }
+      }
+
+      if (raw.startsWith('[translation]->[original]:')) {
+        const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
+        if (match) {
+          const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
+          return {
+            type: 'translation',
+            direction: 'translation-to-original',
+            source: match[1],
+            target: match[2],
+            tokens: tokens
+          };
+        }
+      }
+
+      if (raw.startsWith('[char]:')) {
+        const match = raw.match(/^\[char\]:\s*\{(.+?)\}$/);
+        if (match) {
+          let char = match[1];
+          if (char.length >= 2 && ((char.startsWith('"') && char.endsWith('"')) || (char.startsWith("'") && char.endsWith("'")))) {
+            char = char.slice(1, -1);
+          }
+          return { type: 'char', char };
+        }
+      }
+
+      if (raw.startsWith('[paragraph]:')) {
+        const match = raw.match(/^\[paragraph\]:\s*\{(.+?)\}$/);
+        if (match) {
+          let content = match[1];
+          if (content.length >= 2 && ((content.startsWith('"') && content.endsWith('"')) || (content.startsWith("'") && content.endsWith("'")))) {
+            content = content.slice(1, -1);
+          }
+          content = content.replace(/\\"/g, '"').replace(/\\'/g, "'");
+          return { type: 'paragraph', content };
+        }
+      }
+
+      return null;
+    }
+
+    function createTextMessage(content, isFromMe) {
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
+      bubble.innerHTML = `
+        <div>${content}</div>
+        <div style="font-size:11px;opacity:0.7;margin-top:4px;">
+          ${new Date().toLocaleTimeString()}
+        </div>
+      `;
+      return bubble;
+    }
+
+    function createTaskMessage(taskData, isFromMe) {
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
+
+      if (taskData.type === 'translation') {
+        bubble.appendChild(createTranslationTask(taskData));
+      } else if (taskData.type === 'char') {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'char-frame';
+        iframe.src = `./lesson1/tasks/task1.html#${encodeURIComponent(taskData.char)}`;
+        iframe.title = `Иероглиф ${taskData.char}`;
+        bubble.appendChild(iframe);
+      } else if (taskData.type === 'paragraph') {
+        const div = document.createElement('div');
+        div.className = 'theory-box';
+        div.innerHTML = taskData.content;
+        bubble.appendChild(div);
+      }
+
+      return bubble;
+    }
+
+    function createTranslationTask(taskData) {
+      const container = document.createElement('div');
+      container.className = 'task-container';
+
+      const taskType = document.createElement('div');
+      taskType.className = 'task-type';
+      taskType.textContent = taskData.direction === 'original-to-translation'
+        ? 'Перевод с китайского на русский'
+        : 'Перевод с русского на китайский';
+      container.appendChild(taskType);
+
+      const sourceText = document.createElement('div');
+      sourceText.className = 'source-text';
+      sourceText.textContent = taskData.source;
+      container.appendChild(sourceText);
+
+      const wordsContainer = document.createElement('div');
+      wordsContainer.className = 'words-container';
+      const wordList = document.createElement('div');
+      wordList.className = 'word-list';
+
+      taskData.tokens.forEach(token => {
+        const wordDiv = document.createElement('div');
+        wordDiv.className = 'word';
+        wordDiv.dataset.word = token;
+        wordDiv.textContent = token;
+        wordList.appendChild(wordDiv);
+      });
+
+      wordsContainer.appendChild(wordList);
+      container.appendChild(wordsContainer);
+
+      const answerContainer = document.createElement('div');
+      answerContainer.className = 'answer-container';
+      const answerWordList = document.createElement('div');
+      answerWordList.className = 'word-list';
+      answerContainer.appendChild(answerWordList);
+      container.appendChild(answerContainer);
+
+      const resultMessage = document.createElement('div');
+      resultMessage.className = 'result-message info';
+      resultMessage.textContent = taskData.direction === 'translation-to-original'
+        ? 'Соберите перевод из доступных иероглифов'
+        : 'Соберите перевод из доступных слов';
+      container.appendChild(resultMessage);
+
+      return container;
+    }
+
+    function attachInteraction(msgBubble, taskData) {
+      const wordsList = msgBubble.querySelector('.words-container .word-list');
+      const answerList = msgBubble.querySelector('.answer-container .word-list');
+      const resultMessage = msgBubble.querySelector('.result-message');
+
+      if (!wordsList || !answerList || !resultMessage) return;
+
+      function checkAnswer() {
+        const userWords = Array.from(answerList.querySelectorAll('.word')).map(el => el.textContent);
+        let userText = taskData.direction === 'translation-to-original'
+          ? userWords.join('')
+          : userWords.join(' ');
+
+        const normalizedUser = normalizeAnswer(userText, taskData.direction === 'translation-to-original');
+        const normalizedCorrect = normalizeAnswer(taskData.target, taskData.direction === 'translation-to-original');
+
+        if (normalizedUser === normalizedCorrect) {
+          resultMessage.className = 'result-message success';
+          resultMessage.textContent = '✅ Верно!';
+        } else {
+          resultMessage.className = 'result-message info';
+          resultMessage.textContent = taskData.direction === 'translation-to-original'
+            ? 'Соберите перевод из доступных иероглифов'
+            : 'Соберите перевод из доступных слов';
+        }
+      }
+
+      wordsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word')) {
+          const word = e.target.dataset.word;
+          e.target.remove();
+
+          const selected = document.createElement('div');
+          selected.className = 'word selected';
+          selected.textContent = word;
+          selected.dataset.word = word;
+          answerList.appendChild(selected);
+
+          checkAnswer();
+        }
+      });
+
+      answerList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word')) {
+          const word = e.target.dataset.word;
+          e.target.remove();
+
+          const btn = document.createElement('div');
+          btn.className = 'word';
+          btn.textContent = word;
+          btn.dataset.word = word;
+          wordsList.appendChild(btn);
+
+          checkAnswer();
+        }
+      });
+    }
+
+    // === ОСНОВНАЯ ЛОГИКА ЧАТА ===
+
+    function getOtherUserIdFromHash() {
+      const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
+      return match ? match[1] : null;
+    }
+
+    function onHashChange() {
+      console.log("[onHashChange] Вызвано");
+      const otherUserId = getOtherUserIdFromHash();
+      if (!otherUserId) {
+        document.getElementById('chat-name').textContent = "Выберите собеседника";
+        document.getElementById('messages-list').innerHTML = '';
+        return;
+      }
+
+      if (!currentUser) {
+        console.log("[onHashChange] currentUser ещё не загружен, ждём...");
+        return;
+      }
+
+      console.log(`[onHashChange] Загружаем чат с пользователем: ${otherUserId}`);
+      loadChatAndStartListening(otherUserId);
+    }
+
+    async function loadChatAndStartListening(otherUserId) {
+      try {
+        const userRef = doc(db, 'users', otherUserId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          otherUser = { id: userSnap.id, ...userSnap.data() };
+          document.getElementById('chat-name').textContent = otherUser.displayName || otherUser.email || 'Неизвестный';
+        } else {
+          document.getElementById('chat-name').textContent = "Пользователь не найден";
+          return;
+        }
+
+        startListeningToMessages(otherUserId);
+        markMessagesAsRead(otherUserId);
+      } catch (e) {
+        console.error("[loadChatAndStartListening] Ошибка:", e);
+        document.getElementById('chat-name').textContent = "Ошибка подключения";
+      }
+    }
+
+    function renderMessages(msgs) {
+      const list = document.getElementById('messages-list');
+      list.innerHTML = '';
+
+      msgs.forEach(msg => {
+        const fromMe = msg.from === currentUser.uid;
+        const fragments = splitHybridMessage(msg.text);
 
         fragments.forEach(fragment => {
+          const timeSpan = `<div style="font-size:11px;opacity:0.7;margin-top:4px;">${new Date(msg.timestamp).toLocaleTimeString()}</div>`;
+
           if (fragment.type === 'text') {
-            const msgBubble = createTextMessage(fragment.content, isFromMe);
-            container.appendChild(msgBubble);
+            const div = document.createElement('div');
+            div.className = `msg-bubble ${fromMe ? 'msg-from-me' : 'msg-from-them'}`;
+            div.innerHTML = `<div>${fragment.content}</div>${timeSpan}`;
+            list.appendChild(div);
           } else if (fragment.type === 'task') {
             const taskData = parseTask(fragment.raw);
             if (taskData) {
-              const msgBubble = createTaskMessage(taskData, isFromMe);
-              container.appendChild(msgBubble);
+              const msgBubble = createTaskMessage(taskData, fromMe);
+              list.appendChild(msgBubble);
               if (taskData.type === 'translation') {
-                attachInteraction(msgBubble, taskData);
+                setTimeout(() => attachInteraction(msgBubble, taskData), 10); // Делаем после рендера
               }
             }
           }
         });
+      });
 
-        container.scrollTop = container.scrollHeight;
-      }
+      list.scrollTop = list.scrollHeight;
+    }
 
-      // Разделение гибридного сообщения
-      function splitHybridMessage(message) {
-        const delimiter = "’‘’‘";
-        const parts = message.split(delimiter);
-        const fragments = [];
+    function startListeningToMessages(otherUserId) {
+      const chatQuery = query(
+        collection(db, 'messages'),
+        where('participants', 'array-contains', currentUser.uid)
+      );
 
-        for (let i = 0; i < parts.length; i++) {
-          if (i % 2 === 0 && parts[i].trim()) {
-            fragments.push({ type: 'text', content: parts[i] });
-          } else if (i % 2 === 1) {
-            fragments.push({ type: 'task', raw: parts[i] });
-          }
-        }
-
-        return fragments;
-      }
-
-      // Парсинг задания
-      function parseTask(raw) {
-        raw = raw.trim();
-
-        if (raw.startsWith('[original]->[translation]:')) {
-          const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
-          if (match) {
-            const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
-            return {
-              type: 'translation',
-              direction: 'original-to-translation',
-              source: match[1],
-              target: match[2],
-              tokens: tokens
-            };
-          }
-        }
-
-        if (raw.startsWith('[translation]->[original]:')) {
-          const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
-          if (match) {
-            const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
-            return {
-              type: 'translation',
-              direction: 'translation-to-original',
-              source: match[1],
-              target: match[2],
-              tokens: tokens
-            };
-          }
-        }
-
-        if (raw.startsWith('[char]:')) {
-          const match = raw.match(/^\[char\]:\s*\{(.+?)\}$/);
-          if (match) {
-            let char = match[1];
-            if (char.length >= 2 && 
-                ((char.startsWith('"') && char.endsWith('"')) || 
-                 (char.startsWith("'") && char.endsWith("'")))) {
-              char = char.slice(1, -1);
-            }
-            return {
-              type: 'char',
-              char: char
-            };
-          }
-        }
-
-        if (raw.startsWith('[paragraph]:')) {
-          const match = raw.match(/^\[paragraph\]:\s*\{(.+?)\}$/);
-          if (match) {
-            let content = match[1];
-            if (content.length >= 2 && 
-                ((content.startsWith('"') && content.endsWith('"')) || 
-                 (content.startsWith("'") && content.endsWith("'")))) {
-              content = content.slice(1, -1);
-            }
-            content = content.replace(/\\"/g, '"').replace(/\\'/g, "'");
-            return {
-              type: 'paragraph',
-              content: content
-            };
-          }
-        }
-
-        return null;
-      }
-
-      // Создание текстового сообщения
-      function createTextMessage(content, isFromMe) {
-        const bubble = document.createElement('div');
-        bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
-
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `regular-message ${isFromMe ? '' : 'them'}`;
-        msgDiv.textContent = content;
-
-        bubble.appendChild(msgDiv);
-        return bubble;
-      }
-
-      // Создание сообщения с заданием
-      function createTaskMessage(taskData, isFromMe) {
-        const bubble = document.createElement('div');
-        bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
-
-        if (taskData.type === 'translation') {
-          bubble.appendChild(createTranslationTask(taskData));
-        } else if (taskData.type === 'char') {
-          bubble.appendChild(createCharTask(taskData.char));
-        } else if (taskData.type === 'paragraph') {
-          bubble.appendChild(createParagraphTask(taskData.content));
-        }
-
-        return bubble;
-      }
-
-      // Создание перевода
-      function createTranslationTask(taskData) {
-        const container = document.createElement('div');
-        container.className = 'task-container';
-
-        const taskType = document.createElement('div');
-        taskType.className = 'task-type';
-        taskType.textContent = taskData.direction === 'original-to-translation'
-          ? 'Перевод с китайского на русский'
-          : 'Перевод с русского на китайский';
-        container.appendChild(taskType);
-
-        const sourceText = document.createElement('div');
-        sourceText.className = 'source-text';
-        sourceText.textContent = taskData.source;
-        container.appendChild(sourceText);
-
-        const wordsContainer = document.createElement('div');
-        wordsContainer.className = 'words-container';
-        const wordList = document.createElement('div');
-        wordList.className = 'word-list';
-
-        taskData.tokens.forEach(token => {
-          const wordDiv = document.createElement('div');
-          wordDiv.className = 'word';
-          wordDiv.dataset.word = token;
-          wordDiv.textContent = token;
-          wordList.appendChild(wordDiv);
-        });
-
-        wordsContainer.appendChild(wordList);
-        container.appendChild(wordsContainer);
-
-        const answerContainer = document.createElement('div');
-        answerContainer.className = 'answer-container';
-        const answerWordList = document.createElement('div');
-        answerWordList.className = 'word-list';
-        answerContainer.appendChild(answerWordList);
-        container.appendChild(answerContainer);
-
-        const resultMessage = document.createElement('div');
-        resultMessage.className = 'result-message info';
-        resultMessage.textContent = taskData.direction === 'translation-to-original'
-          ? 'Соберите перевод из доступных иероглифов'
-          : 'Соберите перевод из доступных слов';
-        container.appendChild(resultMessage);
-
-        return container;
-      }
-
-      // Создание иероглифа
-      function createCharTask(char) {
-        const iframe = document.createElement('iframe');
-        iframe.className = 'char-frame';
-        iframe.src = `./lesson1/tasks/task1.html#${encodeURIComponent(char)}`;
-        iframe.title = `Иероглиф ${char}`;
-        iframe.style.width = '100%';
-        iframe.style.height = '200px';
-        return iframe;
-      }
-
-      // Создание теории
-      function createParagraphTask(htmlContent) {
-        const div = document.createElement('div');
-        div.className = 'theory-box';
-        div.innerHTML = htmlContent;
-        return div;
-      }
-
-      // Прикрепление интерактивности к заданию
-      function attachInteraction(msgBubble, taskData) {
-        const wordsList = msgBubble.querySelector('.words-container .word-list');
-        const answerList = msgBubble.querySelector('.answer-container .word-list');
-        const resultMessage = msgBubble.querySelector('.result-message');
-
-        if (!wordsList || !answerList || !resultMessage) return;
-
-        function checkAnswer() {
-          const userWords = Array.from(answerList.querySelectorAll('.word')).map(el => el.textContent);
-          let userText;
-
-          if (taskData.direction === 'translation-to-original') {
-            userText = userWords.join('');
-          } else {
-            userText = userWords.join(' ');
-          }
-
-          const normalizedUser = normalizeAnswer(userText, taskData.direction === 'translation-to-original');
-          const normalizedCorrect = normalizeAnswer(taskData.target, taskData.direction === 'translation-to-original');
-
-          if (normalizedUser === normalizedCorrect) {
-            resultMessage.className = 'result-message success';
-            resultMessage.textContent = '✅ Верно!';
-          } else {
-            resultMessage.className = 'result-message info';
-            resultMessage.textContent = taskData.direction === 'translation-to-original'
-              ? 'Соберите перевод из доступных иероглифов'
-              : 'Соберите перевод из доступных слов';
-          }
-        }
-
-        wordsList.addEventListener('click', (e) => {
-          if (e.target.classList.contains('word')) {
-            const word = e.target.dataset.word;
-            e.target.remove();
-
-            const selected = document.createElement('div');
-            selected.className = 'word selected';
-            selected.textContent = word;
-            selected.dataset.word = word;
-            answerList.appendChild(selected);
-
-            checkAnswer();
+      onSnapshot(chatQuery, (snapshot) => {
+        const messages = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (
+            data.participants.includes(currentUser.uid) &&
+            data.participants.includes(otherUserId)
+          ) {
+            messages.push({ id: doc.id, ...data });
           }
         });
 
-        answerList.addEventListener('click', (e) => {
-          if (e.target.classList.contains('word')) {
-            const word = e.target.dataset.word;
-            e.target.remove();
+        messages.sort((a, b) => a.timestamp - b.timestamp);
+        renderMessages(messages);
+      }, (error) => {
+        console.error("[onSnapshot] Ошибка подписки:", error);
+      });
+    }
 
-            const btn = document.createElement('div');
-            btn.className = 'word';
-            btn.textContent = word;
-            btn.dataset.word = word;
-            wordsList.appendChild(btn);
+    async function markMessagesAsRead(otherUserId) {
+      if (!currentUser) return;
 
-            checkAnswer();
-          }
-        });
-      }
+      const q = query(
+        collection(db, 'messages'),
+        where('participants', 'array-contains', currentUser.uid)
+      );
 
-      // Слушатель аутентификации
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          currentUser = user;
-          // Слушатель сообщений из Firebase
-          db.collection("messages")
-            .orderBy("timestamp")
-            .onSnapshot(snapshot => {
-              snapshot.docChanges().forEach(change => {
-                if (change.type === "added") {
-                  const msg = change.doc.data();
-                  addMessageToChat(msg.text, msg.from === currentUser.uid);
-                }
-              });
+      try {
+        const snapshot = await getDocs(q);
+        for (const doc of snapshot.docs) {
+          const data = doc.data();
+          if (
+            data.participants.includes(currentUser.uid) &&
+            data.participants.includes(otherUserId) &&
+            (!data.seenBy || !data.seenBy.includes(currentUser.uid))
+          ) {
+            await updateDoc(doc.ref, {
+              seenBy: arrayUnion(currentUser.uid)
             });
+          }
         }
-      });
+      } catch (e) {
+        console.error("[markMessagesAsRead] Ошибка:", e);
+      }
+    }
 
-      // Отправка сообщения
-      messageForm.addEventListener('submit', e => {
-        e.preventDefault();
-        const text = messageInput.value.trim();
-        if (text && currentUser) {
-          db.collection("messages").add({
-            text: text,
-            from: currentUser.uid,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          messageInput.value = '';
+    async function sendMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+
+      if (!text || !otherUser || !currentUser) return;
+
+      const userPair = [currentUser.uid, otherUser.id].sort().join('_');
+      const messageData = {
+        from: currentUser.uid,
+        to: otherUser.id,
+        text: text,
+        timestamp: Date.now(),
+        participants: [currentUser.uid, otherUser.id],
+        userPair: userPair,
+        seenBy: [currentUser.uid]
+      };
+
+      try {
+        await addDoc(collection(db, 'messages'), messageData);
+        input.value = '';
+      } catch (e) {
+        alert("Ошибка отправки: " + e.message);
+      }
+    }
+
+    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+    document.getElementById('message-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    window.addEventListener('load', () => onHashChange());
+    window.addEventListener('hashchange', onHashChange);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          currentUser = { uid: user.uid, ...userDoc.data() };
+          onHashChange();
+        } else {
+          alert("Профиль не найден");
+          window.location.href = './index.html';
         }
-      });
+      } else {
+        window.location.href = './index.html';
+      }
     });
   </script>
 </body>
