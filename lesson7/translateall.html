@@ -476,14 +476,19 @@ V3
     <script src="segmentation.js"></script>
     <script src="extra.js"></script>
     <script>
-        // ==================== FIREBASE INIT ====================
-        // Определяем глобальные переменные для Firebase
-        let auth = null;
-        let db = null;
-        let currentUser = null;
-        let docRef = null;
-        let getDocRef = null;
-        let updateDocRef = null;
+// ==================== FIREBASE ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+let auth = null;
+let db = null;
+let currentUser = null;
+let docRef = null;
+let getDocRef = null;
+let updateDocRef = null;
+// Дополнительные переменные для Firestore
+let collectionRef = null;
+let queryRef = null;
+let whereRef = null;
+let getDocsRef = null; // <-- Эта переменная была пропущена или объявлена дважды
+// ==================== КОНЕЦ FIREBASE ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ ====================
         // Импортируем дополнительные функции Firestore
         let collectionRef = null;
         let queryRef = null;
@@ -514,11 +519,10 @@ function getRandomDecoyCount(min = 1, max = 5) {
 // Функция инициализации Firebase
 async function initFirebase() {
     try {
-        // Динамически импортируем модули Firebase
-        // Убираем лишние пробелы из URL импорта
+        // Динамически импортируем модули Firebase (убираем лишние пробелы в URL)
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
         const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
-        // Импортируем ВСЕ необходимые функции Firestore, включая getDocs
+        // Импортируем ВСЕ необходимые функции Firestore
         const { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
 
         const firebaseConfig = {
@@ -541,13 +545,13 @@ async function initFirebase() {
         collectionRef = collection;
         queryRef = query;
         whereRef = where;
-        getDocsRef = getDocs; // <-- Присваиваем getDocs глобальной переменной
+        getDocsRef = getDocs; // <-- Очень важно: присваиваем getDocs
 
         // Используем async/await для получения полного профиля пользователя
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log('🔐 Пользователь вошёл (auth state):', user.uid);
-                
+
                 try {
                     // Запрашиваем документ пользователя из Firestore
                     const userDocRef = docRef(db, 'users', user.uid);
@@ -558,22 +562,22 @@ async function initFirebase() {
                         currentUser = { uid: user.uid, ...userDocSnap.data() };
                         console.log('✅ Профиль пользователя загружен из Firestore:', currentUser);
                     } else {
-                        console.error('❌ Профиль не найден в Firestore');
-                        // location.href = '../index.html'; // Не будем редиректить в библиотечной функции
+                        console.error('❌ Профиль не найден в Firestore для UID:', user.uid);
+                        // location.href = '../index.html'; // Опционально
                     }
                 } catch (profileError) {
-                    console.error('❌ Ошибка загрузки профиля из Firestore:', profileError);
+                    console.error('❌ Ошибка загрузки профиля из Firestore для UID:', user.uid, profileError);
                     // alert('Не удалось загрузить данные пользователя.');
                 }
             } else {
                 console.warn('🔒 Пользователь не авторизован');
-                currentUser = null; // Убедимся, что currentUser null, если не авторизован
+                currentUser = null;
             }
         });
         console.log("Firebase инициализирован");
     } catch (e) {
         console.error("❌ Ошибка инициализации Firebase:", e);
-        // Даже если Firebase не инициализирован, приложение продолжит работу
+        // Даже если Firebase не инициализирован, приложение может продолжить работу (без отправки сообщений)
     }
 }
 
@@ -891,10 +895,10 @@ async function loadFriendsForSelection() {
         const friendsRef = collectionRef(db, 'users');
         // Создаем запрос с фильтром по ID друзей
         // Ограничиваем до 10, так как 'in' запрос Firestore ограничен 10 элементами
-        const friendsToQuery = currentUser.friends.slice(0, 10); 
+        const friendsToQuery = currentUser.friends.slice(0, 10);
         const q = queryRef(friendsRef, whereRef('__name__', 'in', friendsToQuery));
         // Используем getDocsRef для выполнения запроса, возвращающего несколько документов
-        const querySnap = await getDocsRef(q);
+        const querySnap = await getDocsRef(q); // <-- Исправлено: было getDocRef(q)
 
         const friends = [];
         querySnap.forEach(doc => {
