@@ -494,6 +494,7 @@
     <script src="segmentation.js"></script>
     <script src="extra.js"></script>
     <script>
+
         sendTaskBtn.addEventListener('click', async function() {
     playSound(uiSounds.click);
 
@@ -511,6 +512,8 @@
     modalSelectRecipient.style.display = 'flex';
     loadFriendsForSelection();
 });
+
+
         // ==================== FIREBASE INIT ====================
         // Определяем глобальные переменные для Firebase
         let auth = null;
@@ -546,13 +549,16 @@
                 getDocRef = getDoc;
                 updateDocRef = updateDoc;
 
+// ИСПРАВЛЕННЫЙ КОД:
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         console.log('🔐 Пользователь вошёл:', user.uid);
-        
+
         try {
+            // 1. Создаём ссылку на документ пользователя
             const userDocRef = doc(db, 'users', user.uid);
-            const userDocSnap = await getDoc(userDocSnap); // Ждём реальные данные
+            // 2. Запрашиваем документ ПО ЭТОЙ ССЫЛКЕ
+            const userDocSnap = await getDoc(userDocRef); // <-- Исправлено: было userDocSnap
 
             if (userDocSnap.exists()) {
                 // Теперь currentUser имеет .friends
@@ -806,6 +812,7 @@ onAuthStateChanged(auth, async (user) => {
 
             // === ОБРАБОТЧИК КНОПКИ ✉️ ===
             // УДАЛЕН ВТОРОЙ (НЕПРАВИЛЬНЫЙ) ОБРАБОТЧИК sendTaskBtn
+
             sendTaskBtn.addEventListener('click', async function() {
                 playSound(uiSounds.click);
                 if (!currentUser || !currentUser.uid) {
