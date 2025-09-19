@@ -494,6 +494,23 @@
     <script src="segmentation.js"></script>
     <script src="extra.js"></script>
     <script>
+        sendTaskBtn.addEventListener('click', async function() {
+    playSound(uiSounds.click);
+
+    if (!currentUser || !currentUser.uid) {
+        alert('⛔ Сначала войдите в аккаунт.');
+        return;
+    }
+
+    // Если friends ещё не загружен
+    if (!currentUser.friends) {
+        alert('Данные о друзьях ещё загружаются... Попробуйте через несколько секунд.');
+        return;
+    }
+
+    modalSelectRecipient.style.display = 'flex';
+    loadFriendsForSelection();
+});
         // ==================== FIREBASE INIT ====================
         // Определяем глобальные переменные для Firebase
         let auth = null;
@@ -528,14 +545,33 @@
                 docRef = doc;
                 getDocRef = getDoc;
                 updateDocRef = updateDoc;
-                onAuthStateChanged(auth, (user) => {
-                    currentUser = user;
-                    if (user) {
-                        console.log('🔐 Пользователь авторизован:', user.displayName);
-                    } else {
-                        console.log('🔐 Пользователь не авторизован');
-                    }
-                });
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log('🔐 Пользователь вошёл:', user.uid);
+        
+        try {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnap = await getDoc(userDocSnap); // Ждём реальные данные
+
+            if (userDocSnap.exists()) {
+                // Теперь currentUser имеет .friends
+                currentUser = { uid: user.uid, ...userDocSnap.data() };
+                console.log('✅ Профиль пользователя загружен:', currentUser);
+            } else {
+                console.error('❌ Профиль не найден');
+                location.href = '../index.html';
+            }
+        } catch (error) {
+            console.error('❌ Ошибка загрузки профиля:', error);
+            alert('Не удалось загрузить данные пользователя.');
+        }
+    } else {
+        console.warn('🔒 Не авторизован');
+        location.href = '../index.html';
+    }
+});
+
                 console.log("Firebase инициализирован");
             } catch (e) {
                 console.error("❌ Ошибка инициализации Firebase:", e);
