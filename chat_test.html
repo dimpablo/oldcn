@@ -6,6 +6,15 @@ V4
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Чат</title>
   <style>
+    /* Фикс цвета текста в source-text внутри МОИХ сообщений */
+.msg-from-me .source-text {
+  background-color: #cce6ef !important;
+  color: #00505c !important;        /* тёмно-бирюзовый, видимый на синем */
+  border-color: #99d1e0 !important;
+  font-weight: bold;
+}
+
+/* Дополнительно — если есть кавычки вокруг текста, убери их через JS или не вставляй в данные */
     /* Фикс для слов внутри моих сообщений */
 .msg-from-me .words-container,
 .msg-from-me .answer-container {
