@@ -6,12 +6,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Квиз по переводу текста</title>
 <style>
+
+    /* === МОДАЛЬНЫЕ ОКНА === */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        backdrop-filter: blur(2px);
+    }
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        width: 90%;
+        max-width: 600px;
+        overflow: hidden;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #eaeaea;
+        background: #f8f6fb;
+    }
+    .modal-header h3 {
+        margin: 0;
+        color: #5a5a5a;
+        font-size: 16px;
+    }
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+    }
+    .modal-close:hover {
+        color: #555;
+    }
+    .friends-grid {
+        display: grid;
+        gap: 8px;
+        padding: 16px 20px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .friend-card {
+        padding: 12px;
+        background: #f9f7fc;
+        border: 1px solid #d9d4e7;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #5a5a5a;
+        transition: all 0.2s ease;
+    }
+    .friend-card:hover {
+        background: #f0eaf9;
+        border-color: #d9d4e7;
+        transform: translateY(-1px);
+    }
+    .info-message {
+        text-align: center;
+        color: #777;
+        padding: 20px;
+        font-style: italic;
+        display: none; /* Скрываем по умолчанию */
+    }
+    /* === ЧАТ МОДАЛЬНОЕ ОКНО === */
+    .chat-modal .modal-header {
+        background: #fffaf7;
+    }
+    .chat-modal .modal-content {
+        /* Увеличиваем размер модального окна чата */
+        width: 95%; /* Или даже 98% */
+        max-width: 900px; /* Или больше, например, 1200px */
+        /* Можно немного увеличить высоту, если нужно */
+        /* max-height: 90vh; */ /* Пример: 90% высоты вьюпорта */
+    }
+    #loadingIframe {
+        text-align: center;
+        padding: 30px;
+        color: #777;
+        display: block; /* Показываем по умолчанию */
+    }
+    .chat-iframe {
+        width: 100%;
+        /* min-height: 500px; */ /* Можно увеличить или сделать относительным */
+        min-height: 70vh; /* Например, 70% высоты вьюпорта */
+        border: none;
+        border-top: 1px solid #eee;
+        border-radius: 0 0 12px 12px;
+        display: none; /* Скрываем по умолчанию */
+    }
+    /* Стилизация кнопки "✉️" под .task-type */
+    #sendTaskBtn {
+        /* Убираем старые стили кнопки */
+        background: #e6f4f1; /* Цвет фона как у task-type */
+        color: #5a9a8f; /* Цвет текста как у task-type */
+        border: 1px solid #c2e3dd; /* Граница как у task-type */
+
+        /* Применяем стили как у task-type */
+        padding: 3px 8px; /* То же, что и у task-type */
+        border-radius: 12px; /* То же, что и у task-type */
+        font-size: 11px; /* То же, что и у task-type */
+        line-height: 1.2; /* То же или близкое значение */
+        white-space: nowrap; /* Чтобы текст не переносился */
+
+        /* Добавляем специфичные для кнопки свойства */
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s; /* Плавные переходы */
+        /* Убираем min-width и width, чтобы размер подстраивался под содержимое */
+        min-width: auto;
+        width: auto;
+    }
+
+    /* Стили при наведении на кнопку */
+    #sendTaskBtn:hover:not(:disabled) {
+        background-color: #c2e3dd; /* Более темный оттенок фона */
+        color: #3c766f; /* Более темный цвет текста */
+        border-color: #a8d8ce; /* Более темная граница */
+    }
+
+    /* Стили для отключенной кнопки (если нужно) */
+    #sendTaskBtn:disabled {
+        background-color: #c0c0c0; /* Серый фон */
+        border-color: #a0a0a0;
+        color: #777;
+        cursor: not-allowed;
+        opacity: 0.7; /* Делаем немного прозрачной */
+    }
+
     * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
-
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         line-height: 1.5;
@@ -20,12 +158,10 @@
         background-color: #fdf6f0; /* Пастельный персиковый фон */
         font-size: 14px;
     }
-
     .container {
         max-width: 100%;
         margin: 0 auto;
     }
-
     .header {
         background-color: #fffaf7; /* Светлый персик */
         padding: 10px;
@@ -35,18 +171,15 @@
         text-align: center;
         border: 1px solid #f5e1da; /* Пастельный коралл */
     }
-
     .header h1 {
         color: #7c6b96; /* Пастельный фиолетовый */
         font-size: 18px;
         margin-bottom: 5px;
     }
-
     .header p {
         font-size: 12px;
         color: #a0a0a0;
     }
-
     .progress {
         background-color: #e6f4f1; /* Пастельный мятный */
         padding: 8px;
@@ -58,7 +191,6 @@
         font-size: 13px;
         border: 1px solid #c2e3dd;
     }
-
     /* Collapsible Dictionary */
     .collapsible-container {
         border: 1px solid #d9d4e7; /* Пастельная лаванда */
@@ -67,7 +199,6 @@
         margin-bottom: 10px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-
     .collapsible-header {
         background-color: #f8f6fb; /* Очень светлая лаванда */
         padding: 10px;
@@ -81,17 +212,14 @@
         font-size: 13px;
         border-bottom: 1px solid #eae5f3;
     }
-
     .collapsible-header::after {
         content: "+";
         font-size: 18px;
         color: #9b9b9b;
     }
-
     .collapsible-header.active::after {
         content: "−";
     }
-
     .collapsible-content {
         padding: 0;
         max-height: 0;
@@ -99,18 +227,15 @@
         transition: max-height 0.3s ease-out;
         background-color: #fffdfb;
     }
-
     .collapsible-content.show {
         max-height: 400px;
         padding: 10px;
     }
-
     .dictionary-content {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         gap: 8px;
     }
-
     .dict-item {
         padding: 6px;
         background-color: #f9f7fc; /* Очень светлая лаванда */
@@ -120,30 +245,25 @@
         transition: all 0.2s;
         min-height: 55px;
     }
-
     .dict-item:hover {
         background-color: #f0eaf9; /* Светло-фиолетовый ховер */
         border-color: #d9d4e7;
     }
-
     .dict-char {
         font-size: 16px;
         font-weight: bold;
         color: #7c6b96;
         margin-bottom: 4px;
     }
-
     .dict-pinyin {
         font-size: 11px;
         color: #999999;
         margin-bottom: 2px;
     }
-
     .dict-meaning {
         font-size: 10px;
         color: #777777;
     }
-
     .task-container {
         background-color: #fffdfb;
         padding: 12px;
@@ -151,7 +271,6 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         margin-bottom: 12px;
     }
-
     .source-text {
         font-size: 16px;
         font-weight: bold;
@@ -166,7 +285,6 @@
         justify-content: center;
         border: 1px solid #eae5f3;
     }
-
     .task-type {
         display: inline-block;
         background-color: #e6f4f1;
@@ -176,8 +294,10 @@
         font-size: 11px;
         margin-bottom: 8px;
         border: 1px solid #c2e3dd;
+        /* Добавим эти свойства для лучшего соответствия кнопке */
+        line-height: 1.2; /* Или подходящее значение */
+        white-space: nowrap; /* Чтобы текст не переносился */
     }
-
     .words-container, .answer-container {
         border: 1px dashed #d9d4e7;
         border-radius: 6px;
@@ -187,22 +307,18 @@
         background-color: #f9f7fc;
         font-size: 13px;
     }
-
     .words-container {
         background-color: #f9f7fc;
     }
-
     .answer-container {
         background-color: #f0faf8; /* Мятно-кремовый */
         border-color: #a8d8ce;
     }
-
     .word-list {
         display: flex;
         flex-wrap: wrap;
         gap: 5px;
     }
-
     .word {
         padding: 6px 10px;
         background-color: #fff;
@@ -213,20 +329,17 @@
         font-size: 13px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-
     .word:hover {
         background-color: #f0eaf9;
         transform: translateY(-1px);
         border-color: #d9d4e7;
     }
-
-.word.selected {
-    background-color: #ffb6c1; /* Светло-розовый (пастельный) */
-    color: #ffffff;
-    border-color: #ff99ab; /* Немного более насыщенный розовый */
-    box-shadow: 0 2px 4px rgba(255, 182, 193, 0.4); /* Лёгкая тень для лучшей видимости */
-}
-
+    .word.selected {
+        background-color: #ffb6c1; /* Светло-розовый (пастельный) */
+        color: #ffffff;
+        border-color: #ff99ab; /* Немного более насыщенный розовый */
+        box-shadow: 0 2px 4px rgba(255, 182, 193, 0.4); /* Лёгкая тень для лучшей видимости */
+    }
     #resultMessage {
         min-height: 20px;
         text-align: center;
@@ -236,19 +349,16 @@
         border-radius: 6px;
         font-size: 13px;
     }
-
     .success {
         background-color: #e8f4f1;
         color: #3c766f;
         border: 1px solid #c2e3dd;
     }
-
     .info {
         background-color: #f0f4fb;
         color: #4a6fa5;
         border: 1px solid #d0ddf0;
     }
-
     .congratulations {
         text-align: center;
         padding: 20px 12px;
@@ -257,19 +367,16 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         border: 1px solid #f5e1da;
     }
-
     .congratulations h2 {
         color: #c28e8e; /* Пастельный розово-коричневый */
         margin-bottom: 12px;
         font-size: 18px;
     }
-
     .congratulations p {
         font-size: 14px;
         margin-bottom: 15px;
         color: #777;
     }
-
     .btn {
         display: block;
         width: 100%;
@@ -284,31 +391,25 @@
         margin-top: 8px;
         border: 1px solid #8fb8cc;
     }
-
     .btn:hover {
         background-color: #8fb8cc;
     }
-
     .btn-success {
         background-color: #c2e3dd; /* Пастельный мятный */
         border: 1px solid #a8d8ce;
     }
-
     .btn-success:hover {
         background-color: #a8d8ce;
     }
-
     /* Glow Animation */
     @keyframes glow {
         0% { box-shadow: 0 0 5px #c2e3dd, 0 0 10px #c2e3dd; }
         50% { box-shadow: 0 0 15px #c2e3dd, 0 0 25px #c2e3dd; }
         100% { box-shadow: 0 0 5px #c2e3dd, 0 0 10px #c2e3dd; }
     }
-
     .dict-item.glow {
         animation: glow 0.3s ease-in-out;
     }
-
     /* Hint styles */
     .hint-container {
         margin-top: 10px;
@@ -337,7 +438,6 @@
         border-color: #a0a0a0;
         cursor: not-allowed;
     }
-
     /* Adaptation for very small screens */
     @media (max-width: 360px) {
         .dictionary-content {
@@ -358,6 +458,7 @@
             font-size: 9px;
         }
     }
+
 </style>
 </head>
 <body>
@@ -366,11 +467,9 @@
             <h1>Квиз по переводу</h1>
             <p>Сопоставьте текст с переводом</p>
         </div>
-
         <div class="progress">
             Осталось: <span id="tasksLeft">0</span>
         </div>
-
         <!-- Сворачиваемый словарь -->
         <div class="collapsible-container">
             <div class="collapsible-header" id="collapsibleHeader"> <!-- ID для JS -->
@@ -380,98 +479,120 @@
                 <div class="dictionary-content" id="dictionaryContent"></div>
             </div>
         </div>
-
         <div id="mainContent">
             <div class="task-container">
-                <div class="task-type" id="taskType">Перевод с китайского</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div class="task-type" id="taskType">Перевод с китайского</div>
+                    <button id="sendTaskBtn" title="Отправить задание">Послать в личку ✉️</button>
+                </div>
                 <div class="source-text" id="sourceText">Загрузка...</div>
-
                 <div class="words-container">
                     <div class="word-list" id="wordsList"></div>
                 </div>
-
                 <div class="answer-container">
                     <div class="word-list" id="answerList"></div>
                 </div>
-
                 <!-- Контейнер для подсказки -->
                 <div class="hint-container" id="hintContainer">
                     Правильный ответ: <span id="hintText"></span>
                 </div>
-
                 <!-- Кнопка подсказки -->
                 <button id="hintBtn" class="btn">Подсмотреть правильный ответ (-7 баллов)</button>
-
                 <div id="resultMessage"></div>
             </div>
         </div>
-
         <div id="congratulations" class="congratulations" style="display: none;">
             <h2>🎉 Поздравляем!</h2>
             <p>Вы прошли все задания!</p>
             <button class="btn btn-success" id="returnBtn">На главную</button>
         </div>
     </div>
-
     <!-- Подключаем данные -->
-<script src="segmentation.js"></script>
-<script src="extra.js"></script>
+    <script src="segmentation.js"></script>
+    <script src="extra.js"></script>
+    <script>
+        // Функция инициализации Firebase
+// ==================== FIREBASE INIT ====================
+// Определяем глобальные переменные для Firebase
+let auth = null;
+let db = null;
+let currentUser = null;
+let docRef = null;
+let getDocRef = null;
+let updateDocRef = null;
+let collectionRef = null;
+let queryRef = null;
+let whereRef = null;
+let getDocsRef = null; // <-- Новая глобальная переменная для getDocs
 
-<script>
-        // ==================== FIREBASE INIT ====================
-        // Определяем глобальные переменные для Firebase
-        let auth = null;
-        let db = null;
-        let currentUser = null;
-        let docRef = null;
-        let getDocRef = null;
-        let updateDocRef = null;
-
-
-        function getRandomDecoyCount(min = 1, max = 5) {
+function getRandomDecoyCount(min = 1, max = 5) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-        // Функция инициализации Firebase
-        async function initFirebase() {
-            try {
-                // Динамически импортируем модули Firebase
-                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
-                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
-                const { getFirestore, doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+// Функция инициализации Firebase
+async function initFirebase() {
+    try {
+        // Динамически импортируем модули Firebase (убираем лишние пробелы в URL)
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
+        const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
+        // Импортируем ВСЕ необходимые функции Firestore
+        const { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
 
-                const firebaseConfig = {
-                    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-                    authDomain: "antient-9bff0.firebaseapp.com",
-                    projectId: "antient-9bff0",
-                    storageBucket: "antient-9bff0.firebasestorage.app",
-                    messagingSenderId: "311792589414",
-                    appId: "1:311792589414:web:5fff3154735007c2006ba7",
-                    measurementId: "G-W4ZQXWRTKK"
-                };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+            authDomain: "antient-9bff0.firebaseapp.com",
+            projectId: "antient-9bff0",
+            storageBucket: "antient-9bff0.firebasestorage.app",
+            messagingSenderId: "311792589414",
+            appId: "1:311792589414:web:5fff3154735007c2006ba7",
+            measurementId: "G-W4ZQXWRTKK"
+        };
 
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                // Присваиваем функции Firebase глобальным переменным
-                docRef = doc;
-                getDocRef = getDoc;
-                updateDocRef = updateDoc;
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        // Присваиваем функции Firebase глобальным переменным
+        docRef = doc;
+        getDocRef = getDoc;
+        updateDocRef = updateDoc;
+        collectionRef = collection;
+        queryRef = query;
+        whereRef = where;
+        getDocsRef = getDocs; // <-- Очень важно: присваиваем getDocs
 
-                onAuthStateChanged(auth, (user) => {
-                    currentUser = user;
-                    if (user) {
-                        console.log('🔐 Пользователь авторизован:', user.displayName);
+        // Используем async/await для получения полного профиля пользователя
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log('🔐 Пользователь вошёл (auth state):', user.uid);
+
+                try {
+                    // Запрашиваем документ пользователя из Firestore
+                    const userDocRef = docRef(db, 'users', user.uid);
+                    const userDocSnap = await getDocRef(userDocRef); // Используем getDocRef для одного документа
+
+                    if (userDocSnap.exists()) {
+                        // Теперь currentUser имеет .friends и другие данные из Firestore
+                        currentUser = { uid: user.uid, ...userDocSnap.data() };
+                        console.log('✅ Профиль пользователя загружен из Firestore:', currentUser);
                     } else {
-                        console.log('🔐 Пользователь не авторизован');
+                        console.error('❌ Профиль не найден в Firestore для UID:', user.uid);
+                        // location.href = '../index.html'; // Опционально
                     }
-                });
-                console.log("Firebase инициализирован");
-            } catch (e) {
-                console.error("❌ Ошибка инициализации Firebase:", e);
-                // Даже если Firebase не инициализирован, приложение продолжит работу
+                } catch (profileError) {
+                    console.error('❌ Ошибка загрузки профиля из Firestore для UID:', user.uid, profileError);
+                    // alert('Не удалось загрузить данные пользователя.');
+                }
+            } else {
+                console.warn('🔒 Пользователь не авторизован');
+                currentUser = null;
             }
-        }
+        });
+        console.log("Firebase инициализирован");
+    } catch (e) {
+        console.error("❌ Ошибка инициализации Firebase:", e);
+        // Даже если Firebase не инициализирован, приложение может продолжить работу (без отправки сообщений)
+    }
+}
 
 
         // ==================== СИСТЕМА БАЛЛОВ ====================
@@ -718,15 +839,168 @@
             await initFirebase(); // Дожидаемся инициализации Firebase
             await preloadUISounds(); // Дожидаемся загрузки звуков
 
+            // ==================== ФУНКЦИИ ====================
+            // Функция для формирования строки задания с правильными кавычками
+            function getTaskShareString(task, currentAnswerWords) {
+                const tokens = task.words.map(w => `"${w}"`).join(', ');
+                if (task.type === 'toTranslation') {
+                    return `’‘’‘ [original]->[translation]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}} ’‘’‘`;
+                } else {
+                    return `’‘’‘ [translation]->[original]: {"${task.source}"}->{"${task.correctAnswer}"}; [tokens]: {${tokens}} ’‘’‘`;
+                }
+            }
+
             // ==================== СОБЫТИЯ ИНТЕРФЕЙСА ====================
             // Сворачиваемый словарь
             const collapsibleHeader = document.getElementById('collapsibleHeader');
             const collapsibleContent = document.getElementById('collapsibleContent');
+            const sendTaskBtn = document.getElementById('sendTaskBtn');
+
+            // === ЭЛЕМЕНТЫ DOM ДЛЯ МОДАЛЬНЫХ ОКОН ===
+            const modalSelectRecipient = document.getElementById('modalSelectRecipient');
+            const closeRecipientModalBtn = document.getElementById('closeRecipientModalBtn');
+            const recipientList = document.getElementById('recipientList');
+            const noFriendsMessage = document.getElementById('noFriendsMessage');
+            const modalShareTask = document.getElementById('modalShareTaskChat'); // Используем уникальный ID
+            const closeModalBtn = document.getElementById('closeModalBtnChat'); // Используем уникальный ID
+            const shareTaskFrame = document.getElementById('shareTaskFrame');
+            const loadingIframe = document.getElementById('loadingIframe');
+
+            // === ОБРАБОТЧИК КНОПКИ ✉️ ===
+            sendTaskBtn.addEventListener('click', async function() {
+                playSound(uiSounds.click);
+
+                if (!currentUser || !currentUser.uid) {
+                    alert('⛔ Сначала войдите в аккаунт.');
+                    return;
+                }
+
+                // Проверяем, загружен ли массив друзей
+                if (!Array.isArray(currentUser.friends)) {
+                    alert('Данные о друзьях ещё загружаются или отсутствуют... Попробуйте позже.');
+                    console.warn("currentUser.friends не является массивом или отсутствует:", currentUser.friends);
+                    return;
+                }
+
+                modalSelectRecipient.style.display = 'flex';
+                loadFriendsForSelection();
+            });
+
+            // === ЗАГРУЗКА ДРУЗЕЙ ===
+// === ЗАГРУЗКА ДРУЗЕЙ ===
+async function loadFriendsForSelection() {
+    const recipientList = document.getElementById('recipientList');
+    const noFriendsMessage = document.getElementById('noFriendsMessage');
+
+    recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка друзей...</div>';
+    noFriendsMessage.style.display = 'none';
+
+    // Повторная и более строгая проверка внутри функции
+    if (!currentUser || !Array.isArray(currentUser.friends) || currentUser.friends.length === 0) {
+        console.warn("Нет друзей для загрузки или currentUser.friends не является массивом:", currentUser?.friends);
+        recipientList.innerHTML = '';
+        noFriendsMessage.style.display = 'block';
+        return;
+    }
+
+    try {
+        // Создаем ссылку на коллекцию пользователей
+        const friendsRef = collectionRef(db, 'users');
+        // Создаем запрос с фильтром по ID друзей
+        // Ограничиваем до 10, так как 'in' запрос Firestore ограничен 10 элементами
+        const friendsToQuery = currentUser.friends.slice(0, 10);
+        const q = queryRef(friendsRef, whereRef('__name__', 'in', friendsToQuery));
+        // Используем getDocsRef для выполнения запроса, возвращающего несколько документов
+        const querySnap = await getDocsRef(q); // <-- Исправлено: было getDocRef(q)
+
+        const friends = [];
+        querySnap.forEach(doc => {
+            friends.push({ id: doc.id, ...doc.data() });
+        });
+
+        recipientList.innerHTML = '';
+
+        if (friends.length === 0) {
+            recipientList.innerHTML = '<div style="text-align:center;color:#777">Друзья не найдены</div>';
+            return;
+        }
+
+        // Только список имён и баллов
+        friends.forEach(friend => {
+            const card = document.createElement('div');
+            card.className = 'friend-card';
+            // Только текст
+            card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
+            // Стили уже определены в CSS, добавляем обработчик клика
+            card.addEventListener('click', () => selectRecipient(friend));
+            recipientList.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Ошибка загрузки друзей:", error);
+        recipientList.innerHTML = '<div style="text-align:center;color:red">Ошибка загрузки</div>';
+    }
+}
+
+            // === ВЫБОР ПОЛУЧАТЕЛЯ ===
+            function selectRecipient(friend) {
+                modalSelectRecipient.style.display = 'none';
+
+                const task = tasks[currentTaskIndex];
+                const shareString = getTaskShareString(task, currentAnswer);
+                const encodedShareString = encodeURIComponent(shareString);
+                const chatUrl = `../chat.html#chat/${friend.id}/${encodedShareString}`;
+
+                // Показываем модальное окно чата
+                modalShareTask.style.display = 'flex';
+                shareTaskFrame.src = '';
+                loadingIframe.style.display = 'block';
+                shareTaskFrame.style.display = 'none';
+
+                setTimeout(() => {
+                    shareTaskFrame.src = chatUrl;
+                }, 10);
+
+                shareTaskFrame.onload = () => {
+                    loadingIframe.style.display = 'none';
+                    shareTaskFrame.style.display = 'block';
+                };
+            }
+
+            // === ЗАКРЫТИЕ МОДАЛОК ===
+            closeRecipientModalBtn?.addEventListener('click', () => {
+                modalSelectRecipient.style.display = 'none';
+            });
+
+            closeModalBtn?.addEventListener('click', () => {
+                modalShareTask.style.display = 'none';
+                shareTaskFrame.src = '';
+            });
+
+            // Закрытие по Esc
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (modalSelectRecipient.style.display !== 'none') {
+                        modalSelectRecipient.style.display = 'none';
+                    }
+                    if (modalShareTask.style.display !== 'none') {
+                        modalShareTask.style.display = 'none';
+                        shareTaskFrame.src = '';
+                    }
+                }
+            });
+
+            // Закрытие по клику мимо
+            modalSelectRecipient?.addEventListener('click', (e) => {
+                if (e.target === modalSelectRecipient) modalSelectRecipient.style.display = 'none';
+            });
+
+            modalShareTask?.addEventListener('click', (e) => {
+                if (e.target === modalShareTask) modalShareTask.style.display = 'none';
+            });
 
             collapsibleHeader.addEventListener('click', function() {
                 this.classList.toggle('active');
                 collapsibleContent.classList.toggle('show');
-
                 // Воспроизводим звук в зависимости от состояния
                 if (collapsibleContent.classList.contains('show')) {
                     playSound(uiSounds.expand);
@@ -776,32 +1050,31 @@
             // ==================== ОСНОВНАЯ ЛОГИКА ====================
             // Подготовка данных
             // Проверка SentenceData теперь внутри DOMContentLoaded, где она гарантированно загружена
-// Проверяем основные данные
-if (typeof SentenceData === 'undefined' || !SentenceData.sentences || !Array.isArray(SentenceData.sentences)) {
-    console.error("SentenceData не загружена или имеет неверный формат!");
-    document.getElementById('sourceText').textContent = "Ошибка: данные урока не загружены.";
-    return;
-}
+            // Проверяем основные данные
+            if (typeof SentenceData === 'undefined' || !SentenceData.sentences || !Array.isArray(SentenceData.sentences)) {
+                console.error("SentenceData не загружена или имеет неверный формат!");
+                document.getElementById('sourceText').textContent = "Ошибка: данные урока не загружены.";
+                return;
+            }
 
-// Проверяем дополнительные данные (необязательные, но если есть — должны быть валидны)
-let extraSentences = [];
-if (typeof extra !== 'undefined' && extra.sentences && Array.isArray(extra.sentences)) {
-    console.log(`✅ Загружено ${extra.sentences.length} дополнительных предложений из extra.js`);
-    extraSentences = extra.sentences;
-} else {
-    console.warn("⚠️ Файл extra.js не загружен или имеет неверный формат. Продолжаем без дополнительных заданий.");
-}
+            // Проверяем дополнительные данные (необязательные, но если есть — должны быть валидны)
+            let extraSentences = [];
+            if (typeof extra !== 'undefined' && extra.sentences && Array.isArray(extra.sentences)) {
+                console.log(`✅ Загружено ${extra.sentences.length} дополнительных предложений из extra.js`);
+                extraSentences = extra.sentences;
+            } else {
+                console.warn("⚠️ Файл extra.js не загружен или имеет неверный формат. Продолжаем без дополнительных заданий.");
+            }
 
+            // Объединяем предложения из основного и дополнительного источника
+            const allSentences = [...SentenceData.sentences, ...extraSentences];
 
-// Объединяем предложения из основного и дополнительного источника
-const allSentences = [...SentenceData.sentences, ...extraSentences];
+            const allOriginals = allSentences.map(s => s.original);
+            const allTranslations = allSentences.map(s => s.translation);
 
-const allOriginals = allSentences.map(s => s.original);
-const allTranslations = allSentences.map(s => s.translation);
-
-function cleanRussian(text) {
-    return text.replace(/[^\p{L}\p{N}\s]/gu, '').toLowerCase().trim();
-}
+            function cleanRussian(text) {
+                return text.replace(/[^\p{L}\p{N}\s]/gu, '').toLowerCase().trim();
+            }
 
             const allRussianWords = [];
             allTranslations.forEach(trans => {
@@ -823,45 +1096,45 @@ function cleanRussian(text) {
                 return arr;
             }
 
-let tasks = [];
-allSentences.forEach(sentence => {
-    const actualRussianWords = cleanRussian(sentence.translation).split(' ').filter(w => w);
-    const actualChineseChars = sentence.original.split('');
+            let tasks = [];
+            allSentences.forEach(sentence => {
+                const actualRussianWords = cleanRussian(sentence.translation).split(' ').filter(w => w);
+                const actualChineseChars = sentence.original.split('');
 
-    // --- Для перевода с китайского на русский ---
-    // Фильтруем общий пул слов: только те, которых НЕТ в настоящем ответе
-    const availableRussianDecoys = allRussianWords.filter(word => !actualRussianWords.includes(word));
-    // Убираем дубликаты из пула обманок
-    const uniqueRussianDecoys = [...new Set(availableRussianDecoys)];
-    // Перемешиваем
-    const shuffledRussianDecoys = shuffleArray(uniqueRussianDecoys);
-    // Берём случайное количество от 1 до 5, но не больше, чем доступно
-    const russianDecoyCount = Math.min(getRandomDecoyCount(), shuffledRussianDecoys.length);
-    const russianDecoys = shuffledRussianDecoys.slice(0, russianDecoyCount);
+                // --- Для перевода с китайского на русский ---
+                // Фильтруем общий пул слов: только те, которых НЕТ в настоящем ответе
+                const availableRussianDecoys = allRussianWords.filter(word => !actualRussianWords.includes(word));
+                // Убираем дубликаты из пула обманок
+                const uniqueRussianDecoys = [...new Set(availableRussianDecoys)];
+                // Перемешиваем
+                const shuffledRussianDecoys = shuffleArray(uniqueRussianDecoys);
+                // Берём случайное количество от 1 до 5, но не больше, чем доступно
+                const russianDecoyCount = Math.min(getRandomDecoyCount(), shuffledRussianDecoys.length);
+                const russianDecoys = shuffledRussianDecoys.slice(0, russianDecoyCount);
 
-    tasks.push({
-        type: 'toTranslation',
-        source: sentence.original,
-        correctAnswer: cleanRussian(sentence.translation),
-        words: shuffleArray([...actualRussianWords, ...russianDecoys]),
-        direction: 'с китайского на русский'
-    });
+                tasks.push({
+                    type: 'toTranslation',
+                    source: sentence.original,
+                    correctAnswer: cleanRussian(sentence.translation),
+                    words: shuffleArray([...actualRussianWords, ...russianDecoys]),
+                    direction: 'с китайского на русский'
+                });
 
-    // --- Для перевода с русского на китайский ---
-    const availableChineseDecoys = allChineseChars.filter(char => !actualChineseChars.includes(char));
-    const uniqueChineseDecoys = [...new Set(availableChineseDecoys)];
-    const shuffledChineseDecoys = shuffleArray(uniqueChineseDecoys);
-    const chineseDecoyCount = Math.min(getRandomDecoyCount(), shuffledChineseDecoys.length);
-    const chineseDecoys = shuffledChineseDecoys.slice(0, chineseDecoyCount);
+                // --- Для перевода с русского на китайский ---
+                const availableChineseDecoys = allChineseChars.filter(char => !actualChineseChars.includes(char));
+                const uniqueChineseDecoys = [...new Set(availableChineseDecoys)];
+                const shuffledChineseDecoys = shuffleArray(uniqueChineseDecoys);
+                const chineseDecoyCount = Math.min(getRandomDecoyCount(), shuffledChineseDecoys.length);
+                const chineseDecoys = shuffledChineseDecoys.slice(0, chineseDecoyCount);
 
-    tasks.push({
-        type: 'toOriginal',
-        source: sentence.translation,
-        correctAnswer: sentence.original,
-        words: shuffleArray([...actualChineseChars, ...chineseDecoys]),
-        direction: 'с русского на китайский'
-    });
-});
+                tasks.push({
+                    type: 'toOriginal',
+                    source: sentence.translation,
+                    correctAnswer: sentence.original,
+                    words: shuffleArray([...actualChineseChars, ...chineseDecoys]),
+                    direction: 'с русского на китайский'
+                });
+            });
 
             tasks = shuffleArray(tasks);
 
@@ -951,7 +1224,7 @@ allSentences.forEach(sentence => {
                         await updateUserPoints(5); // Начисляем 5 баллов
                         showSuccess();
                     }
-                } else { 
+                } else {
                     const currentTextOriginal = currentAnswer.join(''); // Для китайского склеиваем без пробелов
                     if (currentTextOriginal === task.correctAnswer) {
                         playSound(uiSounds.success); // Воспроизводим звук успеха
@@ -1022,8 +1295,33 @@ allSentences.forEach(sentence => {
             // Инициализируем первую задачу
             renderTask();
         });
-
     </script>
-<script src="../uploader.js"></script>
+    <script src="../uploader.js"></script>
+    <!-- Модальное окно выбора получателя -->
+    <div id="modalSelectRecipient" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📬 Выберите получателя</h3>
+                <button id="closeRecipientModalBtn" class="modal-close">×</button>
+            </div>
+            <div id="recipientList" class="friends-grid">
+                <!-- Список друзей будет загружен здесь -->
+            </div>
+            <div id="noFriendsMessage" class="info-message">
+                У вас пока нет друзей. Добавьте их в разделе "Сообщество".
+            </div>
+        </div>
+    </div>
+    <!-- Модальное окно чата (исправлено ID) -->
+    <div id="modalShareTaskChat" class="modal-overlay"> <!-- Уникальный ID -->
+        <div class="modal-content chat-modal">
+            <div class="modal-header">
+                <h3>💬 Отправка задания</h3>
+                <button id="closeModalBtnChat" class="modal-close">×</button> <!-- Уникальный ID -->
+            </div>
+            <div id="loadingIframe">Загрузка чата...</div>
+            <iframe id="shareTaskFrame" src="" class="chat-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
 </body>
 </html>
