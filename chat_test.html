@@ -1,4 +1,4 @@
-V7
+V8
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -630,7 +630,7 @@ V7
     const match = window.location.hash.match(/^#chat\/([^\/]+)(?:\/.*)?$/);
     return match ? match[1] : null;
   }
-  
+
   function onHashChange() {
     console.log("[onHashChange] Вызвано");
     const otherUserId = getOtherUserIdFromHash();
