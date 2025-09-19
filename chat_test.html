@@ -1,4 +1,4 @@
-V5
+V6
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,57 +7,51 @@ V5
   <title>Чат</title>
   <style>
     /* === ФИКС .theory-box В МОИХ СООБЩЕНИЯХ === */
+    .msg-from-me .theory-box {
+      background-color: #cce6ef !important;
+      border-color: #99d1e0 !important;
+      color: #00505c !important;
+    }
+    .msg-from-me .theory-box h3 {
+      color: #006680 !important;
+      border-bottom-color: #99d1e0 !important;
+    }
+    .msg-from-me .theory-box p {
+      color: #00505c !important;
+    }
+    .msg-from-me .theory-box .example {
+      color: #004d40 !important;
+      background-color: #be97ec !important;
+    }
 
-.msg-from-me .theory-box {
-  background-color: #cce6ef !important;
-  border-color: #99d1e0 !important;
-  color: #00505c !important;
-}
-
-.msg-from-me .theory-box h3 {
-  color: #006680 !important;
-  border-bottom-color: #99d1e0 !important;
-}
-
-.msg-from-me .theory-box p {
-  color: #00505c !important;
-}
-
-.msg-from-me .theory-box .example {
-  color: #004d40 !important;
-  background-color: #be97ec !important;
-}
     /* Фикс цвета текста в source-text внутри МОИХ сообщений */
-.msg-from-me .source-text {
-  background-color: #cce6ef !important;
-  color: #00505c !important;        /* тёмно-бирюзовый, видимый на синем */
-  border-color: #99d1e0 !important;
-  font-weight: bold;
-}
+    .msg-from-me .source-text {
+      background-color: #cce6ef !important;
+      color: #00505c !important;
+      border-color: #99d1e0 !important;
+      font-weight: bold;
+    }
 
-/* Дополнительно — если есть кавычки вокруг текста, убери их через JS или не вставляй в данные */
     /* Фикс для слов внутри моих сообщений */
-.msg-from-me .words-container,
-.msg-from-me .answer-container {
-  background-color: #cce6ef !important;
-  border-color: #99d1e0;
-}
+    .msg-from-me .words-container,
+    .msg-from-me .answer-container {
+      background-color: #cce6ef !important;
+      border-color: #99d1e0;
+    }
+    .msg-from-me .word {
+      background-color: white !important;
+      color: #333 !important;
+      border-color: #99d1e0;
+    }
+    .msg-from-me .word.selected {
+      background-color: #ff6b6b !important;
+      color: white !important;
+    }
+    .msg-from-me .result-message {
+      background-color: #e8f4f1 !important;
+      color: #3c766f !important;
+    }
 
-.msg-from-me .word {
-  background-color: white !important;
-  color: #333 !important; /* тёмный текст */
-  border-color: #99d1e0;
-}
-
-.msg-from-me .word.selected {
-  background-color: #ff6b6b !important;
-  color: white !important;
-}
-
-.msg-from-me .result-message {
-  background-color: #e8f4f1 !important;
-  color: #3c766f !important;
-}
     body {
       margin: 0;
       padding: 0;
@@ -253,6 +247,36 @@ V5
     #send-message-btn:hover {
       background: #006064;
     }
+
+    /* === ПАНЕЛЬ ВСТАВКИ ИЗ URL === */
+    #payload-preview {
+      padding: 10px;
+      margin: 10px;
+      background: #e8f4f1;
+      border-radius: 8px;
+      border: 1px solid #c2e3dd;
+      font-size: 13px;
+    }
+    #payload-preview button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    #insert-payload-btn {
+      background: #00838f;
+      color: white;
+    }
+    #send-payload-btn {
+      background: #2e7d32;
+      color: white;
+    }
+    #close-payload {
+      background: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -266,6 +290,19 @@ V5
   <div id="chat-controls">
     <input type="text" id="message-input" placeholder="Введите сообщение..." />
     <button id="send-message-btn">Отправить</button>
+  </div>
+
+  <!-- Панель вставки из URL -->
+  <div id="payload-preview" style="display: none;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <strong>📎 Задание из ссылки</strong>
+      <button id="close-payload">✕</button>
+    </div>
+    <div id="payload-content"></div>
+    <div style="margin-top: 8px; display: flex; gap: 8px;">
+      <button id="insert-payload-btn">Добавить к сообщению</button>
+      <button id="send-payload-btn">Отправить сразу</button>
+    </div>
   </div>
 
   <!-- Firebase SDK -->
@@ -414,7 +451,6 @@ V5
         iframe.title = `Иероглиф ${taskData.char}`;
         iframe.style.width = '120%';
         iframe.style.height = '400px';
-
         bubble.appendChild(iframe);
       } else if (taskData.type === 'paragraph') {
         const div = document.createElement('div');
@@ -439,7 +475,7 @@ V5
 
       const sourceText = document.createElement('div');
       sourceText.className = 'source-text';
-      sourceText.textContent = taskData.source;
+      sourceText.textContent = taskData.source.replace(/^["']|["']$/g, ''); // Убираем кавычки
       container.appendChild(sourceText);
 
       const wordsContainer = document.createElement('div');
@@ -536,8 +572,99 @@ V5
     // === ОСНОВНАЯ ЛОГИКА ЧАТА ===
 
     function getOtherUserIdFromHash() {
-      const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
+      const match = window.location.hash.match(/^#chat\/([^\/]+)(?:\/.*)?$/);
       return match ? match[1] : null;
+    }
+
+    function getPayloadFromHash() {
+      const match = window.location.hash.match(/^#chat\/[^\/]+\/(.*)$/);
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function processHashPayload() {
+      const payload = getPayloadFromHash();
+      const previewPanel = document.getElementById('payload-preview');
+      const payloadContent = document.getElementById('payload-content');
+
+      if (!payload) {
+        previewPanel.style.display = 'none';
+        return;
+      }
+
+      try {
+        const fragments = splitHybridMessage(payload);
+        payloadContent.innerHTML = '';
+
+        fragments.forEach(fragment => {
+          if (fragment.type === 'text') {
+            const p = document.createElement('p');
+            p.style.margin = '4px 0';
+            p.textContent = fragment.content;
+            payloadContent.appendChild(p);
+          } else if (fragment.type === 'task') {
+            const taskData = parseTask(fragment.raw);
+            if (taskData) {
+              const el = createTaskMessage(taskData, true);
+              payloadContent.appendChild(el);
+            }
+          }
+        });
+
+        previewPanel.style.display = 'block';
+      } catch (e) {
+        console.error("Ошибка парсинга payload:", e);
+        payloadContent.innerHTML = '<p style="color: red">❌ Ошибка разбора задания</p>';
+        previewPanel.style.display = 'block';
+      }
+    }
+
+    function setupPayloadHandlers() {
+      const insertBtn = document.getElementById('insert-payload-btn');
+      const sendBtn = document.getElementById('send-payload-btn');
+      const closeBtn = document.getElementById('close-payload');
+      const payloadContent = document.getElementById('payload-content');
+      const messageInput = document.getElementById('message-input');
+      const previewPanel = document.getElementById('payload-preview');
+
+      insertBtn.addEventListener('click', () => {
+        const payloadText = getPayloadFromHash();
+        if (!payloadText) return;
+
+        if (messageInput.value) {
+          messageInput.value += ' ' + payloadText;
+        } else {
+          messageInput.value = payloadText;
+        }
+        messageInput.focus();
+        previewPanel.style.display = 'none';
+      });
+
+      sendBtn.addEventListener('click', async () => {
+        const payloadText = getPayloadFromHash();
+        if (!payloadText || !otherUser || !currentUser) return;
+
+        const userPair = [currentUser.uid, otherUser.id].sort().join('_');
+        const messageData = {
+          from: currentUser.uid,
+          to: otherUser.id,
+          text: payloadText,
+          timestamp: Date.now(),
+          participants: [currentUser.uid, otherUser.id],
+          userPair: userPair,
+          seenBy: [currentUser.uid]
+        };
+
+        try {
+          await addDoc(collection(db, 'messages'), messageData);
+          previewPanel.style.display = 'none';
+        } catch (e) {
+          alert("Ошибка отправки: " + e.message);
+        }
+      });
+
+      closeBtn.addEventListener('click', () => {
+        previewPanel.style.display = 'none';
+      });
     }
 
     function onHashChange() {
@@ -573,6 +700,7 @@ V5
 
         startListeningToMessages(otherUserId);
         markMessagesAsRead(otherUserId);
+        processHashPayload(); // Показываем панель, если есть payload
       } catch (e) {
         console.error("[loadChatAndStartListening] Ошибка:", e);
         document.getElementById('chat-name').textContent = "Ошибка подключения";
@@ -601,7 +729,7 @@ V5
               const msgBubble = createTaskMessage(taskData, fromMe);
               list.appendChild(msgBubble);
               if (taskData.type === 'translation') {
-                setTimeout(() => attachInteraction(msgBubble, taskData), 10); // Делаем после рендера
+                setTimeout(() => attachInteraction(msgBubble, taskData), 10);
               }
             }
           }
@@ -693,22 +821,27 @@ V5
       if (e.key === 'Enter') sendMessage();
     });
 
-    window.addEventListener('load', () => onHashChange());
-    window.addEventListener('hashchange', onHashChange);
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          currentUser = { uid: user.uid, ...userDoc.data() };
-          onHashChange();
+    window.addEventListener('load', () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            currentUser = { uid: user.uid, ...userDoc.data() };
+            onHashChange();
+            setupPayloadHandlers();
+          } else {
+            alert("Профиль не найден");
+            window.location.href = './index.html';
+          }
         } else {
-          alert("Профиль не найден");
           window.location.href = './index.html';
         }
-      } else {
-        window.location.href = './index.html';
-      }
+      });
+    });
+
+    window.addEventListener('hashchange', () => {
+      onHashChange();
+      processHashPayload();
     });
   </script>
 </body>
