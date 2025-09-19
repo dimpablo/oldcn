@@ -820,22 +820,30 @@ if (currentPayload) {
   });
 
   // === Инициализация при загрузке ===
-  window.addEventListener('load', () => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          currentUser = { uid: user.uid, ...userDoc.data() };
-          onHashChange();
-        } else {
-          alert("Профиль не найден");
-          window.location.href = './index.html';
-        }
+window.addEventListener('load', () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        currentUser = { uid: user.uid, ...userDoc.data() };
+        onHashChange();
       } else {
+        alert("Профиль не найден");
         window.location.href = './index.html';
       }
-    });
+    } else {
+      window.location.href = './index.html';
+    }
   });
+
+  // === Добавляем обработчик для кнопки закрытия payload ===
+  document.getElementById('close-payload').addEventListener('click', () => {
+    const previewPanel = document.getElementById('payload-preview');
+    previewPanel.style.display = 'none';
+    currentPayload = null;
+    console.log("[close-payload] Payload отменён, возвращаемся к обычному вводу.");
+  });
+});
 
   window.addEventListener('hashchange', () => {
     onHashChange();
