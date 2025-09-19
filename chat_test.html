@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Чат с заданиями</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      color: #333;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.5;
+      color: #5a5a5a;
+      padding: 0;
+      background-color: #f0f2f5;
+      font-size: 14px;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
+
     #chat-header {
       background: #00838f;
       color: white;
       padding: 15px;
       text-align: center;
     }
+
     #messages-list {
       flex: 1;
       overflow-y: auto;
@@ -29,374 +38,563 @@
       flex-direction: column;
       gap: 8px;
     }
+
     .msg-bubble {
-      max-width: 70%;
-      padding: 10px 14px;
-      border-radius: 18px;
+      max-width: 80%;
       margin: 4px 0;
       word-wrap: break-word;
     }
+
     .msg-from-me {
-      background: #00838f;
-      color: white;
       align-self: flex-end;
     }
+
     .msg-from-them {
-      background: #e0e0e0;
-      color: black;
       align-self: flex-start;
     }
-    #chat-controls {
+
+    .regular-message {
+      padding: 10px 14px;
+      border-radius: 18px;
+      background: #00838f;
+      color: white;
+    }
+
+    .regular-message.them {
+      background: #e0e0e0;
+      color: black;
+    }
+
+    .task-container {
+      background-color: #fffdfb;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .source-text {
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 12px;
+      background-color: #f8f6fb;
+      border-radius: 6px;
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #eae5f3;
+    }
+
+    .task-type {
+      display: inline-block;
+      background-color: #e6f4f1;
+      color: #5a9a8f;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-bottom: 8px;
+      border: 1px solid #c2e3dd;
+    }
+
+    .words-container, .answer-container {
+      border: 1px dashed #d9d4e7;
+      border-radius: 6px;
+      padding: 10px;
+      min-height: 50px;
+      margin-bottom: 12px;
+      background-color: #f9f7fc;
+      font-size: 13px;
+    }
+
+    .answer-container {
+      background-color: #f0faf8;
+      border-color: #a8d8ce;
+    }
+
+    .word-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .word {
+      padding: 6px 10px;
+      background-color: #fff;
+      border: 1px solid #e0d8e9;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .word:hover {
+      background-color: #f0eaf9;
+      transform: translateY(-1px);
+      border-color: #d9d4e7;
+    }
+
+    .word.selected {
+      background-color: #ffb6c1;
+      color: #ffffff;
+      border-color: #ff99ab;
+      box-shadow: 0 2px 4px rgba(255, 182, 193, 0.4);
+    }
+
+    .result-message {
+      min-height: 20px;
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .success {
+      background-color: #e8f4f1;
+      color: #3c766f;
+      border: 1px solid #c2e3dd;
+    }
+
+    .info {
+      background-color: #f0f4fb;
+      color: #4a6fa5;
+      border: 1px solid #d0ddf0;
+    }
+
+    .char-frame {
+      width: 100%;
+      height: 200px;
+      border: none;
+      background: white;
+      border-radius: 8px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .theory-box {
+      background: #f8f6fb;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #eae5f3;
+      margin: 10px 0;
+    }
+
+    .theory-box h3 {
+      color: #7c6b96;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #eae5f3;
+      padding-bottom: 6px;
+    }
+
+    .theory-box p {
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .theory-box .example {
+      color: #00838f;
+      font-style: italic;
+      background: #f0faf8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 2px 0;
+    }
+
+    #message-form {
       display: flex;
       padding: 10px;
-      gap: 10px;
       background: white;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid #e0e0e0;
     }
+
     #message-input {
       flex: 1;
       padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 18px;
+      margin-right: 10px;
     }
-    #send-message-btn {
-      padding: 10px 16px;
+
+    #send-button {
       background: #00838f;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 18px;
+      padding: 10px 20px;
       cursor: pointer;
     }
-    #send-message-btn:hover {
+
+    #send-button:hover {
       background: #006064;
     }
   </style>
 </head>
 <body>
-
   <div id="chat-header">
-    <h3 id="chat-name">Тест интерактивных заданий</h3>
+    <h3>Чат с заданиями</h3>
   </div>
 
-  <div id="messages-list"></div>
-
-  <div id="chat-controls">
-    <input type="text" id="message-input" placeholder="Введите сообщение... Пример: ’‘’‘ [original]->[translation]: {其雨}->{Будет дождь}; [tokens]: {будет, дождь, пошёл} ’‘’‘" />
-    <button id="send-message-btn">Отправить</button>
+  <div id="messages-list">
+    <!-- Сообщения будут добавляться сюда -->
   </div>
+
+  <form id="message-form">
+    <input type="text" id="message-input" placeholder="Введите сообщение..." required>
+    <button type="submit" id="send-button">Отправить</button>
+  </form>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
   <script>
-    // Парсер структурированных сообщений
-    function parseStructuredMessage(text) {
-      const pattern = /’‘’‘([\s\S]*?)’‘’‘/g;
-      const parts = [];
-      let lastIndex = 0;
-      let match;
+    // Firebase конфигурация
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-      while ((match = pattern.exec(text)) !== null) {
-        // Текст до блока
-        if (match.index > lastIndex) {
-          parts.push({ type: 'text', content: text.slice(lastIndex, match.index) });
-        }
+    // Инициализация Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-        // Обработка блока
-        const blockContent = match[1].trim();
-        const blockData = parseBlock(blockContent);
-        if (blockData) {
-          parts.push({ type: 'block', content: blockData });
+    // Аутентификация анонимного пользователя
+    auth.signInAnonymously().catch(error => {
+      console.error("Ошибка аутентификации:", error);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const messagesList = document.getElementById('messages-list');
+      const messageForm = document.getElementById('message-form');
+      const messageInput = document.getElementById('message-input');
+      let currentUser = null;
+
+      // Функция нормализации для сравнения ответов
+      function normalizeAnswer(text, isChineseOutput) {
+        let normalized = text.toLowerCase();
+        normalized = normalized.replace(/[^\p{L}\p{N}\s]/gu, '');
+        if (isChineseOutput) {
+          normalized = normalized.replace(/\s+/g, '');
         } else {
-          // Если парсинг провалился — показываем как есть
-          parts.push({ type: 'text', content: match[0] });
+          normalized = normalized.replace(/\s+/g, ' ').trim();
         }
-
-        lastIndex = pattern.lastIndex;
+        return normalized;
       }
 
-      // Остаток текста
-      if (lastIndex < text.length) {
-        parts.push({ type: 'text', content: text.slice(lastIndex) });
-      }
+      // Функция для добавления сообщения в чат
+      function addMessageToChat(text, isFromMe = false) {
+        const fragments = splitHybridMessage(text);
+        const container = document.getElementById('messages-list');
 
-      return parts;
-    }
-
-    function parseBlock(content) {
-      const result = {};
-      // Поддерживаем любые символы внутри [...]
-      const regex = /\[([^\]]+)\]\s*:\s*\{([^}]*)\}/g;
-      let match;
-
-      while ((match = regex.exec(content)) !== null) {
-        const key = match[1].trim(); // например: "original->translation"
-        let value = match[2].trim();
-
-        // Обработка стрелок: {其雨}->{Будет дождь}
-        if (value.includes('}->{')) {
-          const parts = value.split('}->{');
-          if (parts.length === 2) {
-            const from = parts[0].replace(/{/, '').trim();
-            const to = parts[1].replace(/}$/, '').trim();
-            result[key] = { from, to };
-          }
-        }
-        // Обработка списков: {токен1, токен2, ...}
-        else if (value.includes(',')) {
-          result[key] = value.split(',').map(s => s.trim());
-        }
-        // Одиночное значение
-        else {
-          result[key] = value;
-        }
-      }
-
-      return Object.keys(result).length ? result : null;
-    }
-
-    function renderMessages(msgs) {
-      const list = document.getElementById('messages-list');
-      list.innerHTML = '';
-      
-      msgs.forEach(msg => {
-        const fromMe = true; // Для теста все сообщения от меня
-        const wrapper = document.createElement('div');
-        wrapper.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
-
-        // Парсим сообщение
-        const parsedParts = parseStructuredMessage(msg.text);
-
-        parsedParts.forEach(part => {
-          if (part.type === 'text') {
-            const textNode = document.createElement('div');
-            textNode.textContent = part.content;
-            wrapper.appendChild(textNode);
-          } else if (part.type === 'block') {
-            const block = part.content;
-
-            // --- Интерактивное задание: [original]->[translation] + [tokens] ---
-            if (block["original->translation"] && block.tokens) {
-              const tr = block["original->translation"];
-              const tokens = Array.isArray(block.tokens) ? block.tokens : [];
-
-              const taskCard = document.createElement('div');
-              taskCard.style.cssText = `
-                background: white;
-                border: 1px solid #ccc;
-                border-radius: 12px;
-                padding: 14px;
-                margin: 8px 0;
-                font-family: sans-serif;
-                max-width: 300px;
-              `;
-
-              taskCard.innerHTML = `
-                <div style="font-size:16px; font-weight:bold; color:#333;">${tr.from}</div>
-                <div style="margin: 10px 0; font-size:12px; color:#555;">
-                  Перетащи слова в правильном порядке:
-                </div>
-
-                <!-- Контейнер с доступными словами -->
-                <div class="word-bank" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:40px; padding:5px; background:#f9f9f9; border-radius:6px;"></div>
-
-                <!-- Ответ пользователя -->
-                <div class="user-answer" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:40px; padding:8px; border:1px dashed #ccc; border-radius:6px; background:#f0faf8;"></div>
-
-                <!-- Кнопка проверки -->
-                <button class="check-btn" style="
-                  padding:6px 12px;
-                  background:#00838f;
-                  color:white;
-                  border:none;
-                  border-radius:6px;
-                  font-size:12px;
-                  cursor:pointer;
-                ">Проверить</button>
-
-                <!-- Результат -->
-                <div class="result-message" style="margin-top:8px; font-size:12px; min-height:16px;"></div>
-              `;
-
-              wrapper.appendChild(taskCard);
-
-              // === Элементы интерфейса ===
-              const wordBank = taskCard.querySelector('.word-bank');
-              const userAnswer = taskCard.querySelector('.user-answer');
-              const checkBtn = taskCard.querySelector('.check-btn');
-              const resultMsg = taskCard.querySelector('.result-message');
-
-              let currentAnswer = [];
-
-              // --- Заполняем банк слов ---
-              const shuffledTokens = [...tokens].sort(() => Math.random() - 0.5);
-              shuffledTokens.forEach(word => {
-                const btn = document.createElement('div');
-                btn.className = 'word-token';
-                btn.textContent = word;
-                btn.style.cssText = `
-                  padding:6px 10px;
-                  background:#fff;
-                  border:1px solid #ddd;
-                  border-radius:12px;
-                  font-size:12px;
-                  cursor:pointer;
-                  transition: all 0.2s;
-                `;
-                btn.addEventListener('click', () => {
-                  btn.remove();
-                  currentAnswer.push(word);
-                  renderUserAnswer();
-                });
-                wordBank.appendChild(btn);
-              });
-
-              function renderUserAnswer() {
-                userAnswer.innerHTML = '';
-                currentAnswer.forEach((word, index) => {
-                  const span = document.createElement('span');
-                  span.textContent = word;
-                  span.style.cssText = `
-                    padding:6px 10px;
-                    background:#00838f;
-                    color:white;
-                    border-radius:12px;
-                    font-size:12px;
-                    position:relative;
-                    cursor:pointer;
-                  `;
-                  // Крестик удаления
-                  const remove = document.createElement('span');
-                  remove.textContent = ' ×';
-                  remove.style.marginLeft = '4px';
-                  remove.style.fontWeight = 'bold';
-                  remove.onclick = (e) => {
-                    e.stopPropagation();
-                    currentAnswer.splice(index, 1);
-                    renderUserAnswer();
-                    // Вернём слово в банк
-                    const btn = document.createElement('div');
-                    btn.className = 'word-token';
-                    btn.textContent = word;
-                    btn.style.cssText = `
-                      padding:6px 10px;
-                      background:#fff;
-                      border:1px solid #ddd;
-                      border-radius:12px;
-                      font-size:12px;
-                      cursor:pointer;
-                    `;
-                    btn.onclick = () => {
-                      btn.remove();
-                      currentAnswer.push(word);
-                      renderUserAnswer();
-                    };
-                    wordBank.appendChild(btn);
-                  };
-                  span.appendChild(remove);
-                  userAnswer.appendChild(span);
-                });
+        fragments.forEach(fragment => {
+          if (fragment.type === 'text') {
+            const msgBubble = createTextMessage(fragment.content, isFromMe);
+            container.appendChild(msgBubble);
+          } else if (fragment.type === 'task') {
+            const taskData = parseTask(fragment.raw);
+            if (taskData) {
+              const msgBubble = createTaskMessage(taskData, isFromMe);
+              container.appendChild(msgBubble);
+              if (taskData.type === 'translation') {
+                attachInteraction(msgBubble, taskData);
               }
-
-              // --- Проверка ответа ---
-              checkBtn.addEventListener('click', () => {
-                const userText = currentAnswer.join(' ').trim().toLowerCase();
-                const correctText = tr.to.toLowerCase();
-
-                if (userText === correctText) {
-                  resultMsg.innerHTML = '✅ <b>Верно!</b>';
-                  resultMsg.style.color = '#2ecc71';
-                  checkBtn.disabled = true;
-                  checkBtn.style.opacity = '0.6';
-                } else {
-                  resultMsg.innerHTML = '❌ Неверно. Попробуй ещё.';
-                  resultMsg.style.color = '#e74c3c';
-                }
-              });
-            }
-            // --- [char]: {"雨"} ---
-            else if (block.char) {
-              const charBox = document.createElement('div');
-              charBox.style.cssText = `
-                font-size: 48px;
-                text-align: center;
-                margin: 10px 0;
-                padding: 10px;
-                background: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                font-family: "Hiragino", serif;
-              `;
-              charBox.textContent = Array.isArray(block.char) ? block.char[0] : block.char;
-              wrapper.appendChild(charBox);
-            }
-            // Любой другой тип — можно расширять
-            else {
-              const pre = document.createElement('pre');
-              pre.style.cssText = "background:#f0f0f0; padding:8px; border-radius:6px; font-size:12px;";
-              pre.textContent = JSON.stringify(block, null, 2);
-              wrapper.appendChild(pre);
             }
           }
         });
 
-        // Время
-        const timeDiv = document.createElement('div');
-        timeDiv.style.cssText = "font-size:11px; opacity:0.7; margin-top:6px; text-align:right";
-        timeDiv.textContent = new Date().toLocaleTimeString();
-        wrapper.appendChild(timeDiv);
+        container.scrollTop = container.scrollHeight;
+      }
 
-        list.appendChild(wrapper);
+      // Разделение гибридного сообщения
+      function splitHybridMessage(message) {
+        const delimiter = "’‘’‘";
+        const parts = message.split(delimiter);
+        const fragments = [];
+
+        for (let i = 0; i < parts.length; i++) {
+          if (i % 2 === 0 && parts[i].trim()) {
+            fragments.push({ type: 'text', content: parts[i] });
+          } else if (i % 2 === 1) {
+            fragments.push({ type: 'task', raw: parts[i] });
+          }
+        }
+
+        return fragments;
+      }
+
+      // Парсинг задания
+      function parseTask(raw) {
+        raw = raw.trim();
+
+        if (raw.startsWith('[original]->[translation]:')) {
+          const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
+          if (match) {
+            const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
+            return {
+              type: 'translation',
+              direction: 'original-to-translation',
+              source: match[1],
+              target: match[2],
+              tokens: tokens
+            };
+          }
+        }
+
+        if (raw.startsWith('[translation]->[original]:')) {
+          const match = raw.match(/^\[.*?\]:\s*\{(.+?)\}->\{(.+?)\};\s*\[tokens\]:\s*\{(.+?)\}$/);
+          if (match) {
+            const tokens = match[3].split(',').map(t => t.trim().replace(/^["']|["']$/g, ''));
+            return {
+              type: 'translation',
+              direction: 'translation-to-original',
+              source: match[1],
+              target: match[2],
+              tokens: tokens
+            };
+          }
+        }
+
+        if (raw.startsWith('[char]:')) {
+          const match = raw.match(/^\[char\]:\s*\{(.+?)\}$/);
+          if (match) {
+            let char = match[1];
+            if (char.length >= 2 && 
+                ((char.startsWith('"') && char.endsWith('"')) || 
+                 (char.startsWith("'") && char.endsWith("'")))) {
+              char = char.slice(1, -1);
+            }
+            return {
+              type: 'char',
+              char: char
+            };
+          }
+        }
+
+        if (raw.startsWith('[paragraph]:')) {
+          const match = raw.match(/^\[paragraph\]:\s*\{(.+?)\}$/);
+          if (match) {
+            let content = match[1];
+            if (content.length >= 2 && 
+                ((content.startsWith('"') && content.endsWith('"')) || 
+                 (content.startsWith("'") && content.endsWith("'")))) {
+              content = content.slice(1, -1);
+            }
+            content = content.replace(/\\"/g, '"').replace(/\\'/g, "'");
+            return {
+              type: 'paragraph',
+              content: content
+            };
+          }
+        }
+
+        return null;
+      }
+
+      // Создание текстового сообщения
+      function createTextMessage(content, isFromMe) {
+        const bubble = document.createElement('div');
+        bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `regular-message ${isFromMe ? '' : 'them'}`;
+        msgDiv.textContent = content;
+
+        bubble.appendChild(msgDiv);
+        return bubble;
+      }
+
+      // Создание сообщения с заданием
+      function createTaskMessage(taskData, isFromMe) {
+        const bubble = document.createElement('div');
+        bubble.className = `msg-bubble ${isFromMe ? 'msg-from-me' : 'msg-from-them'}`;
+
+        if (taskData.type === 'translation') {
+          bubble.appendChild(createTranslationTask(taskData));
+        } else if (taskData.type === 'char') {
+          bubble.appendChild(createCharTask(taskData.char));
+        } else if (taskData.type === 'paragraph') {
+          bubble.appendChild(createParagraphTask(taskData.content));
+        }
+
+        return bubble;
+      }
+
+      // Создание перевода
+      function createTranslationTask(taskData) {
+        const container = document.createElement('div');
+        container.className = 'task-container';
+
+        const taskType = document.createElement('div');
+        taskType.className = 'task-type';
+        taskType.textContent = taskData.direction === 'original-to-translation'
+          ? 'Перевод с китайского на русский'
+          : 'Перевод с русского на китайский';
+        container.appendChild(taskType);
+
+        const sourceText = document.createElement('div');
+        sourceText.className = 'source-text';
+        sourceText.textContent = taskData.source;
+        container.appendChild(sourceText);
+
+        const wordsContainer = document.createElement('div');
+        wordsContainer.className = 'words-container';
+        const wordList = document.createElement('div');
+        wordList.className = 'word-list';
+
+        taskData.tokens.forEach(token => {
+          const wordDiv = document.createElement('div');
+          wordDiv.className = 'word';
+          wordDiv.dataset.word = token;
+          wordDiv.textContent = token;
+          wordList.appendChild(wordDiv);
+        });
+
+        wordsContainer.appendChild(wordList);
+        container.appendChild(wordsContainer);
+
+        const answerContainer = document.createElement('div');
+        answerContainer.className = 'answer-container';
+        const answerWordList = document.createElement('div');
+        answerWordList.className = 'word-list';
+        answerContainer.appendChild(answerWordList);
+        container.appendChild(answerContainer);
+
+        const resultMessage = document.createElement('div');
+        resultMessage.className = 'result-message info';
+        resultMessage.textContent = taskData.direction === 'translation-to-original'
+          ? 'Соберите перевод из доступных иероглифов'
+          : 'Соберите перевод из доступных слов';
+        container.appendChild(resultMessage);
+
+        return container;
+      }
+
+      // Создание иероглифа
+      function createCharTask(char) {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'char-frame';
+        iframe.src = `./lesson1/tasks/task1.html#${encodeURIComponent(char)}`;
+        iframe.title = `Иероглиф ${char}`;
+        iframe.style.width = '100%';
+        iframe.style.height = '200px';
+        return iframe;
+      }
+
+      // Создание теории
+      function createParagraphTask(htmlContent) {
+        const div = document.createElement('div');
+        div.className = 'theory-box';
+        div.innerHTML = htmlContent;
+        return div;
+      }
+
+      // Прикрепление интерактивности к заданию
+      function attachInteraction(msgBubble, taskData) {
+        const wordsList = msgBubble.querySelector('.words-container .word-list');
+        const answerList = msgBubble.querySelector('.answer-container .word-list');
+        const resultMessage = msgBubble.querySelector('.result-message');
+
+        if (!wordsList || !answerList || !resultMessage) return;
+
+        function checkAnswer() {
+          const userWords = Array.from(answerList.querySelectorAll('.word')).map(el => el.textContent);
+          let userText;
+
+          if (taskData.direction === 'translation-to-original') {
+            userText = userWords.join('');
+          } else {
+            userText = userWords.join(' ');
+          }
+
+          const normalizedUser = normalizeAnswer(userText, taskData.direction === 'translation-to-original');
+          const normalizedCorrect = normalizeAnswer(taskData.target, taskData.direction === 'translation-to-original');
+
+          if (normalizedUser === normalizedCorrect) {
+            resultMessage.className = 'result-message success';
+            resultMessage.textContent = '✅ Верно!';
+          } else {
+            resultMessage.className = 'result-message info';
+            resultMessage.textContent = taskData.direction === 'translation-to-original'
+              ? 'Соберите перевод из доступных иероглифов'
+              : 'Соберите перевод из доступных слов';
+          }
+        }
+
+        wordsList.addEventListener('click', (e) => {
+          if (e.target.classList.contains('word')) {
+            const word = e.target.dataset.word;
+            e.target.remove();
+
+            const selected = document.createElement('div');
+            selected.className = 'word selected';
+            selected.textContent = word;
+            selected.dataset.word = word;
+            answerList.appendChild(selected);
+
+            checkAnswer();
+          }
+        });
+
+        answerList.addEventListener('click', (e) => {
+          if (e.target.classList.contains('word')) {
+            const word = e.target.dataset.word;
+            e.target.remove();
+
+            const btn = document.createElement('div');
+            btn.className = 'word';
+            btn.textContent = word;
+            btn.dataset.word = word;
+            wordsList.appendChild(btn);
+
+            checkAnswer();
+          }
+        });
+      }
+
+      // Слушатель аутентификации
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          currentUser = user;
+          // Слушатель сообщений из Firebase
+          db.collection("messages")
+            .orderBy("timestamp")
+            .onSnapshot(snapshot => {
+              snapshot.docChanges().forEach(change => {
+                if (change.type === "added") {
+                  const msg = change.doc.data();
+                  addMessageToChat(msg.text, msg.from === currentUser.uid);
+                }
+              });
+            });
+        }
       });
 
-      list.scrollTop = list.scrollHeight;
-    }
-
-    function sendMessage() {
-      const input = document.getElementById('message-input');
-      const text = input.value.trim();
-
-      if (!text) return;
-
-      const message = {
-        text: text,
-        timestamp: Date.now()
-      };
-
-      // Для теста просто добавляем в список
-      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
-      messages.push(message);
-      localStorage.setItem('testMessages', JSON.stringify(messages));
-
-      input.value = '';
-      loadMessages();
-    }
-
-    function loadMessages() {
-      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
-      renderMessages(messages);
-    }
-
-    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
-    document.getElementById('message-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendMessage();
-      }
-    });
-
-    // Загружаем сообщения при старте
-    window.addEventListener('load', loadMessages);
-
-    // Добавим тестовое сообщение если список пуст
-    window.addEventListener('load', () => {
-      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
-      if (messages.length === 0) {
-        const testMessage = {
-          text: 'Попробуй это задание: ’‘’‘ [original]->[translation]: {其雨}->{Будет дождь}; [tokens]: {будет, дождь, пошёл} ’‘’‘',
-          timestamp: Date.now()
-        };
-        messages.push(testMessage);
-        localStorage.setItem('testMessages', JSON.stringify(messages));
-        loadMessages();
-      }
+      // Отправка сообщения
+      messageForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if (text && currentUser) {
+          db.collection("messages").add({
+            text: text,
+            from: currentUser.uid,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          messageInput.value = '';
+        }
+      });
     });
   </script>
 </body>
