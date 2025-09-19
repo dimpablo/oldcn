@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Чат</title>
+  <title>Чат с заданиями</title>
   <style>
     body {
       margin: 0;
@@ -76,51 +76,17 @@
 <body>
 
   <div id="chat-header">
-    <h3 id="chat-name">Выберите собеседника</h3>
+    <h3 id="chat-name">Тест интерактивных заданий</h3>
   </div>
 
   <div id="messages-list"></div>
 
   <div id="chat-controls">
-    <input type="text" id="message-input" placeholder="Введите сообщение... Используйте ’‘’‘[type]:{...}’‘’‘ для специальных блоков" />
+    <input type="text" id="message-input" placeholder="Введите сообщение... Пример: ’‘’‘ [original]->[translation]: {其雨}->{Будет дождь}; [tokens]: {будет, дождь, пошёл} ’‘’‘" />
     <button id="send-message-btn">Отправить</button>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-    import {
-      getFirestore,
-      collection,
-      query,
-      where,
-      onSnapshot,
-      addDoc,
-      doc,
-      getDoc,
-      updateDoc,
-      arrayUnion,
-      getDocs
-    } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-      authDomain: "antient-9bff0.firebaseapp.com",
-      projectId: "antient-9bff0",
-      storageBucket: "antient-9bff0.firebasestorage.app",
-      messagingSenderId: "311792589414",
-      appId: "1:311792589414:web:5fff3154735007c2006ba7",
-      measurementId: "G-W4ZQXWRTKK"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUser = null;
-    let otherUser = null;
-
+  <script>
     // Парсер структурированных сообщений
     function parseStructuredMessage(text) {
       const pattern = /’‘’‘([\s\S]*?)’‘’‘/g;
@@ -157,22 +123,29 @@
 
     function parseBlock(content) {
       const result = {};
-      const regex = /\[(\w+)\]\s*:\s*\{([^}]*)\}/g;
+      // Поддерживаем любые символы внутри [...]
+      const regex = /\[([^\]]+)\]\s*:\s*\{([^}]*)\}/g;
       let match;
 
       while ((match = regex.exec(content)) !== null) {
-        const key = match[1].trim();
+        const key = match[1].trim(); // например: "original->translation"
         let value = match[2].trim();
 
-        // Удаляем внешние кавычки, если есть
-        if (value.startsWith('"') && value.endsWith('"')) {
-          value = value.slice(1, -1);
+        // Обработка стрелок: {其雨}->{Будет дождь}
+        if (value.includes('}->{')) {
+          const parts = value.split('}->{');
+          if (parts.length === 2) {
+            const from = parts[0].replace(/{/, '').trim();
+            const to = parts[1].replace(/}$/, '').trim();
+            result[key] = { from, to };
+          }
         }
-
-        // Разбиваем список через запятую, если несколько элементов в фигурных скобках
-        if (value.includes('","')) {
-          result[key] = value.split('","').map(s => s.trim().replace(/^"|"$/g, ''));
-        } else {
+        // Обработка списков: {токен1, токен2, ...}
+        else if (value.includes(',')) {
+          result[key] = value.split(',').map(s => s.trim());
+        }
+        // Одиночное значение
+        else {
           result[key] = value;
         }
       }
@@ -180,94 +153,12 @@
       return Object.keys(result).length ? result : null;
     }
 
-    function getOtherUserIdFromHash() {
-      const match = window.location.hash.match(/^#chat\/([^\/]+)$/);
-      return match ? match[1] : null;
-    }
-
-    function onHashChange() {
-      console.log("[onHashChange] Вызвано");
-      const otherUserId = getOtherUserIdFromHash();
-      if (!otherUserId) {
-        document.getElementById('chat-name').textContent = "Выберите собеседника";
-        document.getElementById('messages-list').innerHTML = '';
-        return;
-      }
-
-      if (!currentUser) {
-        console.log("[onHashChange] currentUser ещё не загружен, ждём...");
-        return;
-      }
-
-      console.log(`[onHashChange] Загружаем чат с пользователем: ${otherUserId}`);
-      loadChatAndStartListening(otherUserId);
-    }
-
-    async function loadChatAndStartListening(otherUserId) {
-      console.log(`[loadChatAndStartListening] Начало для ${otherUserId}`);
-      try {
-        console.log(`[loadChatAndStartListening] Запрос профиля: ${otherUserId}`);
-        const userRef = doc(db, 'users', otherUserId);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          otherUser = { id: userSnap.id, ...userSnap.data() };
-          document.getElementById('chat-name').textContent = otherUser.displayName || otherUser.email || 'Неизвестный';
-          console.log(`[loadChatAndStartListening] Профиль загружен: ${otherUser.displayName || otherUser.email}`);
-        } else {
-          document.getElementById('chat-name').textContent = "Пользователь не найден";
-          console.warn(`[loadChatAndStartListening] Профиль ${otherUserId} не найден`);
-          return;
-        }
-
-        startListeningToMessages(otherUserId);
-        markMessagesAsRead(otherUserId);
-      } catch (e) {
-        console.error("[loadChatAndStartListening] Ошибка:", e);
-        document.getElementById('chat-name').textContent = "Ошибка подключения";
-      }
-    }
-
-    function startListeningToMessages(otherUserId) {
-      console.log(`[startListeningToMessages] Начало для ${otherUserId}`);
-      if (!currentUser) {
-        console.error("[startListeningToMessages] currentUser is null!");
-        return;
-      }
-
-      const chatQuery = query(
-        collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid)
-      );
-
-      console.log(`[startListeningToMessages] Запрос сообщений для ${currentUser.uid}`);
-
-      onSnapshot(chatQuery, (snapshot) => {
-        console.log(`[onSnapshot] Получено ${snapshot.size} сообщений`);
-        const messages = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (
-            data.participants.includes(currentUser.uid) &&
-            data.participants.includes(otherUserId)
-          ) {
-            messages.push({ id: doc.id, ...data });
-          }
-        });
-
-        messages.sort((a, b) => a.timestamp - b.timestamp);
-        renderMessages(messages);
-      }, (error) => {
-        console.error("[onSnapshot] Ошибка подписки:", error);
-      });
-    }
-
     function renderMessages(msgs) {
       const list = document.getElementById('messages-list');
       list.innerHTML = '';
       
       msgs.forEach(msg => {
-        const fromMe = msg.from === currentUser.uid;
+        const fromMe = true; // Для теста все сообщения от меня
         const wrapper = document.createElement('div');
         wrapper.className = 'msg-bubble ' + (fromMe ? 'msg-from-me' : 'msg-from-them');
 
@@ -282,8 +173,147 @@
           } else if (part.type === 'block') {
             const block = part.content;
 
+            // --- Интерактивное задание: [original]->[translation] + [tokens] ---
+            if (block["original->translation"] && block.tokens) {
+              const tr = block["original->translation"];
+              const tokens = Array.isArray(block.tokens) ? block.tokens : [];
+
+              const taskCard = document.createElement('div');
+              taskCard.style.cssText = `
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 12px;
+                padding: 14px;
+                margin: 8px 0;
+                font-family: sans-serif;
+                max-width: 300px;
+              `;
+
+              taskCard.innerHTML = `
+                <div style="font-size:16px; font-weight:bold; color:#333;">${tr.from}</div>
+                <div style="margin: 10px 0; font-size:12px; color:#555;">
+                  Перетащи слова в правильном порядке:
+                </div>
+
+                <!-- Контейнер с доступными словами -->
+                <div class="word-bank" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:40px; padding:5px; background:#f9f9f9; border-radius:6px;"></div>
+
+                <!-- Ответ пользователя -->
+                <div class="user-answer" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:40px; padding:8px; border:1px dashed #ccc; border-radius:6px; background:#f0faf8;"></div>
+
+                <!-- Кнопка проверки -->
+                <button class="check-btn" style="
+                  padding:6px 12px;
+                  background:#00838f;
+                  color:white;
+                  border:none;
+                  border-radius:6px;
+                  font-size:12px;
+                  cursor:pointer;
+                ">Проверить</button>
+
+                <!-- Результат -->
+                <div class="result-message" style="margin-top:8px; font-size:12px; min-height:16px;"></div>
+              `;
+
+              wrapper.appendChild(taskCard);
+
+              // === Элементы интерфейса ===
+              const wordBank = taskCard.querySelector('.word-bank');
+              const userAnswer = taskCard.querySelector('.user-answer');
+              const checkBtn = taskCard.querySelector('.check-btn');
+              const resultMsg = taskCard.querySelector('.result-message');
+
+              let currentAnswer = [];
+
+              // --- Заполняем банк слов ---
+              const shuffledTokens = [...tokens].sort(() => Math.random() - 0.5);
+              shuffledTokens.forEach(word => {
+                const btn = document.createElement('div');
+                btn.className = 'word-token';
+                btn.textContent = word;
+                btn.style.cssText = `
+                  padding:6px 10px;
+                  background:#fff;
+                  border:1px solid #ddd;
+                  border-radius:12px;
+                  font-size:12px;
+                  cursor:pointer;
+                  transition: all 0.2s;
+                `;
+                btn.addEventListener('click', () => {
+                  btn.remove();
+                  currentAnswer.push(word);
+                  renderUserAnswer();
+                });
+                wordBank.appendChild(btn);
+              });
+
+              function renderUserAnswer() {
+                userAnswer.innerHTML = '';
+                currentAnswer.forEach((word, index) => {
+                  const span = document.createElement('span');
+                  span.textContent = word;
+                  span.style.cssText = `
+                    padding:6px 10px;
+                    background:#00838f;
+                    color:white;
+                    border-radius:12px;
+                    font-size:12px;
+                    position:relative;
+                    cursor:pointer;
+                  `;
+                  // Крестик удаления
+                  const remove = document.createElement('span');
+                  remove.textContent = ' ×';
+                  remove.style.marginLeft = '4px';
+                  remove.style.fontWeight = 'bold';
+                  remove.onclick = (e) => {
+                    e.stopPropagation();
+                    currentAnswer.splice(index, 1);
+                    renderUserAnswer();
+                    // Вернём слово в банк
+                    const btn = document.createElement('div');
+                    btn.className = 'word-token';
+                    btn.textContent = word;
+                    btn.style.cssText = `
+                      padding:6px 10px;
+                      background:#fff;
+                      border:1px solid #ddd;
+                      border-radius:12px;
+                      font-size:12px;
+                      cursor:pointer;
+                    `;
+                    btn.onclick = () => {
+                      btn.remove();
+                      currentAnswer.push(word);
+                      renderUserAnswer();
+                    };
+                    wordBank.appendChild(btn);
+                  };
+                  span.appendChild(remove);
+                  userAnswer.appendChild(span);
+                });
+              }
+
+              // --- Проверка ответа ---
+              checkBtn.addEventListener('click', () => {
+                const userText = currentAnswer.join(' ').trim().toLowerCase();
+                const correctText = tr.to.toLowerCase();
+
+                if (userText === correctText) {
+                  resultMsg.innerHTML = '✅ <b>Верно!</b>';
+                  resultMsg.style.color = '#2ecc71';
+                  checkBtn.disabled = true;
+                  checkBtn.style.opacity = '0.6';
+                } else {
+                  resultMsg.innerHTML = '❌ Неверно. Попробуй ещё.';
+                  resultMsg.style.color = '#e74c3c';
+                }
+              });
+            }
             // --- [char]: {"雨"} ---
-            if (block.char) {
+            else if (block.char) {
               const charBox = document.createElement('div');
               charBox.style.cssText = `
                 font-size: 48px;
@@ -298,57 +328,6 @@
               charBox.textContent = Array.isArray(block.char) ? block.char[0] : block.char;
               wrapper.appendChild(charBox);
             }
-
-            // --- [original]->[translation] + tokens ---
-            else if (block.original && block.translation) {
-              const card = document.createElement('div');
-              card.style.cssText = `
-                background: white;
-                border: 1px solid #ccc;
-                border-radius: 12px;
-                padding: 12px;
-                margin: 6px 0;
-                font-family: sans-serif;
-              `;
-
-              card.innerHTML = `
-                <div style="font-size:18px; font-weight:bold;">${block.original}</div>
-                <div style="font-size:16px; color:#00838f; margin:8px 0;">→ ${block.translation}</div>
-                ${block.tokens ? `
-                  <div style="margin-top:8px; font-size:12px; color:#555;">
-                    Токены: ${block.tokens.map(t => `<span style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:4px;">${t}</span>`).join('')}
-                  </div>
-                ` : ''}
-              `;
-              wrapper.appendChild(card);
-            }
-
-            // --- [paragraph] с HTML и стилями ---
-            else if (block.paragraph) {
-              const container = document.createElement('div');
-              container.style.cssText = `
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                padding: 15px;
-                margin: 8px 0;
-                font-size: 14px;
-                line-height: 1.5;
-              `;
-
-              // Вставляем HTML
-              container.innerHTML = block.paragraph;
-
-              // Добавляем стили, если заданы
-              if (block.style) {
-                const style = document.createElement('style');
-                style.textContent = block.style;
-                container.appendChild(style);
-              }
-
-              wrapper.appendChild(container);
-            }
-
             // Любой другой тип — можно расширять
             else {
               const pre = document.createElement('pre');
@@ -362,137 +341,61 @@
         // Время
         const timeDiv = document.createElement('div');
         timeDiv.style.cssText = "font-size:11px; opacity:0.7; margin-top:6px; text-align:right";
-        timeDiv.textContent = new Date(msg.timestamp).toLocaleTimeString();
+        timeDiv.textContent = new Date().toLocaleTimeString();
         wrapper.appendChild(timeDiv);
 
         list.appendChild(wrapper);
       });
 
       list.scrollTop = list.scrollHeight;
-      console.log(`[renderMessages] Отрендерено ${msgs.length} сообщений`);
     }
 
-    async function markMessagesAsRead(otherUserId) {
-      console.log(`[markMessagesAsRead] Начало для ${otherUserId}`);
-      if (!currentUser) {
-        console.error("[markMessagesAsRead] currentUser is null!");
-        return;
-      }
-
-      const q = query(
-        collection(db, 'messages'),
-        where('participants', 'array-contains', currentUser.uid)
-      );
-
-      console.log(`[markMessagesAsRead] Запрос к Firestore для ${currentUser.uid}`);
-
-      try {
-        const snapshot = await getDocs(q);
-        console.log(`[markMessagesAsRead] Найдено ${snapshot.size} документов`);
-
-        for (const doc of snapshot.docs) {
-          const data = doc.data();
-          if (
-            data.participants.includes(currentUser.uid) &&
-            data.participants.includes(otherUserId) &&
-            (!data.seenBy || !data.seenBy.includes(currentUser.uid))
-          ) {
-            console.log(`[markMessagesAsRead] Обновляем seenBy для ${doc.id}`);
-            try {
-              await updateDoc(doc.ref, {
-                seenBy: arrayUnion(currentUser.uid)
-              });
-              console.log(`[markMessagesAsRead] Успешно обновлён seenBy в ${doc.id}`);
-            } catch (err) {
-              console.error(`[markMessagesAsRead] Ошибка обновления ${doc.id}:`, err);
-            }
-          }
-        }
-
-        console.log("[markMessagesAsRead] Завершено");
-      } catch (e) {
-        console.error("[markMessagesAsRead] Критическая ошибка:", e);
-      }
-    }
-
-    async function sendMessage() {
-      console.log("[sendMessage] Вызвано");
+    function sendMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
-      console.log(`[sendMessage] Текст: "${text}"`);
 
-      if (!text) {
-        console.warn("[sendMessage] Пустое сообщение");
-        return;
-      }
-      if (!otherUser) {
-        console.warn("[sendMessage] otherUser не определён");
-        alert("Выберите собеседника");
-        return;
-      }
-      if (!currentUser) {
-        console.warn("[sendMessage] currentUser не определён");
-        alert("Ошибка: пользователь не загружен");
-        return;
-      }
+      if (!text) return;
 
-      const userPair = [currentUser.uid, otherUser.id].sort().join('_');
-
-      const messageData = {
-        from: currentUser.uid,
-        to: otherUser.id,
+      const message = {
         text: text,
-        timestamp: Date.now(),
-        participants: [currentUser.uid, otherUser.id],
-        userPair: userPair,
-        seenBy: [currentUser.uid]
+        timestamp: Date.now()
       };
 
-      console.log("[sendMessage] Отправка данных:", messageData);
+      // Для теста просто добавляем в список
+      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
+      messages.push(message);
+      localStorage.setItem('testMessages', JSON.stringify(messages));
 
-      try {
-        const docRef = await addDoc(collection(db, 'messages'), messageData);
-        console.log(`[sendMessage] Сообщение отправлено. ID: ${docRef.id}`);
-        input.value = '';
-      } catch (e) {
-        console.error("[sendMessage] Ошибка отправки:", e);
-        alert("Не удалось отправить сообщение: " + e.message);
-      }
+      input.value = '';
+      loadMessages();
     }
 
-    document.getElementById('send-message-btn').addEventListener('click', () => {
-      console.log("[EventListener] Кнопка 'Отправить' нажата");
-      sendMessage();
-    });
+    function loadMessages() {
+      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
+      renderMessages(messages);
+    }
+
+    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('message-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        console.log("[EventListener] Enter в поле ввода");
         sendMessage();
       }
     });
 
-    window.addEventListener('load', () => {
-      console.log('[EventListener] Страница загружена. Ждём авторизации...');
-      onHashChange();
-    });
-    window.addEventListener('hashchange', onHashChange);
+    // Загружаем сообщения при старте
+    window.addEventListener('load', loadMessages);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log(`[onAuthStateChanged] Пользователь авторизован: ${user.uid}`);
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          currentUser = { uid: user.uid, ...userDoc.data() };
-          console.log(`[onAuthStateChanged] Профиль загружен: ${currentUser.displayName || currentUser.email}`);
-          onHashChange();
-        } else {
-          console.warn(`[onAuthStateChanged] Профиль ${user.uid} не найден`);
-          alert("Профиль не найден");
-          window.location.href = './index.html';
-        }
-      } else {
-        console.log('[onAuthStateChanged] Пользователь не авторизован. Редирект.');
-        window.location.href = './index.html';
+    // Добавим тестовое сообщение если список пуст
+    window.addEventListener('load', () => {
+      const messages = JSON.parse(localStorage.getItem('testMessages') || '[]');
+      if (messages.length === 0) {
+        const testMessage = {
+          text: 'Попробуй это задание: ’‘’‘ [original]->[translation]: {其雨}->{Будет дождь}; [tokens]: {будет, дождь, пошёл} ’‘’‘',
+          timestamp: Date.now()
+        };
+        messages.push(testMessage);
+        localStorage.setItem('testMessages', JSON.stringify(messages));
+        loadMessages();
       }
     });
   </script>
