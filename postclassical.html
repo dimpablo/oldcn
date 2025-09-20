@@ -981,4 +981,83 @@ import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot
 </script>
 
 </body>
+<script>
+  (() => {
+  const circles = document.querySelectorAll('.unit-circle');
+
+  circles.forEach(circle => {
+    // Очистим содержимое от предыдущих модификаций
+    circle.innerHTML = circle.textContent.trim();
+
+    const words = circle.textContent.split(' ').filter(w => w.length > 0);
+    let html = '';
+
+    if (words.length > 1) {
+      // Разбиваем на строки по одному слову
+      html = words.map(word => `<div class="circle-line">${word}</div>`).join('');
+    } else {
+      html = `<div class="circle-line">${words[0]}</div>`;
+    }
+
+    circle.innerHTML = html;
+
+    // Применяем стили для строк
+    const lines = circle.querySelectorAll('.circle-line');
+    lines.forEach(line => {
+      line.style.textAlign = 'center';
+      line.style.whiteSpace = 'nowrap';
+      line.style.overflow = 'hidden';
+      line.style.textOverflow = 'ellipsis';
+    });
+
+    // Функция подбора максимального шрифта
+    const fitText = () => {
+      let minSize = 10;
+      let maxSize = 200;
+      let bestSize = minSize;
+
+      for (let size = minSize; size <= maxSize; size++) {
+        lines.forEach(line => line.style.fontSize = size + 'px');
+        circle.style.lineHeight = 'normal'; // сброс, чтобы не мешал
+
+        // Проверяем, не вылез ли текст за границы
+        const isOverflowing = Array.from(lines).some(line => {
+          const rect = line.getBoundingClientRect();
+          const circleRect = circle.getBoundingClientRect();
+          return (
+            rect.width > circleRect.width ||
+            rect.height > circleRect.height ||
+            line.scrollWidth > line.clientWidth ||
+            line.scrollHeight > line.clientHeight
+          );
+        });
+
+        if (isOverflowing) {
+          break;
+        } else {
+          bestSize = size;
+        }
+      }
+
+      // Уменьшаем на 3 пикселя для запаса
+      bestSize = Math.max(minSize, bestSize - 3);
+
+      // Устанавливаем размер
+      lines.forEach(line => line.style.fontSize = bestSize + 'px');
+
+      // Центрируем по вертикали через flex
+      circle.style.display = 'flex';
+      circle.style.flexDirection = 'column';
+      circle.style.justifyContent = 'center';
+      circle.style.alignItems = 'center';
+      circle.style.lineHeight = 1.2; // для межстрочного интервала
+    };
+
+    // Запускаем подгонку
+    fitText();
+  });
+
+  console.log('✅ Размеры шрифтов уменьшены на 3px и оптимизированы!');
+})();
+</script>
 </html>
