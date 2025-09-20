@@ -609,5 +609,177 @@
       this.classList.remove('pulse');
     });
   </script>
+
+<!-- Firebase SDK и логика авторизации -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+  import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
+    authDomain: "antient-9bff0.firebaseapp.com",
+    projectId: "antient-9bff0",
+    storageBucket: "antient-9bff0.firebasestorage.app",
+    messagingSenderId: "311792589414",
+    appId: "1:311792589414:web:5fff3154735007c2006ba7",
+    measurementId: "G-W4ZQXWRTKK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginBtn = document.getElementById('loginWithGoogle');
+  const loginContainer = document.getElementById('login-container');
+  const userContainer = document.getElementById('user-container');
+  const userName = document.getElementById('user-name');
+  const userEmail = document.getElementById('user-email');
+  const userPhoto = document.getElementById('user-photo');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const userPointsEl = document.getElementById('user-points');
+  const userFriendsEl = document.getElementById('user-friends');
+  const userUnreadEl = document.getElementById('user-unread');
+
+  let currentUser = null;
+
+  loginBtn.addEventListener('click', () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        loadUserData(result.user);
+      })
+      .catch((error) => {
+        alert("Ошибка входа: " + error.message);
+      });
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    signOut(auth).catch(() => {
+      alert("Ошибка выхода");
+    });
+  });
+
+  async function loadUserData(user) {
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        displayName: user.displayName || 'Аноним',
+        email: user.email,
+        photoURL: user.photoURL,
+        points: 0,
+        friends: [],
+        joinedAt: new Date()
+      });
+    }
+
+    const data = userSnap.data();
+    currentUser = { uid: user.uid, ...data };
+
+    userName.textContent = user.displayName || 'Пользователь';
+    userEmail.textContent = user.email;
+    userPhoto.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
+
+    userPointsEl.textContent = data.points || 0;
+    userFriendsEl.textContent = (data.friends ? data.friends.length : 0);
+
+    if (currentUser) {
+      loadUnreadMessages(currentUser.uid);
+    }
+
+    loginContainer.classList.add('hidden');
+    userContainer.classList.remove('hidden');
+  }
+
+  function loadUnreadMessages(userId) {
+    const msgQuery = query(
+      collection(db, 'messages'),
+      where('participants', 'array-contains', userId)
+    );
+
+    onSnapshot(msgQuery, (snap) => {
+      let unread = 0;
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.to === userId && (!data.seenBy || !data.seenBy.includes(userId))) {
+          unread++;
+        }
+      });
+      userUnreadEl.textContent = unread;
+    }, (error) => {
+      console.error("Ошибка при подсчёте непрочитанных:", error);
+    });
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loadUserData(user);
+    } else {
+      loginContainer.classList.remove('hidden');
+      userContainer.classList.add('hidden');
+    }
+  });
+</script>
+
+<script>
+  // Проверка, мобильное ли устройство
+  function isMobile() {
+    return window.innerWidth <= 768 ||
+           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Функция для внедрения CSS
+  function injectMobileStyles() {
+    if (!isMobile()) return;
+
+    const style = document.createElement('style');
+    style.id = 'mobile-auth-buttons-style';
+    style.textContent = `
+      .user-panel .auth-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .user-panel .auth-buttons .btn {
+        width: 100% !important;
+        max-width: none !important;
+        flex: 1;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .user-panel .auth-buttons .btn-secondary,
+      .user-panel .auth-buttons .btn-logout {
+        min-width: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Запускаем при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    injectMobileStyles();
+
+    // На случай, если пользователь логинится позже — перезапускаем стили
+    const observer = new MutationObserver(() => {
+      const userContainer = document.getElementById('user-container');
+      if (userContainer && !userContainer.classList.contains('hidden')) {
+        // Убедимся, что стили всё ещё вставлены
+        if (!document.getElementById('mobile-auth-buttons-style')) {
+          injectMobileStyles();
+        }
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  });
+</script>
 </body>
 </html>
