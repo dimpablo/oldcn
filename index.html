@@ -345,6 +345,7 @@
         <button class="btn btn-primary" id="loginWithGoogle">Войти через Google</button>
         <a href="https://t.me/oldcnio" class="btn btn-secondary">Связаться с разработчиком</a>
         <a href="./dictionary.html" class="btn btn-secondary">Словарь курса</a>
+        <a href="#donate" class="btn btn-secondary" id="donateBtn">🪙 Поддержать проект</a>
 
       </div>
       <div id="user-container" class="user-container hidden">
@@ -370,6 +371,7 @@
           <a href="./community.html#users" class="btn btn-secondary">Сообщество</a>
           <a href="https://t.me/oldcnio" class="btn btn-secondary">Разработчик</a>
           <a href="./dictionary.html" class="btn btn-secondary">Словарь курса</a>
+          <a href="#donate" class="btn btn-secondary" id="donateBtn">🪙 Поддержать проект</a>
           <button class="btn btn-logout" id="logoutBtn">Выйти</button>
         </div>
       </div>
@@ -604,5 +606,43 @@
     });
     //МЕНЯЕМ РАЗМЕР КНОПОК
   </script>
+<!-- Модальное окно донатов -->
+<div id="donateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%); padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; color: white; text-align: center; position: relative;">
+    <button onclick="document.getElementById('donateModal').style.display = 'none'" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+    <h2 style="margin-top: 0;">Поддержать проект</h2>
+    <p>Ваша поддержка помогает развивать курс и добавлять новые материалы!</p>
+    
+    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0; text-align: left;">
+      <h3 style="margin-top: 0;">Банковский перевод:</h3>
+      <p>+7 (981) 361-34-61 (Озон-банк)</p>
+      
+      <h3>Bitcoin:</h3>
+      <p style="word-break: break-all; font-size: 14px;">1MAkcNBaJDoLzo3rtxgSjvyS7LZ6zgqdZo</p>
+      
+      <h3>Ethereum:</h3>
+      <p style="word-break: break-all; font-size: 14px;">0x69fcFd9Dcf84FdFe69C2E1E50887E2Cb720A9Cb4</p>
+    </div>
+    
+    <p style="font-style: italic;">Спасибо за вашу поддержку! 🙏</p>
+  </div>
+</div>
+
+<script>
+// Обработчик для кнопок доната
+document.querySelectorAll('#donateBtn, a[href="#donate"]').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('donateModal').style.display = 'flex';
+  });
+});
+
+// Закрытие по клику вне модального окна
+document.getElementById('donateModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.style.display = 'none';
+  }
+});
+</script>
 </body>
 </html>
