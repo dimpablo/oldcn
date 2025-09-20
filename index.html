@@ -4,8 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Древнекитайский язык — Онлайн-курс</title>
-
   <style>
+    /* Стили кнопки доната */
+    .btn-donate {
+      background: linear-gradient(to right, #ffcc00, #ff9900);
+      color: #333 !important;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-donate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 204, 0, 0.4);
+    }
+    
+    .btn-donate:active {
+      transform: translateY(0);
+    }
+    
+    .btn-donate::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+    
+    .btn-donate:hover::before {
+      opacity: 1;
+      animation: shine 1.5s infinite;
+    }
+    
+    @keyframes shine {
+      0% {
+        left: -50%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 204, 0, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+      }
+    }
+    
+    /* Остальные стили остаются без изменений */
     body {
       margin: 0;
       padding: 0;
@@ -44,7 +115,6 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
 
-    /* Панель пользователя */
     .user-panel {
       background: rgba(44, 62, 80, 0.95);
       backdrop-filter: blur(10px);
@@ -168,7 +238,6 @@
       display: none !important;
     }
 
-    /* Карточки периодов */
     .periods-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -252,7 +321,6 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.7);
     }
 
-    /* Подвал */
     footer {
       text-align: center;
       padding: 30px 20px;
@@ -265,9 +333,65 @@
       text-decoration: underline;
     }
 
-    /* === Адаптивность для мобильных устройств === */
+    /* Модальное окно */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      color: white;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .donate-options {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .donate-options h3 {
+      margin-top: 0;
+      color: #ffcc00;
+    }
+
+    .donate-options p {
+      word-break: break-all;
+      font-size: 14px;
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 5px;
+    }
+
     @media (max-width: 768px) {
-      /* Отключаем прилипание панели */
       .user-panel {
         position: static;
         margin: 10px;
@@ -328,25 +452,26 @@
       .lesson-count {
         font-size: 0.8em;
       }
+      
+      .auth-buttons {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Заголовок -->
     <header>
       <h1>Древнекитайский язык</h1>
       <div class="subtitle">Онлайн-курс по архаическому и классическому китайскому языку</div>
     </header>
 
-    <!-- Панель пользователя -->
     <div class="user-panel">
       <div id="login-container" class="login-container">
         <button class="btn btn-primary" id="loginWithGoogle">Войти через Google</button>
         <a href="https://t.me/oldcnio" class="btn btn-secondary">Связаться с разработчиком</a>
         <a href="./dictionary.html" class="btn btn-secondary">Словарь курса</a>
-        <a href="#donate" class="btn btn-secondary" id="donateBtn">🪙 Поддержать проект</a>
-
+        <button class="btn btn-donate pulse" id="donateBtn">❤️ Поддержать проект</button>
       </div>
       <div id="user-container" class="user-container hidden">
         <div class="user-info">
@@ -371,13 +496,12 @@
           <a href="./community.html#users" class="btn btn-secondary">Сообщество</a>
           <a href="https://t.me/oldcnio" class="btn btn-secondary">Разработчик</a>
           <a href="./dictionary.html" class="btn btn-secondary">Словарь курса</a>
-          <a href="#donate" class="btn btn-secondary" id="donateBtn">🪙 Поддержать проект</a>
+          <button class="btn btn-donate" id="donateBtnUser">❤️ Поддержать</button>
           <button class="btn btn-logout" id="logoutBtn">Выйти</button>
         </div>
       </div>
     </div>
 
-    <!-- Карточки периодов -->
     <div class="periods-grid">
       <a href="./archaic.html" class="period-card bg-archaic">
         <div class="period-content">
@@ -428,221 +552,62 @@
       </a>
     </div>
 
-    <!-- Подвал -->
     <footer>
       <p>© 2025 OLDCN.github.IO | <a href="https://t.me/oldcnio">Канал в Telegram</a></p>
       <p>Учебник: В. А. Крюков, Хуан Шуин. «Древнекитайский язык»</p>
+      <p>Поддержать развитие проекта: 
+        <a href="#donate" style="color: #ffcc00; font-weight: bold;">Сделать пожертвование</a>
+      </p>
     </footer>
   </div>
 
-  <!-- Firebase SDK и логика авторизации -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
-      authDomain: "antient-9bff0.firebaseapp.com",
-      projectId: "antient-9bff0",
-      storageBucket: "antient-9bff0.firebasestorage.app",
-      messagingSenderId: "311792589414",
-      appId: "1:311792589414:web:5fff3154735007c2006ba7",
-      measurementId: "G-W4ZQXWRTKK"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    const loginBtn = document.getElementById('loginWithGoogle');
-    const loginContainer = document.getElementById('login-container');
-    const userContainer = document.getElementById('user-container');
-    const userName = document.getElementById('user-name');
-    const userEmail = document.getElementById('user-email');
-    const userPhoto = document.getElementById('user-photo');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userPointsEl = document.getElementById('user-points');
-    const userFriendsEl = document.getElementById('user-friends');
-    const userUnreadEl = document.getElementById('user-unread');
-
-    let currentUser = null;
-
-    loginBtn.addEventListener('click', () => {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          loadUserData(result.user);
-        })
-        .catch((error) => {
-          alert("Ошибка входа: " + error.message);
-        });
-    });
-
-    logoutBtn.addEventListener('click', () => {
-      signOut(auth).catch(() => {
-        alert("Ошибка выхода");
-      });
-    });
-
-    async function loadUserData(user) {
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          uid: user.uid,
-          displayName: user.displayName || 'Аноним',
-          email: user.email,
-          photoURL: user.photoURL,
-          points: 0,
-          friends: [],
-          joinedAt: new Date()
-        });
-      }
-
-      const data = userSnap.data();
-      currentUser = { uid: user.uid, ...data };
-
-      userName.textContent = user.displayName || 'Пользователь';
-      userEmail.textContent = user.email;
-      userPhoto.src = user.photoURL || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
-
-      userPointsEl.textContent = data.points || 0;
-      userFriendsEl.textContent = (data.friends ? data.friends.length : 0);
-
-      if (currentUser) {
-        loadUnreadMessages(currentUser.uid);
-      }
-
-      loginContainer.classList.add('hidden');
-      userContainer.classList.remove('hidden');
-    }
-
-    function loadUnreadMessages(userId) {
-      const msgQuery = query(
-        collection(db, 'messages'),
-        where('participants', 'array-contains', userId)
-      );
-
-      onSnapshot(msgQuery, (snap) => {
-        let unread = 0;
-        snap.forEach(doc => {
-          const data = doc.data();
-          if (data.to === userId && (!data.seenBy || !data.seenBy.includes(userId))) {
-            unread++;
-          }
-        });
-        userUnreadEl.textContent = unread;
-      }, (error) => {
-        console.error("Ошибка при подсчёте непрочитанных:", error);
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loadUserData(user);
-      } else {
-        loginContainer.classList.remove('hidden');
-        userContainer.classList.add('hidden');
-      }
-    });
-  </script>
-  <script>
-    // Проверка, мобильное ли устройство
-    function isMobile() {
-      return window.innerWidth <= 768 ||
-             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-
-    // Функция для внедрения CSS
-    function injectMobileStyles() {
-      if (!isMobile()) return;
-
-      const style = document.createElement('style');
-      style.id = 'mobile-auth-buttons-style';
-      style.textContent = `
-        .user-panel .auth-buttons {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .user-panel .auth-buttons .btn {
-          width: 100% !important;
-          max-width: none !important;
-          flex: 1;
-          text-align: center;
-          box-sizing: border-box;
-        }
-        .user-panel .auth-buttons .btn-secondary,
-        .user-panel .auth-buttons .btn-logout {
-          min-width: 0 !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    // Запускаем при загрузке
-    document.addEventListener('DOMContentLoaded', () => {
-      injectMobileStyles();
-
-      // На случай, если пользователь логинится позже — перезапускаем стили
-      const observer = new MutationObserver(() => {
-        const userContainer = document.getElementById('user-container');
-        if (userContainer && !userContainer.classList.contains('hidden')) {
-          // Убедимся, что стили всё ещё вставлены
-          if (!document.getElementById('mobile-auth-buttons-style')) {
-            injectMobileStyles();
-          }
-        }
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class']
-      });
-    });
-    //МЕНЯЕМ РАЗМЕР КНОПОК
-  </script>
-<!-- Модальное окно донатов -->
-<div id="donateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-  <div style="background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%); padding: 30px; border-radius: 16px; max-width: 500px; width: 90%; color: white; text-align: center; position: relative;">
-    <button onclick="document.getElementById('donateModal').style.display = 'none'" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
-    <h2 style="margin-top: 0;">Поддержать проект</h2>
-    <p>Ваша поддержка помогает развивать курс и добавлять новые материалы!</p>
-    
-    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0; text-align: left;">
-      <h3 style="margin-top: 0;">Банковский перевод:</h3>
-      <p>+7 (981) 361-34-61 (Озон-банк)</p>
+  <!-- Модальное окно донатов -->
+  <div id="donateModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModal">×</button>
+      <h2>Поддержать проект</h2>
+      <p>Ваша поддержка помогает развивать курс и добавлять новые материалы!</p>
       
-      <h3>Bitcoin:</h3>
-      <p style="word-break: break-all; font-size: 14px;">1MAkcNBaJDoLzo3rtxgSjvyS7LZ6zgqdZo</p>
+      <div class="donate-options">
+        <h3>Банковский перевод:</h3>
+        <p>+7 (981) 361-34-61 (Озон-банк)</p>
+        
+        <h3>Bitcoin:</h3>
+        <p>1MAkcNBaJDoLzo3rtxgSjvyS7LZ6zgqdZo</p>
+        
+        <h3>Ethereum:</h3>
+        <p>0x69fcFd9Dcf84FdFe69C2E1E50887E2Cb720A9Cb4</p>
+      </div>
       
-      <h3>Ethereum:</h3>
-      <p style="word-break: break-all; font-size: 14px;">0x69fcFd9Dcf84FdFe69C2E1E50887E2Cb720A9Cb4</p>
+      <p style="font-style: italic;">Спасибо за вашу поддержку! 🙏</p>
     </div>
-    
-    <p style="font-style: italic;">Спасибо за вашу поддержку! 🙏</p>
   </div>
-</div>
 
-<script>
-// Обработчик для кнопок доната
-document.querySelectorAll('#donateBtn, a[href="#donate"]').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('donateModal').style.display = 'flex';
-  });
-});
+  <script>
+    // Обработчик для кнопок доната
+    document.querySelectorAll('#donateBtn, #donateBtnUser, footer a[href="#donate"]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('donateModal').style.display = 'flex';
+      });
+    });
 
-// Закрытие по клику вне модального окна
-document.getElementById('donateModal').addEventListener('click', function(e) {
-  if (e.target === this) {
-    this.style.display = 'none';
-  }
-});
-</script>
+    // Закрытие модального окна
+    document.getElementById('closeModal').addEventListener('click', function() {
+      document.getElementById('donateModal').style.display = 'none';
+    });
+
+    // Закрытие по клику вне модального окна
+    document.getElementById('donateModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+
+    // Убираем класс pulse после первого клика
+    document.getElementById('donateBtn').addEventListener('click', function() {
+      this.classList.remove('pulse');
+    });
+  </script>
 </body>
 </html>
