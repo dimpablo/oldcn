@@ -1,0 +1,1636 @@
+.
+├── Wav
+│   ├── Click_Electronic
+│   │   ├── Click_Electronic_00.wav
+│   │   ├── Click_Electronic_01.wav
+│   │   ├── Click_Electronic_02.wav
+│   │   ├── Click_Electronic_03.wav
+│   │   ├── Click_Electronic_04.wav
+│   │   ├── Click_Electronic_05.wav
+│   │   ├── Click_Electronic_06.wav
+│   │   ├── Click_Electronic_07.wav
+│   │   ├── Click_Electronic_08.wav
+│   │   ├── Click_Electronic_09.wav
+│   │   ├── Click_Electronic_10.wav
+│   │   ├── Click_Electronic_11.wav
+│   │   ├── Click_Electronic_12.wav
+│   │   ├── Click_Electronic_13.wav
+│   │   ├── Click_Electronic_14.wav
+│   │   ├── Click_Electronic_15.wav
+│   │   └── Click_Electronic_16.wav
+│   ├── Click_Heavy_00.wav
+│   ├── Click_Mechanical_00.wav
+│   ├── Click_Mechanical_01.wav
+│   ├── Click_Sharp_00.wav
+│   ├── Click_Soft_00.wav
+│   ├── Click_Soft_01.wav
+│   ├── Click_Soft_02.wav
+│   ├── Click_Standard_00.wav
+│   ├── Click_Standard_01.wav
+│   ├── Click_Standard_02.wav
+│   ├── Click_Standard_03.wav
+│   ├── Click_Standard_04.wav
+│   ├── Click_Standard_05.wav
+│   ├── Mouth
+│   │   ├── Mouth_00.wav
+│   │   ├── Mouth_01.wav
+│   │   ├── Mouth_02.wav
+│   │   ├── Mouth_03.wav
+│   │   ├── Mouth_04.wav
+│   │   ├── Mouth_05.wav
+│   │   ├── Mouth_06.wav
+│   │   ├── Mouth_07.wav
+│   │   ├── Mouth_08.wav
+│   │   ├── Mouth_09.wav
+│   │   ├── Mouth_10.wav
+│   │   ├── Mouth_11.wav
+│   │   ├── Mouth_12.wav
+│   │   ├── Mouth_13.wav
+│   │   ├── Mouth_14.wav
+│   │   ├── Mouth_15.wav
+│   │   ├── Mouth_16.wav
+│   │   ├── Mouth_17.wav
+│   │   ├── Mouth_18.wav
+│   │   ├── Mouth_19.wav
+│   │   ├── Mouth_20.wav
+│   │   ├── Mouth_21.wav
+│   │   ├── Mouth_22.wav
+│   │   ├── Mouth_23.wav
+│   │   ├── Mouth_24.wav
+│   │   ├── Mouth_25.wav
+│   │   ├── Mouth_26.wav
+│   │   ├── Mouth_27.wav
+│   │   ├── Mouth_28.wav
+│   │   ├── Mouth_29.wav
+│   │   ├── Mouth_30.wav
+│   │   ├── Mouth_31.wav
+│   │   ├── Mouth_32.wav
+│   │   ├── Mouth_33.wav
+│   │   ├── Mouth_34.wav
+│   │   ├── Mouth_35.wav
+│   │   ├── Mouth_36.wav
+│   │   ├── Mouth_37.wav
+│   │   ├── Mouth_38.wav
+│   │   ├── Mouth_39.wav
+│   │   ├── Mouth_40.wav
+│   │   ├── Mouth_41.wav
+│   │   ├── Mouth_42.wav
+│   │   ├── Mouth_43.wav
+│   │   ├── Mouth_44.wav
+│   │   ├── Mouth_45.wav
+│   │   ├── Mouth_46.wav
+│   │   ├── Mouth_47.wav
+│   │   ├── Mouth_48.wav
+│   │   ├── Mouth_49.wav
+│   │   ├── Mouth_50.wav
+│   │   ├── Mouth_51.wav
+│   │   ├── Mouth_52.wav
+│   │   ├── Mouth_53.wav
+│   │   ├── Mouth_54.wav
+│   │   ├── Mouth_55.wav
+│   │   ├── Mouth_56.wav
+│   │   ├── Mouth_57.wav
+│   │   ├── Mouth_58.wav
+│   │   ├── Mouth_59.wav
+│   │   ├── Mouth_60.wav
+│   │   ├── Mouth_61.wav
+│   │   ├── Mouth_62.wav
+│   │   ├── Mouth_63.wav
+│   │   ├── Mouth_64.wav
+│   │   ├── Mouth_65.wav
+│   │   ├── Mouth_66.wav
+│   │   └── Mouth_Special_00.wav
+│   ├── Slide_Electronic_00.wav
+│   ├── Slide_Electronic_01.wav
+│   ├── Slide_Electronic_02.wav
+│   ├── Slide_Sharp_00.wav
+│   ├── Slide_Sharp_01.wav
+│   ├── Slide_Sharp_02.wav
+│   └── Slide_Soft_00.wav
+├── all_tasks_combined.txt
+├── archaic.html
+├── chat.html
+├── chat_test.html
+├── community.html
+├── const2var.sh
+├── dict_human.txt
+├── dictionary.html
+├── dictionary.js
+├── early.html
+├── earlyclassical.html
+├── editor.html
+├── epistolary.html
+├── favicon
+│   ├── android-chrome-144x144.png
+│   ├── android-chrome-192x192.png
+│   ├── android-chrome-256x256.png
+│   ├── android-chrome-384x384.png
+│   ├── android-chrome-512x512.png
+│   ├── android-chrome-96x96.png
+│   ├── apple-touch-icon-1024x1024.png
+│   ├── apple-touch-icon-114x114.png
+│   ├── apple-touch-icon-120x120.png
+│   ├── apple-touch-icon-144x144.png
+│   ├── apple-touch-icon-152x152.png
+│   ├── apple-touch-icon-167x167.png
+│   ├── apple-touch-icon-180x180.png
+│   ├── apple-touch-icon-57x57.png
+│   ├── apple-touch-icon-60x60.png
+│   ├── apple-touch-icon-72x72.png
+│   ├── apple-touch-icon-76x76.png
+│   ├── apple-touch-icon-80x80.png
+│   ├── browserconfig.xml
+│   ├── favicon.ico
+│   ├── favicon.png
+│   ├── favicon.py
+│   ├── maskable-icon-192x192-masked.png
+│   ├── maskable-icon-192x192.png
+│   ├── maskable-icon-512x512-masked.png
+│   ├── maskable-icon-512x512.png
+│   ├── site.webmanifest
+│   ├── tmp_16.png
+│   ├── tmp_32.png
+│   ├── tmp_48.png
+│   └── 說.svg
+├── fontscreater
+│   ├── index.html
+│   ├── jiagu.py
+│   ├── jiaguwen.ttf
+│   └── oracle_chars
+│       ├── 㱿.svg
+│       ├── 一.svg
+│       ├── 丁.svg
+│       ├── 七.svg
+│       ├── 三.svg
+│       ├── 上.svg
+│       ├── 下.svg
+│       ├── 不.svg
+│       ├── 丑.svg
+│       ├── 丙.svg
+│       ├── 中.svg
+│       ├── 乃.svg
+│       ├── 乘.svg
+│       ├── 乙.svg
+│       ├── 九.svg
+│       ├── 二.svg
+│       ├── 于.svg
+│       ├── 五.svg
+│       ├── 亘.svg
+│       ├── 亡.svg
+│       ├── 亥.svg
+│       ├── 亦.svg
+│       ├── 人.svg
+│       ├── 今.svg
+│       ├── 令.svg
+│       ├── 以.svg
+│       ├── 伐.svg
+│       ├── 佑.svg
+│       ├── 余.svg
+│       ├── 作.svg
+│       ├── 使.svg
+│       ├── 來.svg
+│       ├── 侵.svg
+│       ├── 俘.svg
+│       ├── 倉.svg
+│       ├── 偁.svg
+│       ├── 允.svg
+│       ├── 兄.svg
+│       ├── 兕.svg
+│       ├── 入.svg
+│       ├── 六.svg
+│       ├── 其.svg
+│       ├── 冓.svg
+│       ├── 出.svg
+│       ├── 勿.svg
+│       ├── 北.svg
+│       ├── 十.svg
+│       ├── 千.svg
+│       ├── 午.svg
+│       ├── 南.svg
+│       ├── 卜.svg
+│       ├── 占.svg
+│       ├── 卯.svg
+│       ├── 叀.svg
+│       ├── 及.svg
+│       ├── 受.svg
+│       ├── 合.svg
+│       ├── 吉.svg
+│       ├── 后.svg
+│       ├── 告.svg
+│       ├── 周.svg
+│       ├── 唐.svg
+│       ├── 唯.svg
+│       ├── 商.svg
+│       ├── 四.svg
+│       ├── 土.svg
+│       ├── 在.svg
+│       ├── 執.svg
+│       ├── 基.svg
+│       ├── 壬.svg
+│       ├── 多.svg
+│       ├── 大.svg
+│       ├── 央.svg
+│       ├── 夷.svg
+│       ├── 奚.svg
+│       ├── 妌.svg
+│       ├── 妣.svg
+│       ├── 娩.svg
+│       ├── 婦.svg
+│       ├── 子.svg
+│       ├── 宗.svg
+│       ├── 寅.svg
+│       ├── 寇.svg
+│       ├── 射.svg
+│       ├── 小.svg
+│       ├── 尹.svg
+│       ├── 工.svg
+│       ├── 己.svg
+│       ├── 巳.svg
+│       ├── 帝.svg
+│       ├── 年.svg
+│       ├── 庚.svg
+│       ├── 弗.svg
+│       ├── 弜.svg
+│       ├── 往.svg
+│       ├── 征.svg
+│       ├── 得.svg
+│       ├── 從.svg
+│       ├── 御.svg
+│       ├── 戊.svg
+│       ├── 戌.svg
+│       ├── 我.svg
+│       ├── 戔.svg
+│       ├── 振.svg
+│       ├── 方.svg
+│       ├── 旅.svg
+│       ├── 日.svg
+│       ├── 旬.svg
+│       ├── 昔.svg
+│       ├── 春.svg
+│       ├── 曰.svg
+│       ├── 月.svg
+│       ├── 有.svg
+│       ├── 朕.svg
+│       ├── 望.svg
+│       ├── 未.svg
+│       ├── 東.svg
+│       ├── 步.svg
+│       ├── 歳.svg
+│       ├── 死.svg
+│       ├── 永.svg
+│       ├── 求.svg
+│       ├── 汝.svg
+│       ├── 河.svg
+│       ├── 洹.svg
+│       ├── 烖.svg
+│       ├── 熯.svg
+│       ├── 爭.svg
+│       ├── 父.svg
+│       ├── 牛.svg
+│       ├── 犬.svg
+│       ├── 獲.svg
+│       ├── 王.svg
+│       ├── 生.svg
+│       ├── 用.svg
+│       ├── 甫.svg
+│       ├── 田.svg
+│       ├── 甲.svg
+│       ├── 申.svg
+│       ├── 疾.svg
+│       ├── 癸.svg
+│       ├── 登.svg
+│       ├── 白.svg
+│       ├── 眔.svg
+│       ├── 硪.svg
+│       ├── 示.svg
+│       ├── 祐.svg
+│       ├── 祖.svg
+│       ├── 祟.svg
+│       ├── 稲.svg
+│       ├── 羌.svg
+│       ├── 羽.svg
+│       ├── 翌.svg
+│       ├── 臣.svg
+│       ├── 自.svg
+│       ├── 至.svg
+│       ├── 艱.svg
+│       ├── 若.svg
+│       ├── 茲.svg
+│       ├── 萬.svg
+│       ├── 西.svg
+│       ├── 貝.svg
+│       ├── 貞.svg
+│       ├── 賽.svg
+│       ├── 足.svg
+│       ├── 身.svg
+│       ├── 車.svg
+│       ├── 辛.svg
+│       ├── 辰.svg
+│       ├── 逆.svg
+│       ├── 逐.svg
+│       ├── 邑.svg
+│       ├── 鄙.svg
+│       ├── 酉.svg
+│       ├── 門.svg
+│       ├── 降.svg
+│       ├── 陘.svg
+│       ├── 雞.svg
+│       ├── 雨.svg
+│       ├── 震.svg
+│       ├── 馬.svg
+│       ├── 馭.svg
+│       ├── 高.svg
+│       ├── 鹿.svg
+│       ├── 黍.svg
+│       └── 鼠.svg
+├── grammarunited.txt
+├── help
+│   ├── 不.html
+│   ├── 于.html
+│   ├── 亡.html
+│   ├── 允.html
+│   ├── 其.html
+│   ├── 占.html
+│   ├── 叀.html
+│   ├── 唯.html
+│   ├── 奚.html
+│   ├── 弗.html
+│   ├── 弜.html
+│   ├── 曰.html
+│   ├── 王.html
+│   ├── 若.html
+│   └── 貞.html
+├── help.js
+├── img
+│   ├── bronze.png
+│   ├── laozi.jpg
+│   ├── oracle.jpeg
+│   ├── seal.jpg
+│   ├── simaqian.jpeg
+│   └── vinegartasters.jpg
+├── index.html
+├── jiaguwen.ttf
+├── late.html
+├── lateclassical.html
+├── lesson0
+│   ├── 1.html
+│   ├── 2.html
+│   ├── 3.html
+│   ├── 4.html
+│   ├── 5.html
+│   ├── 6.html
+│   ├── img
+│   │   ├── 1.jpg
+│   │   ├── 1.tiff
+│   │   ├── 2.jpg
+│   │   ├── 2.tiff
+│   │   └── page_7_img_1.jpeg
+│   ├── mp3
+│   │   └── 1.mp3
+│   └── mp4
+│       └── bones.mp4
+├── lesson1
+│   ├── extra.js
+│   ├── filez-extractor.sh
+│   ├── filez.sh
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   │   └── 1.mp3
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   ├── task9.html
+│   │   └── tasks-data.js
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson10
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── 10.jpg
+│   │   ├── 11.jpg
+│   │   └── 9.jpg
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson11
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── 13.jpg
+│   │   ├── 14.jpg
+│   │   ├── 15.jpg
+│   │   ├── 16.jpg
+│   │   ├── 17.jpg
+│   │   ├── 18.jpg
+│   │   └── 19.jpg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── theory — копия.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson12
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── 20.jpg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson13
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── page_6_img_1.jpeg
+│   │   ├── page_7_img_1.jpeg
+│   │   └── page_9_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson14
+│   ├── hanzi.html
+│   ├── img
+│   │   └── 20.jpg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson15
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson16
+│   ├── hanzi.html
+│   ├── img
+│   │   └── 20.jpg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson17
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson18
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson19
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson2
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_3_img_1.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── syntax.html
+│   ├── table.html
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task25.html
+│   │   ├── task26.html
+│   │   ├── task27.html
+│   │   ├── task28.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── tasks.js
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson20
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson21
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson22
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson23
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_3_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson24
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson25
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── page_5_img_1.jpeg
+│   │   ├── page_6_img_1.jpeg
+│   │   ├── page_6_img_2.jpeg
+│   │   └── page_6_img_3.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson26
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson27
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson28
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson29
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson3
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── 5.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── segmentation_full.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task25.html
+│   │   ├── task26.html
+│   │   ├── task27.html
+│   │   ├── task28.html
+│   │   ├── task29.html
+│   │   ├── task3.html
+│   │   ├── task30.html
+│   │   ├── task31.html
+│   │   ├── task32.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson30
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson31
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson32
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson33
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_9_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson34
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson35
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson36
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson37
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson38
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson39
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson4
+│   ├── hanzi.html
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── segmentation_old.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson40
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson41
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson42
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson43
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson44
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson45
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.png
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson46
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson47
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson48
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson49
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── page_5_img_1.png
+│   │   └── page_6_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson5
+│   ├── grammarunited.txt
+│   ├── hanzi.html
+│   ├── img
+│   │   └── 6.jpg
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── segmentation_old.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson50
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson51
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── page_6_img_1.jpeg
+│   │   └── page_7_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson52
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson53
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson54
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_6_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson55
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson56
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson57
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_5_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson58
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson59
+│   ├── hanzi.html
+│   ├── img
+│   │   └── page_8_img_1.jpeg
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson6
+│   ├── extra.js
+│   ├── grammarunited.txt
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── 7.jpg
+│   │   └── 8.jpg
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson60
+│   ├── hanzi.html
+│   ├── img
+│   ├── index.html
+│   ├── mp3
+│   ├── quiz.html
+│   ├── safe
+│   ├── segmentation.js
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   └── task1.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson7
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task23.html
+│   │   ├── task24.html
+│   │   ├── task25.html
+│   │   ├── task26.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson8
+│   ├── extra.js
+│   ├── grammarunited.txt
+│   ├── hanzi.html
+│   ├── img
+│   │   ├── 7.jpg
+│   │   └── 8.jpg
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task19.html
+│   │   ├── task2.html
+│   │   ├── task20.html
+│   │   ├── task21.html
+│   │   ├── task22.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── lesson9
+│   ├── extra.js
+│   ├── hanzi.html
+│   ├── index.html
+│   ├── quiz.html
+│   ├── segmentation.js
+│   ├── segmentation.js.bak
+│   ├── tasks
+│   │   ├── filez-extractor.sh
+│   │   ├── filez.sh
+│   │   ├── filez.txt
+│   │   ├── task1.html
+│   │   ├── task10.html
+│   │   ├── task11.html
+│   │   ├── task12.html
+│   │   ├── task13.html
+│   │   ├── task14.html
+│   │   ├── task15.html
+│   │   ├── task16.html
+│   │   ├── task17.html
+│   │   ├── task18.html
+│   │   ├── task2.html
+│   │   ├── task3.html
+│   │   ├── task4.html
+│   │   ├── task5.html
+│   │   ├── task6.html
+│   │   ├── task7.html
+│   │   ├── task8.html
+│   │   └── task9.html
+│   ├── theory.html
+│   ├── translateall.html
+│   └── vocab.html
+├── postclassical.html
+├── segmentation.js
+├── singleline.sh
+├── tasks.css
+├── translateall.html
+├── tree.txt
+├── uploader.js
+├── vocab.css
+├── wenyan_full.json
+└── рекомендуемые шрифты
+
+295 directories, 1339 files

@@ -457,9 +457,38 @@
         flex-direction: column;
       }
     }
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; /* Увеличено с 36px */
+  height: 48px; /* Увеличено с 36px */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffcc00, #ff6600); /* Яркий градиент */
+  color: #333; /* Тёмный текст для контраста */
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 20px; /* Увеличенный размер иконки */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.4); /* Яркая тень */
+  border: 2px solid white; /* Белая обводка для выделения */
+}
+
+.lang-btn:hover {
+  transform: scale(1.15) translateY(-3px); /* Больше увеличение и подъём */
+  box-shadow: 0 8px 20px rgba(255, 102, 0, 0.6); /* Усиленная тень при наведении */
+  background: linear-gradient(135deg, #ffdd44, #ff8800); /* Ещё ярче при наведении */
+}
+
+.lang-btn:active {
+  transform: scale(0.95) translateY(1px); /* Эффект "нажатия" */
+  box-shadow: 0 2px 6px rgba(255, 102, 0, 0.3);
+}
   </style>
 </head>
 <body>
+
   <div class="container">
     <header>
       <h1>Древнекитайский язык</h1>
@@ -467,11 +496,14 @@
     </header>
 
     <div class="user-panel">
-      <div id="login-container" class="login-container">
+<div class="lang-switch" style="position: absolute; top: -3em; right: 15px; display: flex; gap: 12px; z-index: 25;">   <a href="index.html"    class="lang-btn">🇷🇺</a>   <a href="https://dimpablo.github.io/linguabaseada/" class="lang-btn">🇧🇷</a>   <a href="index_en.html" class="lang-btn">🇺🇸</a> </div>       <!-- Simple Language Switcher -->
+   <div id="login-container" class="login-container">
+
         <button class="btn btn-primary" id="loginWithGoogle">Войти через Google</button>
         <a href="https://t.me/oldcnio" class="btn btn-secondary">Связаться с разработчиком</a>
         <a href="./dictionary.html" class="btn btn-secondary">Словарь курса</a>
         <button class="btn btn-donate pulse" id="donateBtn">❤️ Поддержать проект</button>
+
       </div>
       <div id="user-container" class="user-container hidden">
         <div class="user-info">
@@ -492,6 +524,7 @@
             </a>
           </div>
         </div>
+
         <div class="auth-buttons">
           <a href="./community.html#users" class="btn btn-secondary">Сообщество</a>
           <a href="https://t.me/oldcnio" class="btn btn-secondary">Разработчик</a>
@@ -580,7 +613,9 @@
       </div>
       
       <p style="font-style: italic;">Спасибо за вашу поддержку! 🙏</p>
+
     </div>
+
   </div>
 
   <script>
