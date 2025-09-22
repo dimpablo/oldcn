@@ -1,10 +1,14 @@
 {
-  "name": "Мой Китайский Словарь",
-  "short_name": "Иероглифы",
-  "start_url": ".",
+  "name": "basedlingua — курс древнекитайского",
+  "short_name": "basedlingua",
+  "description": "Интерактивный курс древнекитайского языка: иероглифы, грамматика, классические тексты",
+  "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f9f9f9",
   "theme_color": "#4CAF50",
+  "scope": "/",
+  "lang": "ru",
   "icons": [
     {
       "src": "android-chrome-96x96.png",
@@ -22,6 +26,12 @@
       "type": "image/png"
     },
     {
+      "src": "maskable-icon-192x192-masked.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "android-chrome-256x256.png",
       "sizes": "256x256",
       "type": "image/png"
@@ -37,16 +47,24 @@
       "type": "image/png"
     },
     {
-      "src": "maskable-icon-192x192-masked.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
       "src": "maskable-icon-512x512-masked.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-1.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "description": "Урок по чтению классических текстов на древнекитайском"
+    },
+    {
+      "src": "screenshot-2.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "description": "Интерактивные упражнения с иероглифами"
     }
   ]
 }
