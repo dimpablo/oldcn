@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script src="./dictionary.js"></script>
     <meta charset="UTF-8">
     <title>Словарь классических китайских иероглифов</title>
 
@@ -252,6 +251,9 @@
     </div>
 
     <script>
+        // === ГЛОБАЛЬНЫЙ charData ===
+        window.charData = {};
+
         document.addEventListener('DOMContentLoaded', async function () {
             const cardsContainer = document.getElementById('cards-container');
             const searchInput = document.getElementById('search-input');
@@ -259,34 +261,7 @@
             const modal = document.getElementById('char-modal');
             const closeModalBtn = document.getElementById('close-modal');
 
-            let charData = {};
             let allCards = [];
-
-            // --- Функция озвучки ---
-            function playHanziSound(hanzi) {
-                const data = charData[hanzi];
-                if (!data || !data.pinyin) return;
-
-                let cleanPinyin = data.pinyin
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/ü/g, 'u')
-                    .replace(/v/g, 'u');
-
-                let tone = '1';
-                if (data.pinyin.includes('ā') || data.pinyin.includes('ē') || data.pinyin.includes('ī') || data.pinyin.includes('ō') || data.pinyin.includes('ū') || data.pinyin.includes('ǖ')) tone = '1';
-                else if (data.pinyin.includes('á') || data.pinyin.includes('é') || data.pinyin.includes('í') || data.pinyin.includes('ó') || data.pinyin.includes('ú') || data.pinyin.includes('ǘ')) tone = '2';
-                else if (data.pinyin.includes('ǎ') || data.pinyin.includes('ě') || data.pinyin.includes('ǐ') || data.pinyin.includes('ǒ') || data.pinyin.includes('ǔ') || data.pinyin.includes('ǚ')) tone = '3';
-                else if (data.pinyin.includes('à') || data.pinyin.includes('è') || data.pinyin.includes('ì') || data.pinyin.includes('ò') || data.pinyin.includes('ù') || data.pinyin.includes('ǜ')) tone = '4';
-
-                const pinyinKey = cleanPinyin + tone;
-                const url = `https://data.dong-chinese.com/pinyin/b/${pinyinKey}.mp3`;
-                const audio = new Audio(url);
-
-                audio.play().catch(e => {
-                    console.warn(`🔇 Нет звука для ${hanzi} (${pinyinKey})`);
-                });
-            }
 
             // --- ШАГ 1: Загрузка wenyan_full.json ---
             try {
@@ -294,9 +269,10 @@
                 if (!response.ok) throw new Error('Не удалось загрузить wenyan_full.json');
                 const data = await response.json();
 
+                // Создаём charData в нужном формате: { "人": { pinyin, meaning, lesson, theory, ... } }
                 data.forEach(item => {
                     if (item.character.includes('{{') || !item.character.trim()) return;
-                    charData[item.character] = {
+                    window.charData[item.character] = {
                         character: item.character,
                         pinyin: item.readings.map(r => r.pinyin).join(', '),
                         meaning: item.readings.flatMap(r => r.meanings || []).slice(0, 2).join(', '),
@@ -313,10 +289,10 @@
             }
 
             // --- ШАГ 2: Обогащение из theory.html файлов ---
-            await enrichCharDataFromTheoryFiles(charData);
+            await enrichCharDataFromTheoryFiles(window.charData);
 
             // --- ШАГ 3: Создание карточек ---
-            const sortedChars = Object.values(charData).sort((a, b) =>
+            const sortedChars = Object.values(window.charData).sort((a, b) =>
                 a.pinyin.localeCompare(b.pinyin)
             );
 
@@ -382,7 +358,7 @@
 
             // --- Модальное окно ---
             function showCharModal(hanzi) {
-                const item = charData[hanzi];
+                const item = window.charData[hanzi];
                 if (!item) return;
 
                 document.getElementById('modal-char').textContent = hanzi;
@@ -571,7 +547,7 @@
 
             searchInput.addEventListener('input', () => filterCards(searchInput.value));
 
-            // --- Обработчик озвучки (делегирование) ---
+            // --- Обработчик озвучки ---
             modal.addEventListener('click', function(e) {
                 if (e.target.classList.contains('sound-btn')) {
                     e.preventDefault();
@@ -593,6 +569,38 @@
                 }
             });
         });
+
+        // --- Функция озвучки ---
+        function playHanziSound(hanzi) {
+            const data = window.charData[hanzi];
+            if (!data || !data.pinyin) {
+                console.warn(`🔇 Нет данных для '${hanzi}'`);
+                return;
+            }
+
+            const pinyins = data.pinyin.split(',').map(p => p.trim());
+            for (const p of pinyins) {
+                let clean = p.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'u').replace(/v/g, 'u');
+
+                const toneMap = [
+                    { re: /[āēīōūǖ]/, tone: '1' },
+                    { re: /[áéíóúǘ]/, tone: '2' },
+                    { re: /[ǎěǐǒǔǚ]/, tone: '3' },
+                    { re: /[àèìòùǜ]/, tone: '4' }
+                ];
+                const tone = toneMap.find(t => t.re.test(p))?.tone || '1';
+                const key = clean + tone;
+                const url = `https://data.dong-chinese.com/pinyin/b/${key}.mp3`;
+
+                const audio = new Audio(url);
+                audio.play().then(() => {
+                    console.log(`✅ Проигрывание '${hanzi}' (${p}) → ${url}`);
+                }).catch(err => {
+                    console.warn(`❌ Не удалось проиграть '${hanzi}' (${p}):`, err.message);
+                });
+                break;
+            }
+        }
 
         // --- Обогащение из theory.html ---
         async function enrichCharDataFromTheoryFiles(charData) {
