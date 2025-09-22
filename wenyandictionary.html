@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Китайские иероглифы по урокам</title>
+
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="80x80" href="/favicon/apple-touch-icon-80x80.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/favicon/apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="/favicon/apple-touch-icon-1024x1024.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/android-chrome-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/favicon/android-chrome-144x144.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/favicon/android-chrome-256x256.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="/favicon/android-chrome-384x384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/maskable-icon-192x192-masked.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon/maskable-icon-512x512-masked.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+    <meta name="msapplication-config" content="/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#4CAF50">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+        #search-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #search-input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .no-results {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 18px;
+            margin: 40px 0;
+            font-weight: bold;
+            display: none;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        #progress-bar {
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        .lesson {
+            margin-bottom: 40px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .char {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .pinyin {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .meaning {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-btn:hover {
+            color: #000;
+        }
+        .modal-char {
+            font-size: 64px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .tab-header {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-header div {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            margin-left: 4px;
+            font-weight: bold;
+        }
+        .tab-header .active {
+            background: white;
+            color: #7c6b96;
+        }
+        .tab-header .inactive {
+            background: #f8f6fb;
+            color: #666;
+        }
+        .tab-pane {
+            display: block;
+        }
+        .tab-pane.hidden {
+            display: none;
+        }
+        .example-item {
+            margin: 10px 0;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .example-chinese {
+            font-family: serif;
+            font-size: 16px;
+            color: #333;
+        }
+        .example-translation {
+            font-style: italic;
+            color: #555;
+        }
+        .example-source {
+            font-size: 12px;
+            color: #999;
+        }
+        .note-badge {
+            display: inline-block;
+            background: #f0e6ff;
+            color: #7c6b96;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Словарь иероглифов по урокам</h1>
+
+    <!-- Search Box -->
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню или значению...">
+    </div>
+    <div id="no-results" class="no-results">Ничего не найдено</div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- Search Results -->
+    <div id="search-results" class="lesson" style="display: none;">
+        <h2>Результаты поиска</h2>
+        <div class="card-container"></div>
+    </div>
+
+    <!-- Lessons Container -->
+    <div id="lessons-container"></div>
+
+    <!-- Modal -->
+    <div id="char-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <div class="modal-char" id="modal-char"></div>
+            <div class="tab-header">
+                <div id="tab-main" class="active">📖 Значения</div>
+                <div id="tab-input" class="inactive">✍️ Рукописный ввод</div>
+            </div>
+            <div id="tab-main-pane" class="tab-pane"></div>
+            <div id="tab-input-pane" class="tab-pane hidden">
+                <iframe id="hanzi-frame" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const lessonsContainer = document.getElementById('lessons-container');
+            const progressBar = document.getElementById('progress-bar');
+            const modal = document.getElementById('char-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const searchInput = document.getElementById('search-input');
+            const noResultsDiv = document.getElementById('no-results');
+            const searchResultsContainer = document.getElementById('search-results');
+            const searchCardContainer = searchResultsContainer.querySelector('.card-container');
+
+            let charData = {}; // { "危": { character, readings, notes, id }, ... }
+            let allCards = [];
+            let lessons = {};
+
+            try {
+                const response = await fetch('wenyan_full.json');
+                if (!response.ok) throw new Error('Не удалось загрузить wenyan_full.json');
+                const data = await response.json();
+
+                // Преобразуем массив в объект по иероглифу
+                data.forEach(item => {
+                    charData[item.character] = item;
+                });
+
+                // Группируем по урокам (id)
+                Object.values(charData).forEach(item => {
+                    const lessonNum = String(item.id);
+                    if (!lessons[lessonNum]) lessons[lessonNum] = [];
+                    lessons[lessonNum].push(item);
+                });
+
+                const sortedLessons = Object.keys(lessons).sort((a, b) => Number(a) - Number(b));
+                const totalLessons = sortedLessons.length;
+
+                // Создаём карточки
+                sortedLessons.forEach((lessonNum, index) => {
+                    setTimeout(() => {
+                        const lessonDiv = document.createElement('div');
+                        lessonDiv.className = 'lesson';
+                        lessonDiv.dataset.lesson = lessonNum;
+
+                        const title = document.createElement('h2');
+                        title.textContent = `Урок ${lessonNum}`;
+                        lessonDiv.appendChild(title);
+
+                        const cardContainer = document.createElement('div');
+                        cardContainer.className = 'card-container';
+
+                        lessons[lessonNum].sort((a, b) => a.character.localeCompare(b.character));
+
+                        lessons[lessonNum].forEach(item => {
+                            const card = createCard(item, lessonDiv);
+                            cardContainer.appendChild(card);
+                            allCards.push({
+                                element: card,
+                                data: item,
+                                normalizedPinyin: removeDiacritics(getAllPinyin(item).toLowerCase()),
+                                normalizedMeaning: getAllMeanings(item).toLowerCase(),
+                                lessonElement: lessonDiv
+                            });
+                        });
+
+                        lessonDiv.appendChild(cardContainer);
+                        lessonsContainer.appendChild(lessonDiv);
+
+                        // Прогресс
+                        progressBar.style.width = `${Math.round(((index + 1) / totalLessons) * 100)}%`;
+                    }, 0);
+                });
+            } catch (err) {
+                console.error('Ошибка загрузки данных:', err);
+                alert('Не удалось загрузить словарь. Проверьте наличие файла wenyan_full.json.');
+            }
+
+            // --- Вспомогательные функции ---
+            function removeDiacritics(str) {
+                return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
+
+            function getAllPinyin(item) {
+                return item.readings.map(r => r.pinyin).join(', ');
+            }
+
+            function getAllMeanings(item) {
+                return item.readings.flatMap(r => r.meanings).join(', ');
+            }
+
+            function createCard(item, lessonDiv) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.char = item.character;
+
+                const charElem = document.createElement('div');
+                charElem.className = 'char';
+                charElem.textContent = item.character;
+
+                const pinyinElem = document.createElement('div');
+                pinyinElem.className = 'pinyin';
+                pinyinElem.textContent = getAllPinyin(item);
+
+                const meaningElem = document.createElement('div');
+                meaningElem.className = 'meaning';
+                meaningElem.textContent = item.readings[0].meanings[0];
+
+                card.appendChild(charElem);
+                card.appendChild(pinyinElem);
+                card.appendChild(meaningElem);
+
+                card.addEventListener('click', () => showTheoryModal(item.character));
+
+                return card;
+            }
+
+            // --- Модальное окно ---
+            function showTheoryModal(hanzi) {
+                const item = charData[hanzi];
+                if (!item) return;
+
+                document.getElementById('modal-char').textContent = hanzi;
+
+                // Очищаем вкладки
+                const mainPane = document.getElementById('tab-main-pane');
+                mainPane.innerHTML = '';
+
+                // Заполняем значения
+                if (item.readings && item.readings.length > 0) {
+                    item.readings.forEach((reading, idx) => {
+                        const group = document.createElement('div');
+                        if (idx > 0) {
+                            group.style.marginTop = '20px';
+                            group.style.paddingTop = '15px';
+                            group.style.borderTop = '1px dashed #ccc';
+                        }
+
+                        const pinyin = document.createElement('strong');
+                        pinyin.textContent = reading.pinyin;
+                        pinyin.style.color = '#e74c3c';
+                        pinyin.style.display = 'block';
+                        pinyin.style.fontSize = '16px';
+                        group.appendChild(pinyin);
+
+                        if (reading.meanings) {
+                            const ul = document.createElement('ul');
+                            reading.meanings.forEach(m => {
+                                const li = document.createElement('li');
+                                li.textContent = m.trim();
+                                li.style.margin = '4px 0';
+                                ul.appendChild(li);
+                            });
+                            group.appendChild(ul);
+                        }
+
+                        if (reading.examples && reading.examples.length > 0) {
+                            const examplesTitle = document.createElement('p');
+                            examplesTitle.innerHTML = '<strong>Примеры:</strong>';
+                            examplesTitle.style.margin = '10px 0 5px 0';
+                            group.appendChild(examplesTitle);
+
+                            const examplesList = document.createElement('ol');
+                            reading.examples.forEach(ex => {
+                                const li = document.createElement('li');
+                                li.classList.add('example-item');
+
+                                const context = ex.chinese.replace(
+                                    new RegExp(`(${hanzi})`, 'g'),
+                                    '<strong style="color:#4CAF50;">$1</strong>'
+                                );
+
+                                li.innerHTML = `
+                                    <div class="example-chinese">${context}</div>
+                                    <div class="example-translation">«${ex.translation}»</div>
+                                    ${ex.source ? `<div class="example-source">Источник: ${ex.source}</div>` : ''}
+                                `;
+                                examplesList.appendChild(li);
+                            });
+                            group.appendChild(examplesList);
+                        }
+
+                        mainPane.appendChild(group);
+                    });
+                }
+
+                // Примечания
+                if (item.notes && item.notes.length > 0) {
+                    const notesDiv = document.createElement('div');
+                    notesDiv.style.marginTop = '15px';
+                    notesDiv.style.padding = '10px';
+                    notesDiv.style.backgroundColor = '#f8f6fc';
+                    notesDiv.style.borderLeft = '4px solid #a8c8d8';
+                    notesDiv.style.borderRadius = '0 6px 6px 0';
+                    notesDiv.style.fontSize = '13px';
+
+                    const badges = item.notes.map(n => `<span class="note-badge">${n.trim()}</span>`).join('');
+                    notesDiv.innerHTML = `<strong>Примечания:</strong> ${badges}`;
+                    mainPane.appendChild(notesDiv);
+                }
+
+                // Переключение вкладок
+                document.getElementById('tab-main').onclick = () => {
+                    document.getElementById('tab-main').className = 'active';
+                    document.getElementById('tab-input').className = 'inactive';
+                    document.getElementById('tab-main-pane').classList.remove('hidden');
+                    document.getElementById('tab-input-pane').classList.add('hidden');
+                };
+                document.getElementById('tab-input').onclick = () => {
+                    document.getElementById('tab-input').className = 'active';
+                    document.getElementById('tab-main').className = 'inactive';
+                    document.getElementById('tab-input-pane').classList.remove('hidden');
+                    document.getElementById('tab-main-pane').classList.add('hidden');
+                    document.getElementById('hanzi-frame').src = `./lesson1/tasks/task1.html#${hanzi}`;
+                };
+
+                // Открываем первую вкладку
+                document.getElementById('tab-main').click();
+
+                modal.style.display = 'block';
+            }
+
+            // --- Поиск ---
+            function filterCards(query) {
+                if (!query.trim()) {
+                    searchResultsContainer.style.display = 'none';
+                    lessonsContainer.style.display = 'block';
+                    noResultsDiv.style.display = 'none';
+                    return;
+                }
+
+                searchCardContainer.innerHTML = '';
+                const lowerQuery = query.toLowerCase();
+                const normalizedQuery = removeDiacritics(lowerQuery);
+                let found = false;
+
+                allCards.forEach(cardData => {
+                    const item = cardData.data;
+                    const match =
+                        item.character.includes(query) ||
+                        removeDiacritics(getAllPinyin(item).toLowerCase()).includes(normalizedQuery) ||
+                        getAllMeanings(item).toLowerCase().includes(lowerQuery);
+
+                    if (match) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'card';
+
+                        const lessonLabel = document.createElement('div');
+                        lessonLabel.textContent = `Урок ${item.id}`;
+                        lessonLabel.style.color = '#4CAF50';
+                        lessonLabel.style.fontSize = '14px';
+                        lessonLabel.style.fontWeight = 'bold';
+                        lessonLabel.style.marginBottom = '4px';
+
+                        const charElem = document.createElement('div');
+                        charElem.className = 'char';
+                        charElem.textContent = item.character;
+
+                        const pinyinElem = document.createElement('div');
+                        pinyinElem.className = 'pinyin';
+                        pinyinElem.textContent = getAllPinyin(item);
+
+                        const meaningElem = document.createElement('div');
+                        meaningElem.className = 'meaning';
+                        meaningElem.textContent = item.readings[0].meanings[0];
+
+                        wrapper.appendChild(lessonLabel);
+                        wrapper.appendChild(charElem);
+                        wrapper.appendChild(pinyinElem);
+                        wrapper.appendChild(meaningElem);
+
+                        wrapper.addEventListener('click', () => {
+                            showTheoryModal(item.character);
+                        });
+
+                        searchCardContainer.appendChild(wrapper);
+                        found = true;
+                    }
+                });
+
+                if (found) {
+                    searchResultsContainer.style.display = 'block';
+                    lessonsContainer.style.display = 'none';
+                    noResultsDiv.style.display = 'none';
+                } else {
+                    searchResultsContainer.style.display = 'none';
+                    lessonsContainer.style.display = 'block';
+                    noResultsDiv.style.display = 'block';
+                }
+            }
+
+            searchInput.addEventListener('input', () => filterCards(searchInput.value));
+
+            // Закрытие модального окна
+            closeModalBtn.onclick = () => modal.style.display = 'none';
+            window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'block') modal.style.display = 'none'; });
+        });
+    </script>
+</body>
+</html>
