@@ -315,7 +315,6 @@
     transform: translateX(30px);
   }
 </style>
-
 <style>/* Уменьшаем размер для номеров */
 /* Tooltip — без изменений */
 .char-tooltip {
@@ -631,7 +630,6 @@ document.addEventListener('DOMContentLoaded', createOracleTable);
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -778,6 +776,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-</script></body>
+</script><script defer="True" src="../sender.js"></script></body>
 <script id="help" src="../help.js"></script>
 </html>

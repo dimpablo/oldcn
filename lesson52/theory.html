@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 52 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 52 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -318,25 +317,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 52</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
-
-<div style="display: none;" style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     const lessonText = [
         "我自不驅卿|妾有繡腰襦",
@@ -421,98 +416,90 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>52.1. Составные предикативы</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>52.1. Составные предикативы</h3>
+<p class="original">
         Широкое распространение составных предикативов, состоящих
         из двух синонимичных или близких по смыслу компонентов, — от-личительная черта постклассического периода истории древнеки-тайского языка. Особенность такого рода предикативов — свобод-ная перестановка составляющих морфем. Например:悲哀 bēi āi и哀悲 āi bēi «горевать»: 飮酒則歡樂,處喪則悲哀 yǐn jiǔ zé huān lè, chù sāng zé
         bēi āi «Когда пьешь вино — радуешься, когда справляешь
         траур — печалишься».
-        <br>
-        <span class="example">心中哀悲而不能去 xīn zhōng āi bēi ér bù néng qù «Сердце
+        <br/>
+<span class="example">心中哀悲而不能去 xīn zhōng āi bēi ér bù néng qù «Сердце
             преисполнено печали и не может избавиться от нее».</span>
-        <br>
+<br/>
         Подобный составной предикатив отмечен и в тексте урока 52.
         Это歸還 guī huán —還歸 huán guī «возвращаться»:
-        <br>
-        <span class="example">不久當歸還 bù jiǔ dāng guī huán</span>
-        <br>
-        <span class="example">不久當還歸 bù jiǔ dāng huán guī} «Я скоро вернусь»</span>
-    </p>
-
-    <h3>52.2. Показатель пассивного оборота被 bèi</h3>
-    <p class="original">
+        <br/>
+<span class="example">不久當歸還 bù jiǔ dāng guī huán</span>
+<br/>
+<span class="example">不久當還歸 bù jiǔ dāng huán guī} «Я скоро вернусь»</span>
+</p>
+<h3>52.2. Показатель пассивного оборота被 bèi</h3>
+<p class="original">
         В классическом языке被 bèi было знаменательным словом со значением «подвергаться», «испытывать на себе». Оно могло
         иметь прямое дополнение:
-        <br>
-        <span class="example">數被水旱之害 shù bèi shuǐ hàn zhī hài «неоднократно подвергаться стихийным бедствиям в виде наводнений
+        <br/>
+<span class="example">數被水旱之害 shù bèi shuǐ hàn zhī hài «неоднократно подвергаться стихийным бедствиям в виде наводнений
             и засух».</span>
-        <br>
+<br/>
         В постклассическом языке被 bèi транформируется в показа-
         тель пассивного оборота. В качестве такового被 bèi не принимает
         дополнение; после него перед предикативом может стоять слово, обозначающее субъект действия:
-        <br>
-        <span class="example">亮子被蘇峻害 liàng zǐ bèi sū jùn hài «Сын Ляна был
+        <br/>
+<span class="example">亮子被蘇峻害 liàng zǐ bèi sū jùn hài «Сын Ляна был
             погуб лен Су Цзюнем».</span>
-        <br>
+<br/>
         Иногда — хотя и крайне редко —被 bèi по-прежнему выступает
         в качестве предикатива «подвергаться». В сочинении «Новые вер-сии старых историй» слово被 bèi 28 раз зафиксировано в роли по-казателя пассива и лишь дважды как знаменательный предикатив.
     </p>
-
-    <h3>52.3. Служебное слово欲 yù</h3>
-    <p class="original">
+<h3>52.3. Служебное слово欲 yù</h3>
+<p class="original">
         Слово欲 yù, употреблявшееся ранее как знаменательное, в постклассическом языке становится показателем будущего вре-мени. Его особенностью является то, что оно употребляется преи-мущественно в безличных предложениях: 
-        <br>
-        <span class="example">外欲曙 wài yù shǔ «На улице вот-вот рассветет».</span>
-    </p>
-
-    <h3>52.4. Служебное слово當 dāng</h3>
-    <p class="original">
+        <br/>
+<span class="example">外欲曙 wài yù shǔ «На улице вот-вот рассветет».</span>
+</p>
+<h3>52.4. Служебное слово當 dāng</h3>
+<p class="original">
         Слово當 dāng встречалось нам в позднем классическом языке
         как модальный предикатив(44.4). Выражая объективную необхo-димость совершения того или иного действия,當 dāng употребля-ется и в постклассическом языке, причем, как правило, в безлич-ных предложениях:
-        <br>
-        <span class="example">當生剝其皮 dāng shēng bō qí pí «Следует с него живого
+        <br/>
+<span class="example">當生剝其皮 dāng shēng bō qí pí «Следует с него живого
             содрать кожу!»</span>
-        <br>
+<br/>
         Встречается слово當 dāng и в предложениях, где указан субъ-ект действия. Чаще всего он выражен личным местоимением.
         В таком контексте當 dāng означает уже не долженствование, а яв-ляется показателем будущего времени: 
-        <br>
-        <span class="example">我亦當往 wǒ yì dāng wǎng «Я тоже пойду».</span>
-        <br>
-        <span class="example">我今當一一嘗之,然後當取 wō j īn dāng yī yī cháng zhī,
+        <br/>
+<span class="example">我亦當往 wǒ yì dāng wǎng «Я тоже пойду».</span>
+<br/>
+<span class="example">我今當一一嘗之,然後當取 wō j īn dāng yī yī cháng zhī,
             rán hòu dāng qǔ «Сейчас попробую их по одному, а потом
             уж возьму».</span>
-        <br>
+<br/>
         Сравните со следующим предложением из нашего текста: 
-        <br>
-        <span class="example">吾今且報府,不久當歸還 wú j īn qiě bào fǔ, bù jiǔ dāng
+        <br/>
+<span class="example">吾今且報府,不久當歸還 wú j īn qiě bào fǔ, bù jiǔ dāng
             guī huán «Я сейчас иду в присутственное место, скоро
             вернусь».</span>
-    </p>
-
-    <h3>52.5. Именные суффиксы</h3>
-    <p class="original">
+</p>
+<h3>52.5. Именные суффиксы</h3>
+<p class="original">
         Появление именных суффиксов — одна из наиболее характер-ных черт постклассического древнекитайского языка, хотя этот
         процесс начался еще в классический период.
-        <br><br>
+        <br/><br/>
         Среди именных суффиксов первым стал употребляться, по всей
         вероятности,子 zǐ. В тексте урока 52 отмечено имя с этим суффик-сом(珠子 zhūzǐ).
-        <br><br>
+        <br/><br/>
         Именные суффиксы становятся формальными показателями
         принадлежности слова к классу имен вне зависимости от грамма-тического контекста. Слово, оформленное суффиксом, в качестве
         предикатива употребляться не могло.
-        <br><br>
+        <br/><br/>
         Перед нами — качественный сдвиг, знаменующий начало про-цесса формирования современного китайского языка.
     </p>
 </div>
-
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -544,79 +531,71 @@
         charList.appendChild(item);
     });
 </script>
-
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
-    <p class="original">
-        <span class="example">逼迫 bī pò «заставлять», «принуждать»</span><br>
-        <span class="example">報府 bào fǔ «идти на службу»</span><br>
-        <span class="example">歸還 guī huán «возвращаться»</span><br>
-        <span class="example">紛紜 fēn yún «запутывать, усложнять дело»</span><br>
-        <span class="example">初陽歳 chū yáng suì (см. ниже 52.А)</span><br>
-        <span class="example">貴門 guì mén «ваш дом»</span><br>
-        <span class="example">伶俜 líng p īng «усталость, заботы, одиночество»</span><br>
-        <span class="example">罪過 zuì guò «преступление»</span><br>
-        <span class="example">供養 gòng yăng «заботиться о старших»</span><br>
-        <span class="example">驅遣 qū qiăn «прогонять»</span><br>
-        <span class="example">葳蕤 wēi ruí «яркий»</span><br>
-        <span class="example">斗帳 dǒu zhàng «накидка»</span><br>
-        <span class="example">玳瑁 dài mào «черепаха, черепаховый»</span><br>
-        <span class="example">繡腰襦 xiù yāo rú «кофточка с вышитым подолом»</span><br>
-        <span class="example">夾裙 jiá qún «юбка на подкладке»</span><br>
-        <span class="example">珠璫 zhū dāng «жемчужные серьги»</span><br>
-        <span class="example">遣施 qiǎn shī «распоряжаться»</span><br>
-        <span class="example">野里 yè lǐ «захолустье»</span><br>
-        <span class="example">教訓 jiào xùn «поучение»</span><br>
-        <span class="example">小姑 xiăo gū «золовка» (младшая сестра мужа)</span><br>
-        <span class="example">珠子 zhūzǐ «жемчуг»</span>
-    </p>
+<h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
+<p class="original">
+<span class="example">逼迫 bī pò «заставлять», «принуждать»</span><br/>
+<span class="example">報府 bào fǔ «идти на службу»</span><br/>
+<span class="example">歸還 guī huán «возвращаться»</span><br/>
+<span class="example">紛紜 fēn yún «запутывать, усложнять дело»</span><br/>
+<span class="example">初陽歳 chū yáng suì (см. ниже 52.А)</span><br/>
+<span class="example">貴門 guì mén «ваш дом»</span><br/>
+<span class="example">伶俜 líng p īng «усталость, заботы, одиночество»</span><br/>
+<span class="example">罪過 zuì guò «преступление»</span><br/>
+<span class="example">供養 gòng yăng «заботиться о старших»</span><br/>
+<span class="example">驅遣 qū qiăn «прогонять»</span><br/>
+<span class="example">葳蕤 wēi ruí «яркий»</span><br/>
+<span class="example">斗帳 dǒu zhàng «накидка»</span><br/>
+<span class="example">玳瑁 dài mào «черепаха, черепаховый»</span><br/>
+<span class="example">繡腰襦 xiù yāo rú «кофточка с вышитым подолом»</span><br/>
+<span class="example">夾裙 jiá qún «юбка на подкладке»</span><br/>
+<span class="example">珠璫 zhū dāng «жемчужные серьги»</span><br/>
+<span class="example">遣施 qiǎn shī «распоряжаться»</span><br/>
+<span class="example">野里 yè lǐ «захолустье»</span><br/>
+<span class="example">教訓 jiào xùn «поучение»</span><br/>
+<span class="example">小姑 xiăo gū «золовка» (младшая сестра мужа)</span><br/>
+<span class="example">珠子 zhūzǐ «жемчуг»</span>
+</p>
 </div>
-
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>52.А. 初陽歳 chū yáng suì</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>52.А. 初陽歳 chū yáng suì</h3>
+<p class="original">
         По древнекитайскому календарю год делился на 24 отрезка (по
         два в каждом лунном месяце). Период времени между冬至 dōng zhì (день зимнего солнцестояния, середина 11-го месяца) и立春 lì
         chūn («начало весны», вторая половина 1-го месяца) назывался初
         陽歳 chū yáng suì.
     </p>
-
-    <h3>52.Б. Предметы дамского туалета</h3>
-    <p class="original">
+<h3>52.Б. Предметы дамского туалета</h3>
+<p class="original">
         В одном из погребений, раскопанных в районе современного Чанша и датированных V в., была обнаружена каменная стела
         с надписью. В ней перечислялись предметы, положенные в погре-бение некоей Фань. Среди них мы обнаруживаем несколько упоми-нающихся в нашем тексте.
-        <br><br>
+        <br/><br/>
         Одежда: кофточка (襦 rú; у нашей героини кофточки были с вы-шитым подолом 繍腰襦 xiù yāo rú); юбка (裙 qún; в тексте урока
         фигурирует юбка на подкладке 裌裙 jiá qún).
-        <br><br>
+        <br/><br/>
         Украшения: серьги (璫 dāng), обычно жемчужные (珠璫 zhū
         dāng).
     </p>
-
-    <h3>52.В. Ширма и полог</h3>
-    <p class="original">
+<h3>52.В. Ширма и полог</h3>
+<p class="original">
         На ночь к кровати обычно придвигали ширмы, которые закры-вали сверху специальным пологом.
-        <br><br>
+        <br/><br/>
         Ширма с пологом, которую получила в качестве приданого на-ша героиня, была сделана из красного газа; по краям ее свешива-лись мешочки с ароматическим веществом.
     </p>
 </div>
-
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Переведите текст на русский язык.</li>
-        <li>Перечислите все способы выражения пассива в древнекитайском языке.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Переведите текст на русский язык.</li>
+<li>Перечислите все способы выражения пассива в древнекитайском языке.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Постклассический древнекитайский язык.<br/>
-    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Учебник: В. А. Крюков — Постклассический древнекитайский язык.<br>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
     Все иероглифы — из текстов Уроков 1–52, либо из циклических знаков (甲子 – 癸亥).
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -722,6 +701,5 @@
     });
 </script>
 <script id="help" src="../help.js"></script>
-
-</body>
+<script defer="True" src="../sender.js"></script></body>
 </html>

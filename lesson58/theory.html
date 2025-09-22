@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 58 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 58 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -318,24 +317,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 58</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
 <div style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     const lessonText = [
         "晉太原中武陵人捕魚為業緣溪行忘",
@@ -428,59 +424,50 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>58.1. Дополнение, выраженное вопросительным местоимением</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>58.1. Дополнение, выраженное вопросительным местоимением</h3>
+<p class="original">
         Начиная с доклассического периода, в древнекитайском языке существовало правило, согласно которому позиции дополнений, выраженных именем и местоимением, различались между собой: во-первых, прямое дополнение, представленное местоимением, всегда стояло перед сказуемым; во-вторых, косвенное дополнение, выраженное вопросительным местоимением, не следует за предлогом, а предшествует ему.
-        <br><br>
+        <br/><br/>
         В конце классического периода появляются первые признаки изменений в этом правиле.
-        <br><br>
+        <br/><br/>
         В это время прямое дополнение, выраженное вопросительным местоимением, иногда ставилось на том же месте, где обычно стоит именно дополнение, т. е. после сказуемого: <span class="example">諸將云何 zhū jiàng yún hé «Что сказали полководцы?»</span> Указанное отклонение от правила становится все более регулярным в постклассических текстах. В частности, выраженное вопросительным местоимением косвенное дополнение с предлогом теперь в смысле порядка слов уже не отличается от именного: <span class="example">見漁人乃大驚問從何來 jiàn yú rén nǎi dà jīng wèn cóng hé lái «Увидев рыбака, они страшно изумились и стали спрашивать, откуда он пришел».</span>
-    </p>
-
-    <h3>58.2. Служебное слово 悉 xī</h3>
-    <p class="original">
+</p>
+<h3>58.2. Служебное слово 悉 xī</h3>
+<p class="original">
         В классическом языке это слово было связано по смыслу только с дополнением в постпозиции к сказуемому (49.1). В III–V вв. значение 悉 xī меняется, и оно начинает употребляться как синоним 皆 jiē, т. е. относиться и к подлежащему:
-        <br><br>
-        <span class="example">男女衣著悉如外人 nán nǚ yī zhuó xī rú wài rén «Вся одежда и у мужчин, и у женщин была как у иностранцев».</span>
-    </p>
-
-    <h3>58.3. Показатель интенсивной степени качества 極 jí</h3>
-    <p class="original">
+        <br/><br/>
+<span class="example">男女衣著悉如外人 nán nǚ yī zhuó xī rú wài rén «Вся одежда и у мужчин, и у женщин была как у иностранцев».</span>
+</p>
+<h3>58.3. Показатель интенсивной степени качества 極 jí</h3>
+<p class="original">
         Наряду с 甚 shèn как показатель интенсивной степени качества, начиная с классического периода, употребляется также слово 極 jí:
-        <br><br>
-        <span class="example">吾所為者極難耳 wú suǒ wéi zhě jí nán ěr «То, что мне предстоит сделать, будет чрезвычайно трудным».</span>
-        <br>
-        <span class="example">初極狹 chū jí xiá «Сначала [проход] был очень узким».</span>
-    </p>
-
-    <h3>58.4. Ограничительное наречие 才 cái</h3>
-    <p class="original">
+        <br/><br/>
+<span class="example">吾所為者極難耳 wú suǒ wéi zhě jí nán ěr «То, что мне предстоит сделать, будет чрезвычайно трудным».</span>
+<br/>
+<span class="example">初極狹 chū jí xiá «Сначала [проход] был очень узким».</span>
+</p>
+<h3>58.4. Ограничительное наречие 才 cái</h3>
+<p class="original">
         Наречие 才 cái (может также записываться иероглифами 纔, 裁, 財) стоит перед сказуемым и придает ему ограничительный оттенок:
-        <br><br>
-        <span class="example">路才容軌 lù cái róng guǐ «По дороге могла проехать только одна телега».</span>
-        <br>
-        <span class="example">初極狹才通人 chū jí xiá cái tōng rén «Сначала [проход] был очень узким, и [по нему] с трудом мог пройти человек».</span>
-    </p>
-
-    <h3>58.5. Побудительный модальный предикатив 要 yào</h3>
-    <p class="original">
+        <br/><br/>
+<span class="example">路才容軌 lù cái róng guǐ «По дороге могла проехать только одна телега».</span>
+<br/>
+<span class="example">初極狹才通人 chū jí xiá cái tōng rén «Сначала [проход] был очень узким, и [по нему] с трудом мог пройти человек».</span>
+</p>
+<h3>58.5. Побудительный модальный предикатив 要 yào</h3>
+<p class="original">
         Начиная с III–V вв. слово 要 yào встречается в текстах как модальный предикатив «побуждать»: <span class="example">便要還家 biàn yào huán jiā «И тогда его пригласили пойти домой».</span>
-    </p>
-
-    <h3>58.6. Предлог 緣 yuán</h3>
-    <p class="original">
+</p>
+<h3>58.6. Предлог 緣 yuán</h3>
+<p class="original">
         К числу новых предлогов, появляющихся в постклассическое время, относится 緣 yuán «вдоль». Он, как и другие предлоги этой группы, произошел от предикатива. Наиболее привычная позиция дополнения с этим предлогом — перед сказуемым: <span class="example">緣溪行 yuán xī xíng «Он шел вдоль ручья».</span>
-    </p>
+</p>
 </div>
-
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -512,75 +499,66 @@
         charList.appendChild(item);
     });
 </script>
-
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
-    <p class="original">
-        <span class="example">太原 tài yuán «Тайюань» (девиз правления)</span><br>
-        <span class="example">武陵人 wǔ líng rén «человек из Улина»</span><br>
-        <span class="example">繽紛 bīn fēn «усыпать» (об опавших листьях)</span><br>
-        <span class="example">髣髴 fǎng fú «словно, будто»</span><br>
-        <span class="example">豁然 huò rán «вдруг»</span><br>
-        <span class="example">開朗 kāi lǎng «свет, простор»</span><br>
-        <span class="example">土地 tǔ dì «земля»</span><br>
-        <span class="example">邑人 yì rén «горожанин»</span><br>
-        <span class="example">居舍 jū shè «жилище»</span><br>
-        <span class="example">阡陌 qiān mò «межи на поле»</span><br>
-        <span class="example">黃髪 huáng fà «старик»</span><br>
-        <span class="example">垂髫 chuí tiáo «младенец»</span><br>
-        <span class="example">絕境 jué jìng «захолустье, заброшенный уголок»</span><br>
-        <span class="example">劉子驥 liú zǐ jì «Лю Цзыцзи» (имя собств.)</span>
-    </p>
+<h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
+<p class="original">
+<span class="example">太原 tài yuán «Тайюань» (девиз правления)</span><br/>
+<span class="example">武陵人 wǔ líng rén «человек из Улина»</span><br/>
+<span class="example">繽紛 bīn fēn «усыпать» (об опавших листьях)</span><br/>
+<span class="example">髣髴 fǎng fú «словно, будто»</span><br/>
+<span class="example">豁然 huò rán «вдруг»</span><br/>
+<span class="example">開朗 kāi lǎng «свет, простор»</span><br/>
+<span class="example">土地 tǔ dì «земля»</span><br/>
+<span class="example">邑人 yì rén «горожанин»</span><br/>
+<span class="example">居舍 jū shè «жилище»</span><br/>
+<span class="example">阡陌 qiān mò «межи на поле»</span><br/>
+<span class="example">黃髪 huáng fà «старик»</span><br/>
+<span class="example">垂髫 chuí tiáo «младенец»</span><br/>
+<span class="example">絕境 jué jìng «захолустье, заброшенный уголок»</span><br/>
+<span class="example">劉子驥 liú zǐ jì «Лю Цзыцзи» (имя собств.)</span>
+</p>
 </div>
-
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>58.А. Девизы правления</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>58.А. Девизы правления</h3>
+<p class="original">
         Ханьский император Вэнь-ди впервые ввел обычай именовать отдельные периоды времени в пределах правления одного императора специальными названиями, так называемыми «девизами правления» (年號 nián hào).
-        <br><br>
+        <br/><br/>
         Периоды эти не имели фиксированной продолжительности: в раннеханьское время они включали в среднем по 5–6 лет, но иногда менялись и через год.
-        <br><br>
+        <br/><br/>
         Девиз правления 太原 tài yuán относится к Восточно-Цзиньской династии и соответствует 376–396 гг.
     </p>
-
-    <h3>58.Б. «Человек из Улина»</h3>
-    <p class="original">
+<h3>58.Б. «Человек из Улина»</h3>
+<p class="original">
         Улин — название округа при династии Восточная Цзинь.
         Главный город округа был расположен близ современного Чандэ в Хунани.
     </p>
-
-    <h3>58.В. «Не слышали о Хань, а уж тем более о Вэй и Цзинь»</h3>
-    <p class="original">
+<h3>58.В. «Не слышали о Хань, а уж тем более о Вэй и Цзинь»</h3>
+<p class="original">
         Беженцы, переселившиеся в укромное место в период правления династии Цинь (221–209 до н. э.), не знали даже о том, что после этого в Китае правила династия Хань (206 до н. э. — 220 н. э.), не говоря уже о династиях Вэй (220–263) и Цзинь (265–420).
     </p>
-
-    <h3>58.Г. «Желтые волосы» и «свисающие пряди»</h3>
-    <p class="original">
+<h3>58.Г. «Желтые волосы» и «свисающие пряди»</h3>
+<p class="original">
         Седовласых в Древнем Китае обычно называли «желтоволосыми» (黄髪 huáng fà).
-        <br><br>
+        <br/><br/>
         Взрослые мужчины и женщины укладывали волосы пучком на макушке и закрепляли их головной шпилькой. Малолетние дети до определенного возраста ходили с распущенными волосами.
-        <br><br>
+        <br/><br/>
         Поэтому выражение 垂髫 chuí tiáo «свисающие пряди волос» служило образным обозначением понятия «несовершеннолетние».
     </p>
 </div>
-
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Перепишите текст и расставьте знаки препинания.</li>
-        <li>Переведите текст на русский язык.</li>
-        <li>Отметьте в тексте все служебные слова.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст и расставьте знаки препинания.</li>
+<li>Переведите текст на русский язык.</li>
+<li>Отметьте в тексте все служебные слова.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Постклассический древнекитайский язык.<br/>
-    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Учебник: В. А. Крюков — Постклассический древнекитайский язык.<br>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
     Все иероглифы — из текстов Уроков 1–58, либо из циклических знаков (甲子 – 癸亥).
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -657,6 +635,5 @@
     });
 </script>
 <script id="help" src="../help.js"></script>
-
-</body>
+<script defer="True" src="../sender.js"></script></body>
 </html>

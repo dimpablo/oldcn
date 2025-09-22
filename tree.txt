@@ -110,7 +110,6 @@
 ├── all_tasks_combined.txt
 ├── archaic.html
 ├── chat.html
-├── chat_test.html
 ├── community.html
 ├── const2var.sh
 ├── dict_human.txt
@@ -1623,14 +1622,16 @@
 │   ├── translateall.html
 │   └── vocab.html
 ├── postclassical.html
-├── segmentation.js
+├── sender.js
 ├── singleline.sh
 ├── tasks.css
+├── theory.sh
 ├── translateall.html
 ├── tree.txt
 ├── uploader.js
 ├── vocab.css
 ├── wenyan_full.json
+├── wenyandictionary.html
 └── рекомендуемые шрифты
 
-295 directories, 1339 files
+295 directories, 1340 files

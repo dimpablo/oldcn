@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 54 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 54 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -318,25 +317,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 54</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
-
-<div style="display: none;" style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     const lessonText = [
         "阿女含涙答|矯逸未有婚",
@@ -420,82 +415,76 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>54.1. Вопросительное слово那 nǎ</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>54.1. Вопросительное слово那 nǎ</h3>
+<p class="original">
         Слово那 nǎ употребляется в постклассическом языке в качестве вопросительного наречия. Оно стоит перед сказуемым,
         замещая обстоятельство образа действия, и соответствует русскому «как?», «каким образом?». Вопрос, заданный с помощью этого
         слова, часто носит риторический характер.
-        <br><br>
+        <br/><br/>
         那 nǎ может употребляться в сочетании с модальными предикативами得 dé и可 kě «мочь»:
-        <br>
-        <span class="example">а) 那得 nǎ dé 是我女袍,那得在市 shì wǒ nǚ páo, nǎ dé zài shì «Это халат моей дочери, как же он мог оказаться на рынке?»</span>
-        <br>
-        <span class="example">б) 那可 nǎ kě 那可嫁女與之 nǎ kě jià nǚ yǔ zhī «Как можно отдать дочь за него?»</span>
-    </p>
-
-    <h3>54.2. Вопросительное словосочетание何所 hé suǒ</h3>
-    <p class="original">
+        <br/>
+<span class="example">а) 那得 nǎ dé 是我女袍,那得在市 shì wǒ nǚ páo, nǎ dé zài shì «Это халат моей дочери, как же он мог оказаться на рынке?»</span>
+<br/>
+<span class="example">б) 那可 nǎ kě 那可嫁女與之 nǎ kě jià nǚ yǔ zhī «Как можно отдать дочь за него?»</span>
+</p>
+<h3>54.2. Вопросительное словосочетание何所 hé suǒ</h3>
+<p class="original">
         Вопросительное слово何 hé часто встречается в постклассическом языке, в том числе в составе словосочетания何所 hé suǒ.
         Одно из его значений «где?», «откуда?» происходит от знаменательного слова所 suǒ «место» (синоним何處 hé chù):
-        <br>
-        <span class="example">當於何所得奴婢耶 dāng yú hé suǒ dé nú bì yé «Откуда я смогу взять рабыню?»</span>
-        <br>
-        <span class="example">於何處失 yú hé chù shī «Где ты потерял ее?»</span>
-        <br><br>
+        <br/>
+<span class="example">當於何所得奴婢耶 dāng yú hé suǒ dé nú bì yé «Откуда я смогу взять рабыню?»</span>
+<br/>
+<span class="example">於何處失 yú hé chù shī «Где ты потерял ее?»</span>
+<br/><br/>
         何所 hé suǒ не обязательно оформляется предлогом, но, как правило, стоит перед сказуемым:
-        <br>
-        <span class="example">何所從來 hé suǒ cóng lái «Откуда пришли?»</span>
-        <br><br>
+        <br/>
+<span class="example">何所從來 hé suǒ cóng lái «Откуда пришли?»</span>
+<br/><br/>
         Другое значение этого словосочетания связано с所 suǒ как нейтрализатором предикативности. В этой его функции何所 hé suǒ
         стоит перед сказуемым и замещает дополнение, приобретая значение «что?»:
-        <br>
-        <span class="example">汝何所作 rǔ hé suǒ zuò «Что ты делаешь?»</span>
-        <br>
-        <span class="example">汝何所求 rǔ hé suǒ qiú «Чего ты добиваешься?»</span>
-    </p>
-
-    <h3>54.3. Личные местоимения 3-го лица</h3>
-    <p class="original">
+        <br/>
+<span class="example">汝何所作 rǔ hé suǒ zuò «Что ты делаешь?»</span>
+<br/>
+<span class="example">汝何所求 rǔ hé suǒ qiú «Чего ты добиваешься?»</span>
+</p>
+<h3>54.3. Личные местоимения 3-го лица</h3>
+<p class="original">
         На протяжении всего предшествующего периода истории древнекитайского языка в нем отсутствовали личные местоимения 3-го лица, способные выполнять функции подлежащего (иногда вместо
         личного использовалось указательное местоимение彼 bǐ, в качестве подлежащего придаточного предложения могло употребляться其 qí).
-        <br><br>
+        <br/><br/>
         В постклассическом языке впервые появляются полноценные личные местоимения 3-го лица, способные выступать в любой
         именной функции.
-        <br><br>
+        <br/><br/>
         Таких местоимений три:
-        <br><br>
+        <br/><br/>
         а)伊 yī
-        <br>
-        <span class="example">伊必能克蜀 yī bì néng kè shǔ «Он наверняка сможет победить Шу».</span>
-        <br>
-        <span class="example">汝兄自不如伊 rǔ xiōng zì bù rú yī «Твой брат не может сравниться с ним».</span>
-        <br><br>
+        <br/>
+<span class="example">伊必能克蜀 yī bì néng kè shǔ «Он наверняка сможет победить Шу».</span>
+<br/>
+<span class="example">汝兄自不如伊 rǔ xiōng zì bù rú yī «Твой брат не может сравниться с ним».</span>
+<br/><br/>
         б)渠 qú
-        <br>
-        <span class="example">女婿昨來,必是渠所竊 nǚ xù zuó lái, bì shì qú suǒ qiè «Вчера приходил зять, это наверняка он украл».</span>
-        <br>
-        <span class="example">長夜枕渠頭 cháng yè zhěn qú tóu «на протяжении долгой ночи быть подушкой для его головы».</span>
-        <br><br>
+        <br/>
+<span class="example">女婿昨來,必是渠所竊 nǚ xù zuó lái, bì shì qú suǒ qiè «Вчера приходил зять, это наверняка он украл».</span>
+<br/>
+<span class="example">長夜枕渠頭 cháng yè zhěn qú tóu «на протяжении долгой ночи быть подушкой для его головы».</span>
+<br/><br/>
         в)他 tā
-        <br>
-        <span class="example">驅 tā牛還主,驅到他門 qú niú huán zhǔ, qú dào tā mén «Повел быка назад к хозяину и привел к воротам его дома».</span>
-        <br>
-        <span class="example">還他馬，赦汝罪 huán tā mǎ, shè rǔ zuì «Верни ему лошадь, и я прощу тебе твою провинность».</span>
-        <br><br>
+        <br/>
+<span class="example">驅 tā牛還主,驅到他門 qú niú huán zhǔ, qú dào tā mén «Повел быка назад к хозяину и привел к воротам его дома».</span>
+<br/>
+<span class="example">還他馬，赦汝罪 huán tā mǎ, shè rǔ zuì «Верни ему лошадь, и я прощу тебе твою провинность».</span>
+<br/><br/>
         Из этих трех местоимений в постклассическое время реже всего встречается последнее. Однако именно оно вытеснит впоследствии остальные и станет единственным личным местоимением 3-го лица в современном китайском языке. В III–V вв. слово他 tā продолжает употребляться и в своем прежнем значении «другой», что нашло отражение, в частности, и в тексте данного урока:
-        <br>
-        <span class="example">以我應他人 yǐ wǒ yìng tā rén «сосватать меня другому».</span>
-    </p>
+        <br/>
+<span class="example">以我應他人 yǐ wǒ yìng tā rén «сосватать меня другому».</span>
+</p>
 </div>
-
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -527,58 +516,52 @@
         charList.appendChild(item);
     });
 </script>
-
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
-    <p class="original">
-        <span class="example">阿女 ānǚ «дочь»</span><br>
-        <span class="example">丁寧 dīng níng «повторять», «многократно напутствовать»</span><br>
-        <span class="example">媒人 méi rén «сваха»</span><br>
-        <span class="example">令郎君 lìng láng jūn «господин»</span><br>
-        <span class="example">嬌逸 jiāo yì «красивый, симпатичный»</span><br>
-        <span class="example">太守 tài shǒu «начальник округа»</span><br>
-        <span class="example">阿兄 āxiōng «старший брат»</span><br>
-        <span class="example">悵然 chàng rán «огорченно»</span><br>
-        <span class="example">阿妹 āmèi «младшая сестра»</span><br>
-        <span class="example">主簿 zhǔ bù «письмоводитель»</span><br>
-        <span class="example">夫婿 fū xù «муж»</span><br>
-        <span class="example">諾諾 nuò nuò «Конечно, конечно!»</span><br>
-        <span class="example">爾爾 ěr ěr «Да, да!»</span><br>
-        <span class="example">府君 fǔ jūn «начальник уездной управы»</span>
-    </p>
+<h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
+<p class="original">
+<span class="example">阿女 ānǚ «дочь»</span><br/>
+<span class="example">丁寧 dīng níng «повторять», «многократно напутствовать»</span><br/>
+<span class="example">媒人 méi rén «сваха»</span><br/>
+<span class="example">令郎君 lìng láng jūn «господин»</span><br/>
+<span class="example">嬌逸 jiāo yì «красивый, симпатичный»</span><br/>
+<span class="example">太守 tài shǒu «начальник округа»</span><br/>
+<span class="example">阿兄 āxiōng «старший брат»</span><br/>
+<span class="example">悵然 chàng rán «огорченно»</span><br/>
+<span class="example">阿妹 āmèi «младшая сестра»</span><br/>
+<span class="example">主簿 zhǔ bù «письмоводитель»</span><br/>
+<span class="example">夫婿 fū xù «муж»</span><br/>
+<span class="example">諾諾 nuò nuò «Конечно, конечно!»</span><br/>
+<span class="example">爾爾 ěr ěr «Да, да!»</span><br/>
+<span class="example">府君 fǔ jūn «начальник уездной управы»</span>
+</p>
 </div>
-
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>54.А. Названия чиновничьих должностей</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>54.А. Названия чиновничьих должностей</h3>
+<p class="original">
         Административная система раннесредневековых империй повторяла прототип, созданный еще в циньское время. Цинь Шихуан, как известно, разделил страну на 36 округов. Каждый
         округ включал некоторое количество уездов, которые в свою очередь состояли из волостей.
-        <br><br>
+        <br/><br/>
         Соответственно, в округе был наместник (太守 tài shǒu), он назначал начальников уездов (縣令 xiàn lìng). Помощник начальника назывался丞 chéng.
         Делопроизводством в окружном или уездном присутственном месте занимался主簿 zhǔ bù.
     </p>
-        <div style="text-align: center; margin: 20px 0;">
-    <img alt="Два чиновника (древнекитайская терракотовая статуэтка)" class="original" src="./img/page_6_img_1.jpeg" style="border: none; padding: 0; max-width: 100%;"/>
-    <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Два чиновника<br>(древнекитайская терракотовая статуэтка) </p>
-    </div>
+<div style="text-align: center; margin: 20px 0;">
+<img alt="Два чиновника (древнекитайская терракотовая статуэтка)" class="original" src="./img/page_6_img_1.jpeg" style="border: none; padding: 0; max-width: 100%;"/>
+<p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Два чиновника<br/>(древнекитайская терракотовая статуэтка) </p>
 </div>
-
+</div>
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Переведите текст на русский язык.</li>
-        <li>Перечислите все встретившиеся вам двусложные слова с суффиксом啊 a.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Переведите текст на русский язык.</li>
+<li>Перечислите все встретившиеся вам двусложные слова с суффиксом啊 a.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Поздний классический древнекитайский язык.<br/>
-    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Учебник: В. А. Крюков — Поздний классический древнекитайский язык.<br>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
     Все иероглифы — из текстов Уроков 1–54, либо из циклических знаков (甲子 – 癸亥).
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -683,7 +666,6 @@
         });
     });
 </script>
-</body>
+<script defer="True" src="../sender.js"></script></body>
 <script id="help" src="../help.js"></script>
-
 </html>

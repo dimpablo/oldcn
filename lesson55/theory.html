@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 55 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 55 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -318,25 +317,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 55</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
-
-<div style="display: none;" style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     const lessonText = [
         "府君得聞之|從人四五百",
@@ -421,37 +416,32 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>55.1. Связка 是 shì</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>55.1. Связка 是 shì</h3>
+<p class="original">
         Появление новой связки 是 shì — одно из важных явлений постклассического языка.
-        <br><br>
+        <br/><br/>
         Связка 是 shì произошла от указательного местоимения 是 shì. Постепенно 是 shì трансформируется в связку и заменяет прежнюю也 yě.
         Первые признаки этого мы обнаруживаем уже в позднем классическом языке, однако нормой такое употребление данного слова становится только в постклассический период: 
         <span class="example">汝是阿誰 rǔ shì āshuí «Ты кто?»</span>
-        <span class="example">我是汝妻 wǒ shì rǔ qī «Я — твоя жена».</span>
-        <br><br>
+<span class="example">我是汝妻 wǒ shì rǔ qī «Я — твоя жена».</span>
+<br/><br/>
         Но в начале постклассического периода 是 shì встречается и в своем прежнем значении:
         <span class="example">知是故人來 zhī shì gù rén lái «Она поняла: это приехал ее бывший муж».</span>
-        <br><br>
+<br/><br/>
         В качестве связки в отрицательном предложении в это время по-прежнему употребляется 非 fēi. Сочетание 不是 bù shì появляется гораздо позже.
     </p>
-
-    <h3>55.2. Наречие 大 dà</h3>
-    <p class="original">
+<h3>55.2. Наречие 大 dà</h3>
+<p class="original">
         Слово 大 dà, известное нам в знаменательном значении «большой», может употребляться как наречие, обозначающее интенсивную степень качества «весьма», «очень»:
-        <br><br>
-        <span class="example">心中大欢喜 xīn zhōng dà huān xǐ «В глубине души он был очень рад».</span>
-    </p>
+        <br/><br/>
+<span class="example">心中大欢喜 xīn zhōng dà huān xǐ «В глубине души он был очень рад».</span>
+</p>
 </div>
-
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -483,57 +473,50 @@
         charList.appendChild(item);
     });
 </script>
-
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
-    <p class="original">
-        <span class="example">絡繹 luò yì «свита»</span><br>
-        <span class="example">婀娜 ē nuó «красивый, изящный»</span><br>
-        <span class="example">躑躅 zhí zhú «переступать с ноги на ногу»</span><br>
-        <span class="example">齎錢 jī qián «деньги в подарок невесте»</span><br>
-        <span class="example">廣交 guǎng jiāo «Гуандун и Цзяочжи»</span><br>
-        <span class="example">手巾 shǒu jīn «платок»</span><br>
-        <span class="example">琉璃 liú lí «эмаль; стекло»</span><br>
-        <span class="example">流蘇 liú sū «украшение седла»</span><br>
-        <span class="example">求假 qiú jià «просить отпуск»</span><br>
-        <span class="example">逢迎 fáng yíng «встречать»</span><br>
-        <span class="example">高遷 gāo qiān «получить повышение»</span>
-    </p>
+<h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
+<p class="original">
+<span class="example">絡繹 luò yì «свита»</span><br/>
+<span class="example">婀娜 ē nuó «красивый, изящный»</span><br/>
+<span class="example">躑躅 zhí zhú «переступать с ноги на ногу»</span><br/>
+<span class="example">齎錢 jī qián «деньги в подарок невесте»</span><br/>
+<span class="example">廣交 guǎng jiāo «Гуандун и Цзяочжи»</span><br/>
+<span class="example">手巾 shǒu jīn «платок»</span><br/>
+<span class="example">琉璃 liú lí «эмаль; стекло»</span><br/>
+<span class="example">流蘇 liú sū «украшение седла»</span><br/>
+<span class="example">求假 qiú jià «просить отпуск»</span><br/>
+<span class="example">逢迎 fáng yíng «встречать»</span><br/>
+<span class="example">高遷 gāo qiān «получить повышение»</span>
+</p>
 </div>
-
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>55.А. Гороскоп</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>55.А. Гороскоп</h3>
+<p class="original">
         Подготовке к свадьбе в Древнем Китае обязательно предшествовало выяснение того, будет ли готовящийся брак счастливым.
         Для этого было необходимо знать даты рождения жениха и невесты, чтобы с помощью гороскопа определить совместимость их врожденных качеств.
-        <br><br>
+        <br/><br/>
         Не менее тщательно определялся и день свадьбы. Наиболее «благоприятной» выбранная дата считалась в том случае, если шесть циклических знаков, обозначающих год, месяц и день торжества, «соответствовали» друг другу (например, год 甲子 jiǎ zǐ, месяц 乙丑 yǐ chǒu, день 丙寅 bǐng yín). Иногда подходящего дня приходилось ждать очень долго, несколько месяцев. Поэтому понятна радость жениха, узнавшего, что благоприятный день наступит на той же неделе.
     </p>
-
-    <h3>55.Б. Эмаль</h3>
-    <p class="original">
+<h3>55.Б. Эмаль</h3>
+<p class="original">
         В отличие от современного языка, для которого транскрипционная адаптация заимствований в целом нехарактерна, в древности именно такой способ их передачи играл ведущую роль. Вполне естественно, что заимствование по звучанию предполагало в большинстве случаев некоторое искажение фонетического облика адаптируемых слов.
-        <br><br>
+        <br/><br/>
         Ярким примером такого рода является древнекитайское слово 琉璃 liú lí «эмаль» (от санскритского veluria). Отметим, что заимствованное с Запада стекло обозначалось в первых веках нашей эры тем же словом.
     </p>
 </div>
-
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Переведите текст на русский язык.</li>
-        <li>Перечислите все способы оформления предложения с именным сказуемым.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Переведите текст на русский язык.</li>
+<li>Перечислите все способы оформления предложения с именным сказуемым.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Поздний классический древнекитайский язык.<br/>
-    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Учебник: В. А. Крюков — Поздний классический древнекитайский язык.<br>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
     Все иероглифы — из текстов Уроков 1–55, либо из циклических знаков (甲子 – 癸亥).
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -638,7 +621,6 @@
         });
     });
 </script>
-</body>
+<script defer="True" src="../sender.js"></script></body>
 <script id="help" src="../help.js"></script>
-
 </html>

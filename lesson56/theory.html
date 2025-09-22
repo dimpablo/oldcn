@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 56 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 56 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -318,25 +317,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 56</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
-
-<div style="display: none;" style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     const lessonText = [
         "新婦謂府吏|勿復怨鬼神",
@@ -423,77 +418,71 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>56.1. Пространственные показатели в функции послелогов (продолжение)</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>56.1. Пространственные показатели в функции послелогов (продолжение)</h3>
+<p class="original">
         Среди новых пространственных показателей, появляющихся
         в постклассическое время, следует наряду с裏 lǐ отметить и неко-
         торые другие, например旁 páng (傍 bàng) «около», «рядом с...»:
-        <br>
-        <span class="example">合葬華山旁 hé zèng huà shān páng «Похоронили их
+        <br/>
+<span class="example">合葬華山旁 hé zèng huà shān páng «Похоронили их
             в одной могиле около горы Хуашань».</span>
-        <br>
+<br/>
         Хотя чаще всего пространственные показатели употребляются
         в качестве послелогов, у них есть и некоторые другие функции.
         Так, они могут самостоятельно обозначать обстоятельство места:
-        <br>
-        <span class="example">葉葉相交通,中有雙飛鳥 yè yè xiāng jiāo tōng, zhōng yǒu shuāng fēi niǎo «Листья[дерева] сплелись между со-бой, меж ними — две порхающие птички».</span>
-    </p>
-
-    <h3>56.2. Предлог向 xiàng</h3>
-    <p class="original">
+        <br/>
+<span class="example">葉葉相交通,中有雙飛鳥 yè yè xiāng jiāo tōng, zhōng yǒu shuāng fēi niǎo «Листья[дерева] сплелись между со-бой, меж ними — две порхающие птички».</span>
+</p>
+<h3>56.2. Предлог向 xiàng</h3>
+<p class="original">
         В постклассическом языке происходит значительное расшире-ние того набора предлогов, который был характерен для класси-
         ческого древнекитайского. Новые предлоги образуются главным
         образом из знаменательных предикативов, поэтому процесс фор-мирования этих предлогов отмечен сосуществованием двух раз-
         личных грамматических функций ряда слов: они употребляются
         и как предикативы, и как предлоги.
-        <br><br>
+        <br/><br/>
         К числу новых предлогов относится向 xiàng. Он происходит
         от предикатива «быть обращенным к...»; его функция — введение
         дополнения, указывающего на предмет или лицо, к которому обра-щено действие.
-        <br><br>
+        <br/><br/>
         В наших текстах向 xiàng употребляется как предикатив:
-        <br>
-        <span class="example">吾獨向黄泉 wú dú xiàng huáng quán «Только я обращен
+        <br/>
+<span class="example">吾獨向黄泉 wú dú xiàng huáng quán «Только я обращен
             лицом в сторону Желтого Источника».</span>
-        <br><br>
+<br/><br/>
         Наряду с этим向 xiàng встречается и в качестве предлога:
-        <br>
-        <span class="example">轉頭向户裏 zhuǎn tóu xiàng hù lǐ «повернуть голову
+        <br/>
+<span class="example">轉頭向户裏 zhuǎn tóu xiàng hù lǐ «повернуть голову
             в сторону внутренних покоев».</span>
-        <br><br>
+<br/><br/>
         向 xiàng с дополнением, обозначающим лицо:
-        <br>
-        <span class="example">汝今何故不向我道 rǔ jīn hé gù bù xiàng wǒ dào «Почему
+        <br/>
+<span class="example">汝今何故不向我道 rǔ jīn hé gù bù xiàng wǒ dào «Почему
             же сейчас ты мне ничего не говоришь?»</span>
-        <br>
-        <span class="example">向象三説我不須汝 xiàng xiàng sān shuō wǒ bù xū rǔ
+<br/>
+<span class="example">向象三説我不須汝 xiàng xiàng sān shuō wǒ bù xū rǔ
             «Он трижды сказал слону: “Ты мне не нужен”».</span>
-        <br><br>
+<br/><br/>
         Отметим, что предлог向 xiàng оформляет дополнение, стоящее
         как перед сказуемым, так и после него.
     </p>
-
-    <h3>56.3. Местопредикатив爾 ĕr</h3>
-    <p class="original">
+<h3>56.3. Местопредикатив爾 ĕr</h3>
+<p class="original">
         Наряду с известным нам然 rán «быть таким» в древнекитай-ском языке начиная с классического периода употребляется место-предикатив с тем же значением —爾 ĕr.
-        <br><br>
+        <br/><br/>
         В нашем тексте оба этих слова встретились в одном и том же
         предложении:
-        <br>
-        <span class="example">君爾,妾亦然 jūn ĕr, qiè yì rán «Так дело обстоит и с
+        <br/>
+<span class="example">君爾,妾亦然 jūn ĕr, qiè yì rán «Так дело обстоит и с
             Вами, и со мной».</span>
-    </p>
+</p>
 </div>
-
 <!-- СПИСОК СЛОВ УРОКА -->
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -525,75 +514,67 @@
         charList.appendChild(item);
     });
 </script>
-
 <!-- СЛОВОСОЧЕТАНИЯ -->
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
-    <p class="original">
-        <span class="example">樹木 shù mù «дерево»</span><br>
-        <span class="example">鬼神 guǐ shén «духи»</span><br>
-        <span class="example">四體 sì tǐ «тело»</span><br>
-        <span class="example">仕宦 shì huàn «служить»</span><br>
-        <span class="example">青廬 qīng lú «синий полог» (см. 56.В.)</span><br>
-        <span class="example">臺閣 tái gé «беседка; присутственное место»</span><br>
-        <span class="example">城郭 chéng guō «город»</span><br>
-        <span class="example">合葬 hé zàng «похоронить в одной могиле»</span><br>
-        <span class="example">華山 huà shān «Хуашань» (название горы)</span><br>
-        <span class="example">梧桐 wū tóng «дриандра» (название дерева)</span><br>
-        <span class="example">鴛鴦 yuān yāng «мандаринская утка»</span><br>
-        <span class="example">行人 xíng rén «прохожий»</span><br>
-        <span class="example">寡婦 guǎ fù «вдова»</span><br>
-        <span class="example">彷徨 páng huáng «бродить»</span>
-    </p>
+<h2>СЛОВОСОЧЕТАНИЯ И ДВУСЛОЖНЫЕ СЛОВА</h2>
+<p class="original">
+<span class="example">樹木 shù mù «дерево»</span><br/>
+<span class="example">鬼神 guǐ shén «духи»</span><br/>
+<span class="example">四體 sì tǐ «тело»</span><br/>
+<span class="example">仕宦 shì huàn «служить»</span><br/>
+<span class="example">青廬 qīng lú «синий полог» (см. 56.В.)</span><br/>
+<span class="example">臺閣 tái gé «беседка; присутственное место»</span><br/>
+<span class="example">城郭 chéng guō «город»</span><br/>
+<span class="example">合葬 hé zàng «похоронить в одной могиле»</span><br/>
+<span class="example">華山 huà shān «Хуашань» (название горы)</span><br/>
+<span class="example">梧桐 wū tóng «дриандра» (название дерева)</span><br/>
+<span class="example">鴛鴦 yuān yāng «мандаринская утка»</span><br/>
+<span class="example">行人 xíng rén «прохожий»</span><br/>
+<span class="example">寡婦 guǎ fù «вдова»</span><br/>
+<span class="example">彷徨 páng huáng «бродить»</span>
+</p>
 </div>
-
 <!-- ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>56.А. Мандаринские утки</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>56.А. Мандаринские утки</h3>
+<p class="original">
         Образ двух мандаринских уток, всегда плавающих вместе и ни-
         когда не разлучающихся, символизирует в древнекитайской поэ-зии счастливых супругов.
-        <br><br>
-    </p>
-    <div style="text-align: center; margin: 20px 0;">
-    <img alt="Мандаринские утки" class="original" src="./img/page_5_img_1.jpeg" style="border: none; padding: 0; max-width: 100%;"/>
-    <p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Мандаринские утки</p>
-    </div>
-
-    <h3>56.Б. «Пятая стража»</h3>
-    <p class="original">
+        <br/><br/>
+</p>
+<div style="text-align: center; margin: 20px 0;">
+<img alt="Мандаринские утки" class="original" src="./img/page_5_img_1.jpeg" style="border: none; padding: 0; max-width: 100%;"/>
+<p class="footer" style="margin-top: 8px; border-top: none; padding-top: 0;">Мандаринские утки</p>
+</div>
+<h3>56.Б. «Пятая стража»</h3>
+<p class="original">
         По крайней мере с ханьского времени в Китае делили ночь на
         пять двухчасовых отрезков, или «страж» (更 gēng). Первая стра-жа начиналась в 7 часов вечера, пятая кончалась в 5 часов утра.
-        <br><br>
+        <br/><br/>
         Отсюда выражение «ночь до пятой стражи», что означало «всю
         ночь напролет».
     </p>
-
-    <h3>56.В. «Синий навес»</h3>
-    <p class="original">
+<h3>56.В. «Синий навес»</h3>
+<p class="original">
         В первых веках нашей эры в Китае существовал обычай совер-
         шать свадебную церемонию под навесом из синей ткани, который
         устанавливали во дворе дома.
     </p>
 </div>
-
 <!-- ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ -->
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Переведите текст на русский язык.</li>
-        <li>Перечислите предлоги, впервые появляющиеся в постклассиче-ском древнекитайском языке, и приведите примеры их употребле-ния.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Переведите текст на русский язык.</li>
+<li>Перечислите предлоги, впервые появляющиеся в постклассиче-ском древнекитайском языке, и приведите примеры их употребле-ния.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Постклассический язык.<br/>
-    Восстановлено по материалам урока 56 из оригинального курса.<br/>
+    Учебник: В. А. Крюков — Постклассический язык.<br>
+    Восстановлено по материалам урока 56 из оригинального курса.<br>
     Все иероглифы — из текста Урока 56, благоговейно сохранены авторские формулировки и структура.
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -698,7 +679,6 @@
         });
     });
 </script>
-</body>
+<script defer="True" src="../sender.js"></script></body>
 <script id="help" src="../help.js"></script>
-
 </html>

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
-    <meta charset="utf-8"/>
-    <title>Урок 16 — Древнекитайский язык по Крюкову</title>
-    <style>
+<script src="./../dictionary.js">//dictionary.js содержит переменную charData используемую для подсказок таблицы! НЕ УДАЛЯТЬ! КРИТИЧЕСКИ ВАЖЕН!</script>
+<meta charset="utf-8"/>
+<title>Урок 16 — Древнекитайский язык по Крюкову</title>
+<style>
         body {
             font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
             line-height: 1.8;
@@ -130,7 +131,7 @@
             display: block;
         }
     </style>
-    <style>
+<style>
         @font-face {
             font-family: 'Jiaguwen';
             src: url('../jiaguwen.ttf') format('truetype');
@@ -139,7 +140,7 @@
             font-display: swap;
         }
     </style>
-    <style id="2change">
+<style id="2change">
         .oracle-table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -166,8 +167,7 @@
             white-space: nowrap;
         }
     </style>
-
-    <style>
+<style>
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -208,8 +208,7 @@
             transform: translateX(30px);
         }
     </style>
-
-    <style>
+<style>
         .char-tooltip {
             display: none;
             position: absolute;
@@ -275,25 +274,21 @@
     </style>
 </head>
 <body>
-
 <h1>УРОК 16</h1>
-
 <!-- ТАБЛИЦА ТЕКСТ УРОКА -->
 <div class="text">
-    <h2>Текст урока</h2>
-    <table class="oracle-table" id="oracleTable"></table>
+<h2>Текст урока</h2>
+<table class="oracle-table" id="oracleTable"></table>
 </div>
-
-<div style="display: none;" style="text-align: center; margin: 20px 0;">
-    <label class="toggle-switch">
-        <input id="fontToggle" type="checkbox"/>
-        <span class="slider"></span>
-    </label>
-    <span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
+<div style="text-align: center; margin: 20px 0;">
+<label class="toggle-switch">
+<input id="fontToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span id="toggleLabel" style="margin-left: 10px; font-family: 'Segoe UI', sans-serif; color: #333;">
         Обычный вид
     </span>
 </div>
-
 <script>
     // Данные текста урока 16 (по строкам из PDF)
     const lessonText = [
@@ -361,109 +356,102 @@
     document.addEventListener('DOMContentLoaded', createOracleTable);
 </script>
 <!-- КОНЕЦ ТАБЛИЦЫ ТЕКСТ УРОКА -->
-
 <!-- ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ -->
 <div class="grammar">
-    <h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>16.1. Служебное слово之 zhī (продолжение)</h3>
-    <p class="original">
+<h2>ГРАММАТИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>16.1. Служебное слово之 zhī (продолжение)</h3>
+<p class="original">
         Подавляющее большинство служебных слов архаического языка имеет одну строго определенную грамматическую функцию. Впервые появившееся в раннем доклассическом языке слово之 zhī, напротив, имеет несколько значений. С одним из них (показатель определительной связи) мы уже знакомы. Кроме того,之 zhī является также указательным местоимением.
-        <br><br>
+        <br/><br/>
         Особенность местоимения之 zhī, отличающая его от других служебных слов той же группы, состоит в том, что если последние могут быть использованы в качестве заместителя имени в любой именной функции, то之 zhī употребляется в предложении исключительно в качестве дополнения: <span class="example">萬年永寳用之 wàn nián yǒng bǎo yòng zhī</span> «На протяжении десяти тысяч лет постоянно использовать это как драгоценность».
-        <br><br>
+        <br/><br/>
         Будучи дополнением,之 zhī может рассматриваться не только как указательное местоимение «этот», «это», но и как личное — «его», «ее», «их». Таким образом, местоимение之 zhī частично восполняет отсутствие местоимения 3-го лица в доклассическом языке.
-        <br><br>
-        <strong>Таблица 3. Функции личных местоимений в раннем доклассическом языке</strong>
-        <br><br>
-        <table style="width: 70%; margin: 15px auto; border-collapse: collapse; font-size: 0.95em;">
-            <tr style="background-color: #f0f4f8;">
-                <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Лицо</th>
-                <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Подлежащее</th>
-                <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Дополнение</th>
-                <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Определение</th>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">1-е</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">余 yú</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">余 yú</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">朕 zhèn</td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">2-е</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">汝 rǔ</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">汝 rǔ</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">乃 nǎi</td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">3-е</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">–</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">之 zhī</td>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">厥 jué</td>
-            </tr>
-        </table>
-        <br>
+        <br/><br/>
+<strong>Таблица 3. Функции личных местоимений в раннем доклассическом языке</strong>
+<br/><br/>
+<table style="width: 70%; margin: 15px auto; border-collapse: collapse; font-size: 0.95em;">
+<tr style="background-color: #f0f4f8;">
+<th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Лицо</th>
+<th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Подлежащее</th>
+<th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Дополнение</th>
+<th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Определение</th>
+</tr>
+<tr>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">1-е</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">余 yú</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">余 yú</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">朕 zhèn</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">2-е</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">汝 rǔ</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">汝 rǔ</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">乃 nǎi</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">3-е</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">–</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">之 zhī</td>
+<td style="border: 1px solid #ccc; padding: 8px; text-align: center;">厥 jué</td>
+</tr>
+</table>
+<br/>
         Однако в раннем доклассическом языке по-прежнему нет личного местоимения 3-го лица, способного быть подлежащим.
     </p>
-
-    <h3>16.2. Определение, выраженное предложением</h3>
-    <p class="original">
+<h3>16.2. Определение, выраженное предложением</h3>
+<p class="original">
         Как мы помним, служебное слово厥 jué указывает на определительные отношения между двумя именами, т. е. употребляется только в том случае, если определение к имени выражено именем. В этом случае вместо厥 jué может употребляться также служебное слово之 zhī:
-        <br><br>
-        <div class="math-example">
-            <div class="math-content">
-                <span class="example">天子厥休 tiān zǐ jué xiū</span>
-                <span class="example">天子之休 tiān zǐ zhī xiū</span>
-            </div>
-            <div class="math-brace">}</div>
-            <div class="math-caption">«подарок Сына Неба»</div>
-        </div>
-        <br>
+        <br/><br/>
+<div class="math-example">
+<div class="math-content">
+<span class="example">天子厥休 tiān zǐ jué xiū</span>
+<span class="example">天子之休 tiān zǐ zhī xiū</span>
+</div>
+<div class="math-brace">}</div>
+<div class="math-caption">«подарок Сына Неба»</div>
+</div>
+<br/>
         В отличие от厥 jué, служебное слово之 zhī может оформлять определение, выраженное не только именем или именным оборотом, но также и предикативным оборотом или целым предложением.
-        <br><br>
+        <br/><br/>
         С такими сложными определениями к имени мы уже встречались в архаическом языке, но там определительные отношения между двумя компонентами не были выражены. Аналогичные примеры можно встретить и в текстах раннего доклассического периода: <span class="example">王休貝 wáng xiū bèi</span> «раковины, подаренные правителем»;
         <span class="example">明保至成周年 míng bǎo zhì chéng zhōu nián</span> «год, когда Мин Бао прибыл в Чэнчжоу».
-        <br><br>
+        <br/><br/>
         Слово之 zhī формализует определительную связь между именем и предшествующим словосочетанием или предложением:
-        <br><br>
-        <span class="example">王命南宮伐反虎方之年 wáng mìng nán gōng fá fǎn hǔ fāng zhī nián</span> «год, когда ван приказал Нань-гуну покарать восставшее Ху-фан».
+        <br/><br/>
+<span class="example">王命南宮伐反虎方之年 wáng mìng nán gōng fá fǎn hǔ fāng zhī nián</span> «год, когда ван приказал Нань-гуну покарать восставшее Ху-фан».
     </p>
-
-    <h3>16.3. Служебное слово乃 nǎi (迺 nǎi)</h3>
-    <p class="original">
+<h3>16.3. Служебное слово乃 nǎi (迺 nǎi)</h3>
+<p class="original">
         Грамматически полифункциональным является и служебное слово乃 nǎi. Как и в архаическом языке, оно может быть не только личным местоимением 2-го лица в функции определения, но и показателем логической или хронологической связи между событиями.
-        <br><br>
+        <br/><br/>
         Мы уже сталкивались с тем, что служебное слово乃 nǎi в этом значении может записываться также иероглифом迺 nǎi (см. 10.6). Оба знака взаимозаменяемы и в ранних доклассических текстах:
-        <br><br>
-        <div class="math-example">
-            <div class="math-content">
-                <span class="example">東宮乃曰 dōng gōng nǎi yuē</span>
-                <span class="example">東宮迺曰 dōng gōng nǎi yuē</span>
-            </div>
-            <div class="math-brace">}</div>
-            <div class="math-caption">«И сказал наследник: “...”»</div>
-        </div>
-        <br>
+        <br/><br/>
+<div class="math-example">
+<div class="math-content">
+<span class="example">東宮乃曰 dōng gōng nǎi yuē</span>
+<span class="example">東宮迺曰 dōng gōng nǎi yuē</span>
+</div>
+<div class="math-brace">}</div>
+<div class="math-caption">«И сказал наследник: “...”»</div>
+</div>
+<br/>
         Напомним, что乃 nǎi или迺 nǎi в этом случае всегда стоит перед сказуемым второго предложения: <span class="example">馭方納醴于王,乃祼之 yú fāng nà lǐ yú wáng nǎi guàn zhī</span> «Юй-фан поднес правителю сладкого вина, и его торжественно распили».
     </p>
-
-    <h3>16.4. Служебные слова咸 xián и率 shuài</h3>
-    <p class="original">
+<h3>16.4. Служебные слова咸 xián и率 shuài</h3>
+<p class="original">
         Служебные слова咸 xián и率 shuài всегда стоят непосредственно перед сказуемым и показывают, что выраженное им действие или состояние относится ко всем без исключения предметам или явлениям, обозначенным подлежащим или дополнением:
-        <br><br>
-        <span class="example">率懷不廷方 shuài huái bù tíng fāng</span> «Охватить все те племена, которые не прибывают ко двору для аудиенции».
-        <br>
-        <span class="example">周公咸勤 zhōu gōng xián qín</span> «Чжоу-гун побуждал всех настойчиво трудиться».
-        <br>
-        <span class="example">殷正百辟率肆于酒 yīn zhèng bǎi pì shuài sì yú jiǔ</span> «Все иньские чиновники и местные правители погрязли в пьянстве».
-        <br>
-        <span class="example">萬邦咸休 wàn bāng xián xiū</span> «Все государства удостоились милости».
+        <br/><br/>
+<span class="example">率懷不廷方 shuài huái bù tíng fāng</span> «Охватить все те племена, которые не прибывают ко двору для аудиенции».
+        <br/>
+<span class="example">周公咸勤 zhōu gōng xián qín</span> «Чжоу-гун побуждал всех настойчиво трудиться».
+        <br/>
+<span class="example">殷正百辟率肆于酒 yīn zhèng bǎi pì shuài sì yú jiǔ</span> «Все иньские чиновники и местные правители погрязли в пьянстве».
+        <br/>
+<span class="example">萬邦咸休 wàn bāng xián xiū</span> «Все государства удостоились милости».
     </p>
 </div>
-
 <h2>СПИСОК СЛОВ УРОКА</h2>
 <div class="char-list"></div>
-
 <script>
     // Укажи номер урока здесь
     const LESSON = parseInt((window.location.pathname.match(/\/lesson(\d+)(?:\/|$)/) || [])[1] || '1');
@@ -495,56 +483,48 @@
         charList.appendChild(item);
     });
 </script>
-
 <div class="lexicon">
-    <h2>СЛОВОСОЧЕТАНИЯ</h2>
-    <p class="original">
-        <span class="example">鄂侯 è hóu</span> «Э-хоу»<br>
-        <span class="example">休贅 xiū zhuì</span> «дар»<br>
-        <span class="example">膳夫 shàn fū</span> «стряпчий» (название должности)<br>
-        <span class="example">舍令 shè lìng</span> «отдать приказ»<br>
-        <span class="example">成周 chéng zhōu</span> «Чэнчжоу» (название города)<br>
-        <span class="example">釐季 lí jì</span> «Ли-цзи» (имя собств.)<br>
-        <span class="example">眉壽 méi shòu</span> «долголетие»<br>
-        <span class="example">靈終 líng zhōng</span> «умереть своей смертью»
+<h2>СЛОВОСОЧЕТАНИЯ</h2>
+<p class="original">
+<span class="example">鄂侯 è hóu</span> «Э-хоу»<br/>
+<span class="example">休贅 xiū zhuì</span> «дар»<br/>
+<span class="example">膳夫 shàn fū</span> «стряпчий» (название должности)<br/>
+<span class="example">舍令 shè lìng</span> «отдать приказ»<br/>
+<span class="example">成周 chéng zhōu</span> «Чэнчжоу» (название города)<br/>
+<span class="example">釐季 lí jì</span> «Ли-цзи» (имя собств.)<br/>
+<span class="example">眉壽 méi shòu</span> «долголетие»<br/>
+<span class="example">靈終 líng zhōng</span> «умереть своей смертью»
     </p>
 </div>
-
 <div class="lexicon">
-    <h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
-
-    <h3>16.А. «Поход на юг»</h3>
-    <p class="original">
+<h2>ЛЕКСИЧЕСКИЙ КОММЕНТАРИЙ</h2>
+<h3>16.А. «Поход на юг»</h3>
+<p class="original">
         Одним из главных политических событий в период правления чжоуского Чжао-вана (966–948 до н. э.) были военные столкновения с царством Чу. Чусцы не признавали власти Чжоу, и вану пришлось предпринять несколько походов для того, чтобы привести их к повиновению. Первая надпись в тексте урока относится именно к этому времени. Несмотря на то что данная надпись сообщает об успехе похода, в конечном счете война с Чу кончилась для Чжао-вана трагично: он погиб в одном из боев, и войско вернулось домой без своего предводителя.
     </p>
-
-    <h3>16.Б. Стрельба из лука</h3>
-    <p class="original">
+<h3>16.Б. Стрельба из лука</h3>
+<p class="original">
         Умение хорошо стрелять из лука (射 shè) считалось в чжоуское время одним из «шести искусств», овладение которыми было абсолютно необходимо каждому аристократу. Стреляли в цель, сделанную из кожи.
     </p>
-
-    <h3>16.В. Э-хоу Юйфан</h3>
-    <p class="original">
+<h3>16.В. Э-хоу Юйфан</h3>
+<p class="original">
         Трудно сказать, почему этого Э-хоу звали Юйфан, но, как бы то ни было, это то самое выражение, которым чжоусцы обозначали врагов-кочевников: 馭方 yù fāng «племя, умеющее управлять колесницами», «колесничное племя».
     </p>
 </div>
-
 <div class="assignment">
-    <h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
-    <ol>
-        <li>Перепишите текст и расставьте знаки препинания.</li>
-        <li>Проделайте грамматический анализ текста.</li>
-        <li>Переведите текст на русский язык.</li>
-        <li>Выпишите все названия чжоуских должностей, встречавшиеся в проработанных текстах.</li>
-    </ol>
+<h2>ЗАДАНИЕ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ</h2>
+<ol>
+<li>Перепишите текст и расставьте знаки препинания.</li>
+<li>Проделайте грамматический анализ текста.</li>
+<li>Переведите текст на русский язык.</li>
+<li>Выпишите все названия чжоуских должностей, встречавшиеся в проработанных текстах.</li>
+</ol>
 </div>
-
 <div class="footer">
-    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br/>
-    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br/>
+    Учебник: В. А. Крюков — Архаический древнекитайский язык.<br>
+    Восстановлено по OCR с сохранением авторского стиля и добавлением пиньиня.<br>
     Все иероглифы — из текстов Уроков 1–16, либо из циклических знаков (甲子 – 癸亥).
-</div>
-
+</br></br></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('fontToggle');
@@ -621,6 +601,5 @@
     });
 </script>
 <script id="help" src="../help.js"></script>
-
-</body>
+<script defer="True" src="../sender.js"></script></body>
 </html>
