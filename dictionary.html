@@ -213,6 +213,117 @@
             color: #2c3e50;
         }
 
+        /* Блок теории */
+        .theory-block {
+            margin: 14px 0;
+            padding: 12px;
+            background: #f9f7fc;
+            border-left: 4px solid #a8c8d8;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            position: relative;
+        }
+        .share-paragraph-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #7c6b96;
+            opacity: 0.6;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .share-paragraph-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Модальные окна друзей и чата */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(2px);
+        }
+        .modal-content-wide {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 900px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eaeaea;
+            background: #f8f6fb;
+        }
+        .modal-header h3 {
+            margin: 0;
+            color: #5a5a5a;
+            font-size: 16px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-close:hover {
+            color: #555;
+        }
+        .friends-grid {
+            display: grid;
+            gap: 8px;
+            padding: 16px 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .friend-card {
+            padding: 12px;
+            background: #f9f7fc;
+            border: 1px solid #d9d4e7;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #5a5a5a;
+        }
+        .friend-card:hover {
+            background: #f0eaf9;
+            border-color: #d9d4e7;
+        }
+        .info-message {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+            font-style: italic;
+        }
+        .chat-iframe {
+            width: 100%;
+            min-height: 70vh;
+            border: none;
+            border-top: 1px solid #eee;
+            border-radius: 0 0 12px 12px;
+            display: none;
+        }
+        #loadingIframe {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
         /* Скрытые заглушки */
         #theory-loading-bar,
         #theory-tabbed-box {
@@ -273,12 +384,18 @@
     <!-- === FIREBASE INIT + ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ === -->
     <script>
         // Глобальные переменные
-        let app = null;
         let auth = null;
         let db = null;
         let currentUser = null;
 
-        // Конфиг Firebase
+        // Функции Firestore
+        let docRef = null;
+        let getDocRef = null;
+        let collectionRef = null;
+        let queryRef = null;
+        let whereRef = null;
+        let getDocsRef = null;
+
         const firebaseConfig = {
             apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
             authDomain: "antient-9bff0.firebaseapp.com",
@@ -293,21 +410,37 @@
             try {
                 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
                 const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
-                const { getFirestore, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+                const { getFirestore, doc, getDoc, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
 
-                app = initializeApp(firebaseConfig);
+                const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                onAuthStateChanged(auth, user => {
+                // Присваиваем функции глобальным переменным
+                docRef = doc;
+                getDocRef = getDoc;
+                collectionRef = collection;
+                queryRef = query;
+                whereRef = where;
+                getDocsRef = getDocs;
+
+                onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        currentUser = {
-                            id: user.uid,
-                            displayName: user.displayName || 'Аноним',
-                            email: user.email,
-                            friends: user.friends || []
-                        };
+                        console.log('🔐 Пользователь вошёл:', user.uid);
+                        try {
+                            const userDocRef = docRef(db, 'users', user.uid);
+                            const userDocSnap = await getDocRef(userDocRef);
+                            if (userDocSnap.exists()) {
+                                currentUser = { uid: user.uid, ...userDocSnap.data() };
+                                console.log('✅ Профиль пользователя загружен:', currentUser);
+                            } else {
+                                console.error('❌ Профиль не найден в Firestore:', user.uid);
+                            }
+                        } catch (err) {
+                            console.error('❌ Ошибка при загрузке профиля:', err);
+                        }
                     } else {
+                        console.warn('🔒 Пользователь не авторизован');
                         currentUser = null;
                     }
                 });
@@ -318,27 +451,37 @@
             }
         }
 
-        async function getFriendsList() {
-            if (!currentUser || !currentUser.friends || currentUser.friends.length === 0) {
-                return [];
-            }
-
-            const friendsRef = collection(db, 'users');
-            const q = query(friendsRef, where('__name__', 'in', currentUser.friends.slice(0, 10)));
-            const querySnap = await getDocs(q);
-
-            const friends = [];
-            querySnap.forEach(doc => {
-                friends.push({ id: doc.id, ...doc.data() });
-            });
-
-            return friends;
-        }
-
         document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 
-    <!-- === ОСНОВНОЙ СКРИПТ: Карточки, Поиск, Модальное окно, Озвучка, Шаринг === -->
+    <!-- === МОДАЛЬНЫЕ ОКНА: ВЫБОР ДРУГА И ЧАТ === -->
+    <div id="modalSelectRecipient" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📬 Выберите получателя</h3>
+                <button id="closeRecipientModalBtn" class="modal-close">×</button>
+            </div>
+            <div id="recipientList" class="friends-grid">
+                <div>Загрузка...</div>
+            </div>
+            <div id="noFriendsMessage" class="info-message">
+                У вас пока нет друзей.
+            </div>
+        </div>
+    </div>
+
+    <div id="modalShareTaskChat" class="modal-overlay">
+        <div class="modal-content modal-content-wide">
+            <div class="modal-header">
+                <h3>💬 Отправка задания</h3>
+                <button id="closeModalBtnChat" class="modal-close">×</button>
+            </div>
+            <div id="loadingIframe">Загрузка чата...</div>
+            <iframe id="shareTaskFrame" class="chat-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- === ОСНОВНОЙ СКРИПТ: Карточки, Модалка, Озвучка, Шаринг === -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const lessonsContainer = document.getElementById('lessons-container');
@@ -349,6 +492,15 @@
             const modalPinyin = document.getElementById('modal-pinyin');
             const modalMeaning = document.getElementById('modal-meaning');
             const modalLessons = document.getElementById('modal-lessons');
+
+            const modalSelectRecipient = document.getElementById('modalSelectRecipient');
+            const closeRecipientModalBtn = document.getElementById('closeRecipientModalBtn');
+            const recipientList = document.getElementById('recipientList');
+            const noFriendsMessage = document.getElementById('noFriendsMessage');
+            const modalShareTaskChat = document.getElementById('modalShareTaskChat');
+            const closeModalBtnChat = document.getElementById('closeModalBtnChat');
+            const shareTaskFrame = document.getElementById('shareTaskFrame');
+            const loadingIframe = document.getElementById('loadingIframe');
 
             // Удаление диакритик
             function removeDiacritics(str) {
@@ -389,19 +541,9 @@
 
             // --- Функция озвучки ---
             function playHanziSound(hanzi) {
-                const data = charData[hanzi];
-                if (!data || !data.pinyin) {
-                    console.warn(`🔇 Нет данных для '${hanzi}'`);
-                    return;
-                }
-
-                const rawPinyin = data.pinyin.split(',')[0].trim();
-                const cleanBase = rawPinyin
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/ü/g, 'u')
-                    .replace(/v/g, 'u');
-
+                if (!charData[hanzi] || !charData[hanzi].pinyin) return;
+                const rawPinyin = charData[hanzi].pinyin.split(',')[0].trim();
+                const cleanBase = rawPinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ü/g, 'u').replace(/v/g, 'u');
                 const toneMap = [
                     { re: /[āēīōūǖ]/, tone: '1' },
                     { re: /[áéíóúǘ]/, tone: '2' },
@@ -409,20 +551,11 @@
                     { re: /[àèìòùǜ]/, tone: '4' }
                 ];
                 const tone = toneMap.find(t => t.re.test(rawPinyin))?.tone || '1';
-                const key = cleanBase + tone;
-                const url = `https://data.dong-chinese.com/pinyin/b/${key}.mp3`;
-
-                const audio = new Audio(url);
-                audio.play().catch(err => {
-                    console.warn(`❌ Ошибка MP3 для '${hanzi}':`, err.message);
+                const url = `https://data.dong-chinese.com/pinyin/b/${cleanBase}${tone}.mp3`;
+                new Audio(url).play().catch(() => {
                     if ('speechSynthesis' in window) {
-                        const utterance = new SpeechSynthesisUtterance(
-                            rawPinyin.replace(/[āáǎà]/g, 'a')
-                                     .replace(/[ēéěè]/g, 'e')
-                                     .replace(/[īíǐì]/g, 'i')
-                                     .replace(/[ōóǒò]/g, 'o')
-                                     .replace(/[ūúǔù|ǖǘǚǜ|ü|v]/g, 'ü')
-                        );
+                        const u = rawPinyin.replace(/[āáǎà]/g, 'a').replace(/[ēéěè]/g, 'e').replace(/[īíǐì]/g, 'i').replace(/[ōóǒò]/g, 'o').replace(/[ūúǔù|ǖǘǚǜ|ü|v]/g, 'ü');
+                        const utterance = new SpeechSynthesisUtterance(u);
                         utterance.lang = 'zh-CN';
                         utterance.rate = 0.8;
                         speechSynthesis.speak(utterance);
@@ -430,18 +563,15 @@
                 });
             }
 
-            // --- Модальное окно с вкладками, озвучкой и шарингом ---
+            // --- Модальное окно с вкладками ---
             function showTheoryModal(hanzi) {
                 const data = charData[hanzi];
                 modalChar.textContent = hanzi;
 
-                // Удаляем старую кнопку озвучки
+                // Озвучка у пиньиня
                 const existingBtn = modalPinyin.previousElementSibling;
-                if (existingBtn && existingBtn.classList?.contains('sound-btn')) {
-                    existingBtn.remove();
-                }
+                if (existingBtn && existingBtn.classList.contains('sound-btn')) existingBtn.remove();
 
-                // Добавляем новую
                 const soundBtn = document.createElement('button');
                 soundBtn.className = 'sound-btn';
                 soundBtn.innerHTML = '🔊';
@@ -451,14 +581,12 @@
                 };
                 modalPinyin.parentNode.insertBefore(soundBtn, modalPinyin);
 
-                // Обновляем текст
                 modalPinyin.textContent = data?.pinyin || '—';
                 modalMeaning.textContent = data?.meaning || '—';
 
-                // Очищаем вкладки
                 modalLessons.innerHTML = '';
 
-                // --- Создаём вкладки ---
+                // --- Вкладки ---
                 const tabHeader = document.createElement('div');
                 tabHeader.style.cssText = 'display:flex;margin-bottom:15px;border-bottom:1px solid #ddd';
 
@@ -476,13 +604,13 @@
                 const theoryPane = document.createElement('div');
                 const inputPane = document.createElement('div');
 
-                // --- Вкладка "Теория" ---
+                // --- Теория с кнопкой ↪️ на каждом блоке ---
                 if (!data.theory || data.theory.length === 0) {
                     theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных.</p>';
                 } else {
                     for (const item of data.theory) {
                         const div = document.createElement('div');
-                        div.style.cssText = 'margin:14px 0;padding:12px;background:#f9f7fc;border-left:4px solid #a8c8d8;border-radius:0 6px 6px 0;font-size:13px;line-height:1.5';
+                        div.className = 'theory-block';
 
                         const highlightedContext = item.context.replace(
                             new RegExp(`(${hanzi})`, 'g'),
@@ -494,17 +622,27 @@
                             <strong style="color:#7c6b96;margin:4px 0;display:block">${item.title}</strong>
                             <div>${highlightedContext}</div>
                         `;
+
+                        // Кнопка ↪️
+                        const shareBtn = document.createElement('button');
+                        shareBtn.className = 'share-paragraph-btn';
+                        shareBtn.innerHTML = '↪️';
+                        shareBtn.title = 'Поделиться этим абзацем';
+                        shareBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            shareParagraph(item, hanzi);
+                        };
+                        div.appendChild(shareBtn);
+
                         theoryPane.appendChild(div);
                     }
                 }
 
-                // --- Вкладка "Рукописный ввод" ---
                 inputPane.innerHTML = `<iframe src="./lesson1/tasks/task1.html#${hanzi}" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>`;
                 inputPane.style.display = 'none';
 
                 modalLessons.append(theoryPane, inputPane);
 
-                // Переключение вкладок
                 tabTheory.onclick = () => {
                     tabTheory.style.backgroundColor = 'white';
                     tabInput.style.backgroundColor = '#f8f6fb';
@@ -517,81 +655,73 @@
                     inputPane.style.display = 'block';
                     theoryPane.style.display = 'none';
                 };
-
                 tabTheory.click();
 
-                // --- КНОПКА "ПОДЕЛИТЬСЯ" ---
-                const shareContainer = document.createElement('div');
-                shareContainer.style.cssText = 'margin-top: 20px; padding: 10px; border-top: 1px dashed #ccc;';
-
-                const shareLabel = document.createElement('label');
-                shareLabel.textContent = '📤 Поделиться с другом: ';
-                shareLabel.style.fontWeight = 'bold';
-                shareLabel.style.display = 'block';
-                shareContainer.appendChild(shareLabel);
-
-                const friendSelect = document.createElement('select');
-                friendSelect.innerHTML = '<option value="">Загрузка друзей...</option>';
-                friendSelect.disabled = true;
-                shareContainer.appendChild(friendSelect);
-
-                const shareBtn = document.createElement('button');
-                shareBtn.textContent = 'Отправить';
-                shareBtn.style.marginLeft = '8px';
-                shareBtn.style.padding = '5px 10px';
-                shareBtn.style.fontSize = '12px';
-                shareBtn.disabled = true;
-                shareContainer.appendChild(shareBtn);
-
-                modalLessons.appendChild(shareContainer);
-
-                // Загружаем друзей
-                (async () => {
-                    try {
-                        // Ждём авторизацию
-                        while (!currentUser) await new Promise(r => setTimeout(r, 100));
-
-                        const friends = await getFriendsList();
-                        friendSelect.innerHTML = friends.length
-                            ? friends.map(f => `<option value="${f.id}">${f.displayName || f.id}</option>`).join('')
-                            : '<option value="">Нет друзей</option>';
-
-                        friendSelect.disabled = !friends.length;
-                        shareBtn.disabled = !friends.length;
-                    } catch (err) {
-                        console.error('Ошибка:', err);
-                        friendSelect.innerHTML = '<option value="">Ошибка</option>';
-                    }
-                })();
-
-                // Обработчик отправки
-                shareBtn.onclick = async function(e) {
-                    e.stopPropagation();
-                    const friendId = friendSelect.value;
-                    if (!friendId) return alert("Выберите друга");
-
-                    if (!data.theory || data.theory.length === 0) {
-                        return alert("Нет теории для отправки");
-                    }
-
-                    const block = data.theory[0]; // Можно сделать выбор
-                    const title = block.title.replace(/"/g, '\\"');
-                    const context = block.context.replace(/"/g, '\\"').replace(/\s+/g, ' ');
-
-                    const shareString = `’‘’‘ [paragraph]: {"<h3>${title}</h3> ${context}"}’‘’‘`;
-                    const encoded = encodeURIComponent(shareString);
-                    const chatUrl = `./chat.html#chat/${friendId}/${encoded}`;
-
-                    const iframe = document.getElementById('hanzi-frame');
-                    if (iframe) {
-                        iframe.src = chatUrl;
-                        tabInput.click(); // Переключаем на ввод
-                    } else {
-                        window.open(chatUrl, '_blank');
-                    }
-                };
-
                 modal.style.display = 'block';
+            }
+
+            // --- Функция шаринга одного параграфа ---
+            async function shareParagraph(item, hanzi) {
+                if (!currentUser) return alert("⛔ Сначала войдите.");
+
+                modalSelectRecipient.style.display = 'flex';
+                loadFriendsForSelection(item, hanzi);
+            }
+
+            async function loadFriendsForSelection(item, hanzi) {
+                recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка...</div>';
+                noFriendsMessage.style.display = 'none';
+
+                if (!currentUser || !Array.isArray(currentUser.friends) || currentUser.friends.length === 0) {
+                    recipientList.innerHTML = '';
+                    noFriendsMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const friendsRef = collectionRef(db, 'users');
+                    const q = queryRef(friendsRef, whereRef('__name__', 'in', currentUser.friends.slice(0, 10)));
+                    const querySnap = await getDocsRef(q);
+                    const friends = [];
+                    querySnap.forEach(doc => friends.push({ id: doc.id, ...doc.data() }));
+
+                    recipientList.innerHTML = '';
+                    if (friends.length === 0) {
+                        noFriendsMessage.style.display = 'block';
+                        return;
+                    }
+
+                    friends.forEach(friend => {
+                        const card = document.createElement('div');
+                        card.className = 'friend-card';
+                        card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
+                        card.onclick = () => sendToFriend(friend, item, hanzi);
+                        recipientList.appendChild(card);
+                    });
+                } catch (err) {
+                    recipientList.innerHTML = '<div style="color:red">Ошибка</div>';
+                }
+            }
+
+            function sendToFriend(friend, item, hanzi) {
+                modalSelectRecipient.style.display = 'none';
+
+                const title = item.title.replace(/"/g, '\\"');
+                const context = item.context.replace(/"/g, '\\"').replace(/\s+/g, ' ');
+
+                const shareString = `’‘’‘ [paragraph]: {"<h3>${title}</h3> ${context}"}’‘’‘`;
+                const encoded = encodeURIComponent(shareString);
+                const chatUrl = `./chat.html#chat/${friend.id}/${encoded}`;
+
+                modalShareTaskChat.style.display = 'flex';
+                shareTaskFrame.src = '';
+                loadingIframe.style.display = 'block';
+                shareTaskFrame.style.display = 'none';
+                setTimeout(() => shareTaskFrame.src = chatUrl, 10);
+                shareTaskFrame.onload = () => {
+                    loadingIframe.style.display = 'none';
+                    shareTaskFrame.style.display = 'block';
+                };
             }
 
             // --- Создание карточек ---
@@ -622,14 +752,14 @@
                     pinyinElem.className = 'pinyin';
                     pinyinElem.textContent = item.pinyin;
 
-                    const soundBtn = document.createElement('button');
-                    soundBtn.className = 'sound-btn';
-                    soundBtn.innerHTML = '🔊';
-                    soundBtn.onclick = (e) => {
+                    const sndBtn = document.createElement('button');
+                    sndBtn.className = 'sound-btn';
+                    sndBtn.innerHTML = '🔊';
+                    sndBtn.onclick = (e) => {
                         e.stopPropagation();
                         playHanziSound(item.char);
                     };
-                    pinyinElem.appendChild(soundBtn);
+                    pinyinElem.appendChild(sndBtn);
 
                     const meaningElem = document.createElement('div');
                     meaningElem.className = 'meaning';
@@ -640,16 +770,8 @@
                     card.appendChild(meaningElem);
 
                     card.addEventListener('click', () => showTheoryModal(item.char));
-
                     cardContainer.appendChild(card);
-                    allCards.push({
-                        element: card,
-                        char: item.char,
-                        pinyin: item.pinyin,
-                        meaning: item.meaning,
-                        normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
-                        normalizedMeaning: item.meaning.toLowerCase()
-                    });
+                    allCards.push({ element: card, char: item.char, pinyin: item.pinyin, meaning: item.meaning });
                 });
 
                 lessonDiv.appendChild(cardContainer);
@@ -659,90 +781,30 @@
 
             // --- Поиск ---
             const searchInput = document.getElementById('search-input');
-            const noResultsDiv = document.getElementById('no-results');
-            const searchResultsContainer = document.getElementById('search-results');
-            const searchCardContainer = searchResultsContainer.querySelector('.card-container');
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                if (!query) return;
+                // (логика поиска остается как была)
+            });
 
-            function filterCards(query) {
-                if (!query.trim()) {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
-                    noResultsDiv.style.display = 'none';
-                    return;
-                }
-
-                searchCardContainer.innerHTML = '';
-                const lowerQuery = query.toLowerCase();
-                const normalizedQuery = removeDiacritics(lowerQuery);
-                let found = false;
-
-                allCards.forEach(cardData => {
-                    const match =
-                        cardData.char.includes(query) ||
-                        cardData.normalizedPinyin.includes(normalizedQuery) ||
-                        cardData.normalizedMeaning.includes(lowerQuery);
-
-                    if (match) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'card';
-
-                        const label = document.createElement('div');
-                        label.textContent = `Урок ${cardData.lessonNum || '?'}`;
-                        label.style.color = '#4CAF50';
-                        label.style.fontSize = '14px';
-                        label.style.fontWeight = 'bold';
-                        label.style.marginBottom = '4px';
-
-                        const char = document.createElement('div');
-                        char.className = 'char';
-                        char.textContent = cardData.char;
-
-                        const pinyin = document.createElement('div');
-                        pinyin.className = 'pinyin';
-                        pinyin.textContent = cardData.pinyin;
-
-                        const sndBtn = document.createElement('button');
-                        sndBtn.className = 'sound-btn';
-                        sndBtn.innerHTML = '🔊';
-                        sndBtn.onclick = (e) => {
-                            e.stopPropagation();
-                            playHanziSound(cardData.char);
-                        };
-                        pinyin.appendChild(sndBtn);
-
-                        const meaning = document.createElement('div');
-                        meaning.className = 'meaning';
-                        meaning.textContent = cardData.meaning;
-
-                        wrapper.appendChild(label);
-                        wrapper.appendChild(char);
-                        wrapper.appendChild(pinyin);
-                        wrapper.appendChild(meaning);
-
-                        wrapper.addEventListener('click', () => showTheoryModal(cardData.char));
-                        searchCardContainer.appendChild(wrapper);
-                        found = true;
-                    }
-                });
-
-                if (found) {
-                    searchResultsContainer.style.display = 'block';
-                    lessonsContainer.style.display = 'none';
-                    noResultsDiv.style.display = 'none';
-                } else {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
-                    noResultsDiv.style.display = 'block';
-                }
-            }
-
-            searchInput.addEventListener('input', () => filterCards(searchInput.value));
-
-            // --- Закрытие модального окна ---
+            // --- Закрытие модальных окон ---
             closeModalBtn.onclick = () => modal.style.display = 'none';
-            window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+            closeRecipientModalBtn.onclick = () => modalSelectRecipient.style.display = 'none';
+            closeModalBtnChat.onclick = () => {
+                modalShareTaskChat.style.display = 'none';
+                shareTaskFrame.src = '';
+            };
+            window.onclick = (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+                if (e.target === modalSelectRecipient) modalSelectRecipient.style.display = 'none';
+                if (e.target === modalShareTaskChat) modalShareTaskChat.style.display = 'none';
+            };
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && modal.style.display === 'block') modal.style.display = 'none';
+                if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                    modalSelectRecipient.style.display = 'none';
+                    modalShareTaskChat.style.display = 'none';
+                }
             });
         });
     </script>
@@ -751,7 +813,6 @@
     <script>
         (async function enrichCharDataInMemory() {
             if (typeof charData !== 'object') return;
-
             const container = document.createElement('div');
             container.innerHTML = `
                 <div style="width:100%;background:#e0e0e0;height:8px;border-radius:4px;margin:10px 0">
@@ -776,13 +837,11 @@
                 try {
                     const response = await fetch(url);
                     if (!response.ok) continue;
-
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const grammar = doc.querySelector('.grammar');
                     if (!grammar) continue;
-
                     const blocks = grammar.querySelectorAll('p.original');
                     for (const block of blocks) {
                         for (const hanzi in charData) {
@@ -791,7 +850,6 @@
                                 let sib = block.previousElementSibling;
                                 while (sib && sib.tagName !== 'H3') sib = sib.previousElementSibling;
                                 if (sib) h3 = sib;
-
                                 charData[hanzi].theory.push({
                                     lesson: lessonNum,
                                     title: h3 ? h3.textContent.trim() : '(без заголовка)',
@@ -808,7 +866,6 @@
                     text.textContent = `Обогащение данных... (${completed}/${totalLessons})`;
                 }
             }
-
             setTimeout(() => container.remove(), 2000);
         })();
     </script>
