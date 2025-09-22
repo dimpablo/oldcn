@@ -286,20 +286,20 @@
                 a.pinyin.localeCompare(b.pinyin)
             );
 
-            sortedChars.forEach(item => {
-                const card = createCard(item);
-                cardsContainer.appendChild(card);
-                allCards.push({
-                    element: card,
-                    char: item.character,
-                    pinyin: item.pinyin,
-                    meaning: item.meaning,
-                    lessonNum: item.lesson,
-                    normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
-                    normalizedMeaning: item.meaning.toLowerCase(),
-                    sources: extractSources(item.theory)
-                });
-            });
+sortedChars.forEach(item => {
+    const card = createCard(item); // используем исправленную функцию
+    cardsContainer.appendChild(card);
+    allCards.push({
+        element: card,
+        char: item.character,
+        pinyin: item.pinyin,
+        meaning: item.meaning,
+        lessonNum: item.lesson,
+        normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+        normalizedMeaning: item.meaning.toLowerCase(),
+        sources: extractSources(item.theory)
+    });
+});
 
             // --- Вспомогательные функции ---
             function removeDiacritics(str) {
@@ -310,31 +310,41 @@
                 return [...new Set(theoryList.map(t => `Урок ${t.lesson}`))];
             }
 
-            function createCard(item) {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.dataset.char = item.character;
+function createCard(item) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.char = item.character; // сохраняем для поиска
 
-                const charElem = document.createElement('div');
-                charElem.className = 'char';
-                charElem.textContent = item.character;
+    // --- Сам иероглиф ---
+    const charElem = document.createElement('div');
+    charElem.className = 'char';
+    charElem.textContent = item.character; // обязательно!
 
-                const pinyinElem = document.createElement('div');
-                pinyinElem.className = 'pinyin';
-                pinyinElem.textContent = item.pinyin;
+    // --- Пиньинь ---
+    const pinyinElem = document.createElement('div');
+    pinyinElem.className = 'pinyin';
+    pinyinElem.textContent = item.pinyin;
 
-                const meaningElem = document.createElement('div');
-                meaningElem.className = 'meaning';
-                meaningElem.textContent = item.meaning.substring(0, 50) + '...';
+    // --- Значение (первое или кратко) ---
+    const meaningElem = document.createElement('div');
+    meaningElem.className = 'meaning';
+    const firstMeaning = item.readings[0]?.meanings[0] || '—';
+    meaningElem.textContent = firstMeaning.length > 50 
+        ? firstMeaning.substring(0, 47) + '...' 
+        : firstMeaning;
 
-                card.appendChild(charElem);
-                card.appendChild(pinyinElem);
-                card.appendChild(meaningElem);
+    // --- Добавляем всё в карточку ---
+    card.appendChild(charElem);
+    card.appendChild(pinyinElem);
+    card.appendChild(meaningElem);
 
-                card.addEventListener('click', () => showCharModal(item.character));
+    // --- Обработчик клика ---
+    card.addEventListener('click', () => {
+        showCharModal(item.character);
+    });
 
-                return card;
-            }
+    return card;
+}
 
             // --- Модальное окно ---
             function showCharModal(hanzi) {
