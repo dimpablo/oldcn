@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Китайские иероглифы по урокам</title>
+    <title>Словарь классических китайских иероглифов</title>
 
     <!-- Favicon & PWA -->
     <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
@@ -158,31 +158,6 @@
         .tab-pane.hidden {
             display: none;
         }
-        .theory-block {
-            margin: 14px 0;
-            padding: 12px;
-            background: #f9f7fc;
-            border-left: 4px solid #a8c8d8;
-            border-radius: 0 6px 6px 0;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .theory-source {
-            color: #5a5a5a;
-            font-size: 12px;
-        }
-        .theory-title {
-            color: #7c6b96;
-            font-weight: bold;
-            margin: 4px 0;
-            display: block;
-        }
-        .highlighted {
-            background: #ffb6c1;
-            padding: 2px 3px;
-            border-radius: 3px;
-            font-weight: bold;
-        }
         .example-item {
             margin: 10px 0;
             line-height: 1.5;
@@ -209,6 +184,21 @@
             border-radius: 4px;
             font-size: 12px;
             margin: 0 2px;
+        }
+        .theory-block {
+            margin: 14px 0;
+            padding: 12px;
+            background: #f9f7fc;
+            border-left: 4px solid #a8c8d8;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .highlighted {
+            background: #ffb6c1;
+            padding: 2px 3px;
+            border-radius: 3px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -264,6 +254,7 @@
                 data.forEach(item => {
                     if (item.character.includes('{{') || !item.character.trim()) return;
                     charData[item.character] = {
+                        character: item.character,
                         pinyin: item.readings.map(r => r.pinyin).join(', '),
                         meaning: item.readings.flatMap(r => r.meanings || []).slice(0, 2).join(', '),
                         lesson: item.id,
@@ -286,20 +277,20 @@
                 a.pinyin.localeCompare(b.pinyin)
             );
 
-sortedChars.forEach(item => {
-    const card = createCard(item); // используем исправленную функцию
-    cardsContainer.appendChild(card);
-    allCards.push({
-        element: card,
-        char: item.character,
-        pinyin: item.pinyin,
-        meaning: item.meaning,
-        lessonNum: item.lesson,
-        normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
-        normalizedMeaning: item.meaning.toLowerCase(),
-        sources: extractSources(item.theory)
-    });
-});
+            sortedChars.forEach(item => {
+                const card = createCard(item);
+                cardsContainer.appendChild(card);
+                allCards.push({
+                    element: card,
+                    char: item.character,
+                    pinyin: item.pinyin,
+                    meaning: item.meaning,
+                    lessonNum: item.lesson,
+                    normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+                    normalizedMeaning: item.meaning.toLowerCase(),
+                    sources: extractSources(item.theory)
+                });
+            });
 
             // --- Вспомогательные функции ---
             function removeDiacritics(str) {
@@ -310,41 +301,39 @@ sortedChars.forEach(item => {
                 return [...new Set(theoryList.map(t => `Урок ${t.lesson}`))];
             }
 
-function createCard(item) {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.char = item.character; // сохраняем для поиска
+            function createCard(item) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.char = item.character;
 
-    // --- Сам иероглиф ---
-    const charElem = document.createElement('div');
-    charElem.className = 'char';
-    charElem.textContent = item.character; // обязательно!
+                // --- Сам иероглиф ---
+                const charElem = document.createElement('div');
+                charElem.className = 'char';
+                charElem.textContent = item.character;
 
-    // --- Пиньинь ---
-    const pinyinElem = document.createElement('div');
-    pinyinElem.className = 'pinyin';
-    pinyinElem.textContent = item.pinyin;
+                // --- Пиньинь ---
+                const pinyinElem = document.createElement('div');
+                pinyinElem.className = 'pinyin';
+                pinyinElem.textContent = item.pinyin;
 
-    // --- Значение (первое или кратко) ---
-    const meaningElem = document.createElement('div');
-    meaningElem.className = 'meaning';
-    const firstMeaning = item.readings[0]?.meanings[0] || '—';
-    meaningElem.textContent = firstMeaning.length > 50 
-        ? firstMeaning.substring(0, 47) + '...' 
-        : firstMeaning;
+                // --- Значение ---
+                const meaningElem = document.createElement('div');
+                meaningElem.className = 'meaning';
+                const firstMeaning = item.readings[0]?.meanings[0] || '—';
+                meaningElem.textContent = firstMeaning.length > 50 
+                    ? firstMeaning.substring(0, 47) + '...' 
+                    : firstMeaning;
 
-    // --- Добавляем всё в карточку ---
-    card.appendChild(charElem);
-    card.appendChild(pinyinElem);
-    card.appendChild(meaningElem);
+                // --- Добавляем всё в карточку ---
+                card.appendChild(charElem);
+                card.appendChild(pinyinElem);
+                card.appendChild(meaningElem);
 
-    // --- Обработчик клика ---
-    card.addEventListener('click', () => {
-        showCharModal(item.character);
-    });
+                // --- Обработчик клика ---
+                card.addEventListener('click', () => showCharModal(item.character));
 
-    return card;
-}
+                return card;
+            }
 
             // --- Модальное окно ---
             function showCharModal(hanzi) {
@@ -493,7 +482,7 @@ function createCard(item) {
                         );
 
                         li.innerHTML = `
-                            <strong class="theory-title">${t.title}</strong>
+                            <strong>${t.title}</strong><br>
                             <div>${highlightedContext}</div>
                         `;
                         list.appendChild(li);
@@ -562,7 +551,7 @@ function createCard(item) {
                 <div style="width:100%;background:#e0e0e0;height:8px;border-radius:4px;margin:10px 0">
                     <div id="enrich-bar" style="height:100%;background:#4CAF50;width:0%;transition:width 0.2s"></div>
                 </div>
-                <div id="enrich-text" style="text-align:center;color:#666;font-size:12px">Обогащение данных... (0/${totalLessons})</div>
+                <div id="enrich-text" style="text-align:center;color:#666;font-size:12px">Обогащение данных... (${completed}/${totalLessons})</div>
             `;
             document.querySelector('h1').after(barContainer);
 
