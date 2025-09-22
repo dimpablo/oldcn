@@ -50,31 +50,11 @@
             font-weight: bold;
             display: none;
         }
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin-bottom: 30px;
-        }
-        #progress-bar {
-            height: 10px;
-            background-color: #4CAF50;
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 5px;
-        }
-        .lesson {
-            margin-bottom: 40px;
-        }
         .card-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            justify-content: center;
         }
         .card {
             background: white;
@@ -104,6 +84,7 @@
         .meaning {
             font-size: 13px;
             color: #555;
+            min-height: 40px;
         }
 
         /* Modal styles */
@@ -124,7 +105,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             position: relative;
             animation: fadeIn 0.3s;
         }
@@ -202,55 +183,72 @@
             border-radius: 3px;
             font-weight: bold;
         }
+        .example-item {
+            margin: 10px 0;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .example-chinese {
+            font-family: serif;
+            font-size: 16px;
+            color: #333;
+        }
+        .example-translation {
+            font-style: italic;
+            color: #555;
+        }
+        .example-source {
+            font-size: 12px;
+            color: #999;
+        }
+        .note-badge {
+            display: inline-block;
+            background: #f0e6ff;
+            color: #7c6b96;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 0 2px;
+        }
     </style>
 </head>
 <body>
-    <h1>Словарь иероглифов по урокам</h1>
+    <h1>Словарь классических китайских иероглифов</h1>
 
     <!-- Search Box -->
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню или значению...">
+        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню, значению или источнику...">
     </div>
     <div id="no-results" class="no-results">Ничего не найдено</div>
 
-    <!-- Progress Bar -->
-    <div class="progress-container">
-        <div id="progress-bar"></div>
-    </div>
-
-    <!-- Search Results -->
-    <div id="search-results" class="lesson" style="display: none;">
-        <h2>Результаты поиска</h2>
-        <div class="card-container"></div>
-    </div>
-
-    <!-- Lessons Container -->
-    <div id="lessons-container"></div>
+    <!-- All Cards -->
+    <div class="card-container" id="cards-container"></div>
 
     <!-- Modal -->
     <div id="char-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">&times;</span>
             <div class="modal-char" id="modal-char"></div>
+
             <div class="tab-header">
-                <div id="tab-theory" class="active">📌 Теория</div>
+                <div id="tab-main" class="active">📖 Значения</div>
+                <div id="tab-theory" class="inactive">📌 Теория (по источникам)</div>
                 <div id="tab-input" class="inactive">✍️ Рукописный ввод</div>
             </div>
-            <div id="tab-theory-pane" class="tab-pane"></div>
+
+            <div id="tab-main-pane" class="tab-pane"></div>
+            <div id="tab-theory-pane" class="tab-pane hidden"></div>
             <div id="tab-input-pane" class="tab-pane hidden">
-                <iframe id="hanzi-frame" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>
+                <iframe id="hanzi-frame" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px" src=""></iframe>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
-            const lessonsContainer = document.getElementById('lessons-container');
-            const progressBar = document.getElementById('progress-bar');
+            const cardsContainer = document.getElementById('cards-container');
             const searchInput = document.getElementById('search-input');
             const noResultsDiv = document.getElementById('no-results');
-            const searchResultsContainer = document.getElementById('search-results');
-            const searchCardContainer = searchResultsContainer.querySelector('.card-container');
             const modal = document.getElementById('char-modal');
             const closeModalBtn = document.getElementById('close-modal');
 
@@ -264,12 +262,14 @@
                 const data = await response.json();
 
                 data.forEach(item => {
-                    if (item.character.includes('{{') || !item.character.trim()) return; // фильтруем мусор
+                    if (item.character.includes('{{') || !item.character.trim()) return;
                     charData[item.character] = {
                         pinyin: item.readings.map(r => r.pinyin).join(', '),
                         meaning: item.readings.flatMap(r => r.meanings || []).slice(0, 2).join(', '),
                         lesson: item.id,
-                        theory: [] // подготовим для обогащения
+                        theory: [],
+                        readings: item.readings,
+                        notes: item.notes || []
                     };
                 });
             } catch (err) {
@@ -278,71 +278,46 @@
                 return;
             }
 
-            // --- ШАГ 2: Группировка по урокам ---
-            const lessons = {};
-            for (const char in charData) {
-                const lessonNum = charData[char].lesson;
-                if (!lessons[lessonNum]) lessons[lessonNum] = [];
-                lessons[lessonNum].push({
-                    char,
-                    pinyin: charData[char].pinyin,
-                    meaning: charData[char].meaning
-                });
-            }
-
-            const sortedLessons = Object.keys(lessons).sort((a, b) => a - b);
-            const totalLessons = sortedLessons.length;
+            // --- ШАГ 2: Обогащение из theory.html файлов ---
+            await enrichCharDataFromTheoryFiles(charData);
 
             // --- ШАГ 3: Создание карточек ---
-            sortedLessons.forEach((lessonNum, index) => {
-                setTimeout(() => {
-                    const lessonDiv = document.createElement('div');
-                    lessonDiv.className = 'lesson';
-                    lessonDiv.dataset.lesson = lessonNum;
+            const sortedChars = Object.values(charData).sort((a, b) =>
+                a.pinyin.localeCompare(b.pinyin)
+            );
 
-                    const title = document.createElement('h2');
-                    title.textContent = `Урок ${lessonNum}`;
-                    lessonDiv.appendChild(title);
-
-                    const cardContainer = document.createElement('div');
-                    cardContainer.className = 'card-container';
-
-                    lessons[lessonNum].sort((a, b) => a.char.localeCompare(b.char));
-
-                    lessons[lessonNum].forEach(item => {
-                        const card = createCard(item);
-                        cardContainer.appendChild(card);
-                        allCards.push({
-                            element: card,
-                            char: item.char,
-                            pinyin: item.pinyin,
-                            meaning: item.meaning,
-                            lessonNum: lessonNum,
-                            normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
-                            normalizedMeaning: item.meaning.toLowerCase()
-                        });
-                    });
-
-                    lessonDiv.appendChild(cardContainer);
-                    lessonsContainer.appendChild(lessonDiv);
-
-                    // Прогресс
-                    progressBar.style.width = `${Math.round(((index + 1) / totalLessons) * 100)}%`;
-                }, 0);
+            sortedChars.forEach(item => {
+                const card = createCard(item);
+                cardsContainer.appendChild(card);
+                allCards.push({
+                    element: card,
+                    char: item.character,
+                    pinyin: item.pinyin,
+                    meaning: item.meaning,
+                    lessonNum: item.lesson,
+                    normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+                    normalizedMeaning: item.meaning.toLowerCase(),
+                    sources: extractSources(item.theory)
+                });
             });
 
-            // --- ШАГ 4: Обогащение charData из theory.html ---
-            await enrichCharDataFromTheoryFiles(charData, totalLessons);
+            // --- Вспомогательные функции ---
+            function removeDiacritics(str) {
+                return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
 
-            // --- Функция создания карточки ---
+            function extractSources(theoryList) {
+                return [...new Set(theoryList.map(t => `Урок ${t.lesson}`))];
+            }
+
             function createCard(item) {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.dataset.char = item.char;
+                card.dataset.char = item.character;
 
                 const charElem = document.createElement('div');
                 charElem.className = 'char';
-                charElem.textContent = item.char;
+                charElem.textContent = item.character;
 
                 const pinyinElem = document.createElement('div');
                 pinyinElem.className = 'pinyin';
@@ -350,63 +325,175 @@
 
                 const meaningElem = document.createElement('div');
                 meaningElem.className = 'meaning';
-                meaningElem.textContent = item.meaning;
+                meaningElem.textContent = item.meaning.substring(0, 50) + '...';
 
                 card.appendChild(charElem);
                 card.appendChild(pinyinElem);
                 card.appendChild(meaningElem);
 
-                card.addEventListener('click', () => showCharModal(item.char));
+                card.addEventListener('click', () => showCharModal(item.character));
 
                 return card;
             }
 
             // --- Модальное окно ---
             function showCharModal(hanzi) {
-                const data = charData[hanzi];
-                if (!data) return;
+                const item = charData[hanzi];
+                if (!item) return;
 
                 document.getElementById('modal-char').textContent = hanzi;
 
-                const theoryPane = document.getElementById('tab-theory-pane');
-                theoryPane.innerHTML = '';
+                // Очищаем вкладки
+                document.getElementById('tab-main-pane').innerHTML = '';
+                document.getElementById('tab-theory-pane').innerHTML = '';
 
-                if (!data.theory || data.theory.length === 0) {
-                    theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных из учебника.</p>';
-                } else {
-                    data.theory.forEach(item => {
-                        const block = document.createElement('div');
-                        block.className = 'theory-block';
+                // --- Вкладка "Значения" ---
+                renderMainTab(item);
 
-                        const highlightedContext = item.context.replace(
-                            new RegExp(`(${hanzi})`, 'g'),
-                            '<span class="highlighted">$1</span>'
-                        );
+                // --- Вкладка "Теория" ---
+                renderTheoryTab(item);
 
-                        block.innerHTML = `
-                            <strong class="theory-source">Урок ${item.lesson}</strong><br>
-                            <strong class="theory-title">${item.title}</strong>
-                            <div>${highlightedContext}</div>
-                        `;
-                        theoryPane.appendChild(block);
-                    });
-                }
+                // --- Вкладка "Рукописный ввод" ---
+                const frame = document.getElementById('hanzi-frame');
+                frame.src = ''; // сброс
+                setTimeout(() => {
+                    frame.src = `./lesson1/tasks/task1.html#${hanzi}`;
+                }, 10); // небольшая задержка для гарантии
 
                 // Переключение вкладок
-                document.getElementById('tab-theory').onclick = () => {
-                    setTabActive('theory');
-                };
-                document.getElementById('tab-input').onclick = () => {
-                    setTabActive('input');
-                    document.getElementById('hanzi-frame').src = `./lesson1/tasks/task1.html#${hanzi}`;
-                };
+                document.getElementById('tab-main').onclick = () => setTabActive('main');
+                document.getElementById('tab-theory').onclick = () => setTabActive('theory');
+                document.getElementById('tab-input').onclick = () => setTabActive('input');
 
-                setTabActive('theory');
+                setTabActive('main'); // по умолчанию
                 modal.style.display = 'block';
             }
 
+            function renderMainTab(item) {
+                const pane = document.getElementById('tab-main-pane');
+                pane.innerHTML = '';
+
+                if (item.readings && item.readings.length > 0) {
+                    item.readings.forEach((reading, idx) => {
+                        const group = document.createElement('div');
+                        if (idx > 0) {
+                            group.style.marginTop = '20px';
+                            group.style.paddingTop = '15px';
+                            group.style.borderTop = '1px dashed #ccc';
+                        }
+
+                        const pinyin = document.createElement('strong');
+                        pinyin.textContent = reading.pinyin;
+                        pinyin.style.color = '#e74c3c';
+                        pinyin.style.display = 'block';
+                        pinyin.style.fontSize = '16px';
+                        group.appendChild(pinyin);
+
+                        if (reading.meanings && reading.meanings.length) {
+                            const ul = document.createElement('ul');
+                            reading.meanings.forEach(m => {
+                                const li = document.createElement('li');
+                                li.textContent = m.trim();
+                                li.style.margin = '4px 0';
+                                ul.appendChild(li);
+                            });
+                            group.appendChild(ul);
+                        }
+
+                        if (reading.examples && reading.examples.length > 0) {
+                            const examplesTitle = document.createElement('p');
+                            examplesTitle.innerHTML = '<strong>Примеры:</strong>';
+                            examplesTitle.style.margin = '10px 0 5px 0';
+                            group.appendChild(examplesTitle);
+
+                            const examplesList = document.createElement('ol');
+                            reading.examples.forEach(ex => {
+                                const li = document.createElement('li');
+                                li.classList.add('example-item');
+
+                                const context = ex.chinese.replace(
+                                    new RegExp(`(${item.character})`, 'g'),
+                                    '<strong style="color:#4CAF50;">$1</strong>'
+                                );
+
+                                li.innerHTML = `
+                                    <div class="example-chinese">${context}</div>
+                                    <div class="example-translation">«${ex.translation}»</div>
+                                    ${ex.source ? `<div class="example-source">Источник: ${ex.source}</div>` : ''}
+                                `;
+                                examplesList.appendChild(li);
+                            });
+                            group.appendChild(examplesList);
+                        }
+
+                        pane.appendChild(group);
+                    });
+                }
+
+                // Примечания
+                if (item.notes && item.notes.length > 0) {
+                    const notesDiv = document.createElement('div');
+                    notesDiv.style.marginTop = '15px';
+                    notesDiv.style.padding = '10px';
+                    notesDiv.style.backgroundColor = '#f8f6fc';
+                    notesDiv.style.borderLeft = '4px solid #a8c8d8';
+                    notesDiv.style.borderRadius = '0 6px 6px 0';
+                    notesDiv.style.fontSize = '13px';
+
+                    const badges = item.notes.map(n => `<span class="note-badge">${n.trim()}</span>`).join('');
+                    notesDiv.innerHTML = `<strong>Примечания:</strong> ${badges}`;
+                    pane.appendChild(notesDiv);
+                }
+            }
+
+            function renderTheoryTab(item) {
+                const pane = document.getElementById('tab-theory-pane');
+                pane.innerHTML = '';
+
+                if (!item.theory || item.theory.length === 0) {
+                    pane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных из учебника.</p>';
+                    return;
+                }
+
+                // Группировка по урокам
+                const byLesson = {};
+                item.theory.forEach(t => {
+                    if (!byLesson[t.lesson]) byLesson[t.lesson] = [];
+                    byLesson[t.lesson].push(t);
+                });
+
+                Object.keys(byLesson).sort((a, b) => a - b).forEach(lessonNum => {
+                    const group = byLesson[lessonNum];
+
+                    const header = document.createElement('h4');
+                    header.textContent = `Урок ${lessonNum}`;
+                    header.style.color = '#333';
+                    header.style.marginTop = '20px';
+                    pane.appendChild(header);
+
+                    const list = document.createElement('ul');
+                    group.forEach(t => {
+                        const li = document.createElement('li');
+                        li.style.marginBottom = '12px';
+                        li.style.lineHeight = '1.5';
+
+                        const highlightedContext = t.context.replace(
+                            new RegExp(`(${item.character})`, 'g'),
+                            '<span class="highlighted">$1</span>'
+                        );
+
+                        li.innerHTML = `
+                            <strong class="theory-title">${t.title}</strong>
+                            <div>${highlightedContext}</div>
+                        `;
+                        list.appendChild(li);
+                    });
+                    pane.appendChild(list);
+                });
+            }
+
             function setTabActive(tabName) {
-                ['theory', 'input'].forEach(t => {
+                ['main', 'theory', 'input'].forEach(t => {
                     document.getElementById(`tab-${t}`).className = t === tabName ? 'active' : 'inactive';
                     document.getElementById(`tab-${t}-pane`).classList.toggle('hidden', t !== tabName);
                 });
@@ -415,13 +502,11 @@
             // --- Поиск ---
             function filterCards(query) {
                 if (!query.trim()) {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
+                    allCards.forEach(c => c.element.style.display = '');
                     noResultsDiv.style.display = 'none';
                     return;
                 }
 
-                searchCardContainer.innerHTML = '';
                 const lowerQuery = query.toLowerCase();
                 const normalizedQuery = removeDiacritics(lowerQuery);
                 let found = false;
@@ -430,49 +515,38 @@
                     const match =
                         cardData.char.includes(query) ||
                         cardData.normalizedPinyin.includes(normalizedQuery) ||
-                        card.normalizedMeaning.includes(lowerQuery);
+                        cardData.normalizedMeaning.includes(lowerQuery) ||
+                        cardData.sources.some(s => s.includes(lowerQuery));
 
-                    if (match) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'card';
-                        wrapper.innerHTML = `
-                            <div style="color:#4CAF50;font-weight:bold;font-size:14px">Урок ${cardData.lessonNum}</div>
-                            <div class="char">${cardData.char}</div>
-                            <div class="pinyin">${cardData.pinyin}</div>
-                            <div class="meaning">${cardData.meaning}</div>
-                        `;
-                        wrapper.addEventListener('click', () => showCharModal(cardData.char));
-                        searchCardContainer.appendChild(wrapper);
-                        found = true;
-                    }
+                    cardData.element.style.display = match ? '' : 'none';
+                    if (match) found = true;
                 });
 
-                if (found) {
-                    searchResultsContainer.style.display = 'block';
-                    lessonsContainer.style.display = 'none';
-                    noResultsDiv.style.display = 'none';
-                } else {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
-                    noResultsDiv.style.display = 'block';
-                }
+                noResultsDiv.style.display = found ? 'none' : 'block';
             }
 
             searchInput.addEventListener('input', () => filterCards(searchInput.value));
 
             // Закрытие модального окна
-            closeModalBtn.onclick = () => modal.style.display = 'none';
+            closeModalBtn.onclick = () => {
+                modal.style.display = 'none';
+                document.getElementById('hanzi-frame').src = '';
+            };
             window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'block') modal.style.display = 'none'; });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.getElementById('hanzi-frame').src = '';
+                }
+            });
         });
 
-        // --- Функции ---
-        function removeDiacritics(str) {
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        }
+        // --- Обогащение из theory.html ---
+        async function enrichCharDataFromTheoryFiles(charData) {
+            const totalLessons = 60;
+            let completed = 0;
 
-        // Обогащаем charData из theory.html файлов
-        async function enrichCharDataFromTheoryFiles(charData, totalLessons) {
+            // Прогресс-бар
             const barContainer = document.createElement('div');
             barContainer.innerHTML = `
                 <div style="width:100%;background:#e0e0e0;height:8px;border-radius:4px;margin:10px 0">
@@ -485,7 +559,6 @@
             const bar = document.getElementById('enrich-bar');
             const text = document.getElementById('enrich-text');
 
-            let completed = 0;
             for (let lessonNum = 1; lessonNum <= totalLessons; lessonNum++) {
                 const url = `./lesson${lessonNum}/theory.html`;
                 try {
