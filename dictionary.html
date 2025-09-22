@@ -381,14 +381,12 @@
     <!-- Подключаем словарь -->
     <script src="dictionary.js"></script>
 
-    <!-- === FIREBASE INIT + ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ === -->
+    <!-- === FIREBASE INIT === -->
     <script>
-        // Глобальные переменные
         let auth = null;
         let db = null;
         let currentUser = null;
 
-        // Функции Firestore
         let docRef = null;
         let getDocRef = null;
         let collectionRef = null;
@@ -416,7 +414,6 @@
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Присваиваем функции глобальным переменным
                 docRef = doc;
                 getDocRef = getDoc;
                 collectionRef = collection;
@@ -433,8 +430,6 @@
                             if (userDocSnap.exists()) {
                                 currentUser = { uid: user.uid, ...userDocSnap.data() };
                                 console.log('✅ Профиль пользователя загружен:', currentUser);
-                            } else {
-                                console.error('❌ Профиль не найден в Firestore:', user.uid);
                             }
                         } catch (err) {
                             console.error('❌ Ошибка при загрузке профиля:', err);
@@ -454,7 +449,7 @@
         document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 
-    <!-- === МОДАЛЬНЫЕ ОКНА: ВЫБОР ДРУГА И ЧАТ === -->
+    <!-- === МОДАЛЬНЫЕ ОКНА === -->
     <div id="modalSelectRecipient" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -481,7 +476,7 @@
         </div>
     </div>
 
-    <!-- === ОСНОВНОЙ СКРИПТ: Карточки, Модалка, Озвучка, Шаринг === -->
+    <!-- === ОСНОВНОЙ СКРИПТ === -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const lessonsContainer = document.getElementById('lessons-container');
@@ -502,12 +497,17 @@
             const shareTaskFrame = document.getElementById('shareTaskFrame');
             const loadingIframe = document.getElementById('loadingIframe');
 
-            // Удаление диакритик
+            const searchInput = document.getElementById('search-input');
+            const noResultsDiv = document.getElementById('no-results');
+            const searchResultsContainer = document.getElementById('search-results');
+            const searchCardContainer = searchResultsContainer.querySelector('.card-container');
+
+            // --- Удаление диакритик ---
             function removeDiacritics(str) {
                 return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             }
 
-            // Индекс: иероглиф → уроки
+            // --- Индекс: иероглиф → уроки ---
             const charIndex = {};
             for (const char in charData) {
                 const lessonNum = charData[char].lesson;
@@ -515,7 +515,7 @@
                 charIndex[char].push(lessonNum);
             }
 
-            // Группировка по урокам
+            // --- Группировка по урокам ---
             const lessons = {};
             for (const char in charData) {
                 const lessonNum = charData[char].lesson;
@@ -539,7 +539,7 @@
                 progressBar.style.width = percent + '%';
             }
 
-            // --- Функция озвучки ---
+            // --- Озвучка ---
             function playHanziSound(hanzi) {
                 if (!charData[hanzi] || !charData[hanzi].pinyin) return;
                 const rawPinyin = charData[hanzi].pinyin.split(',')[0].trim();
@@ -568,7 +568,6 @@
                 const data = charData[hanzi];
                 modalChar.textContent = hanzi;
 
-                // Озвучка у пиньиня
                 const existingBtn = modalPinyin.previousElementSibling;
                 if (existingBtn && existingBtn.classList.contains('sound-btn')) existingBtn.remove();
 
@@ -586,7 +585,6 @@
 
                 modalLessons.innerHTML = '';
 
-                // --- Вкладки ---
                 const tabHeader = document.createElement('div');
                 tabHeader.style.cssText = 'display:flex;margin-bottom:15px;border-bottom:1px solid #ddd';
 
@@ -604,7 +602,6 @@
                 const theoryPane = document.createElement('div');
                 const inputPane = document.createElement('div');
 
-                // --- Теория с кнопкой ↪️ на каждом блоке ---
                 if (!data.theory || data.theory.length === 0) {
                     theoryPane.innerHTML = '<p style="color:#999;font-size:13px;">Нет данных.</p>';
                 } else {
@@ -623,10 +620,9 @@
                             <div>${highlightedContext}</div>
                         `;
 
-                        // Кнопка ↪️
                         const shareBtn = document.createElement('button');
                         shareBtn.className = 'share-paragraph-btn';
-                        shareBtn.innerHTML = '↪️ Переслать';
+                        shareBtn.innerHTML = '↪️';
                         shareBtn.title = 'Поделиться этим абзацем';
                         shareBtn.onclick = (e) => {
                             e.stopPropagation();
@@ -660,10 +656,9 @@
                 modal.style.display = 'block';
             }
 
-            // --- Функция шаринга одного параграфа ---
+            // --- Шаринг параграфа ---
             async function shareParagraph(item, hanzi) {
                 if (!currentUser) return alert("⛔ Сначала войдите.");
-
                 modalSelectRecipient.style.display = 'flex';
                 loadFriendsForSelection(item, hanzi);
             }
@@ -771,7 +766,14 @@
 
                     card.addEventListener('click', () => showTheoryModal(item.char));
                     cardContainer.appendChild(card);
-                    allCards.push({ element: card, char: item.char, pinyin: item.pinyin, meaning: item.meaning });
+                    allCards.push({
+                        element: card,
+                        char: item.char,
+                        pinyin: item.pinyin,
+                        meaning: item.meaning,
+                        normalizedPinyin: removeDiacritics(item.pinyin.toLowerCase()),
+                        normalizedMeaning: item.meaning.toLowerCase()
+                    });
                 });
 
                 lessonDiv.appendChild(cardContainer);
@@ -779,13 +781,85 @@
                 setTimeout(updateProgress, 0);
             });
 
-            // --- Поиск ---
-            const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('input', function() {
-                const query = this.value.trim().toLowerCase();
-                if (!query) return;
-                // (логика поиска остается как была)
-            });
+            // --- ПОИСК (полная версия из оригинала) ---
+            function filterCards(query) {
+                if (!query.trim()) {
+                    searchResultsContainer.style.display = 'none';
+                    lessonsContainer.style.display = 'block';
+                    noResultsDiv.style.display = 'none';
+                    return;
+                }
+
+                searchCardContainer.innerHTML = '';
+                const lowerQuery = query.toLowerCase();
+                const normalizedQuery = removeDiacritics(lowerQuery);
+                let found = false;
+
+                allCards.forEach(cardData => {
+                    let match = false;
+
+                    if (cardData.char.includes(query)) match = true;
+                    else if (cardData.normalizedPinyin.includes(normalizedQuery)) match = true;
+                    else if (cardData.normalizedMeaning.includes(lowerQuery)) match = true;
+
+                    if (match) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'card';
+
+                        const lessonLabel = document.createElement('div');
+                        lessonLabel.textContent = `Урок ${cardData.lessonNum || '?'}`;
+                        lessonLabel.style.color = '#4CAF50';
+                        lessonLabel.style.fontSize = '14px';
+                        lessonLabel.style.fontWeight = 'bold';
+                        lessonLabel.style.marginBottom = '4px';
+
+                        const charElem = document.createElement('div');
+                        charElem.className = 'char';
+                        charElem.textContent = cardData.char;
+
+                        const pinyinElem = document.createElement('div');
+                        pinyinElem.className = 'pinyin';
+                        pinyinElem.textContent = cardData.pinyin;
+
+                        const sndBtn = document.createElement('button');
+                        sndBtn.className = 'sound-btn';
+                        sndBtn.innerHTML = '🔊';
+                        sndBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            playHanziSound(cardData.char);
+                        };
+                        pinyinElem.appendChild(sndBtn);
+
+                        const meaningElem = document.createElement('div');
+                        meaningElem.className = 'meaning';
+                        meaningElem.textContent = cardData.meaning;
+
+                        wrapper.appendChild(lessonLabel);
+                        wrapper.appendChild(charElem);
+                        wrapper.appendChild(pinyinElem);
+                        wrapper.appendChild(meaningElem);
+
+                        wrapper.addEventListener('click', () => {
+                            showTheoryModal(cardData.char);
+                        });
+
+                        searchCardContainer.appendChild(wrapper);
+                        found = true;
+                    }
+                });
+
+                if (found) {
+                    searchResultsContainer.style.display = 'block';
+                    lessonsContainer.style.display = 'none';
+                    noResultsDiv.style.display = 'none';
+                } else {
+                    searchResultsContainer.style.display = 'none';
+                    lessonsContainer.style.display = 'block';
+                    noResultsDiv.style.display = 'block';
+                }
+            }
+
+            searchInput.addEventListener('input', () => filterCards(searchInput.value));
 
             // --- Закрытие модальных окон ---
             closeModalBtn.onclick = () => modal.style.display = 'none';
@@ -809,7 +883,7 @@
         });
     </script>
 
-    <!-- === Обогащение charData из theory.html === -->
+    <!-- === Обогащение charData === -->
     <script>
         (async function enrichCharDataInMemory() {
             if (typeof charData !== 'object') return;
