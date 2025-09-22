@@ -2,33 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Китайские иероглифы по урокам</title>
+    <title>Китайские иероглифы из wenyan_full.json</title>
 
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="./favicon/apple-touch-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="./favicon/apple-touch-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="./favicon/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="./favicon/apple-touch-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="80x80" href="./favicon/apple-touch-icon-80x80.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="./favicon/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./favicon/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="./favicon/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./favicon/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="./favicon/apple-touch-icon-167x167.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="1024x1024" href="./favicon/apple-touch-icon-1024x1024.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="./favicon/android-chrome-96x96.png">
-    <link rel="icon" type="image/png" sizes="144x144" href="./favicon/android-chrome-144x144.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./favicon/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="./favicon/android-chrome-256x256.png">
-    <link rel="icon" type="image/png" sizes="384x384" href="./favicon/android-chrome-384x384.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./favicon/android-chrome-512x512.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./favicon/maskable-icon-192x192-masked.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./favicon/maskable-icon-512x512-masked.png">
-    <link rel="manifest" href="./favicon/site.webmanifest">
-    <meta name="msapplication-config" content="./favicon/browserconfig.xml">
+    <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon-180x180.png">
+    <link rel="manifest" href="/favicon/site.webmanifest">
+    <meta name="msapplication-config" content="/favicon/browserconfig.xml">
     <meta name="theme-color" content="#4CAF50">
 
     <style>
@@ -69,31 +50,11 @@
             font-weight: bold;
             display: none;
         }
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin-bottom: 30px;
-        }
-        #progress-bar {
-            height: 10px;
-            background-color: #4CAF50;
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 5px;
-        }
-        .lesson {
-            margin-bottom: 40px;
-        }
         .card-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            justify-content: center;
         }
         .card {
             background: white;
@@ -123,6 +84,7 @@
         .meaning {
             font-size: 13px;
             color: #555;
+            min-height: 40px;
         }
 
         /* Modal styles */
@@ -143,7 +105,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 700px;
+            max-width: 800px;
             position: relative;
             animation: fadeIn 0.3s;
         }
@@ -223,41 +185,42 @@
             font-size: 12px;
             margin: 0 2px;
         }
+        .source-link {
+            color: #1a73e8;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .source-link:hover {
+            color: #0d47a1;
+        }
     </style>
 </head>
 <body>
-    <h1>Словарь иероглифов по урокам</h1>
+    <h1>Словарь классических китайских иероглифов</h1>
 
     <!-- Search Box -->
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню или значению...">
+        <input type="text" id="search-input" placeholder="Поиск по иероглифу, пиньиню, значению или источнику...">
     </div>
     <div id="no-results" class="no-results">Ничего не найдено</div>
 
-    <!-- Progress Bar -->
-    <div class="progress-container">
-        <div id="progress-bar"></div>
-    </div>
-
-    <!-- Search Results -->
-    <div id="search-results" class="lesson" style="display: none;">
-        <h2>Результаты поиска</h2>
-        <div class="card-container"></div>
-    </div>
-
-    <!-- Lessons Container -->
-    <div id="lessons-container"></div>
+    <!-- All Cards -->
+    <div class="card-container" id="cards-container"></div>
 
     <!-- Modal -->
     <div id="char-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">&times;</span>
             <div class="modal-char" id="modal-char"></div>
+
             <div class="tab-header">
                 <div id="tab-main" class="active">📖 Значения</div>
+                <div id="tab-theory" class="inactive">📌 Теория (по источникам)</div>
                 <div id="tab-input" class="inactive">✍️ Рукописный ввод</div>
             </div>
+
             <div id="tab-main-pane" class="tab-pane"></div>
+            <div id="tab-theory-pane" class="tab-pane hidden"></div>
             <div id="tab-input-pane" class="tab-pane hidden">
                 <iframe id="hanzi-frame" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;margin-top:10px"></iframe>
             </div>
@@ -266,74 +229,48 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
-            const lessonsContainer = document.getElementById('lessons-container');
-            const progressBar = document.getElementById('progress-bar');
-            const modal = document.getElementById('char-modal');
-            const closeModalBtn = document.getElementById('close-modal');
+            const cardsContainer = document.getElementById('cards-container');
             const searchInput = document.getElementById('search-input');
             const noResultsDiv = document.getElementById('no-results');
-            const searchResultsContainer = document.getElementById('search-results');
-            const searchCardContainer = searchResultsContainer.querySelector('.card-container');
+            const modal = document.getElementById('char-modal');
+            const closeModalBtn = document.getElementById('close-modal');
 
-            let charData = {}; // { "危": { character, readings, notes, id }, ... }
+            let charData = {};
             let allCards = [];
-            let lessons = {};
 
             try {
                 const response = await fetch('wenyan_full.json');
                 if (!response.ok) throw new Error('Не удалось загрузить wenyan_full.json');
                 const data = await response.json();
 
-                // Преобразуем массив в объект по иероглифу
+                // Преобразуем массив в объект: { иероглиф: данные }
                 data.forEach(item => {
+                    // Убираем мусор вроде "{{3 черты}}"
+                    if (item.character.includes('{{') || item.character.includes('}}')) {
+                        console.warn('Пропущен некорректный иероглиф:', item.character);
+                        return;
+                    }
                     charData[item.character] = item;
                 });
 
-                // Группируем по урокам (id)
-                Object.values(charData).forEach(item => {
-                    const lessonNum = String(item.id);
-                    if (!lessons[lessonNum]) lessons[lessonNum] = [];
-                    lessons[lessonNum].push(item);
+                // Собираем карточки
+                const sortedChars = Object.values(charData).sort((a, b) =>
+                    getAllPinyin(a).localeCompare(getAllPinyin(b))
+                );
+
+                sortedChars.forEach(item => {
+                    const card = createCard(item);
+                    cardsContainer.appendChild(card);
+                    allCards.push({
+                        element: card,
+                        data: item,
+                        normalizedChar: item.character.toLowerCase(),
+                        normalizedPinyin: removeDiacritics(getAllPinyin(item).toLowerCase()),
+                        normalizedMeaning: getAllMeanings(item).toLowerCase(),
+                        sources: getSourceList(item)
+                    });
                 });
 
-                const sortedLessons = Object.keys(lessons).sort((a, b) => Number(a) - Number(b));
-                const totalLessons = sortedLessons.length;
-
-                // Создаём карточки
-                sortedLessons.forEach((lessonNum, index) => {
-                    setTimeout(() => {
-                        const lessonDiv = document.createElement('div');
-                        lessonDiv.className = 'lesson';
-                        lessonDiv.dataset.lesson = lessonNum;
-
-                        const title = document.createElement('h2');
-                        title.textContent = `Урок ${lessonNum}`;
-                        lessonDiv.appendChild(title);
-
-                        const cardContainer = document.createElement('div');
-                        cardContainer.className = 'card-container';
-
-                        lessons[lessonNum].sort((a, b) => a.character.localeCompare(b.character));
-
-                        lessons[lessonNum].forEach(item => {
-                            const card = createCard(item, lessonDiv);
-                            cardContainer.appendChild(card);
-                            allCards.push({
-                                element: card,
-                                data: item,
-                                normalizedPinyin: removeDiacritics(getAllPinyin(item).toLowerCase()),
-                                normalizedMeaning: getAllMeanings(item).toLowerCase(),
-                                lessonElement: lessonDiv
-                            });
-                        });
-
-                        lessonDiv.appendChild(cardContainer);
-                        lessonsContainer.appendChild(lessonDiv);
-
-                        // Прогресс
-                        progressBar.style.width = `${Math.round(((index + 1) / totalLessons) * 100)}%`;
-                    }, 0);
-                });
             } catch (err) {
                 console.error('Ошибка загрузки данных:', err);
                 alert('Не удалось загрузить словарь. Проверьте наличие файла wenyan_full.json.');
@@ -349,10 +286,24 @@
             }
 
             function getAllMeanings(item) {
-                return item.readings.flatMap(r => r.meanings).join(', ');
+                return item.readings.flatMap(r => r.meanings || []).join(', ');
             }
 
-            function createCard(item, lessonDiv) {
+            function getSourceList(item) {
+                const sources = [];
+                item.readings.forEach(r => {
+                    if (r.examples) {
+                        r.examples.forEach(ex => {
+                            if (ex.source && !sources.includes(ex.source)) {
+                                sources.push(ex.source);
+                            }
+                        });
+                    }
+                });
+                return sources;
+            }
+
+            function createCard(item) {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.dataset.char = item.character;
@@ -367,29 +318,56 @@
 
                 const meaningElem = document.createElement('div');
                 meaningElem.className = 'meaning';
-                meaningElem.textContent = item.readings[0].meanings[0];
+                meaningElem.textContent = item.readings[0]?.meanings[0]?.substring(0, 50) + '...';
 
                 card.appendChild(charElem);
                 card.appendChild(pinyinElem);
                 card.appendChild(meaningElem);
 
-                card.addEventListener('click', () => showTheoryModal(item.character));
+                card.addEventListener('click', () => showCharModal(item.character));
 
                 return card;
             }
 
             // --- Модальное окно ---
-            function showTheoryModal(hanzi) {
+            function showCharModal(hanzi) {
                 const item = charData[hanzi];
                 if (!item) return;
 
                 document.getElementById('modal-char').textContent = hanzi;
 
                 // Очищаем вкладки
-                const mainPane = document.getElementById('tab-main-pane');
-                mainPane.innerHTML = '';
+                document.getElementById('tab-main-pane').innerHTML = '';
+                document.getElementById('tab-theory-pane').innerHTML = '';
 
-                // Заполняем значения
+                // === Вкладка "Значения" ===
+                renderMainTab(item);
+
+                // === Вкладка "Теория по источникам" ===
+                renderTheoryTab(item);
+
+                // === Вкладка "Рукописный ввод" ===
+                document.getElementById('hanzi-frame').src = `./lesson1/tasks/task1.html#${hanzi}`;
+
+                // Переключение вкладок
+                document.getElementById('tab-main').onclick = () => {
+                    setTabActive('main');
+                };
+                document.getElementById('tab-theory').onclick = () => {
+                    setTabActive('theory');
+                };
+                document.getElementById('tab-input').onclick = () => {
+                    setTabActive('input');
+                };
+
+                setTabActive('main'); // Открываем первую
+                modal.style.display = 'block';
+            }
+
+            function renderMainTab(item) {
+                const pane = document.getElementById('tab-main-pane');
+                pane.innerHTML = '';
+
                 if (item.readings && item.readings.length > 0) {
                     item.readings.forEach((reading, idx) => {
                         const group = document.createElement('div');
@@ -406,7 +384,7 @@
                         pinyin.style.fontSize = '16px';
                         group.appendChild(pinyin);
 
-                        if (reading.meanings) {
+                        if (reading.meanings && reading.meanings.length) {
                             const ul = document.createElement('ul');
                             reading.meanings.forEach(m => {
                                 const li = document.createElement('li');
@@ -429,7 +407,7 @@
                                 li.classList.add('example-item');
 
                                 const context = ex.chinese.replace(
-                                    new RegExp(`(${hanzi})`, 'g'),
+                                    new RegExp(`(${item.character})`, 'g'),
                                     '<strong style="color:#4CAF50;">$1</strong>'
                                 );
 
@@ -443,7 +421,7 @@
                             group.appendChild(examplesList);
                         }
 
-                        mainPane.appendChild(group);
+                        pane.appendChild(group);
                     });
                 }
 
@@ -459,97 +437,98 @@
 
                     const badges = item.notes.map(n => `<span class="note-badge">${n.trim()}</span>`).join('');
                     notesDiv.innerHTML = `<strong>Примечания:</strong> ${badges}`;
-                    mainPane.appendChild(notesDiv);
+                    pane.appendChild(notesDiv);
+                }
+            }
+
+            function renderTheoryTab(item) {
+                const pane = document.getElementById('tab-theory-pane');
+                pane.innerHTML = '';
+
+                const sourceGroups = {};
+
+                item.readings.forEach(r => {
+                    if (r.examples) {
+                        r.examples.forEach(ex => {
+                            if (ex.source) {
+                                if (!sourceGroups[ex.source]) sourceGroups[ex.source] = [];
+                                sourceGroups[ex.source].push({
+                                    example: ex,
+                                    pinyin: r.pinyin,
+                                    meanings: r.meanings
+                                });
+                            }
+                        });
+                    }
+                });
+
+                if (Object.keys(sourceGroups).length === 0) {
+                    pane.innerHTML = '<p style="color:#999;">Нет примеров из текстов.</p>';
+                    return;
                 }
 
-                // Переключение вкладок
-                document.getElementById('tab-main').onclick = () => {
-                    document.getElementById('tab-main').className = 'active';
-                    document.getElementById('tab-input').className = 'inactive';
-                    document.getElementById('tab-main-pane').classList.remove('hidden');
-                    document.getElementById('tab-input-pane').classList.add('hidden');
-                };
-                document.getElementById('tab-input').onclick = () => {
-                    document.getElementById('tab-input').className = 'active';
-                    document.getElementById('tab-main').className = 'inactive';
-                    document.getElementById('tab-input-pane').classList.remove('hidden');
-                    document.getElementById('tab-main-pane').classList.add('hidden');
-                    document.getElementById('hanzi-frame').src = `./lesson1/tasks/task1.html#${hanzi}`;
-                };
+                Object.keys(sourceGroups).sort().forEach(source => {
+                    const group = sourceGroups[source];
 
-                // Открываем первую вкладку
-                document.getElementById('tab-main').click();
+                    const header = document.createElement('h4');
+                    header.textContent = `Источник: ${source}`;
+                    header.style.color = '#333';
+                    header.style.marginTop = '20px';
+                    pane.appendChild(header);
 
-                modal.style.display = 'block';
+                    const list = document.createElement('ul');
+                    group.forEach(({ example, pinyin, meanings }) => {
+                        const li = document.createElement('li');
+                        li.style.marginBottom = '12px';
+                        li.style.lineHeight = '1.5';
+
+                        const context = example.chinese.replace(
+                            new RegExp(`(${item.character})`, 'g'),
+                            '<strong style="color:#4CAF50;">$1</strong>'
+                        );
+
+                        li.innerHTML = `
+                            <div class="example-chinese">${context}</div>
+                            <div class="example-translation">«${example.translation}»</div>
+                            <div><small><em>Пиньинь:</em> ${pinyin}; <em>Значения:</em> ${meanings.join(', ')}</small></div>
+                        `;
+                        list.appendChild(li);
+                    });
+                    pane.appendChild(list);
+                });
+            }
+
+            function setTabActive(tabName) {
+                ['main', 'theory', 'input'].forEach(t => {
+                    document.getElementById(`tab-${t}`).className = t === tabName ? 'active' : 'inactive';
+                    document.getElementById(`tab-${t}-pane`).classList.toggle('hidden', t !== tabName);
+                });
             }
 
             // --- Поиск ---
             function filterCards(query) {
                 if (!query.trim()) {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
+                    allCards.forEach(c => c.element.style.display = '');
                     noResultsDiv.style.display = 'none';
                     return;
                 }
 
-                searchCardContainer.innerHTML = '';
                 const lowerQuery = query.toLowerCase();
                 const normalizedQuery = removeDiacritics(lowerQuery);
                 let found = false;
 
                 allCards.forEach(cardData => {
-                    const item = cardData.data;
                     const match =
-                        item.character.includes(query) ||
-                        removeDiacritics(getAllPinyin(item).toLowerCase()).includes(normalizedQuery) ||
-                        getAllMeanings(item).toLowerCase().includes(lowerQuery);
+                        cardData.normalizedChar.includes(query) ||
+                        cardData.normalizedPinyin.includes(normalizedQuery) ||
+                        cardData.normalizedMeaning.includes(lowerQuery) ||
+                        cardData.sources.some(s => s.toLowerCase().includes(lowerQuery));
 
-                    if (match) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'card';
-
-                        const lessonLabel = document.createElement('div');
-                        lessonLabel.textContent = `Урок ${item.id}`;
-                        lessonLabel.style.color = '#4CAF50';
-                        lessonLabel.style.fontSize = '14px';
-                        lessonLabel.style.fontWeight = 'bold';
-                        lessonLabel.style.marginBottom = '4px';
-
-                        const charElem = document.createElement('div');
-                        charElem.className = 'char';
-                        charElem.textContent = item.character;
-
-                        const pinyinElem = document.createElement('div');
-                        pinyinElem.className = 'pinyin';
-                        pinyinElem.textContent = getAllPinyin(item);
-
-                        const meaningElem = document.createElement('div');
-                        meaningElem.className = 'meaning';
-                        meaningElem.textContent = item.readings[0].meanings[0];
-
-                        wrapper.appendChild(lessonLabel);
-                        wrapper.appendChild(charElem);
-                        wrapper.appendChild(pinyinElem);
-                        wrapper.appendChild(meaningElem);
-
-                        wrapper.addEventListener('click', () => {
-                            showTheoryModal(item.character);
-                        });
-
-                        searchCardContainer.appendChild(wrapper);
-                        found = true;
-                    }
+                    cardData.element.style.display = match ? '' : 'none';
+                    if (match) found = true;
                 });
 
-                if (found) {
-                    searchResultsContainer.style.display = 'block';
-                    lessonsContainer.style.display = 'none';
-                    noResultsDiv.style.display = 'none';
-                } else {
-                    searchResultsContainer.style.display = 'none';
-                    lessonsContainer.style.display = 'block';
-                    noResultsDiv.style.display = 'block';
-                }
+                noResultsDiv.style.display = found ? 'none' : 'block';
             }
 
             searchInput.addEventListener('input', () => filterCards(searchInput.value));
