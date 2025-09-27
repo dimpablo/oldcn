@@ -12,7 +12,7 @@ var SentenceData = {
             "number": 2,
             "original": "丁丑卜㱿貞今春王從洗震",
             "transliteration": "dīng chǒu bǔ què zhēn jīn chūn wáng cóng xǐ zhèn",
-            "translation": "В день дин-чоу гадал Цюэ: прикажет ли этот весной правитель Си Чжэню следовать за собой?"
+            "translation": "В день дин-чоу гадал Цюэ: прикажет ли этой весной правитель Си Чжэню следовать за собой?"
         },
         {
             "number": 3,
@@ -24,19 +24,19 @@ var SentenceData = {
             "number": 4,
             "original": "貞王勿唯洗震從",
             "transliteration": "zhēn wáng wù wéi xǐ zhèn cóng",
-            "translation": "Не Си Чжэню должен приказать правитель следовать за собой?"
+            "translation": "Вопрос 'Не Си Чжэню должен приказать правитель следовать за собой?'"
         },
         {
             "number": 5,
             "original": "貞叀王從洗震",
             "transliteration": "zhēn huì wáng cóng xǐ zhèn",
-            "translation": "Правитель ли заставит Си Чжэня следовать за собой?"
+            "translation": "Вопрос 'Правитель ли заставит Си Чжэня следовать за собой?'"
         },
         {
             "number": 6,
             "original": "貞唯茲商有作禍",
             "transliteration": "zhēn wéi zī shāng yǒu zuò huò",
-            "translation": "Именно этому городу Шан будет причинено несчастье?"
+            "translation": "Вопрос 'Именно этому городу Шан будет причинено несчастье?'"
         },
         {
             "number": 7,
@@ -48,13 +48,13 @@ var SentenceData = {
             "number": 8,
             "original": "貞茲雨唯我禍",
             "transliteration": "zhēn zī yǔ wéi wǒ huò",
-            "translation": "Нам ли принесет несчастье этот дождь?"
+            "translation": "Вопрос 'Нам ли принесет несчастье этот дождь?'"
         },
         {
             "number": 9,
             "original": "貞茲雨不唯我禍",
             "transliteration": "zhēn zī yǔ bù wéi wǒ huò",
-            "translation": "Этот дождь принесет несчастье не нам?"
+            "translation": "Вопрос 'Этот дождь принесет несчастье не нам?'"
         },
         {
             "number": 10,
@@ -72,7 +72,7 @@ var SentenceData = {
             "number": 12,
             "original": "貞我使其烖方",
             "transliteration": "zhēn wǒ shǐ qí zāi fāng",
-            "translation": "Нанесет ли поражение племени наш посол?"
+            "translation": "Вопрос 'Нанесет ли поражение племени наш посол?'"
         },
         {
             "number": 13,
