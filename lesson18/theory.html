@@ -132,8 +132,8 @@
     </style>
 <style>
         @font-face {
-            font-family: 'Jiaguwen';
-            src: url('../jiaguwen.ttf') format('truetype');
+            font-family: 'jinwen';
+            src: url('../jinwen.ttf') format('truetype');
             font-style: normal;
             font-weight: normal;
             font-display: swap;
@@ -529,7 +529,7 @@
             .oracle-table {
                 border-collapse: collapse;
                 margin: 20px auto;
-                font-family: 'Jiaguwen', 'Noto Serif CJK SC', 'KaiTi', serif;
+                font-family: 'jinwen', 'Noto Serif CJK SC', 'KaiTi', serif;
                 font-size: 1.3em;
                 table-layout: fixed;
                 width: 95%;
@@ -558,7 +558,7 @@
         toggle.addEventListener('change', function () {
             if (toggle.checked) {
                 styleSheet.textContent = oracleCSS;
-                label.textContent = 'Оракульный вид';
+                label.textContent = 'Вид бронзовых надписей';
             } else {
                 styleSheet.textContent = normalCSS;
                 label.textContent = 'Обычный вид';
