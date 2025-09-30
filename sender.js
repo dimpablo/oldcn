@@ -18,9 +18,9 @@ let getDocsRef = null;
 // === ИНИЦИАЛИЗАЦИЯ FIREBASE ===
 async function initFirebase() {
     try {
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js');
-        const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js');
-        const { getFirestore, doc, getDoc, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js');
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js  ');
+        const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js  ');
+        const { getFirestore, doc, getDoc, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js  ');
 
         const firebaseConfig = {
             apiKey: "AIzaSyBvyxPtx5PICYk60HUCERw5Cxh1TyCcZCY",
@@ -76,11 +76,19 @@ function createSenderModals() {
                     <h3>📬 Выберите получателя</h3>
                     <button id="closeRecipientModalBtn" class="modal-close">×</button>
                 </div>
-                <div id="recipientList" class="friends-grid">
-                    Загрузка...
+                <div id="friendsList" class="friends-grid">
+                    <h4 style="margin: 10px 0 10px 15px; color: #1a4f72;">Друзья</h4>
+                    <div id="friendsListContent"></div>
+                </div>
+                <div id="allUsersList" class="friends-grid">
+                    <h4 style="margin: 10px 0 10px 15px; color: #1a4f72;">Все пользователи</h4>
+                    <div id="allUsersListContent"></div>
                 </div>
                 <div id="noFriendsMessage" class="info-message">
                     У вас пока нет друзей.
+                </div>
+                <div id="noUsersMessage" class="info-message">
+                    Нет доступных пользователей.
                 </div>
             </div>
         </div>
@@ -148,13 +156,12 @@ function injectStyles() {
             color: #555;
         }
         .friends-grid {
-            display: grid;
-            gap: 8px;
+            display: block;
             padding: 16px 20px;
             max-height: 400px;
             overflow-y: auto;
         }
-        .friend-card {
+        .friend-card, .user-card {
             padding: 12px;
             background: #f9f7fc;
             border: 1px solid #d9d4e7;
@@ -162,8 +169,9 @@ function injectStyles() {
             cursor: pointer;
             font-size: 14px;
             color: #5a5a5a;
+            margin-bottom: 8px;
         }
-        .friend-card:hover {
+        .friend-card:hover, .user-card:hover {
             background: #f0eaf9;
             border-color: #d9d4e7;
         }
@@ -241,47 +249,83 @@ async function shareParagraph(title, context) {
     const modal = document.getElementById('modalSelectRecipient');
     modal.style.display = 'flex';
 
-    loadFriendsForSelection(title, context);
+    loadFriendsAndUsersForSelection(title, context);
 }
 
-async function loadFriendsForSelection(title, context) {
-    const recipientList = document.getElementById('recipientList');
+async function loadFriendsAndUsersForSelection(title, context) {
+    const friendsListContent = document.getElementById('friendsListContent');
+    const allUsersListContent = document.getElementById('allUsersListContent');
     const noFriendsMessage = document.getElementById('noFriendsMessage');
-    recipientList.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка...</div>';
-    noFriendsMessage.style.display = 'none';
+    const noUsersMessage = document.getElementById('noUsersMessage');
 
-    if (!currentUser || !Array.isArray(currentUser.friends) || currentUser.friends.length === 0) {
-        recipientList.innerHTML = '';
-        noFriendsMessage.style.display = 'block';
-        return;
-    }
+    // Очищаем списки
+    friendsListContent.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка друзей...</div>';
+    allUsersListContent.innerHTML = '<div style="text-align:center;padding:10px;">Загрузка пользователей...</div>';
+    noFriendsMessage.style.display = 'none';
+    noUsersMessage.style.display = 'none';
 
     try {
-        const friendsRef = collectionRef(db, 'users');
-        const q = queryRef(friendsRef, whereRef('__name__', 'in', currentUser.friends.slice(0, 10)));
-        const querySnap = await getDocsRef(q);
-        const friends = [];
-        querySnap.forEach(doc => friends.push({ id: doc.id, ...doc.data() }));
+        // Загружаем всех пользователей
+        const usersQuery = queryRef(collectionRef(db, 'users'));
+        const usersSnapshot = await getDocsRef(usersQuery);
+        const allUsers = [];
+        usersSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.displayName) {
+                allUsers.push({ id: doc.id, ...data });
+            }
+        });
 
-        recipientList.innerHTML = '';
-        if (friends.length === 0) {
-            noFriendsMessage.style.display = 'block';
-            return;
+        // Разделяем на друзей и остальных
+        const friendIds = currentUser.friends || [];
+        const friends = allUsers.filter(u => friendIds.includes(u.id));
+        const others = allUsers.filter(u => u.id !== currentUser.uid && !friendIds.includes(u.id));
+
+        // === ПОКАЗ ДРУЗЕЙ ===
+        friendsListContent.innerHTML = '';
+        if (friends.length > 0) {
+            document.getElementById('friendsList').style.display = 'block';
+            friends.forEach(friend => {
+                const card = document.createElement('div');
+                card.className = 'friend-card';
+                card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
+                card.onclick = () => sendToUser(friend, title, context);
+                friendsListContent.appendChild(card);
+            });
+        } else {
+            document.getElementById('friendsList').style.display = 'none';
         }
 
-        friends.forEach(friend => {
-            const card = document.createElement('div');
-            card.className = 'friend-card';
-            card.textContent = `${friend.displayName} (${friend.points || 0} баллов)`;
-            card.onclick = () => sendToFriend(friend, title, context);
-            recipientList.appendChild(card);
-        });
+        // === ПОКАЗ ВСЕХ ОСТАЛЬНЫХ ===
+        allUsersListContent.innerHTML = '';
+        if (others.length > 0) {
+            document.getElementById('allUsersList').style.display = 'block';
+            others.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'user-card';
+                card.textContent = `${user.displayName} (${user.points || 0} баллов)`;
+                card.onclick = () => sendToUser(user, title, context);
+                allUsersListContent.appendChild(card);
+            });
+        } else {
+            document.getElementById('allUsersList').style.display = 'none';
+        }
+
+        // === СООБЩЕНИЯ ===
+        if (friends.length === 0) {
+            noFriendsMessage.style.display = 'block';
+        }
+        if (others.length === 0) {
+            noUsersMessage.style.display = 'block';
+        }
+
     } catch (err) {
-        recipientList.innerHTML = '<div style="color:red">Ошибка</div>';
+        friendsListContent.innerHTML = '<div style="color:red">Ошибка загрузки друзей</div>';
+        allUsersListContent.innerHTML = '<div style="color:red">Ошибка загрузки пользователей</div>';
     }
 }
 
-function sendToFriend(friend, title, context) {
+function sendToUser(user, title, context) {
     const modal = document.getElementById('modalSelectRecipient');
     modal.style.display = 'none';
 
@@ -291,7 +335,7 @@ function sendToFriend(friend, title, context) {
 
     const shareString = `’‘’‘ [paragraph]: {"<h3>${cleanTitle}</h3> ${cleanContext}"}’‘’‘`;
     const encoded = encodeURIComponent(shareString);
-    const chatUrl = `../chat.html#chat/${friend.id}/${encoded}`;
+    const chatUrl = `../chat.html#chat/${user.id}/${encoded}`;
 
     const chatModal = document.getElementById('modalShareTaskChat');
     const frame = document.getElementById('shareTaskFrame');
