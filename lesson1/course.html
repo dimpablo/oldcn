@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курс с теорией и заметками</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Основной контейнер: левая панель + ресайзер + правая панель */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .feed {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ccc;
+        }
+
+        .notes {
+            padding: 20px;
+            border-top: 1px solid #ccc;
+            background-color: #f9f9f9;
+            height: 150px; /* фиксированная высота заметок */
+        }
+
+        .note-input {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .resizer {
+            width: 5px;
+            background-color: #ccc;
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .resizer:hover {
+            background-color: #90caf9;
+        }
+
+        .theory-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Лента курса и заметки — слева -->
+    <div class="main-container">
+        <div class="left-column">
+            <div class="feed">
+                <h2>Лента курса</h2>
+                <div class="post">
+                    <strong>Иван:</strong>
+                    <p>Как работает замыкание в JavaScript?</p>
+                    <small>10 минут назад</small>
+                </div>
+                <div class="post">
+                    <strong>Мария:</strong>
+                    <p>Ответ: Замыкание — это функция, которая запоминает лексическое окружение...</p>
+                    <small>5 минут назад</small>
+                </div>
+            </div>
+            <div class="notes">
+                <h3>Мои заметки</h3>
+                <textarea class="note-input" placeholder="Введите свои заметки по курсу..."></textarea>
+            </div>
+        </div>
+
+        <!-- Разделитель -->
+        <div class="resizer" id="resizer"></div>
+
+        <!-- Теория — справа -->
+        <iframe class="theory-frame" src="theory.html" title="Теория"></iframe>
+    </div>
+
+    <script>
+        // --- Копируем ЛОГИКУ ИЗ ВАШЕГО ФАЙЛА ТОЧНО ---
+        const resizer = document.getElementById('resizer');
+        const leftColumn = document.querySelector('.left-column');
+        const theoryFrame = document.querySelector('.theory-frame');
+        let isResizing = false;
+
+        resizer.addEventListener('pointerdown', (e) => {
+            isResizing = true;
+            resizer.setPointerCapture(e.pointerId);
+            document.body.style.cursor = 'col-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('pointermove', (e) => {
+            if (!isResizing) return;
+
+            const container = document.querySelector('.main-container');
+            const rect = container.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const minLeft = 200;
+            const maxLeft = rect.width - 200; // оставляем минимум для теории
+
+            const newLeftWidth = Math.max(minLeft, Math.min(offsetX, maxLeft));
+            const newRightWidth = rect.width - newLeftWidth;
+
+            leftColumn.style.flexBasis = `${newLeftWidth}px`;
+            theoryFrame.style.flexBasis = `${newRightWidth}px`;
+        });
+
+        resizer.addEventListener('pointerup', () => {
+            isResizing = false;
+            document.body.style.cursor = '';
+        });
+
+        resizer.addEventListener('pointercancel', () => {
+            isResizing = false;
+            document.body.style.cursor = '';
+        });
+
+        // Инициализация (опционально)
+        window.addEventListener('load', () => {
+            const container = document.querySelector('.main-container');
+            const half = container.offsetWidth / 2;
+            leftColumn.style.flexBasis = `${half}px`;
+            theoryFrame.style.flexBasis = `${half}px`;
+        });
+    </script>
+</body>
+</html>
